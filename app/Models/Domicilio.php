@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Domicilio extends Model
+{
+    //
+        protected $fillable = [
+            'pais',
+            'estado',
+            'ciudad',
+            'colonia',
+            'calle',
+            'numero_interior',
+            'numero_exterior',
+            'cp',
+            'cliente_id'
+        ];
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
+}
