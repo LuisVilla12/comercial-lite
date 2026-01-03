@@ -34,7 +34,7 @@ class ClientesSeeder extends Seeder
                 'tipo' => trim($row[4]),
                 'email1' => trim($row[5]) ?: null,
                 'email2' => trim($row[6]) ?: null,
-                'regimen_fiscal' => trim($row[7]),
+                'regimen_fiscal' => trim($row[7])?: null,
                 'telefono' => trim($row[8]) ?: null,
                 'whatsapp' => trim($row[8]) ?: null,
             ];

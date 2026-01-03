@@ -11,7 +11,8 @@
 <nav class="mb-4 bg-blue-900 py-4 px-10 text-white">
     <div class="container flex justify-between">
         <a class="navbar-brand" href="/">Comercial Lite</a>
-        <a class="text-white" href="/clientes">Menu</a>
+        <a class="text-white" href="/clientes">Catalogo Clientes</a>
+        <a class="text-white" href="/proveedores">Catalogo Proveedores</a>
     </div>
 </nav>
 

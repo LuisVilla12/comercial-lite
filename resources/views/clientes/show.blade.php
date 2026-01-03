@@ -3,7 +3,7 @@
 @section('title', 'Clientes')
 
 @section('content')
-<h2 class="text-xl font-semibold">Cliente: {{ $cliente->nombre }}</h2>
+<h2 class="text-xl font-semibold">{{ $tipo == 1 ? 'Cliente' : 'Proveedor' }} : {{ $cliente->nombre }}</h2>
     @if (session('success'))
     <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 my-4">
         <p class="font-semibold">Éxito</p>
@@ -13,10 +13,8 @@
 
     <div class="grid md:grid-cols-2 gap-6 ">
 
-
-
     <div class="mt-6 bg-white shadow rounded p-4">
-    <h4 class="block text-lg font-semibold text-gray-700 my-2">Información del cliente</h4>
+    <h4 class="block text-lg font-semibold text-gray-700 my-2">Información del {{ $tipo == 1 ? 'cliente' : 'proveedor' }}</h4>
         <div class="md:col-span-2">
             <label class="block  text-md font-medium text-gray-700 my-2">
                 Codigo <span class="text-red-500">*</span>: <span>{{ $cliente->codigo }}</span>
@@ -113,9 +111,9 @@
 
     {{-- Botones --}}
         <div class="md:col-span-2 flex justify-end gap-3 mt-4">
-            <a href="{{ route('clientes.index') }}"
+            <a href="{{ route($tipo == 1 ? 'clientes.index' : 'proveedores.index') }}"
                class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
-                Regresar a clientes
+                Regresar a {{ $tipo == 1 ? 'clientes' : 'proveedores'}}
             </a>
 
         </div>

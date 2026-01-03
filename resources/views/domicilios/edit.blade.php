@@ -101,7 +101,7 @@
 
         {{-- Botones --}}
         <div class="md:col-span-2 flex justify-end gap-3 mt-4">
-            <a href="{{ route('clientes.edit', $cliente->id) }}"
+            <a href="{{ route('clientes.edit', [$cliente, $cliente->tipo]) }}"
                class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
                 Cancelar
             </a>

@@ -10,11 +10,11 @@ class ClienteController extends Controller
     /**
      * Display a listing of the resource.
      */
- public function index(Request $request)
+ public function indexClientes(Request $request)
 {
     $search = $request->get('search');
 
-    $clientes = Cliente::where('tipo', '1')
+    $clientes = Cliente::where('tipo', 1)
         ->when($search, function ($query, $search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nombre', 'like', "%{$search}%")
@@ -28,13 +28,30 @@ class ClienteController extends Controller
     return view('clientes.index', compact('clientes', 'search'));
 }
 
+public function indexProveedores(Request $request)
+{
+    $search = $request->get('search');
+
+    $clientes = Cliente::where('tipo', 3)
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                ->orWhere('rfc', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(10)
+        ->withQueryString(); // ← mantiene el search en la paginación
+
+    return view('proveedores.index', compact('clientes', 'search'));
+}
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(string $tipo)
     {
         //
-                return view('clientes.create');
+                return view('clientes.create', compact('tipo'));
     }
 
     /**
@@ -50,7 +67,7 @@ class ClienteController extends Controller
             'regimen_fiscal' => 'required|string|max:255'
         ]);
         $cliente = Cliente::create([
-            'tipo' => 'CLIENTE',
+            'tipo' => $request->tipo,
             'codigo' => $request->codigo,
             'nombre' => $request->nombre,
             'rfc' => $request->rfc,
@@ -63,7 +80,7 @@ class ClienteController extends Controller
         ]);
 
         return redirect()
-            ->route('clientes.show', $cliente->id)
+            ->route('clientes.show', [$cliente->id, $cliente->tipo])
             ->with('success', 'Cliente creado correctamente. Ahora agrega el domicilio.');
 
     }
@@ -71,21 +88,20 @@ class ClienteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Cliente $cliente)
+    public function show(Cliente $cliente, string $tipo)
     {
         //
-        return view('clientes.show', compact('cliente'));
+        return view('clientes.show', compact('cliente', 'tipo'));
 
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Cliente $cliente)
+    public function edit(Cliente $cliente, string $tipo)
     {
         //
-        return view('clientes.edit', compact('cliente'));
-
+        return view('clientes.edit', compact('cliente', 'tipo'));
     }
 
     /**
@@ -95,13 +111,16 @@ class ClienteController extends Controller
     {
         //
          $request->validate([
+            'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:255',
-            'email' => 'nullable|email'
+            'rfc' => 'required|string|max:13',
+            'email1' => 'required|email',
+            'regimen_fiscal' => 'required|string|max:255'
         ]);
-
+        $tipo = $cliente->tipo;
         $cliente->update($request->all());
 
-        return redirect()->route('clientes.index')
+        return redirect()->route($tipo == 1 ? 'clientes.index' : 'proveedores.index')
             ->with('success', 'Cliente actualizado');
     }
 
@@ -110,10 +129,14 @@ class ClienteController extends Controller
      */
     public function destroy(Cliente $cliente)
     {
+     $tipo = $cliente->tipo;
     $cliente->delete();
 
     return redirect()
-        ->route('clientes.index')
-        ->with('success', 'Cliente eliminado correctamente.');
+        ->route($tipo == '1' ? 'clientes.index' : 'proveedores.index')
+        ->with(
+            'success',
+            ($tipo === '1' ? 'Cliente' : 'Proveedor') . ' eliminado correctamente.'
+        );
     }
 }

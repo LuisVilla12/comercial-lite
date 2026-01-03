@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string(column: 'nombre');
             $table->string('rfc', 20);
             $table->string('curp', 18)->nullable();
-            $table->enum('tipo', allowed: ['1', '3'])->default('1');
+            $table->integer('tipo'); // 1=cliente, 2=empleado, 3=proveedor
             $table->string(column: 'email1')->nullable();
             $table->string(column: 'email2')->nullable();
-            $table->string(column: 'regimen_fiscal');
+            $table->string(column: 'regimen_fiscal')->nullable();
             $table->string('telefono')->nullable();
             $table->string('whatsapp')->nullable();
             $table->boolean('activo')->default(true);

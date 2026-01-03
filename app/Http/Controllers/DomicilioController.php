@@ -53,7 +53,7 @@ class DomicilioController extends Controller
 
 
     return redirect()
-        ->route('clientes.show', $cliente->id)
+        ->route('clientes.show', [$cliente, $cliente->tipo])
         ->with('success', value: 'Domicilio agregado correctamente.');
 }
 
@@ -102,7 +102,7 @@ class DomicilioController extends Controller
         ]);
 
         return redirect()
-            ->route('clientes.edit', parameters: $domicilio->cliente_id)
+            ->route('clientes.edit',[ $domicilio->cliente_id,$cliente->tipo])
             ->with('success', value: "Domicilio actualizado correctamente.");
     }
 

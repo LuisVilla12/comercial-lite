@@ -5,7 +5,7 @@
 @section('content')
 <div class="">
      <h1 class="text-2xl font-semibold text-gray-800">
-        Clientes
+        Proveedores
     </h1>
 
 
@@ -14,13 +14,13 @@
 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
     {{-- Buscador --}}
-    <form method="GET" action="{{ route('clientes.index') }}" class="w-full md:w-1/3">
+    <form method="GET" action="{{ route('proveedores.index') }}" class="w-full md:w-1/3">
         <div class="relative">
             <input
                 type="text"
                 name="search"
                 value="{{ request('search') }}"
-                placeholder="Buscar cliente..."
+                placeholder="Buscar proveedor..."
                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             >
 
@@ -41,9 +41,9 @@
     </form>
 
     {{-- Botón --}}
-    <a href="{{ route('clientes.create', '1') }}"
+    <a href="{{ route('clientes.create', '3') }}"
        class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-        Registrar cliente
+        Registrar proveedor
     </a>
 
 </div>
@@ -86,7 +86,7 @@
                         {{ $cliente->rfc }}
                     </td>
                     <td class="px-6 py-4 text-md text-gray-700">
-                        <div class="flex items-center gap-4 text-sm font-medium">
+                                               <div class="flex items-center gap-4 text-sm font-medium">
         {{-- Ver --}}
         <a href="{{ route('clientes.show', [$cliente, $cliente->tipo]) }}"
            class="text-gray-600 hover:text-blue-600 transition">
@@ -144,7 +144,6 @@
     {{ $clientes->links() }}
 
 </div>
-
 
 
 </div>
