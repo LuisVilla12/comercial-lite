@@ -131,7 +131,7 @@
     </table>
 <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-    <p class="text-sm text-gray-600">
+    <p class="text-sm text-gray-600 ml-6">
         Mostrando
         <span class="font-medium">{{ $clientes->firstItem() }}</span>
         a

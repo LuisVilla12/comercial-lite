@@ -7,4 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 class Producto extends Model
 {
     //
+    protected $fillable = [
+        'id_producto',
+        'codigo_producto',
+        'nombre_producto',
+        'tipo_producto',
+        'peso_producto',
+        'estatus_producto',
+        'unidad_medida',
+        'impuesto1',
+        'retencion1',
+        'valor_clasificacion1',
+        'valor_clasificacion2',
+        'importe_extra',
+        'precio1',
+        'precio2',
+        'precio3',
+        'precio4',
+        'precio5',
+        'precio_calculado',
+        'exento_impuesto',
+        'codigo_alterno',
+        'clave_sat'
+    ];
 }

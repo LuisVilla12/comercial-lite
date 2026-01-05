@@ -1,26 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Clientes')
+@section('title', 'Productos')
 
 @section('content')
 <div class="">
      <h1 class="text-2xl font-semibold text-gray-800">
-        Proveedores
+        Productos
     </h1>
-
-
-
 </div>
 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
     {{-- Buscador --}}
-    <form method="GET" action="{{ route('proveedores.index') }}" class="w-full md:w-1/3">
+    <form method="GET" action="{{ route('productos.index') }}" class="w-full md:w-1/3">
         <div class="relative">
             <input
                 type="text"
                 name="search"
                 value="{{ request('search') }}"
-                placeholder="Buscar proveedor..."
+                placeholder="Buscar producto..."
                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             >
 
@@ -33,7 +30,7 @@
         </div>
 
         @if(request('search'))
-            <a href="{{ route('clientes.index') }}"
+            <a href="{{ route('productos.index') }}"
                class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                 Limpiar búsqueda
             </a>
@@ -41,9 +38,9 @@
     </form>
 
     {{-- Botón --}}
-    <a href="{{ route('clientes.create', '3') }}"
+    <a href="{{ route('productos.create') }}"
        class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-        Registrar proveedor
+        Registrar producto
     </a>
 
 </div>
@@ -65,7 +62,10 @@
                     Nombre
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    RFC
+                    Precio1
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Clasificacion 1
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Acciones
@@ -74,28 +74,31 @@
         </thead>
 
         <tbody class="bg-white divide-y divide-gray-100">
-            @forelse ($clientes as $cliente)
+            @forelse ($productos as $producto)
                 <tr class="hover:bg-gray-50 transition">
                     <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $cliente->codigo }}
+                        {{ $producto->codigo_producto }}
                     </td>
                     <td class="px-6 py-4 text-md font-medium text-gray-900">
-                        {{ $cliente->nombre }}
+                        {{ $producto->nombre_producto }}
                     </td>
                     <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $cliente->rfc }}
+                        {{ $producto->precio1 }}
                     </td>
                     <td class="px-6 py-4 text-md text-gray-700">
-                                               <div class="flex items-center gap-4 text-sm font-medium">
+                        {{ $producto->valor_clasificacion1 }}
+                    </td>
+                    <td class="px-6 py-4 text-md text-gray-700">
+                        <div class="flex items-center gap-4 text-sm font-medium">
         {{-- Ver --}}
-        <a href="{{ route('clientes.show', [$cliente, $cliente->tipo]) }}"
+        <a href="{{ route('productos.show', $producto) }}"
            class="text-gray-600 hover:text-blue-600 transition">
             Ver
         </a>
   {{-- Separador --}}
         <span class="text-gray-300">|</span>
         {{-- Editar --}}
-        <a href="{{ route('clientes.edit', [$cliente, $cliente->tipo]) }}"
+        <a href="{{ route('productos.edit', $producto) }}"
            class="text-gray-600 hover:text-indigo-600 transition">
             Editar
         </a>
@@ -104,7 +107,7 @@
         <span class="text-gray-300">|</span>
 
         {{-- Eliminar --}}
-        <form action="{{ route('clientes.destroy', $cliente) }}"
+        <form action="{{ route('productos.destroy', $producto) }}"
               method="POST"
               class="inline">
             @csrf
@@ -122,7 +125,7 @@
             @empty
                 <tr>
                     <td colspan="4" class="px-6 py-6 text-center text-md text-gray-500">
-                        No hay clientes registrados
+                        No hay productos registrados
                     </td>
                 </tr>
             @endforelse
@@ -133,17 +136,17 @@
 
     <p class="text-sm text-gray-600 ml-6">
         Mostrando
-        <span class="font-medium">{{ $clientes->firstItem() }}</span>
+        <span class="font-medium">{{ $productos->firstItem() }}</span>
         a
-        <span class="font-medium">{{ $clientes->lastItem() }}</span>
+        <span class="font-medium">{{ $productos->lastItem() }}</span>
         de
-        <span class="font-medium">{{ $clientes->total() }}</span>
+        <span class="font-medium">{{ $productos->total() }}</span>
         registros
     </p>
 
-    {{ $clientes->links() }}
-
+    {{ $productos->links() }}
 </div>
+
 
 
 </div>

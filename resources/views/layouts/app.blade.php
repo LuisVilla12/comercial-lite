@@ -13,6 +13,7 @@
         <a class="navbar-brand" href="/">Comercial Lite</a>
         <a class="text-white" href="/clientes">Catalogo Clientes</a>
         <a class="text-white" href="/proveedores">Catalogo Proveedores</a>
+        <a class="text-white" href="/productos">Catalogo Productos</a>
     </div>
 </nav>
 
