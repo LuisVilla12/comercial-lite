@@ -1,7 +1,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Clientes')
+@section('title', 'Registrar - Productos')
 
 @section('content')
     <div class="p-4">

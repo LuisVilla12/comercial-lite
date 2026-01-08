@@ -15,7 +15,7 @@ class ClasificacionController extends Controller
         //
         $search = $request->get('search');
         $clasificaciones = Clasificacion::when($search, function ($query, $search) {
-            $query->where('nombre', 'like', "%{$search}%");
+            $query->where('nombre', 'like', "%{$search}%")->orWhere('codigo', 'like', "%{$search}%");
         })
         ->paginate(10)
         ->withQueryString();
@@ -38,7 +38,7 @@ class ClasificacionController extends Controller
     {
         //
         $request->validate([
-            'codigo' => 'required|string|max:50',
+            'codigo' => 'required|unique:clasificacions,codigo|string|max:50',
             'nombre' => 'required|string|max:255',
 
         ]);
@@ -77,7 +77,7 @@ class ClasificacionController extends Controller
     {
         //
         $request->validate([
-            'codigo' => 'required|string|max:50',
+            'codigo' => 'required|unique:clasificacions,codigo|string|max:50',
             'nombre' => 'required|string|max:255',
 
         ]);
@@ -96,5 +96,12 @@ class ClasificacionController extends Controller
     public function destroy(Clasificacion $clasificacion)
     {
         //
+$clasificacion->delete();
+
+    return redirect()
+        ->route('clasificaciones.index')
+        ->with(
+            'success', 'La categoria se ha  eliminado correctamente.'
+        );
     }
 }

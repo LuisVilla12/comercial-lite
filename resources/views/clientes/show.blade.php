@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Clientes')
+@section('title', 'Cliente')
 
 @section('content')
 <h2 class="text-xl font-semibold">{{ $tipo == 1 ? 'Cliente' : 'Proveedor' }} : {{ $cliente->nombre }}</h2>

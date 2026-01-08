@@ -1,14 +1,14 @@
 
 @extends('layouts.app')
 
-@section('title', 'Registrar - Clasificación')
+@section('title', 'Clasificación de producto')
 
 @section('content')
     <div class="p-4">
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
 
     <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        Registro de clasificacion de productos
+        Clasificacion de productos
     </h2>
 
     <form method="POST" action="{{ route('clasificaciones.store') }}" class="grid grid-cols-1 md:grid-cols-2 md:gap-4">
@@ -19,7 +19,8 @@
             </label>
             <input type="string" name="codigo"
                    placeholder="Codigo"
-                   value="{{ old('codigo') }}"
+                   disabled
+                   value="{{ $clasificacion->codigo ?? 'N/A'}}"
                    class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('codigo')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -33,7 +34,8 @@
             </label>
             <input type="text" name="nombre"
                    placeholder="Nombre de la clasificacion"
-                   value="{{ old('nombre') }}"
+                   disabled
+                   value="{{$clasificacion->nombre ?? 'N/A'}}"
                    class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
              @error('nombre')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -45,13 +47,9 @@
         <div class="md:col-span-2 flex justify-end gap-3 mt-4">
             <a href="{{ route('clasificaciones.index') }}"
                class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
-                Cancelar
+                Regresar
             </a>
 
-            <button type="submit"
-                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
-                Guardar clasificacion
-            </button>
         </div>
 
 

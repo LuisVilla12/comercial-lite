@@ -30,7 +30,7 @@
         </div>
 
         @if(request('search'))
-            <a href="{{ route('productos.index') }}"
+            <a href="{{ route('clasificaciones.index') }}"
                class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                 Limpiar búsqueda
             </a>
@@ -80,14 +80,14 @@
                     <td class="px-6 py-4 text-md text-gray-700">
                         <div class="flex items-center gap-4 text-sm font-medium">
         {{-- Ver --}}
-        <a href="{{ route('productos.show', $clasificacion) }}"
+        <a href="{{ route('clasificaciones.show', $clasificacion) }}"
            class="text-gray-600 hover:text-blue-600 transition">
             Ver
         </a>
   {{-- Separador --}}
         <span class="text-gray-300">|</span>
         {{-- Editar --}}
-        <a href="{{ route('productos.edit', $clasificacion) }}"
+        <a href="{{ route('clasificaciones.edit', $clasificacion) }}"
            class="text-gray-600 hover:text-indigo-600 transition">
             Editar
         </a>
@@ -96,7 +96,7 @@
         <span class="text-gray-300">|</span>
 
         {{-- Eliminar --}}
-        <form action="{{ route('productos.destroy', $clasificacion) }}"
+        <form action="{{ route('clasificaciones.destroy', $clasificacion) }}"
               method="POST"
               class="inline">
             @csrf

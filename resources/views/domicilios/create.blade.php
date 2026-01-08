@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Domicilio')
+@section('title', 'Registrar - Domicilio')
 
 @section('content')
 @if (session('success'))

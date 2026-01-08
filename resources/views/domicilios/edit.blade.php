@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Domicilio')
+@section('title', 'Editar - Domicilio')
 
 @section('content')
 <form method="POST" action="{{ route('domicilios.update', [$cliente->id, $domicilio->id]) }}"  class="grid grid-cols-1 md:grid-cols-2 gap-4">

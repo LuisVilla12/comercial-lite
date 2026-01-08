@@ -33,7 +33,7 @@
         </div>
 
         @if(request('search'))
-            <a href="{{ route('clientes.index') }}"
+            <a href="{{ route('proveedores.index') }}"
                class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                 Limpiar búsqueda
             </a>

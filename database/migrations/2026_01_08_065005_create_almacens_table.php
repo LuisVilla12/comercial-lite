@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('almacens', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('codigo', 255)->unique();
+            $table->string('nombre', 100)->nullable;
+            $table->integer('tipo')->nullable()->default(0);
         });
     }
 
