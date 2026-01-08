@@ -81,6 +81,7 @@
             <input type="text" name="peso_producto"
                    value="{{ old(key: 'peso_producto') }}"
                    placeholder="Peso del producto"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
 
@@ -105,10 +106,16 @@
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Clasificación:<span class="text-red-500">*</span>
             </label>
-            <input type="text" name="valor_clasificacion1"
-                   placeholder="Clasificación"
-                     value="{{ old(key: 'valor_clasificacion1') }}"
-                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+<select name="valor_clasificacion1" id="valor_clasificacion1"
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <option value="" disabled selected>Seleccione una opcion</option>
+                @foreach ($clasificaciones as $clasificacion)
+                    <option value="{{ $clasificacion->id }}"
+                        @selected(old('valor_clasificacion1') == $clasificacion->id)>
+                        {{ $clasificacion->nombre }}
+                    </option>
+                @endforeach
+            </select>
             @error('valor_clasificacion1')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -125,6 +132,7 @@
             </label>
             <input type="number" name="precio1"
                    placeholder="Precio1"
+                          step="0.01"
                     value="{{ old(key: 'precio1') }}"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
@@ -137,6 +145,7 @@
             <input type="number" name="precio2"
                     value="{{ old(key: 'precio2') }}"
                    placeholder="Precio 2"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
 
@@ -148,6 +157,7 @@
             <input type="number" name="precio3"
                    value="{{ old(key: 'precio3') }}"
                    placeholder="Precio 3"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Precio 4 --}}
@@ -158,6 +168,7 @@
             <input type="number" name="precio4"
                    value="{{ old(key: 'precio4') }}"
                    placeholder="Precio 4"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
          {{-- Precio 5 --}}
@@ -167,6 +178,7 @@
             </label>
             <input type="number" name="precio5"
                    value="{{ old(key: 'precio5') }}"
+                   step="0.01"
                    placeholder="Precio 5"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
@@ -178,6 +190,7 @@
             <input type="number" name="precio_calculado"
                    value="{{ old(key: 'precio_calculado') }}"
                    placeholder="Precio Calculado"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Impuesto --}}
@@ -207,6 +220,7 @@
             <input type="number" name="importe_extra"
                    value="{{ old(key: 'importe_extra') }}"
                    placeholder="Importe extra"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         <div class="my-2">

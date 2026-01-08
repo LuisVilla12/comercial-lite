@@ -82,6 +82,7 @@
             <input type="text" name="peso_producto"
                    value="{{ $producto->peso_producto ?? old('peso_producto') }}"
                    placeholder="Peso del producto"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
 
@@ -92,10 +93,10 @@
             </label>
             <select name="unidad_medida" id="unidad_medida"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                <option value="" disabled selected>Seleccione unidad</option>
-                <option value="1" @selected(old('unidad_medida') == 1)>PIEZA (PZ)</option>
-                <option value="2" @selected(old('unidad_medida') == 2)>METRO (MT)</option>
-                <option value="4" @selected(old('unidad_medida') == 4)>KILO  (KG)</option>
+                <option value="" disabled selected>Seleccione una opcion</option>
+                <option value="1" @selected($producto->unidad_medida == 1)>PIEZA (PZ)</option>
+                <option value="2" @selected($producto->unidad_medida == 2)>METRO (MT)</option>
+                <option value="4" @selected($producto->unidad_medida == 4)>KILO  (KG)</option>
             </select>
             @error('unidad_medida')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -106,10 +107,16 @@
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Clasificación:<span class="text-red-500">*</span>
             </label>
-            <input type="text" name="valor_clasificacion1"
-                   placeholder="Clasificación"
-                     value="{{ $producto->valor_clasificacion1 ?? old('valor_clasificacion1') }}"
-                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+            <select name="valor_clasificacion1" id="valor_clasificacion1"
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <option value="" disabled selected>Seleccione una opcion</option>
+                @foreach ($clasificaciones as $clasificacion)
+                    <option value="{{ $clasificacion->id }}"
+                        @selected($producto->valor_clasificacion1 == $clasificacion->id)>
+                        {{ $clasificacion->nombre }}
+                    </option>
+                @endforeach
+            </select>
             @error('valor_clasificacion1')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -126,6 +133,7 @@
             </label>
             <input type="number" name="precio1"
                    placeholder="Precio1"
+                   step="0.01"
                     value="{{$producto->precio1 ?? old(key: 'precio1') }}"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
@@ -138,6 +146,7 @@
             <input type="number" name="precio2"
                 value="{{$producto->precio2 ?? old(key: 'precio2') }}"
                    placeholder="Precio 2"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
 
@@ -149,6 +158,7 @@
             <input type="number" name="precio3"
                    value="{{$producto->precio3 ?? old(key: 'precio3') }}"
                    placeholder="Precio 3"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Precio 4 --}}
@@ -158,6 +168,7 @@
             </label>
             <input type="number" name="precio4"
                    value="{{$producto->precio4 ?? old(key: 'precio4') }}"
+                   step="0.01"
                    placeholder="Precio 4"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
@@ -169,6 +180,7 @@
             <input type="number" name="precio5"
                    value="{{ $producto->precio5 ?? old(key: 'precio5') }}"
                    placeholder="Precio 5"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Precio Calculado --}}
@@ -179,6 +191,7 @@
             <input type="number" name="precio_calculado"
                    value="{{$producto->precio_calculado ?? old(key: 'precio_calculado') }}"
                    placeholder="Precio Calculado"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Impuesto --}}
@@ -208,6 +221,7 @@
             <input type="number" name="importe_extra"
                    value="{{ $producto->importe_extra ?? old(key: 'importe_extra') }}"
                    placeholder="Importe extra"
+                   step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         <div class="my-2">

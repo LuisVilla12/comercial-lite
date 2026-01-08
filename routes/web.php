@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DomicilioController;
 use App\Http\Controllers\CodigoPostalController;
@@ -13,7 +15,6 @@ Route::get('/', function () {
 // RUTAS DE CLIENTES
 Route::get('/clientes', [ClienteController::class, 'indexClientes'])->name('clientes.index');
 Route::get('/proveedores', action: [ClienteController::class, 'indexProveedores'])->name('proveedores.index');
-
 Route::get('/clientes/create/{tipo}', [ClienteController::class, 'create'])->name('clientes.create');
 Route::post('/clientes', action: [ClienteController::class, 'store'])->name('clientes.store');
 Route::get('/clientes/{cliente}/{tipo}', [ClienteController::class, 'show'])->name('clientes.show');
@@ -45,7 +46,15 @@ Route::get('/productos', [ProductoController::class, 'index'])->name('productos.
 Route::get('/productos/create', [ProductoController::class, 'create'])->name('productos.create');
 Route::post('/productos', [ProductoController::class, 'store'])->name('productos.store');
 Route::get('/productos/{producto}', [ProductoController::class, 'show'])->name('productos.show');
-
 Route::get('/productos/{producto}/edit', [ProductoController::class, 'edit'])->name('productos.edit');
 Route::put('/productos/{producto}', [ProductoController::class, 'update'])->name('productos.update');
 Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
+
+//Rutas clasificaciones
+Route::get('/clasificaciones', [ClasificacionController::class, 'index'])->name('clasificaciones.index');
+Route::get('/clasificaciones/create', [ClasificacionController::class, 'create'])->name('clasificaciones.create');
+Route::post('/clasificaciones', [ClasificacionController::class, 'store'])->name('clasificaciones.store');
+Route::get('/clasificaciones/{clasificacion}', [ClasificacionController::class, 'show'])->name('clasificaciones.show');
+Route::get('/clasificaciones/{clasificacion}/edit', [ClasificacionController::class, 'edit'])->name('clasificaciones.edit');
+Route::put('/clasificaciones/{clasificacion}', [ClasificacionController::class, 'update'])->name('clasificaciones.update');
+Route::delete('/clasificaciones/{clasificacion}', [ClasificacionController::class, 'destroy'])->name('clasificaciones.destroy');

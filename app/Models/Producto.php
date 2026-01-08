@@ -30,4 +30,9 @@ class Producto extends Model
         'codigo_alterno',
         'clave_sat'
     ];
+
+    public function clasificacion1()
+{
+    return $this->belongsTo(Clasificacion::class, 'valor_clasificacion1');
+}
 }

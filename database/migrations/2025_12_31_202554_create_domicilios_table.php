@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string(column: 'numero_interior')->nullable();
             $table->string(column: 'numero_exterior')->nullable();
             $table->string(column: 'cp')->nullable();
-            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
+            $table->foreignId(column: 'cliente_id')->constrained('clientes')->onDelete('cascade');
+
         });
     }
 

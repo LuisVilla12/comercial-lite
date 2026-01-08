@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Clasificacion;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,7 @@ class ProductoController extends Controller
     public function index(Request $request)
     {
         //
-       $search = $request->get('search');
+    $search = $request->get('search');
 
     $productos = Producto::where('estatus_producto', 1)
         ->when($search, function ($query, $search) {
@@ -36,7 +37,8 @@ class ProductoController extends Controller
     public function create()
     {
         //
-        return view('productos.create');
+        $clasificaciones = Clasificacion::all();
+        return view('productos.create', compact('clasificaciones'));
     }
 
     /**
@@ -84,6 +86,7 @@ class ProductoController extends Controller
     public function show(Producto $producto)
     {
         //
+        return view('productos.show', compact('producto'));
     }
 
     /**
@@ -92,7 +95,8 @@ class ProductoController extends Controller
     public function edit(Producto $producto)
     {
         //
-        return view('productos.edit', compact('producto'));
+        $clasificaciones = Clasificacion::all();
+        return view('productos.edit', compact('producto', 'clasificaciones'));
     }
 
     /**

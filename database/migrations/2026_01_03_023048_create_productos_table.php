@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('codigo_producto')->unique();
             $table->string('nombre_producto');
             $table->string('tipo_producto')->nullable();
-            $table->integer('peso_producto')->nullable()->default(0);
+            $table->decimal('peso_producto', 15, 4)->nullable()->default(0);
             $table->integer('estatus_producto')->nullable()->default(1);
             $table->integer('unidad_medida')->nullable()->default(0);
             $table->integer('impuesto1')->nullable()->default(0);
             $table->integer('retencion1')->nullable()->default(0);
-            $table->integer('valor_clasificacion1')->nullable()->default(0);
+            $table->foreignId(column: 'valor_clasificacion1')->nullable()->constrained('clasificacions')->nullOnDelete();
             $table->integer('valor_clasificacion2')->nullable()->default(0);
             $table->decimal('importe_extra', 15, 2)->nullable()->default(0);
             $table->decimal('precio1', 15, 4);

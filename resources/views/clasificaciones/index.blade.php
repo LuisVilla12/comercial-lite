@@ -5,19 +5,19 @@
 @section('content')
 <div class="">
      <h1 class="text-2xl font-semibold text-gray-800">
-        Productos
+        Clasificaciones de Productos
     </h1>
 </div>
 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
     {{-- Buscador --}}
-    <form method="GET" action="{{ route('productos.index') }}" class="w-full md:w-1/3">
+    <form method="GET" action="{{ route('clasificaciones.index') }}" class="w-full md:w-1/3">
         <div class="relative">
             <input
                 type="text"
                 name="search"
                 value="{{ request('search') }}"
-                placeholder="Buscar producto..."
+                placeholder="Buscar clasificacion..."
                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             >
 
@@ -38,9 +38,9 @@
     </form>
 
     {{-- Botón --}}
-    <a href="{{ route('productos.create') }}"
+    <a href="{{ route('clasificaciones.create') }}"
        class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-        Registrar producto
+        Registrar clasificacion
     </a>
 
 </div>
@@ -61,12 +61,7 @@
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Nombre
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Precio
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Proveedor
-                </th>
+
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Acciones
                 </th>
@@ -74,31 +69,25 @@
         </thead>
 
         <tbody class="bg-white divide-y divide-gray-100">
-            @forelse ($productos as $producto)
+            @forelse ($clasificaciones as $clasificacion)
                 <tr class="hover:bg-gray-50 transition">
                     <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $producto->codigo_producto }}
+                        {{ $clasificacion->codigo }}
                     </td>
                     <td class="px-6 py-4 text-md font-medium text-gray-900">
-                        {{ $producto->nombre_producto }}
-                    </td>
-                    <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $producto->precio1 }}
-                    </td>
-                    <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $producto->clasificacion1->nombre ?? 'N/A' }}
+                        {{ $clasificacion->nombre }}
                     </td>
                     <td class="px-6 py-4 text-md text-gray-700">
                         <div class="flex items-center gap-4 text-sm font-medium">
         {{-- Ver --}}
-        <a href="{{ route('productos.show', $producto) }}"
+        <a href="{{ route('productos.show', $clasificacion) }}"
            class="text-gray-600 hover:text-blue-600 transition">
             Ver
         </a>
   {{-- Separador --}}
         <span class="text-gray-300">|</span>
         {{-- Editar --}}
-        <a href="{{ route('productos.edit', $producto) }}"
+        <a href="{{ route('productos.edit', $clasificacion) }}"
            class="text-gray-600 hover:text-indigo-600 transition">
             Editar
         </a>
@@ -107,7 +96,7 @@
         <span class="text-gray-300">|</span>
 
         {{-- Eliminar --}}
-        <form action="{{ route('productos.destroy', $producto) }}"
+        <form action="{{ route('productos.destroy', $clasificacion) }}"
               method="POST"
               class="inline">
             @csrf
@@ -136,15 +125,15 @@
 
     <p class="text-sm text-gray-600 ml-6">
         Mostrando
-        <span class="font-medium">{{ $productos->firstItem() }}</span>
+        <span class="font-medium">{{ $clasificaciones->firstItem() }}</span>
         a
-        <span class="font-medium">{{ $productos->lastItem() }}</span>
+        <span class="font-medium">{{ $clasificaciones->lastItem() }}</span>
         de
-        <span class="font-medium">{{ $productos->total() }}</span>
+        <span class="font-medium">{{ $clasificaciones->total() }}</span>
         registros
     </p>
 
-    {{ $productos->links() }}
+    {{ $clasificaciones->links() }}
 </div>
 
 
