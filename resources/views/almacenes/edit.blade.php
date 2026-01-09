@@ -1,16 +1,10 @@
-
-@extends('layouts.app')
-
-@section('title', 'Editar - Almacen')
-
-@section('content')
-    <div class="p-4">
-    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        Editar almacen
-    </h2>
-
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Editar Almacen
+        </h2>
+    </x-slot>
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
     <form method="POST" action="{{ route('almacenes.update', $almacen->id) }}" class="grid grid-cols-1 md:grid-cols-2 md:gap-4">
         @csrf
         @method('PUT')
@@ -18,7 +12,7 @@
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Codigo <span class="text-red-500">*</span>
             </label>
-            <input type="string" name="codigo"
+            <input type="text" name="codigo"
                    placeholder="Codigo"
                    value="{{ $almacen->codigo?? old('codigo') }}"
                    class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
@@ -40,12 +34,12 @@
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
-        <div class="my-2">
+        <div class="">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Tipo:<span class="text-red-500">*</span>
             </label>
             <select name="tipo" id="tipo"
-                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 <option value="" disabled selected>Seleccione una opcion</option>
                 <option value="1"  @selected($almacen->tipo == 1)>MATRIZ</option>
                 <option value="2" @selected($almacen->tipo == 2)>SUCURSAL</option>
@@ -65,13 +59,10 @@
 
             <button type="submit"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
-                Guardar almacen
+                Actualizar almacen
             </button>
         </div>
-
-
     </form>
-</div>
-
     </div>
-@endsection
+
+</x-app-layout>

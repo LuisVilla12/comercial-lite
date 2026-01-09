@@ -1,13 +1,9 @@
-@extends('layouts.app')
-
-@section('title', 'Catalogo - Almacenes')
-
-@section('content')
-<div class="">
-     <h1 class="text-2xl font-semibold text-gray-800">
-        Almacenes
-    </h1>
-</div>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Catálogo - Almacenes
+        </h2>
+    </x-slot>
 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
     {{-- Buscador --}}
@@ -17,7 +13,7 @@
                 type="text"
                 name="search"
                 value="{{ request('search') }}"
-                placeholder="Buscar clasificacion..."
+                placeholder="Buscar almacen..."
                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             >
 
@@ -52,6 +48,7 @@
         <p>{{ session('success') }}</p>
     </div>
 @endif
+
     <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-100">
             <tr>
@@ -147,8 +144,6 @@
     {{ $almacenes->links() }}
 </div>
 
-
-
 </div>
 
-@endsection
+</x-app-layout>

@@ -27,10 +27,9 @@ class AlmacenSeeder extends Seeder
         while (($row = fgetcsv($handle, 0, ',')) !== false) {
 
             $batch[] = [
-                'id' => intval($row[0]),
-                'codigo' => trim(string: $row[1]),
-                'nombre' => trim($row[2]),
-                'tipo' => intval( $row[3]),
+                'codigo' => trim(string: $row[0]),
+                'nombre' => trim($row[1]),
+                'tipo' => intval( $row[2]),
             ];
 
             if (count($batch) === 500) {
