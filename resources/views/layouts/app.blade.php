@@ -15,6 +15,7 @@
         <a class="text-white" href="/proveedores">Proveedores</a>
         <a class="text-white" href="/productos">Productos</a>
         <a class="text-white" href="/clasificaciones">Clasificaciones</a>
+        <a class="text-white" href="/almacenes">Almacenes</a>
     </div>
 </nav>
 

@@ -5,6 +5,8 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DomicilioController;
 use App\Http\Controllers\CodigoPostalController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\AlmacenController;
+
 
 use Illuminate\Support\Facades\Route;
 
@@ -58,3 +60,12 @@ Route::get('/clasificaciones/{clasificacion}', [ClasificacionController::class, 
 Route::get('/clasificaciones/{clasificacion}/edit', [ClasificacionController::class, 'edit'])->name('clasificaciones.edit');
 Route::put('/clasificaciones/{clasificacion}', [ClasificacionController::class, 'update'])->name('clasificaciones.update');
 Route::delete('/clasificaciones/{clasificacion}', [ClasificacionController::class, 'destroy'])->name('clasificaciones.destroy');
+
+//Almacenes
+Route::get('/almacenes', [AlmacenController::class, 'index'])->name('almacenes.index');
+Route::get('/almacenes/create', [AlmacenController::class, 'create'])->name('almacenes.create');
+Route::post('/almacenes', [AlmacenController::class, 'store'])->name('almacenes.store');
+Route::get('/almacenes/{almacen}', [AlmacenController::class, 'show'])->name('almacenes.show');
+Route::get('/almacenes/{almacen}/edit', [AlmacenController::class, 'edit'])->name('almacenes.edit');
+Route::put('/almacenes/{almacen}', [AlmacenController::class, 'update'])->name('almacenes.update');
+Route::delete('/almacenes/{almacen}', [AlmacenController::class, 'destroy'])->name('almacenes.destroy');

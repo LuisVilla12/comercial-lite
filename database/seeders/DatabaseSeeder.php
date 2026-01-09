@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         ProductosSeeder::class,
         ClientesSeeder::class,
         CodigosPostalesSeeder::class,
+        AlmacenSeeder::class,
     ]);
         // User::factory(10)->create();
 

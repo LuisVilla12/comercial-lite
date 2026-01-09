@@ -1,14 +1,14 @@
 
 @extends('layouts.app')
 
-@section('title', 'Clasificación de producto')
+@section('title', 'Detalles de la clasificación')
 
 @section('content')
     <div class="p-4">
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
 
     <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        Clasificacion de productos
+        Detalles de la clasificacion
     </h2>
 
     <form method="POST" action="{{ route('clasificaciones.store') }}" class="grid grid-cols-1 md:grid-cols-2 md:gap-4">

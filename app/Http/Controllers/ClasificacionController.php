@@ -36,7 +36,6 @@ class ClasificacionController extends Controller
      */
     public function store(Request $request)
     {
-        //
         $request->validate([
             'codigo' => 'required|unique:clasificacions,codigo|string|max:50',
             'nombre' => 'required|string|max:255',
@@ -75,7 +74,6 @@ class ClasificacionController extends Controller
      */
     public function update(Request $request, Clasificacion $clasificacion)
     {
-        //
         $request->validate([
             'codigo' => 'required|unique:clasificacions,codigo|string|max:50',
             'nombre' => 'required|string|max:255',

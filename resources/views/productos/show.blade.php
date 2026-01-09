@@ -8,7 +8,7 @@
     <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6">
 
     <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        Registro de producto
+        Detalles de producto
     </h2>
             <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">
         Datos generales
