@@ -1,3 +1,5 @@
+@section('title', content: 'Registrar ' . ($tipo == 1 ? 'cliente' : 'proveedor'))
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
