@@ -1,19 +1,12 @@
 
-@extends('layouts.app')
-
-@section('title', 'Producto')
-
-@section('content')
-    <div class="p-4">
-    <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6">
-
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        Detalles de producto
-    </h2>
-            <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">
-        Datos generales
-    </h3>
-    <div class="md:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+           Detalles de producto
+        </h2>
+    </x-slot>
+    <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+<div class="md:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-4">
         {{-- Codigo --}}
             <div class="">
             <label class="block text-md font-medium text-gray-700 mb-1">
@@ -217,18 +210,14 @@
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
     </div>
-    </div>
-        {{-- Botones --}}
+    {{-- Botones --}}
         <div class="md:col-span-2 flex justify-end gap-3 mt-4">
             <a href="{{ route('productos.index') }}"
                class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
                 Regresar
             </a>
-
-
         </div>
-
-</div>
-
     </div>
-@endsection
+</div>
+</div>
+</x-app-layout>

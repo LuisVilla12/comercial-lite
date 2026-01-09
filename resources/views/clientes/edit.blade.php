@@ -1,15 +1,11 @@
 
-@extends('layouts.app')
-
-@section('title', 'Editar - Clientes')
-
-@section('content')
-    <div class="p-4">
-    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        Editar {{ $tipo == 1 ? 'Cliente' : 'Proveedor' }}
-    </h2>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Editar {{ $tipo == 1 ? 'Cliente' : 'Proveedor' }}
+        </h2>
+    </x-slot>
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
 @if (session('success'))
     <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-4">
         <p class="font-semibold">Éxito</p>
@@ -152,7 +148,5 @@
         </div>
 
     </form>
-</div>
-
     </div>
-@endsection
+</x-app-layout>

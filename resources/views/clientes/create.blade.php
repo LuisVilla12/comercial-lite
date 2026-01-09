@@ -1,16 +1,10 @@
-
-@extends('layouts.app')
-
-@section('title', 'Registrar - Clientes')
-
-@section('content')
-    <div class="p-4">
-    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        Registro de {{ $tipo == 1 ? 'Cliente' : 'Proveedor' }}
-    </h2>
-
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Registrar {{ $tipo == 1 ? 'Cliente' : 'Proveedor' }}
+        </h2>
+    </x-slot>
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
     <form method="POST" action="{{ route('clientes.store') }}" class="grid grid-cols-1 md:grid-cols-2 md:gap-4">
         @csrf
         <input type="hidden" name="tipo" value="{{ $tipo }}">
@@ -19,7 +13,7 @@
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Codigo <span class="text-red-500">*</span>
             </label>
-            <input type="number" name="codigo"
+            <input type="text" name="codigo"
                    placeholder="Codigo"
                    value="{{ old('codigo') }}"
                    class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
@@ -143,7 +137,5 @@
 
 
     </form>
-</div>
-
     </div>
-@endsection
+</x-app-layout>

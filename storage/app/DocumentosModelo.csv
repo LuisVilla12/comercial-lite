@@ -1,0 +1,38 @@
+﻿1,Cotización                                        ,3
+2,Pedido                                            ,3
+3,Remisión                                          ,2
+4,Factura                                           ,2
+5,Devolución sobre Venta                            ,1
+6,Devolución de Remisión                            ,1
+7,Nota de Crédito                                   ,3
+8,Cambio del cliente                                ,3
+9,Pago del cliente                                  ,3
+10,Cheque recibido                                   ,3
+11,Honorarios del cliente                            ,3
+12,Abono del Cliente                                 ,3
+13,Nota de Cargo al Cliente                          ,3
+14,Descuento por pronto pago                         ,3
+15,Pagaré                                            ,3
+16,Interés Moratorio                                 ,3
+17,Orden de Compra                                   ,3
+18,Consignación del Proveedor                        ,1
+19,Compra                                            ,1
+20,Devolución sobre Compra                           ,2
+21,Devolución de Consignación                        ,2
+22,Nota de Crédito del Proveedor                     ,3
+23,Pago al proveedor                                 ,3
+24,Cheque emitido                                    ,3
+25,Honorarios del Proveedor                          ,3
+26,Abono al Proveedor                                ,3
+27,Cargo del Proveedor                               ,3
+28,Utilidad Cambiaria Cliente                        ,3
+29,Pérdida Cambiaria Cliente                         ,3
+30,Utilidad Cambiaria Proveedor                      ,3
+31,Pérdida Cambiaria Proveedor                       ,3
+32,Entrada al Almacén                                ,1
+33,Salida del Almacén                                ,2
+34,Traspasos                                         ,2
+35,Nota de Venta                                     ,2
+36,Devolución sobre Nota de Venta                    ,1
+37,Ajuste al Costo                                   ,1
+38,Cotización del Proveedor                          ,3

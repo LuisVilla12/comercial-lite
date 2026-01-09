@@ -1,13 +1,9 @@
-@extends('layouts.app')
-
-@section('title', 'Catalogo - Productos')
-
-@section('content')
-<div class="">
-     <h1 class="text-2xl font-semibold text-gray-800">
-        Productos
-    </h1>
-</div>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+           Catalogo de productos
+        </h2>
+    </x-slot>
 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
     {{-- Buscador --}}
@@ -151,4 +147,4 @@
 
 </div>
 
-@endsection
+</x-app-layout>

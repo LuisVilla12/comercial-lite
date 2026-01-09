@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         ClientesSeeder::class,
         CodigosPostalesSeeder::class,
         AlmacenSeeder::class,
+        DocumentosModeloSeeder::class,
     ]);
         // User::factory(10)->create();
 

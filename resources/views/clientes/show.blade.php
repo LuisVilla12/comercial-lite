@@ -1,8 +1,10 @@
-@extends('layouts.app')
-
-@section('title', 'Cliente')
-
-@section('content')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Registrar {{ $tipo == 1 ? 'Cliente' : 'Proveedor' }}
+        </h2>
+    </x-slot>
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
 <h2 class="text-xl font-semibold">{{ $tipo == 1 ? 'Cliente' : 'Proveedor' }} : {{ $cliente->nombre }}</h2>
     @if (session('success'))
     <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 my-4">
@@ -118,6 +120,5 @@
 
         </div>
     </div>
-
-
-@endsection
+    </div>
+</x-app-layout>

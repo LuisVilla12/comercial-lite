@@ -1,8 +1,10 @@
-@extends('layouts.app')
-
-@section('title', 'Editar - Domicilio')
-
-@section('content')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+           Editar domicilio
+        </h2>
+    </x-slot>
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
 <form method="POST" action="{{ route('domicilios.update', [$cliente->id, $domicilio->id]) }}"  class="grid grid-cols-1 md:grid-cols-2 gap-4">
     @method('PUT')
     @csrf
@@ -111,8 +113,8 @@
             </button>
         </div>
     </form>
-
-@endsection
+</div>
+</x-app-layout>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

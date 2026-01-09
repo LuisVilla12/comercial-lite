@@ -12,10 +12,10 @@ class DocumentosModeloSeeder extends Seeder
      */
     public function run(): void
     {
-        $file = storage_path('app/documentos_modelos.csv');
+        $file = storage_path('app/DocumentosModelo.csv');
 
         if (!file_exists($file)) {
-            $this->command->error('❌ Archivo documentos_modelos.csv no encontrado');
+            $this->command->error('❌ Archivo DocumentosModelo.csv no encontrado');
             return;
         }
 
@@ -33,7 +33,7 @@ class DocumentosModeloSeeder extends Seeder
             ];
 
             if (count($batch) === 500) {
-                DB::table('documentos_modelos')->insert($batch);
+                DB::table('documento_modelos')->insert($batch);
                 $batch = [];
             }
 
@@ -41,7 +41,7 @@ class DocumentosModeloSeeder extends Seeder
         }
 
         if (!empty($batch)) {
-            DB::table('almacens')->insert($batch);
+            DB::table('documento_modelos')->insert($batch);
         }
 
         fclose($handle);

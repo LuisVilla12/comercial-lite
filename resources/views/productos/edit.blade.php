@@ -1,15 +1,10 @@
-
-@extends('layouts.app')
-
-@section('title', 'Editar - Productos')
-
-@section('content')
-    <div class="p-4">
-    <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6">
-
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        Editar producto
-    </h2>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+           Editar producto
+        </h2>
+    </x-slot>
+    <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
 
     <form method="POST" action="{{ route('productos.update', $producto) }}">
         @csrf
@@ -234,8 +229,7 @@
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
     </div>
-    </div>
-        {{-- Botones --}}
+    {{-- Botones --}}
         <div class="md:col-span-2 flex justify-end gap-3 mt-4">
             <a href="{{ route('productos.index') }}"
                class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
@@ -247,10 +241,7 @@
                 Actualizar producto
             </button>
         </div>
-
-
+    </div>
     </form>
 </div>
-
-    </div>
-@endsection
+</x-app-layout>
