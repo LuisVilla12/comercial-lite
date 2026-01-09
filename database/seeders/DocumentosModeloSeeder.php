@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-class AlmacenSeeder extends Seeder
+class DocumentosModeloSeeder extends Seeder
 {
     /**
      * Run the database seeds.
