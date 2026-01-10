@@ -14,6 +14,16 @@ return new class extends Migration
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string(column: 'folio');
+            $table->foreignId(column: 'proveedor_id')->constrained(table: 'clientes');
+            $table->foreignId(column: 'almacen_id')->constrained(table: 'almacens');
+            $table->foreignId(column: 'user_id')->constrained(table: 'users');
+            $table->date(column: 'fecha');
+            $table->decimal(column: 'subtotal');
+            $table->decimal(column: 'impuestos')->default(0);
+            $table->decimal(column: 'total');
+            $table->integer(column: 'estatus')->default(1); //1 pendiente, 2 recibida, 3 cancelada
+            $table->text(column: 'observaciones')->nullable();
         });
     }
 

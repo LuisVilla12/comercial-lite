@@ -32,7 +32,20 @@
             </p>
         </div>
     </a>
+<a href="{{ route(name: 'compras.index') }}"
+       class="flex items-center gap-4 p-6 bg-green-50 dark:bg-green-900/20 rounded-xl shadow hover:shadow-md transition">
+        <div class="p-3 bg-green-500 text-white rounded-lg">
+            {{-- <x-heroicon-o-home class="w-9 h-9" /> --}}
+            <x-heroicon-o-shopping-cart class="w-9 h-9" />
 
+        </div>
+        <div>
+            <h3 class="text-lg font-semibold">Compras</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                Control de compras
+            </p>
+        </div>
+    </a>
     <!-- Productos -->
     <a href="{{ route('productos.index') }}"
        class="flex items-center gap-4 p-6 bg-purple-50 dark:bg-purple-900/20 rounded-xl shadow hover:shadow-md transition">
