@@ -7,7 +7,13 @@
 
 {{-- ================= PROVEEDOR ================= --}}
 <div class="mb-6">
-    <label class="block text-lg font-medium mb-2">Proveedor *</label>
+    <div class="md:flex justify-between">
+        <label class="block text-lg font-medium mb-2 dark:text-white">Proveedor: *</label>
+        <div class="md:flex gap-4">
+            <label class="block text-lg font-medium mb-2 mr-10 dark:text-white">Folio: 1 </label>
+            <label class="block text-lg font-medium mb-2 dark:text-white">Fecha: {{ now()->format('d/m/Y') }}  </label>
+        </div>
+    </div>
 
     <input type="text"
         x-model="proveedorQuery"
@@ -111,7 +117,7 @@
 </div>
 
 {{-- ================= TOTAL ================= --}}
-<div class="flex justify-end text-xl font-bold mt-6">
+<div class="flex justify-end text-xl font-bold mt-6 dark:text-white">
     Total: $<span x-text="total.toFixed(2)"></span>
 </div>
 
