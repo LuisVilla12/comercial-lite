@@ -8,7 +8,6 @@ class Producto extends Model
 {
     //
     protected $fillable = [
-        'id_producto',
         'codigo_producto',
         'nombre_producto',
         'tipo_producto',

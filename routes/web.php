@@ -9,7 +9,10 @@ use App\Http\Controllers\CodigoPostalController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\CompraController;
+use App\Models\Cliente;
+use App\Models\Producto;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,9 +27,24 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 //Usuarios
 Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
 require __DIR__.'/auth.php';
+
+//Busqueda de proveedores para compras
+Route::get('/proveedores/buscar', function (Request $r) {
+    $q = $r->input('q', '');
+return Cliente::where('tipo', 3) // proveedor
+    ->where('activo', 1)
+    ->where(function ($query) use ($q) {
+        $query->where('nombre', 'like', "%{$q}%")
+    ->orWhere('codigo', 'like', "%{$q}%");
+    })
+    ->select('id', 'nombre', 'codigo')
+    ->limit(10)
+    ->get();
+});
 
 // RUTAS DE CLIENTES
 Route::get('/clientes', [ClienteController::class, 'indexClientes'])->name('clientes.index');
@@ -57,6 +75,27 @@ Route::post('/clientes/{cliente}/domicilios', [DomicilioController::class, 'stor
 [DomicilioController::class, 'destroy']
 )->name('domicilios.destroy');
 
+//Busqueda de productos para compras y ventas
+Route::get('/productos/buscar', function () {
+    $q = request('q', '');
+
+    if (strlen($q) < 2) return [];
+
+    return Producto::where('estatus_producto', 1)
+        ->where(function ($query) use ($q) {
+            $query->where('nombre_producto', 'like', "%{$q}%")
+                  ->orWhere('codigo_producto', 'like', "%{$q}%");
+        })
+        ->select(
+            'id',
+            'nombre_producto as nombre',
+            'codigo_producto as codigo',
+            'precio1 as costo'
+        )
+        ->limit(10)
+        ->get();
+});
+
 // RUTAS DE PRODUCTOS
 Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
 Route::get('/productos/create', [ProductoController::class, 'create'])->name('productos.create');
@@ -83,4 +122,15 @@ Route::get('/almacenes/{almacen}', [AlmacenController::class, 'show'])->name('al
 Route::get('/almacenes/{almacen}/edit', [AlmacenController::class, 'edit'])->name('almacenes.edit');
 Route::put('/almacenes/{almacen}', [AlmacenController::class, 'update'])->name('almacenes.update');
 Route::delete('/almacenes/{almacen}', [AlmacenController::class, 'destroy'])->name('almacenes.destroy');
+
+//Compras
+Route::get('/compras', [CompraController::class, 'index'])->name('compras.index');
+Route::get('/compras/create', [CompraController::class, 'create'])->name('compras.create');
+Route::post('/compras', [CompraController::class, 'store'])->name('compras.store');
+Route::get('/compras/{compra}', [CompraController::class, 'show'])->name('compras.show');
+Route::get('/compras/{compra}/edit', [CompraController::class, 'edit'])->name('compras.edit');
+Route::put('/compras/{compra}', [CompraController::class, 'update'])->name('compras.update');
+Route::delete('/compras/{compra}', [CompraController::class, 'destroy'])->name('compras.destroy');
+
+
 
