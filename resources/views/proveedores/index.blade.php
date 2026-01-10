@@ -42,15 +42,18 @@
     </a>
 
 </div>
-
-<div class="bg-white shadow-md rounded-lg overflow-hidden">
 @if (session('success'))
-    <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-        <p class="font-semibold">Éxito</p>
-        <p>{{ session('success') }}</p>
-    </div>
-@endif
-    <table class="min-w-full divide-y divide-gray-200">
+                <p
+                    x-data="{ show: true }"
+                    x-show="show"
+                    x-transition
+                    x-init="setTimeout(() => show = false, 4000)"
+                    class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4"
+                >{{ session('success') }}</p>
+    @endif
+
+<div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200">
+    <table class="min-w-full divide-y divide-gray-200 text-sm">
         <thead class="bg-gray-100">
             <tr>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">

@@ -28,7 +28,7 @@
         <div>
             <h3 class="text-lg font-semibold">Almacenes</h3>
             <p class="text-sm text-gray-600 dark:text-gray-400">
-                Control de inventarios
+                Control de almacenes
             </p>
         </div>
     </a>
@@ -76,7 +76,7 @@
     </a>
 
     <!-- Usuarios -->
-    <a href=""
+    <a href="{{ route('usuarios.index') }}"
        class="flex items-center gap-4 p-6 bg-red-50 dark:bg-red-900/20 rounded-xl shadow hover:shadow-md transition">
         <div class="p-3 bg-red-500 text-white rounded-lg">
             <x-heroicon-o-users class="w-9 h-9" />

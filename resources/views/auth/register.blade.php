@@ -1,25 +1,52 @@
-<x-guest-layout>
+<x-app-layout>
+<x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Registrar Usuario
+        </h2>
+    </x-slot>
+
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
     <form method="POST" action="{{ route('register') }}">
         @csrf
-
         <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Name')" />
+             <label class="block text-md font-medium text-gray-700 mb-1" for="name">
+                Nombre: <span class="text-red-500">*</span>
+            </label>
             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
-
-        <!-- Email Address -->
+        <div class="grid md:grid-cols-2 gap-4">
+      <!-- Email Address -->
         <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
+        <label class="block text-md font-medium text-gray-700 mb-1" for="email">
+                Correo electronico: <span class="text-red-500">*</span>
+            </label>
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
+         <div class="mt-4">
+            <label class="block text-md font-medium text-gray-700 mb-1">
+                Tipo:<span class="text-red-500">*</span>
+            </label>
+            <select name="tipo" id="tipo"
+                    class="p-3 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <option value="" disabled selected>Seleccione una opcion</option>
+                <option value="1">Administrador</option>
+                <option value="2">Operador</option>
+            </select>
+            @error('tipo')
+            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+        </div>
 
+        <div class="grid md:grid-cols-2 gap-4">
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
+        <label class="block text-md font-medium text-gray-700 mb-1" for="password">
+                Contraseña: <span class="text-red-500">*</span>
+            </label>
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
                             name="password"
@@ -30,7 +57,8 @@
 
         <!-- Confirm Password -->
         <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+        <label class="block text-md font-medium text-gray-700 mb-1" for="password_confirmation">
+                Confirmar Contraseña: <span class="text-red-500">*</span>
 
             <x-text-input id="password_confirmation" class="block mt-1 w-full"
                             type="password"
@@ -38,15 +66,20 @@
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
+        </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
+
+        <div class="flex items-center justify-end mt-4 gap-4">
+            <a href="{{ route('usuarios.index') }}"
+               class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
+                Cancelar
             </a>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+            <button type="submit"
+                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
+                Registar Usuario
+            </button>
         </div>
     </form>
-</x-guest-layout>
+    </div>
+</x-app-layout>

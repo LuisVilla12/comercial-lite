@@ -81,7 +81,7 @@ public function indexProveedores(Request $request)
 
         return redirect()
             ->route('clientes.show', [$cliente->id, $cliente->tipo])
-            ->with('success', 'Cliente creado correctamente. Ahora agrega el domicilio.');
+            ->with('success',  $cliente->tipo == 1 ? 'El cliente ha sido registrado.' : 'El proveedor ha sido registrado.');
 
     }
 
@@ -121,7 +121,7 @@ public function indexProveedores(Request $request)
         $cliente->update($request->all());
 
         return redirect()->route($tipo == 1 ? 'clientes.index' : 'proveedores.index')
-            ->with('success', 'Cliente actualizado');
+            ->with('success', $tipo == 1 ? 'Cliente actualizado' : 'Proveedor actualizado');
     }
 
     /**

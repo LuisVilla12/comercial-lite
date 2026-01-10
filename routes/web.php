@@ -8,6 +8,8 @@ use App\Http\Controllers\DomicilioController;
 use App\Http\Controllers\CodigoPostalController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\UserController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,7 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
+//Usuarios
+Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
 require __DIR__.'/auth.php';
 
 // RUTAS DE CLIENTES
@@ -80,3 +83,4 @@ Route::get('/almacenes/{almacen}', [AlmacenController::class, 'show'])->name('al
 Route::get('/almacenes/{almacen}/edit', [AlmacenController::class, 'edit'])->name('almacenes.edit');
 Route::put('/almacenes/{almacen}', [AlmacenController::class, 'update'])->name('almacenes.update');
 Route::delete('/almacenes/{almacen}', [AlmacenController::class, 'destroy'])->name('almacenes.destroy');
+

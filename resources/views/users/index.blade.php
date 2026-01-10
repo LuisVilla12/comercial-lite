@@ -1,21 +1,21 @@
-@section('title', content: 'Productos' )
+@section('title', content: 'Usuarios' )
 
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-           Catalogo de Productos
+            Catalogo de Usuarios
         </h2>
     </x-slot>
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
     {{-- Buscador --}}
-    <form method="GET" action="{{ route('productos.index') }}" class="w-full md:w-1/3">
+    <form method="GET" action="{{ route('usuarios.index') }}" class="w-full md:w-1/3">
         <div class="relative">
             <input
                 type="text"
                 name="search"
                 value="{{ request('search') }}"
-                placeholder="Buscar producto..."
+                placeholder="Buscar usuario..."
                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             >
 
@@ -28,7 +28,7 @@
         </div>
 
         @if(request('search'))
-            <a href="{{ route('productos.index') }}"
+            <a href="{{ route('almacenes.index') }}"
                class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                 Limpiar búsqueda
             </a>
@@ -36,36 +36,34 @@
     </form>
 
     {{-- Botón --}}
-    <a href="{{ route('productos.create') }}"
+    <a href="{{ route('register') }}"
        class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-        Registrar producto
+        Registrar usuario
     </a>
 
 </div>
-@if (session('success'))
+  @if (session('success'))
                 <p
                     x-data="{ show: true }"
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 4000)"
-                    class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4"
+                    class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md"
                 >{{ session('success') }}</p>
     @endif
+
 <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200">
     <table class="min-w-full divide-y divide-gray-200 text-sm">
         <thead class="bg-gray-100">
             <tr>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Nombre de usuario
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Codigo
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Nombre
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Precio
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Proveedor
+                    Tipo
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Acciones
@@ -74,58 +72,47 @@
         </thead>
 
         <tbody class="bg-white divide-y divide-gray-100">
-            @forelse ($productos as $producto)
+            @forelse ($usuarios as $usuario)
                 <tr class="hover:bg-gray-50 transition">
                     <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $producto->codigo_producto }}
+                        {{ $usuario->name }}
                     </td>
                     <td class="px-6 py-4 text-md font-medium text-gray-900">
-                        {{ $producto->nombre_producto }}
+                        {{ $usuario->email }}
                     </td>
-                    <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $producto->precio1 }}
-                    </td>
-                    <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $producto->clasificacion1->nombre ?? 'N/A' }}
+                    <td class="px-6 py-4 text-md font-medium text-gray-900">
+                        @if($usuario->tipo == 1)
+                            Administrador
+                        @elseif($usuario->tipo==2)
+                            Operador
+                        @else
+                            No asignado
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-md text-gray-700">
                         <div class="flex items-center gap-4 text-sm font-medium">
         {{-- Ver --}}
-        <a href="{{ route('productos.show', $producto) }}"
+        <a href=""
            class="text-gray-600 hover:text-blue-600 transition">
             Ver
         </a>
   {{-- Separador --}}
         <span class="text-gray-300">|</span>
         {{-- Editar --}}
-        <a href="{{ route('productos.edit', $producto) }}"
+        <a href=""
            class="text-gray-600 hover:text-indigo-600 transition">
             Editar
         </a>
 
         {{-- Separador --}}
         <span class="text-gray-300">|</span>
-
-        {{-- Eliminar --}}
-        <form action="{{ route('productos.destroy', $producto) }}"
-              method="POST"
-              class="inline">
-            @csrf
-            @method('DELETE')
-
-            <button type="submit"
-                    class="text-gray-500 hover:text-red-600 transition"
-                    onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
-                Eliminar
-            </button>
-        </form>
     </div>
                     </td>
                 </tr>
             @empty
                 <tr>
                     <td colspan="4" class="px-6 py-6 text-center text-md text-gray-500">
-                        No hay productos registrados
+                        No hay usuarios registrados
                     </td>
                 </tr>
             @endforelse
@@ -136,18 +123,16 @@
 
     <p class="text-sm text-gray-600 ml-6">
         Mostrando
-        <span class="font-medium">{{ $productos->firstItem() }}</span>
+        <span class="font-medium">{{ $usuarios->firstItem() }}</span>
         a
-        <span class="font-medium">{{ $productos->lastItem() }}</span>
+        <span class="font-medium">{{ $usuarios->lastItem() }}</span>
         de
-        <span class="font-medium">{{ $productos->total() }}</span>
+        <span class="font-medium">{{ $usuarios->total() }}</span>
         registros
     </p>
 
-    {{ $productos->links() }}
+    {{ $usuarios->links() }}
 </div>
-
-
 
 </div>
 

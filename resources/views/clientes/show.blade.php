@@ -5,13 +5,16 @@
         </h2>
     </x-slot>
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
-<h2 class="text-xl font-semibold">{{ $tipo == 1 ? 'Cliente' : 'Proveedor' }} : {{ $cliente->nombre }}</h2>
-    @if (session('success'))
-    <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 my-4">
-        <p class="font-semibold">Éxito</p>
-        <p>{{ session('success') }}</p>
-    </div>
+        @if (session('success'))
+                <p
+                    x-data="{ show: true }"
+                    x-show="show"
+                    x-transition
+                    x-init="setTimeout(() => show = false, 4000)"
+                    class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4"
+                >{{ session('success') }}</p>
     @endif
+    <h2 class="text-xl font-semibold">{{ $tipo == 1 ? 'Cliente' : 'Proveedor' }} : {{ $cliente->nombre }}</h2>
 
     <div class="grid md:grid-cols-2 gap-6 ">
 
@@ -83,7 +86,7 @@
     <h4 class="block text-lg font-semibold text-gray-700 mt-2 p-4">Domicilio</h4>
 @if ($cliente->domicilios->count() == 0)
             <a href="{{ route('domicilios.create', $cliente->id) }}"
-            class="bg-blue-600 text-white px-3 py-1 rounded">Agregar domicilio
+            class="bg-blue-600 text-white px-3 py-2 rounded">Agregar domicilio
             </a>
         @endif
     </div>
