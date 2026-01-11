@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Almacen;
 use App\Models\Cliente;
 use App\Models\Producto;
+use Illuminate\Support\Facades\DB;
 
 class CompraController extends Controller
 {
@@ -38,7 +39,36 @@ class CompraController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+try {
+
+    $serie = 'CPX'; // o lo que definas
+    $ultimoFolio = Compra::where('serie', $serie)
+        ->lockForUpdate()
+        ->max('folio');
+    $siguienteFolio = $ultimoFolio ? $ultimoFolio + 1 : 1;
+
+    $compra = Compra::create([
+        'serie'        => $serie,
+        'folio'        => $siguienteFolio,
+        'proveedor_id' => $request->proveedor_id,
+        'almacen_id'   => $request->almacen_id,
+        'user_id'      => $request->user_id,
+        'fecha'        => $request->fecha,
+        'subtotal'     => $request->subtotal,
+        'impuestos'=>$request->impuestos,
+        'total'=>$request->total,
+        'estatus'      => 1,
+    ]);
+
+    DB::commit();
+
+} catch (\Throwable $e) {
+    DB::rollBack();
+    throw $e;
+}
+
+        dd($request->all());
     }
 
     /**

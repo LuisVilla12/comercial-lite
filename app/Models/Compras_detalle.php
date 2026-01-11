@@ -13,5 +13,8 @@ class Compras_detalle extends Model
         'costo_unitario',
         'importe'
     ];
-
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class);
+    }
 }

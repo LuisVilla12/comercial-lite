@@ -8,6 +8,7 @@ class Compra extends Model
 {
     protected $fillable = [
         'folio',
+        'serie',
         'proveedor_id',
         'almacen_id',
         'user_id',

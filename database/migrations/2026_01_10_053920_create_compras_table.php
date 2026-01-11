@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string(column: 'folio');
+            $table->integer(column: 'folio');
+            $table->string(column: 'serie')->nullable;
             $table->foreignId(column: 'proveedor_id')->constrained(table: 'clientes');
             $table->foreignId(column: 'almacen_id')->constrained(table: 'almacens');
             $table->foreignId(column: 'user_id')->constrained(table: 'users');
