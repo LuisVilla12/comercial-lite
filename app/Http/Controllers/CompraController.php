@@ -43,13 +43,26 @@ class CompraController extends Controller
     {
         // Validar detalles de la compra
         $request->validate([
-            'productos' => 'required|array|min:1',
-            'productos.*.producto_id' => 'required|exists:productos,id',
-            'productos.*.cantidad' => 'required|integer|min:1',
-            'productos.*.costo' => 'required|numeric|min:0',
+            // Compra
+            'proveedor_id' => 'required|exists:clientes,id',
+            'almacen_id'        => 'required|exists:clientes,id',
+            'user_id'      => 'required|exists:users,id',
+            'fecha'        => 'required|date',
+            'subtotal'        => 'required|numeric',
+            'impuestos'        => 'required|numeric',
+            'total'        => 'required|numeric',
+        //Detalles compra
+            'productos' => 'required|array|min:1'
+        //     // ====== DETALLES ======
+        //     ,
+        //     'productos.*.producto_id' => 'required|exists:productos,id',
+        //     'productos.*.cantidad'    => 'required|numeric|min:1',
+        //     'productos.*.costo'       => 'required|numeric|min:0',
+        //     'productos.*.importe'     => 'required|numeric|min:0',
         ]);
 
         DB::beginTransaction();
+
         try {
             $serie = 'CPX'; // o lo que definas
             $ultimoFolio = Compra::where('serie', $serie)
@@ -81,7 +94,7 @@ class CompraController extends Controller
                     'compra_id'   => $compra->id,
                     'producto_id' => $item['producto_id'],
                     'cantidad'    => $item['cantidad'],
-                    'costo'       => $item['costo'],
+                    'costo_unitario'       => $item['costo'],
                     'importe'     => $item['cantidad'] * $item['costo'],
                 ]);
             }
@@ -89,6 +102,8 @@ class CompraController extends Controller
             DB::rollBack();
             throw $e;
         }
+        return redirect()->route('almacenes.index')
+                ->with('success', 'Compra creado correctamente.');
     }
 
     /**
