@@ -126,36 +126,45 @@ class CompraController extends Controller
         ]);
         return view('compras.show', compact('compra'));
     }
-    public function surtir(Compra $compra)
-    {
-        if ($compra->estatus != 1) {
-            return redirect()
-            ->route('compras.show', $compra)
-            ->with('error', 'La compra ya fue surtida');
-        }
-
-        DB::transaction(function () use ($compra) {
-            foreach ($compra->detalles as $detalle) {
-                ExistenciaProducto::updateOrCreate(
-                    [
-                        'producto_id' => $detalle->producto_id,
-                        'almacen_id' => $compra->almacen_id
-                    ],
-                    [
-                        'cantidad' => DB::raw('cantidad + ' . $detalle->cantidad)
-                    ]
-                );
-            }
-
-            $compra->update([
-                'estatus' => '2'
-            ]);
-        });
-
+   public function surtir(Compra $compra)
+{
+    if ($compra->estatus != 1) {
         return redirect()
             ->route('compras.show', $compra)
-            ->with('success', 'Compra surtida correctamente');
+            ->with('error', 'La compra ya fue surtida');
     }
+
+    DB::transaction(function () use ($compra) {
+
+        foreach ($compra->detalles as $detalle) {
+
+            $existencia = ExistenciaProducto::where('producto_id', $detalle->producto_id)
+                ->where('almacen_id', $compra->almacen_id)
+                ->lockForUpdate()
+                ->first();
+
+            if ($existencia) {
+                // 🔄 Sumar stock
+                $existencia->increment('cantidad', $detalle->cantidad);
+            } else {
+                // 🆕 Crear stock
+                ExistenciaProducto::create([
+                    'producto_id' => $detalle->producto_id,
+                    'almacen_id' => $compra->almacen_id,
+                    'cantidad' => $detalle->cantidad,
+                ]);
+            }
+        }
+
+        $compra->update([
+            'estatus' => 2
+        ]);
+    });
+
+    return redirect()
+        ->route('compras.show', $compra)
+        ->with('success', 'Compra surtida correctamente');
+}
 
 
     /**

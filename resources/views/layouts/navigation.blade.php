@@ -23,8 +23,8 @@
                     <x-nav-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.index')">
                         Contratos
                     </x-nav-link>
-                    <x-nav-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.index')">
-                        Inventario
+                    <x-nav-link :href="route('existencias.index')" :active="request()->routeIs('existencias.index')">
+                        Existencias
                     </x-nav-link>
 
                 </div>

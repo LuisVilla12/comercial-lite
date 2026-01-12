@@ -10,9 +10,22 @@ class ExistenciaProductoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+    $search = $request->get('search');
+$existencias = ExistenciaProducto::with(['producto', 'almacen'])
+    ->when($search, function ($query, $search) {
+        $query->whereHas('producto', function ($q) use ($search) {
+            $q->where('nombre_producto', 'like', "%{$search}%")
+              ->orWhere('codigo_producto', 'like', "%{$search}%");
+        })
+        ->orWhereHas('almacen', function ($q) use ($search) {
+            $q->where('nombre', 'like', "%{$search}%");
+        });
+    })
+    ->paginate(10)
+    ->withQueryString();    // dd($existencias);
+    return view('existencias.index', compact('existencias'));
     }
 
     /**

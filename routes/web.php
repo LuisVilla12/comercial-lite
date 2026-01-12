@@ -10,7 +10,9 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompraController;
+use App\Http\Controllers\ExistenciaProductoController;
 use App\Models\Cliente;
+use App\Models\ExistenciaProducto;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 
@@ -134,6 +136,6 @@ Route::put('/compras/{compra}', [CompraController::class, 'update'])->name('comp
 Route::delete('/compras/{compra}', [CompraController::class, 'destroy'])->name('compras.destroy');
 Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('compras.surtir');
 
-
-
+//Existencias
+Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
 
