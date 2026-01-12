@@ -1,15 +1,16 @@
 <x-app-layout>
-    <form method="POST" action="{{ route('compras.store') }}">
+    <form method="POST" action="{{ route('compras.update', $compra) }}">
         @csrf
-        <div x-data="compraApp()" x-init="init()" class="max-w-7xl mx-auto py-6">
+        @method('PUT')
+        <div x-data="compraEdit(@js($compra->toArray()))" x-init="init()" class="max-w-7xl mx-auto py-6">
             {{-- ================= PROVEEDOR ================= --}}
             <div class="mb-6">
                 <div class="md:flex justify-between">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Proveedor: *</label>
                     <div class="md:flex gap-4">
                         <label class="block text-lg font-medium mb-2 mr-10 dark:text-white">Folio: 1 </label>
-                        <label class="block text-lg font-medium mb-2 dark:text-white">Fecha: {{ now()->format('d/m/Y')
-                            }} </label>
+                        <label class="block text-lg font-medium mb-2 dark:text-white">Fecha:
+                            {{ now()->format('d/m/Y') }} </label>
                     </div>
                 </div>
 
@@ -47,8 +48,7 @@
                                 <td class="p-2 text-center" x-text="item.codigo"></td>
                                 <td class="p-2 relative">
                                     <input type="text" x-model="item.query"
-                                        @input.debounce.300ms="buscarProducto(index)" class="border rounded p-1 w-full"
-                                        placeholder="Buscar producto">
+                                        @input.debounce.300ms="buscarProducto(index)" class="border rounded p-1 w-full">
                                     <ul x-show="item.resultados.length"
                                         class="absolute z-10 bg-white border rounded shadow w-full">
                                         <template x-for="p in item.resultados" :key="p.id">
@@ -80,7 +80,8 @@
                                 </td>
                                 <td class="p-2">
                                     $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
-                                    <input type="hidden":name="`productos[${index}][importe]`" :value="(item.cantidad * item.costo).toFixed(2)">
+                                    <input type="hidden":name="`productos[${index}][importe]`"
+                                        :value="(item.cantidad * item.costo).toFixed(2)">
                                 </td>
 
                                 <td class="p-2 text-center">
@@ -118,9 +119,9 @@
             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
             <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
             <input type="hidden" name="subtotal" x-model="total">
-            <input type="hidden" name="impuestos" x-model="total*1.16-total">
-            <input type="hidden" name="total" x-model="total*1.16">
-            <input type="hidden" name="estatus" x-model="1">
+            <input type="hidden" name="impuestos" :value="total * 1.16 - total">
+            <input type="hidden" name="total" :value="total * 1.16">
+            <input type="hidden" name="estatus" :value="1">
 
             <div class="md:col-span-2 flex justify-between gap-3 mt-4">
                 <a href="{{ route('compras.index') }}"
@@ -130,89 +131,91 @@
 
                 <button type="submit"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Guardar compra
+                    Actualizar compra
                 </button>
             </div>
-    </div>
+        </div>
     </form>
 
     {{-- ================= ALPINE ================= --}}
     <script>
-        function compraApp() {
-    return {
-        proveedor: null,
-        proveedorQuery: '',
-        proveedores: [],
+        function compraEdit(compra) {
+            return {
+                proveedor: compra.proveedor,
+                proveedorQuery: compra.proveedor.nombre,
+                proveedores: [],
+                items: [],
+                total: 0,
 
-        items: [],
-        total: 0,
+                init() {
+                    this.items = compra.detalles.map(d => ({
+                        detalle_id: d.id,
+                        producto_id: d.producto_id,
+                        codigo: d.producto.codigo_producto,
+                        query: d.producto.nombre_producto,
+                        cantidad: d.cantidad,
+                        costo: parseFloat(d.costo_unitario),
+                        resultados: []
+                    }))
+                    // print(resultados)
+                    this.calcular()
+                },
+                // console.log(compra.detalles)
 
-        init() {
-            this.items = []
-            this.agregarFila()
-        },
+                agregarFila() {
+                    this.items.push({
+                        detalle_id: null,
+                        producto_id: null,
+                        codigo: '',
+                        query: '',
+                        cantidad: 1,
+                        costo: 0,
+                        resultados: []
+                    })
+                },
 
-        agregarFila() {
-            this.items.push({
-                producto_id: null,
-                codigo: '',
-                query: '',
-                cantidad: 1,
-                costo: 0,
-                resultados: []
-            })
-        },
+                eliminarFila(index) {
+                    this.items.splice(index, 1)
+                    this.calcular()
+                },
 
-        eliminarFila(index) {
-            if (this.items.length === 1) return
-            this.items.splice(index, 1)
-            this.calcular()
-        },
+                async buscarProveedor() {
+                    if (this.proveedorQuery.length < 2) return
+                    const res = await fetch(`/proveedores/buscar?q=${this.proveedorQuery}`)
+                    this.proveedores = await res.json()
+                },
 
-        async buscarProveedor() {
-            if (this.proveedorQuery.length < 2) return
-            const res = await fetch(`/proveedores/buscar?q=${this.proveedorQuery}`)
-            this.proveedores = await res.json()
-        },
+                seleccionarProveedor(p) {
+                    this.proveedor = p
+                    this.proveedorQuery = p.nombre
+                    this.proveedores = []
+                },
 
-        seleccionarProveedor(p) {
-            this.proveedor = p
-            this.proveedorQuery = p.nombre
-            this.proveedores = []
-        },
+                async buscarProducto(index) {
+                    const q = this.items[index].query
+                    if (q.length < 2) return
+                    const res = await fetch(`/productos/buscar?q=${q}`)
+                    this.items[index].resultados = await res.json()
+                },
 
-        async buscarProducto(index) {
-            const q = this.items[index].query
-            if (q.length < 2) return
+                seleccionarProducto(index, p) {
+                    const item = this.items[index]
+                    item.producto_id = p.id
+                    item.codigo = p.codigo
+                    item.query = p.nombre
+                    item.costo = parseFloat(p.costo)
+                    item.resultados = []
+                    this.calcular()
+                },
 
-            const res = await fetch(`/productos/buscar?q=${q}`)
-            this.items[index].resultados = await res.json()
-        },
-
-        seleccionarProducto(index, p) {
-            if (this.items.some(i => i.producto_id === p.id)) return
-
-            const item = this.items[index]
-            item.producto_id = p.id
-            item.codigo = p.codigo
-            item.query = p.nombre
-            item.costo = parseFloat(p.costo)
-            item.resultados = []
-
-            this.calcular()
-
-            if (index === this.items.length - 1) {
-                this.agregarFila()
+                calcular() {
+                    this.total = this.items.reduce(
+                        (t, i) => t + (i.cantidad * i.costo),
+                        0
+                    )
+                }
             }
-        },
-
-        calcular() {
-            this.total = this.items.reduce(
-                (t, i) => t + (i.cantidad * i.costo),
-                0
-            )
         }
-    }
-}
     </script>
+
 </x-app-layout>

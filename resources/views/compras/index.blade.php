@@ -22,7 +22,7 @@
             </div>
 
             @if (request('search'))
-                <a href="{{ route('almacenes.index') }}"
+                <a href="{{ route('compras.index') }}"
                     class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                     Limpiar búsqueda
                 </a>
@@ -42,18 +42,25 @@
         </p>
     @endif
 
+
     <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200">
         <table class="min-w-full divide-y divide-gray-200 text-sm">
             <thead class="bg-gray-100">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Codigo
+                        Fecha
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Nombre
+                        Serie
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Tipo
+                        Folio
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Razon social
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Total
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Acciones
@@ -62,46 +69,43 @@
             </thead>
 
             <tbody class="bg-white divide-y divide-gray-100">
-                @forelse ($almacenes as $almacen)
+                @forelse ($compras as $compra)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 text-md text-gray-700">
-                            {{ $almacen->codigo }}
+                            {{ $compra->fecha }}
                         </td>
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $almacen->nombre }}
+                            {{ $compra->serie }}
                         </td>
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            @if ($almacen->tipo == 1)
-                                MATRIZ
-                            @elseif($almacen->tipo == 2)
-                                SUCURSAL
-                            @else
-                                No asignado
-                            @endif
+                            {{ $compra->folio }}
+                        </td>
+                        <td class="px-6 py-4 text-md font-medium text-gray-900">
+                            {{ $compra->proveedor->nombre }}
+                        </td>
+                        <td class="px-6 py-4 text-md font-medium text-gray-900">
+                            {{ $compra->total }}
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
                             <div class="flex flex-wrap items-center gap-4">
-
                                 {{-- Ver --}}
-                                <a href="{{ route('almacenes.show', $almacen) }}"
+                                <a href="{{ route('compras.show', $compra) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                     <span class="hidden sm:inline">Ver</span>
                                 </a>
-
-                                <span class="hidden sm:inline text-gray-300">•</span>
-
+                                @if($compra->estatus==1)
+                                    <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                <a href="{{ route('almacenes.edit', $almacen) }}"
+                                <a href="{{ route('compras.edit', $compra) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>
                                 </a>
-
                                 <span class="hidden sm:inline text-gray-300">•</span>
 
                                 {{-- Eliminar --}}
-                                <form action="{{ route('almacenes.destroy', $almacen) }}" method="POST" class="inline">
+                                <form action="{{ route('compras.destroy', $compra) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
 
@@ -112,15 +116,15 @@
                                         <span class="hidden sm:inline">Eliminar</span>
                                     </button>
                                 </form>
-
+                                @endif
                             </div>
                         </td>
 
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-6 py-6 text-center text-md text-gray-500">
-                            No hay almacenes registrados
+                        <td colspan="6" class="px-6 py-6 text-center text-md text-gray-500">
+                            No hay compras registrados
                         </td>
                     </tr>
                 @endforelse
@@ -131,15 +135,15 @@
 
             <p class="text-sm text-gray-600 ml-6">
                 Mostrando
-                <span class="font-medium">{{ $almacenes->firstItem() }}</span>
+                <span class="font-medium">{{ $compras->firstItem() }}</span>
                 a
-                <span class="font-medium">{{ $almacenes->lastItem() }}</span>
+                <span class="font-medium">{{ $compras->lastItem() }}</span>
                 de
-                <span class="font-medium">{{ $almacenes->total() }}</span>
+                <span class="font-medium">{{ $compras->total() }}</span>
                 registros
             </p>
 
-            {{ $almacenes->links() }}
+            {{ $compras->links() }}
         </div>
 
     </div>

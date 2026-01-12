@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Compras_detalle extends Model
 {
+    protected $table = 'compras_detalles';
     protected $fillable = [
         'compra_id',
         'producto_id',
@@ -13,7 +14,11 @@ class Compras_detalle extends Model
         'costo_unitario',
         'importe'
     ];
-    public function producto()
+    public function compra()
+    {
+        return $this->belongsTo(Compra::class);
+    }
+      public function producto()
     {
         return $this->belongsTo(Producto::class);
     }

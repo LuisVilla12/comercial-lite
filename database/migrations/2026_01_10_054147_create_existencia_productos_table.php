@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('existencia_productos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId(column: 'almacen_id')->constrained(table: 'almacens');
+            $table->foreignId(column: 'producto_id')->constrained('productos')->cascadeOnDelete();
+            $table->integer('cantidad');
         });
     }
 

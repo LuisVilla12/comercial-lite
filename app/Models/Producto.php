@@ -34,4 +34,8 @@ class Producto extends Model
 {
     return $this->belongsTo(Clasificacion::class, 'valor_clasificacion1');
 }
+public function existencias()
+    {
+        return $this->hasMany(ExistenciaProducto::class);
+    }
 }

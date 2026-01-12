@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
 require __DIR__.'/auth.php';
 
+//COMPRAS
 //Busqueda de proveedores para compras
 Route::get('/proveedores/buscar', function (Request $r) {
     $q = $r->input('q', '');
@@ -131,6 +132,8 @@ Route::get('/compras/{compra}', [CompraController::class, 'show'])->name('compra
 Route::get('/compras/{compra}/edit', [CompraController::class, 'edit'])->name('compras.edit');
 Route::put('/compras/{compra}', [CompraController::class, 'update'])->name('compras.update');
 Route::delete('/compras/{compra}', [CompraController::class, 'destroy'])->name('compras.destroy');
+Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('compras.surtir');
+
 
 
 
