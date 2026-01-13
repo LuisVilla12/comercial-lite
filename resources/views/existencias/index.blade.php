@@ -9,7 +9,7 @@
         {{-- Buscador --}}
         <form method="GET" action="{{ route('existencias.index') }}" class="w-full md:w-1/3">
             <div class="relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar almacen..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar producto..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
                 <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -59,7 +59,7 @@
                 @forelse ($existencias as $existencia)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 text-md text-gray-700">
-                            {{ $existencia->producto->codigo_producto}}
+                            {{ $existencia->producto->id ." ". $existencia->producto->codigo_producto}}
                         </td>
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
                             {{ $existencia->producto->nombre_producto}}
@@ -92,15 +92,15 @@
 
             <p class="text-sm text-gray-600 ml-6">
                 Mostrando
-                {{-- <span class="font-medium">{{ $existencias->firstItem() }}</span> --}}
+                <span class="font-medium">{{ $existencias->firstItem() }}</span>
                 a
-                {{-- <span class="font-medium">{{ $existencias->lastItem() }}</span> --}}
+                <span class="font-medium">{{ $existencias->lastItem() }}</span>
                 de
-                {{-- <span class="font-medium">{{ $existencias->total() }}</span> --}}
+                <span class="font-medium">{{ $existencias->total() }}</span>
                 registros
             </p>
 
-            {{-- {{ $existencias->links() }} --}}
+            {{ $existencias->links() }}
         </div>
 
     </div>

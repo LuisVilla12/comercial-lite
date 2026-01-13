@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Definir los Seeder a ejecutar
-        $this->call([ 
+        $this->call([
         ClasificacionSeeder::class,
         ProductosSeeder::class,
         ClientesSeeder::class,
@@ -24,12 +24,7 @@ class DatabaseSeeder extends Seeder
         AlmacenSeeder::class,
         DocumentosModeloSeeder::class,
         ExistenciasSeeder::class,
+        UserSeeder::class,
     ]);
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

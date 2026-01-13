@@ -11,7 +11,7 @@ class ExistenciasSeeder extends Seeder
 {
     public function run(): void
     {
-        $file = storage_path('app/existencias.csv');
+        $file = storage_path('app/existencias_2026.csv');
 
         if (!file_exists($file)) {
             $this->command->error('❌ Archivo existencias.csv no encontrado');
@@ -42,8 +42,8 @@ class ExistenciasSeeder extends Seeder
                 continue;
             }
 
-            $almacenId  = trim($row[0]);
-            $productoId = trim($row[1]);
+            $productoId = trim($row[0]);
+            $almacenId  = trim($row[1]);
             $cantidad   = trim($row[2]);
 
             // Validaciones
