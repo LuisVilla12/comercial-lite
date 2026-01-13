@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId(column: 'almacen_id')->constrained(table: 'almacens');
             $table->foreignId(column: 'producto_id')->constrained('productos')->cascadeOnDelete();
-            $table->integer('cantidad');
+            $table->integer('cantidad')->default(0);
         });
     }
 

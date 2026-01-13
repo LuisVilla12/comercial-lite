@@ -1,5 +1,4 @@
 @section('title', content: 'Existencias')
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
@@ -7,7 +6,6 @@
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
-
         {{-- Buscador --}}
         <form method="GET" action="{{ route('existencias.index') }}" class="w-full md:w-1/3">
             <div class="relative">
