@@ -10,11 +10,13 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompraController;
+use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\ExistenciaProductoController;
 use App\Models\Cliente;
 use App\Models\ExistenciaProducto;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,6 +41,19 @@ require __DIR__.'/auth.php';
 Route::get('/proveedores/buscar', function (Request $r) {
     $q = $r->input('q', '');
 return Cliente::where('tipo', 3) // proveedor
+    ->where('activo', 1)
+    ->where(function ($query) use ($q) {
+        $query->where('nombre', 'like', "%{$q}%")
+    ->orWhere('codigo', 'like', "%{$q}%");
+    })
+    ->select('id', 'nombre', 'codigo')
+    ->limit(10)
+    ->get();
+});
+
+Route::get('/clientes/buscar', function (Request $r) {
+    $q = $r->input('q', '');
+return Cliente::where('tipo', 1) // proveedor
     ->where('activo', 1)
     ->where(function ($query) use ($q) {
         $query->where('nombre', 'like', "%{$q}%")
@@ -99,6 +114,45 @@ Route::get('/productos/buscar', function () {
         ->get();
 });
 
+Route::get('/productos2/buscar', function () {
+    $q = request('q');
+
+    return Producto::where('estatus_producto', 1)
+        ->where(function ($query) use ($q) {
+            $query->where('nombre_producto', 'like', "%{$q}%")
+                  ->orWhere('codigo_producto', 'like', "%{$q}%");
+        })
+        ->withSum(['existencias as stock' => function ($q) {
+            $q->where('almacen_id', 1);
+        }], 'cantidad')
+        ->select(
+            'id',
+            'nombre_producto as nombre',
+            'codigo_producto as codigo',
+            'precio1 as costo'
+        )
+        ->limit(10)
+        ->get();
+});
+
+Route::get('/debug/stock', function () {
+
+    $productoId = 2758; // un producto que sepas que existe
+    $almacenId  = 1;
+
+    $stock = DB::table('existencia_productos')
+        ->where('producto_id', $productoId)
+        ->where('almacen_id', $almacenId)
+        ->sum('cantidad');
+
+    return [
+        'producto_id' => $productoId,
+        'almacen_id'  => $almacenId,
+        'stock'       => $stock,
+    ];
+});
+
+
 // RUTAS DE PRODUCTOS
 Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
 Route::get('/productos/create', [ProductoController::class, 'create'])->name('productos.create');
@@ -139,3 +193,5 @@ Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('com
 //Existencias
 Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
 
+//Cotización
+Route::get('/cotizacion/create', [DocumentoController::class, 'create'])->name('cotizacion.create');

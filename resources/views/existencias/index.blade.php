@@ -49,9 +49,6 @@
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Cantidad
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Acciones
-                    </th>
                 </tr>
             </thead>
 
@@ -70,12 +67,7 @@
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
                             {{ $existencia->cantidad }}
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-700">
-                            <div class="flex flex-wrap items-center gap-4">
-                                <span class="hidden sm:inline text-gray-300"></span>
 
-                            </div>
-                        </td>
 
                     </tr>
                 @empty

@@ -2,20 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Documento;
+use App\Models\DocumentosDetalle;
 use Illuminate\Http\Request;
-use App\Models\Producto;
-use App\Models\Almacen;
-use App\Models\Cliente;
 
-class DocumentoController extends Controller
+class DocumentosDetalleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-
+        //
     }
 
     /**
@@ -23,14 +20,7 @@ class DocumentoController extends Controller
      */
     public function create()
     {
-        $proveedores = Cliente::all();
-        $productos = Producto::all();
-        $almacenes = Almacen::all();
-        return view('cotizacion.create', [
-            'proveedores' =>  $proveedores,
-            'productos' => $productos,
-            'almacenes' => $almacenes,
-        ]);
+        //
     }
 
     /**
@@ -44,7 +34,7 @@ class DocumentoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Documento $documento)
+    public function show(DocumentosDetalle $documentosDetalle)
     {
         //
     }
@@ -52,7 +42,7 @@ class DocumentoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Documento $documento)
+    public function edit(DocumentosDetalle $documentosDetalle)
     {
         //
     }
@@ -60,7 +50,7 @@ class DocumentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Documento $documento)
+    public function update(Request $request, DocumentosDetalle $documentosDetalle)
     {
         //
     }
@@ -68,7 +58,7 @@ class DocumentoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Documento $documento)
+    public function destroy(DocumentosDetalle $documentosDetalle)
     {
         //
     }

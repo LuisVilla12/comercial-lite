@@ -36,6 +36,7 @@
                             <th class="p-2">Producto</th>
                             <th class="p-2">Cantidad</th>
                             <th class="p-2">Precio</th>
+                            <th class="p-2">Existencia</th>
                             <th class="p-2">Importe</th>
                             <th class="p-2"></th>
                         </tr>
@@ -68,19 +69,27 @@
                                     <div class="flex justify-center">
                                         <input type="number" min="1" :name="`productos[${index}][cantidad]`"
                                             x-model.number="item.cantidad" @input="calcular"
-                                            class="border rounded p-1 w-20">
+                                            class="border rounded p-1 w-20 text-center">
                                     </div>
                                 </td>
                                 <td class="p-2">
                                     <div class="flex justify-center">
-                                        <input type="number" step="0.01" :name="`productos[${index}][costo]`"
+                                        <input disabled type="number" step="0.01" :name="`productos[${index}][costo]`"
                                             x-model.number="item.costo" @input="calcular"
-                                            class="border rounded p-1 w-24">
+                                            class="border rounded p-1 w-24 text-center">
+                                    </div>
+                                </td>
+                                {{-- Existencias --}}
+                                 <td class="p-2">
+                                    <div class="flex justify-center">
+                                        <input disabled type="number" step="0.01" :name="`productos[${index}][costo]`"
+                                            x-model.number="item.costo" @input="calcular"
+                                            class="border rounded p-1 w-24 text-center">
                                     </div>
                                 </td>
                                 <td class="p-2">
-                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
-                                    <input type="hidden":name="`productos[${index}][importe]`" :value="(item.cantidad * item.costo).toFixed(2)">
+                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)" class="text-center"></span>
+                                    <input type="hidden":name="`productos[${index}][importe]`" :value="(item.cantidad * item.costo).toFixed(2)" class="">
                                 </td>
 
                                 <td class="p-2 text-center">
@@ -171,7 +180,7 @@
 
         async buscarProveedor() {
             if (this.proveedorQuery.length < 2) return
-            const res = await fetch(`/proveedores/buscar?q=${this.proveedorQuery}`)
+            const res = await fetch(`/clientes/buscar?q=${this.proveedorQuery}`)
             this.proveedores = await res.json()
         },
 
@@ -185,13 +194,13 @@
             const q = this.items[index].query
             if (q.length < 2) return
 
-            const res = await fetch(`/productos/buscar?q=${q}`)
+            const res = await fetch(`/productos2/buscar?q=${q}`)
             this.items[index].resultados = await res.json()
         },
 
         seleccionarProducto(index, p) {
             if (this.items.some(i => i.producto_id === p.id)) return
-
+            console.log(p);
             const item = this.items[index]
             item.producto_id = p.id
             item.codigo = p.codigo

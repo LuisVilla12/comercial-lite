@@ -8,7 +8,6 @@ class Documento extends Model
 {
     protected $fillable = [
         'id',
-        'documento_modelo_id',
         'serie',
         'folio',
         'fecha',
