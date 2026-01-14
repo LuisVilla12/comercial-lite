@@ -117,7 +117,6 @@ Route::get('/productos/buscar', function () {
 Route::get('/productos2/buscar', function () {
     $q = request('q');
     $almacenId = 1; // o dinámico si luego lo necesitas
-
     return Producto::where('estatus_producto', 1)
         ->where(function ($query) use ($q) {
             $query->where('nombre_producto', 'like', "%{$q}%")
@@ -197,4 +196,11 @@ Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('com
 Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
 
 //Cotización
+Route::get('/cotizacion', [DocumentoController::class, 'index'])->name('cotizacion.index');
 Route::get('/cotizacion/create', [DocumentoController::class, 'create'])->name('cotizacion.create');
+Route::post('/cotizacion', action: [DocumentoController::class, 'store'])->name('cotizacion.store');
+Route::get('/cotizacion/{documento}', [DocumentoController::class, 'show'])->name('cotizacion.show');
+Route::get('/cotizacion/{documento}/edit', [DocumentoController::class, 'edit'])->name('cotizacion.edit');
+Route::put('/cotizacion/{documento}', [DocumentoController::class, 'update'])->name('cotizacion.update');
+Route::delete('/cotizacion/{documento}', [DocumentoController::class, 'destroy'])->name('cotizacion.destroy');
+

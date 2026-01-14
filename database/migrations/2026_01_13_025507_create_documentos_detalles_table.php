@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('documentos_detalles', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId(column: 'documento_id')->constrained('documentos')->cascadeOnDelete();
+            $table->foreignId(column: 'producto_id')->constrained(table: 'productos')->cascadeOnDelete();
+            $table->integer(column: 'cantidad');
+            $table->decimal(column: 'costo_unitario');
+            $table->decimal(column: 'importe');
         });
     }
 

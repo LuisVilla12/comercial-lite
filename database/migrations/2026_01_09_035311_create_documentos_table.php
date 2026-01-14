@@ -19,17 +19,14 @@ return new class extends Migration
             $table->string('folio')->nullable();
             $table->date('fecha')->nullable();
             $table->foreignId(column: 'cliente_id')->constrained('clientes')->onDelete('cascade');
-            $table->string('nombre_cliente')->nullable();
-            $table->string('rfc_cliente')->nullable();
-            $table->text('observaciones')->nullable();
-            $table->boolean('afectado')->nullable();
-            $table->decimal('neto', 15, 4)->nullable();
+            $table->foreignId(column: 'almacen_id')->constrained('almacens')->onDelete('cascade');
+            $table->foreignId(column: 'user_id')->constrained(table: 'users');
+            $table->decimal('subtotal', 15, 4)->nullable();
             $table->decimal('impuestos', 15, 4)->nullable();
-            $table->decimal('retenciones', 15, 4)->nullable();
             $table->decimal('total', 15, 4)->nullable();
-            $table->decimal('total_unidades', 15, 4)->nullable();
             $table->string('metodo_pago')->nullable();
-            $table->string('usuario')->nullable();
+            $table->text('observaciones')->nullable();
+            $table->integer(column: 'estatus')->default(1); //1 pendiente, 2 recibida, 3 cancelada
         });
     }
 

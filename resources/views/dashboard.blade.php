@@ -103,7 +103,7 @@
     </a>
 
     <!-- Cotización -->
-    <a href=""
+    <a href="{{ route('cotizacion.create') }}"
        class="flex items-center gap-4 p-6 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl shadow hover:shadow-md transition">
         <div class="p-3 bg-indigo-500 text-white rounded-lg">
             <x-heroicon-o-document-text class="w-9 h-9" />

@@ -1,7 +1,8 @@
 <x-app-layout>
     <form method="POST" action="{{ route('cotizacion.store') }}">
         @csrf
-        <div x-data="compraApp()" x-init="init()" class="max-w-7xl mx-auto py-6">
+        @method('PUT')
+        <div x-data="documentoEdit(@js($documento->toArray()))" x-init="init()" class="max-w-7xl mx-auto py-6">
             <div class="mb-6">
                 <div class="md:flex justify-between">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
@@ -112,8 +113,8 @@
             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
             <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
             <input type="hidden" name="subtotal" x-model="total">
-            <input type="hidden" name="impuestos" :value="(total * 1.16) - total">
-            <input type="hidden" name="total" :value="(total*1.16)">
+            <input type="hidden" name="impuestos" :value="total * 1.16 - total">
+            <input type="hidden" name="total" :value="total * 1.16">
             <input type="hidden" name="estatus" :value="1">
 
             <div class="md:col-span-2 flex justify-between gap-3 mt-4">
@@ -130,20 +131,29 @@
 
     {{-- ================= ALPINE ================= --}}
     <script>
-        function compraApp() {
+        function documentoEdit(documento) {
             return {
-                proveedor: null
-                , proveedorQuery: ''
-                , proveedores: [],
+                proveedor: documento.cliente,
+                proveedorQuery: documento.cliente.nombre,
+                proveedores: [],
+                items: [],
+                total: 0,
 
-                items: []
-                , total: 0,
 
                 init() {
-                    this.items = []
-                    this.agregarFila()
+                    this.items = documento.detalles.map(d => ({
+                        detalle_id: d.id,
+                        producto_id: d.producto_id,
+                        codigo: d.producto.codigo_producto,
+                        query: d.producto.nombre_producto,
+                        cantidad: d.cantidad,
+                        stock:d.stock,
+                        costo: parseFloat(d.costo_unitario),
+                        resultados: []
+                    }))
+                    // print(resultados)
+                    this.calcular()
                 },
-
                 agregarFila() {
                     this.items.push({
                         producto_id: null

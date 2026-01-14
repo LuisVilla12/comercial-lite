@@ -16,7 +16,7 @@
                         Inicio
                     </x-nav-link>
 
-                    <x-nav-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.index')">
+                    <x-nav-link :href="route('cotizacion.index')" :active="request()->routeIs('cotizacion.index')">
                         Cotización
                     </x-nav-link>
 

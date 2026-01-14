@@ -8,21 +8,26 @@ class Documento extends Model
 {
     protected $fillable = [
         'id',
+        'documento_modelo_id',
         'serie',
         'folio',
         'fecha',
         'cliente_id',
-        'nombre_cliente',
-        'rfc_cliente',
-        'observaciones',
-        'afectado',
-        'neto',
+        'almacen_id',
+        'user_id',
+        'subtotal',
         'impuestos',
-        'retenciones',
         'total',
-        'total_unidades',
         'metodo_pago',
-        'usuario'
+        'observaciones',
+        'estatus',
     ];
-}
+ public function detalles() {
+        return $this->hasMany(DocumentosDetalle::class);
+    }
+
+    public function cliente() {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
+    }
 
