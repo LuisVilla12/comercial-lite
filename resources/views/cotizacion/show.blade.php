@@ -1,4 +1,11 @@
 <x-app-layout>
+@if(session('open_pdf'))
+<script>
+    if(confirm('¿Deseas imprimir la cotización?')) {
+        window.open("{{ route('cotizacion.pdf', $documento) }}", "_blank");
+    }
+</script>
+@endif
     @if (session('success'))
         <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
             class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4 mt-4">{{ session('success') }}

@@ -195,7 +195,7 @@ Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('com
 //Existencias
 Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
 
-//Cotización
+//Documentos
 Route::get('/cotizacion', [DocumentoController::class, 'index'])->name('cotizacion.index');
 Route::get('/cotizacion/create', [DocumentoController::class, 'create'])->name('cotizacion.create');
 Route::post('/cotizacion', action: [DocumentoController::class, 'store'])->name('cotizacion.store');
@@ -203,4 +203,6 @@ Route::get('/cotizacion/{documento}', [DocumentoController::class, 'show'])->nam
 Route::get('/cotizacion/{documento}/edit', [DocumentoController::class, 'edit'])->name('cotizacion.edit');
 Route::put('/cotizacion/{documento}', [DocumentoController::class, 'update'])->name('cotizacion.update');
 Route::delete('/cotizacion/{documento}', [DocumentoController::class, 'destroy'])->name('cotizacion.destroy');
+Route::get('/cotizacion/{documento}/pdf', [DocumentoController::class, 'pdf'])
+    ->name('cotizacion.pdf');
 

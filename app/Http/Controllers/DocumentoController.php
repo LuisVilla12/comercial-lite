@@ -9,6 +9,7 @@ use App\Models\Almacen;
 use App\Models\Cliente;
 use App\Models\DocumentosDetalle;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DocumentoController extends Controller
 {
@@ -17,7 +18,7 @@ class DocumentoController extends Controller
      */
     public function index(Request $request)
     {
-    $search = $request->get('search');
+        $search = $request->get('search');
         $documentos = Documento::when($search, function ($query, $search) {
             $query->where('serie', 'like', "%{$search}%")->orWhere('folio', 'like', "%{$search}%");
         })
@@ -62,7 +63,7 @@ class DocumentoController extends Controller
             'total'        => 'required|numeric',
             'productos' => 'required|array|min:1'
         ]);
-                DB::beginTransaction();
+        DB::beginTransaction();
 
         try {
             $serie = 'CT'; // o lo que definas
@@ -100,12 +101,15 @@ class DocumentoController extends Controller
                     'importe'     => $item['importe'],
                 ]);
             }
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
         }
-        return redirect()->route('cotizacion.index')
-            ->with('success', 'Cotización creada correctamente.');
+        // return redirect()->route('cotizacion.index')
+        //     ->with('success', 'Cotización creada correctamente.');
+       return redirect()
+    ->route('cotizacion.show', $documento)
+    ->with('open_pdf', true);
     }
 
     /**
@@ -114,7 +118,7 @@ class DocumentoController extends Controller
     public function show(Documento $documento)
     {
         // dd(vars: $documento);
-    $documento->load([
+        $documento->load([
             'cliente',
             'detalles.producto'
         ]);
@@ -124,36 +128,48 @@ class DocumentoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-public function edit(Documento $documento)
-{
-    if ($documento->estatus != 1) {
-        return redirect()
-            ->route('cotizacion.show', $documento)
-            ->with('error', 'La cotización ya fue surtida');
+    public function edit(Documento $documento)
+    {
+        if ($documento->estatus != 1) {
+            return redirect()
+                ->route('cotizacion.show', $documento)
+                ->with('error', 'La cotización ya fue surtida');
+        }
+
+        // ✅ CARGAR RELACIONES PRIMERO
+        $documento->load([
+            'cliente',
+            'detalles.producto'
+        ]);
+
+        // Calcula el stock
+        $documento->detalles->each(function ($d) use ($documento) {
+            $d->stock = $d->producto
+                ->existencias()
+                ->where('almacen_id', $documento->almacen_id)
+                ->value('cantidad') ?? 0;
+        });
+
+        return view('cotizacion.edit', compact('documento'));
     }
-
-    // ✅ CARGAR RELACIONES PRIMERO
-    $documento->load([
-        'cliente',
-        'detalles.producto'
-    ]);
-
-    // ✅ AHORA SÍ CALCULAR STOCK
-    $documento->detalles->each(function ($d) use ($documento) {
-        $d->stock = $d->producto
-            ->existencias()
-            ->where('almacen_id', $documento->almacen_id)
-            ->value('cantidad') ?? 0;
-    });
-
-    return view('cotizacion.edit', compact('documento'));
-}
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Documento $documento)
     {
         //
+    }
+    public function pdf(Documento $documento)
+    {
+        $documento->load([
+            'cliente',
+            'detalles.producto'
+        ]);
+
+        $pdf = Pdf::loadView('cotizacion.pdf', compact('documento'))
+            ->setPaper('letter');
+
+        return $pdf->stream("Cotizacion_{$documento->serie}-{$documento->folio}.pdf");
     }
 
     /**
