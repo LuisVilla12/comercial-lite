@@ -22,10 +22,10 @@
             Cotización # {{ $documento->id }}
         </h1>
         @if ($documento->estatus == 1)
-        <form method="POST" action="{{ route('compras.surtir', $documento) }}">
+        <form method="POST" action="{{ route('cotizacion.convertir', $documento) }}">
             @csrf
  <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                Surtir compra
+                CONVERTIR FACTURA
             </button>
         </form>
         @else

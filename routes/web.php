@@ -208,4 +208,5 @@ Route::put('/cotizacion/{documento}', [DocumentoController::class, 'update'])->n
 Route::delete('/cotizacion/{documento}', [DocumentoController::class, 'destroy'])->name('cotizacion.destroy');
 Route::get('/cotizacion/{documento}/pdf', [DocumentoController::class, 'pdf'])
     ->name('cotizacion.pdf');
+Route::post('/cotizacion/{documento}', [DocumentoController::class, 'convertirFactura'])->name('cotizacion.convertir');
 

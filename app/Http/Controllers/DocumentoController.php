@@ -20,12 +20,12 @@ class DocumentoController extends Controller
     {
         $search = $request->get('search');
         $documentos = Documento::where('documento_modelo_id', 1)
-    ->when($search, function ($query, $search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('serie', 'like', "%{$search}%")
-              ->orWhere('folio', 'like', "%{$search}%");
-        });
-    })
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('serie', 'like', "%{$search}%")
+                        ->orWhere('folio', 'like', "%{$search}%");
+                });
+            })
             ->paginate(10)
             ->withQueryString();
         return view('cotizacion.index', compact('documentos'));
@@ -50,7 +50,7 @@ class DocumentoController extends Controller
         $productos = Producto::all();
         $almacenes = Almacen::all();
         return view('cotizacion.create', [
-            'proveedores' =>  $proveedores,
+            'proveedores' => $proveedores,
             'productos' => $productos,
             'almacenes' => $almacenes,
         ]);
@@ -69,12 +69,12 @@ class DocumentoController extends Controller
         $request->validate([
             // Compra
             'proveedor_id' => 'required|exists:clientes,id',
-            'almacen_id'        => 'required|exists:clientes,id',
-            'user_id'      => 'required|exists:users,id',
-            'fecha'        => 'required|date',
-            'subtotal'        => 'required|numeric',
-            'impuestos'        => 'required|numeric',
-            'total'        => 'required|numeric',
+            'almacen_id' => 'required|exists:clientes,id',
+            'user_id' => 'required|exists:users,id',
+            'fecha' => 'required|date',
+            'subtotal' => 'required|numeric',
+            'impuestos' => 'required|numeric',
+            'total' => 'required|numeric',
             'productos' => 'required|array|min:1'
         ]);
         DB::beginTransaction();
@@ -88,16 +88,16 @@ class DocumentoController extends Controller
 
             $documento = Documento::create([
                 'documento_modelo_id' => 1,
-                'serie'        => $serie,
-                'folio'        => $siguienteFolio,
-                'fecha'        => $request->fecha,
+                'serie' => $serie,
+                'folio' => $siguienteFolio,
+                'fecha' => $request->fecha,
                 'cliente_id' => $request->proveedor_id,
-                'almacen_id'   => $request->almacen_id,
-                'user_id'      => $request->user_id,
-                'subtotal'     => $request->subtotal,
+                'almacen_id' => $request->almacen_id,
+                'user_id' => $request->user_id,
+                'subtotal' => $request->subtotal,
                 'impuestos' => $request->impuestos,
                 'total' => $request->total,
-                'estatus'      => 1,
+                'estatus' => 1,
             ]);
 
             DB::commit();
@@ -108,11 +108,11 @@ class DocumentoController extends Controller
                     continue;
                 }
                 DocumentosDetalle::create([
-                    'documento_id'   => $documento->id,
+                    'documento_id' => $documento->id,
                     'producto_id' => $item['producto_id'],
-                    'cantidad'    => $item['cantidad'],
+                    'cantidad' => $item['cantidad'],
                     'costo_unitario' => $item['costo'],
-                    'importe'     => $item['importe'],
+                    'importe' => $item['importe'],
                 ]);
             }
         } catch (\Throwable $e) {
@@ -121,9 +121,9 @@ class DocumentoController extends Controller
         }
         // return redirect()->route('cotizacion.index')
         //     ->with('success', 'Cotización creada correctamente.');
-       return redirect()
-    ->route('cotizacion.show', $documento)
-    ->with('open_pdf', true);
+        return redirect()
+            ->route('cotizacion.show', $documento)
+            ->with('open_pdf', true);
     }
 
     /**
@@ -171,7 +171,7 @@ class DocumentoController extends Controller
      */
     public function update(Request $request, Documento $documento)
     {
-$productos = collect($request->productos)
+        $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
             ->toArray();
@@ -182,12 +182,12 @@ $productos = collect($request->productos)
         $request->validate([
             // Compra
             'proveedor_id' => 'required|exists:clientes,id',
-            'almacen_id'        => 'required|exists:clientes,id',
-            'user_id'      => 'required|exists:users,id',
-            'fecha'        => 'required|date',
-            'subtotal'        => 'required|numeric',
-            'impuestos'        => 'required|numeric',
-            'total'        => 'required|numeric',
+            'almacen_id' => 'required|exists:clientes,id',
+            'user_id' => 'required|exists:users,id',
+            'fecha' => 'required|date',
+            'subtotal' => 'required|numeric',
+            'impuestos' => 'required|numeric',
+            'total' => 'required|numeric',
             'productos' => 'required|array|min:1'
         ]);
         try {
@@ -277,5 +277,38 @@ $productos = collect($request->productos)
 
             return back()->withErrors('Error al eliminar la cotización');
         }
+    }
+
+    public function convertirFactura(Documento $documento){
+    DB::transaction(function () use ($documento) {
+    $folio = Documento::where('serie', 'R')->max('folio') + 1;
+    // Crear remisión
+    $remision = Documento::create([
+        'documento_modelo_id' => 2, // remisión
+        'serie'               => 'R',
+        'folio'               => Documento::nextFolio('R'),
+        'cliente_id'          => $documento->cliente_id,
+        'subtotal'            => $documento->subtotal,
+        'iva'                 => $documento->iva,
+        'total'               => $documento->total,
+        'estatus'             => 1,
+    ]);
+
+    // Copiar detalles
+    foreach ($documento->detalles as $detalle) {
+        $remision->detalles()->create([
+            'producto_id' => $detalle->producto_id,
+            'cantidad'    => $detalle->cantidad,
+            'precio'      => $detalle->precio,
+            'importe'     => $detalle->importe,
+        ]);
+    }
+
+    // Marcar cotización como convertida
+    $documento->update([
+        'estatus' => 2 // convertida
+    ]);
+});
+
     }
 }
