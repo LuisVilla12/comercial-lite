@@ -88,6 +88,10 @@
                 Actualizar cotización
             </a>
             @endif
+            <a href="{{ route('cotizacion.pdf', $documento) }}" target="_blank"
+                    class="px-4 py-2 bg-red-600 text-white rounded">
+                    📄 Imprimir PDF
+                </a>
         </div>
     </div>
 </x-app-layout>

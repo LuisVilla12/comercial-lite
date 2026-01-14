@@ -157,7 +157,71 @@ class DocumentoController extends Controller
      */
     public function update(Request $request, Documento $documento)
     {
-        //
+$productos = collect($request->productos)
+            ->filter(fn($p) => !empty($p['producto_id']))
+            ->values()
+            ->toArray();
+        $request->merge([
+            'productos' => $productos
+        ]);
+        // Validar detalles de la compra
+        $request->validate([
+            // Compra
+            'proveedor_id' => 'required|exists:clientes,id',
+            'almacen_id'        => 'required|exists:clientes,id',
+            'user_id'      => 'required|exists:users,id',
+            'fecha'        => 'required|date',
+            'subtotal'        => 'required|numeric',
+            'impuestos'        => 'required|numeric',
+            'total'        => 'required|numeric',
+            'productos' => 'required|array|min:1'
+        ]);
+        try {
+            DB::transaction(function () use ($request, $documento) {
+
+                /* ================= ACTUALIZAR COMPRA ================= */
+                $documento->update([
+                    'proveedor_id' => $request->proveedor_id,
+                    'subtotal' => $request->subtotal,
+                    'impuestos' => $request->impuestos,
+                    'total' => $request->total,
+                ]);
+
+                /* ================= DETALLES ================= */
+                $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
+                $detallesEnFormulario = [];
+
+                foreach ($request->productos as $producto) {
+
+                    $detalle = $documento->detalles()->updateOrCreate(
+                        [
+                            'id' => $producto['detalle_id'] ?? null
+                        ],
+                        [
+                            'producto_id' => $producto['producto_id'],
+                            'cantidad' => $producto['cantidad'],
+                            'costo_unitario' => $producto['costo'],
+                            'importe' => $producto['cantidad'] * $producto['costo'],
+                        ]
+                    );
+
+                    $detallesEnFormulario[] = $detalle->id;
+                }
+
+                /* ================= ELIMINAR DETALLES BORRADOS ================= */
+                $detallesParaEliminar = array_diff(
+                    $detallesExistentes,
+                    $detallesEnFormulario
+                );
+
+                if (!empty($detallesParaEliminar)) {
+                    $documento->detalles()->whereIn('id', $detallesParaEliminar)->delete();
+                }
+            });
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
     public function pdf(Documento $documento)
     {
