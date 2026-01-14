@@ -57,10 +57,13 @@
         <thead class="bg-gray-100">
             <tr>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Nombre de usuario
+                    Nombre completo
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Codigo
+                    Nombre usuario
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Correo
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Tipo
@@ -77,6 +80,9 @@
                     <td class="px-6 py-4 text-md text-gray-700">
                         {{ $usuario->name }}
                     </td>
+                    <td class="px-6 py-4 text-md text-gray-700">
+                        {{ $usuario->name }}
+                    </td>
                     <td class="px-6 py-4 text-md font-medium text-gray-900">
                         {{ $usuario->email }}
                     </td>
@@ -89,25 +95,42 @@
                             No asignado
                         @endif
                     </td>
-                    <td class="px-6 py-4 text-md text-gray-700">
-                        <div class="flex items-center gap-4 text-sm font-medium">
-        {{-- Ver --}}
-        <a href=""
-           class="text-gray-600 hover:text-blue-600 transition">
-            Ver
-        </a>
-  {{-- Separador --}}
-        <span class="text-gray-300">|</span>
-        {{-- Editar --}}
-        <a href=""
-           class="text-gray-600 hover:text-indigo-600 transition">
-            Editar
-        </a>
+                    <td class="px-6 py-4 text-sm text-gray-700">
+                            <div class="flex flex-wrap items-center gap-4">
 
-        {{-- Separador --}}
-        <span class="text-gray-300">|</span>
-    </div>
-                    </td>
+                                {{-- Ver --}}
+                                <a href=""
+                                    class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
+                                    <x-heroicon-o-eye class="w-4 h-4" />
+                                    <span class="hidden sm:inline">Ver</span>
+                                </a>
+
+                                <span class="hidden sm:inline text-gray-300">•</span>
+
+                                {{-- Editar --}}
+                                <a href=""
+                                    class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
+                                    <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                    <span class="hidden sm:inline">Editar</span>
+                                </a>
+
+                                <span class="hidden sm:inline text-gray-300">•</span>
+
+                                {{-- Eliminar --}}
+                                <form action="" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit"
+                                        class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                        <x-heroicon-o-trash class="w-4 h-4" />
+                                        <span class="hidden sm:inline">Eliminar</span>
+                                    </button>
+                                </form>
+
+                            </div>
+                        </td>
                 </tr>
             @empty
                 <tr>
@@ -119,7 +142,7 @@
         </tbody>
 
     </table>
-@if($usuario->count()>0)
+@if($usuario->count() > 0)
 <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
     <p class="text-sm text-gray-600 ml-6">
