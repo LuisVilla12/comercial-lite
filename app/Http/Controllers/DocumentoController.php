@@ -16,7 +16,21 @@ class DocumentoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function indexCotizacion(Request $request)
+    {
+        $search = $request->get('search');
+        $documentos = Documento::where('documento_modelo_id', 1)
+    ->when($search, function ($query, $search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('serie', 'like', "%{$search}%")
+              ->orWhere('folio', 'like', "%{$search}%");
+        });
+    })
+            ->paginate(10)
+            ->withQueryString();
+        return view('cotizacion.index', compact('documentos'));
+    }
+    public function indexFacturas(Request $request)
     {
         $search = $request->get('search');
         $documentos = Documento::when($search, function ($query, $search) {
@@ -24,7 +38,7 @@ class DocumentoController extends Controller
         })
             ->paginate(10)
             ->withQueryString();
-        return view('cotizacion.index', compact('documentos'));
+        return view('facturas.index', compact('documentos'));
     }
 
     /**

@@ -1,4 +1,4 @@
-@section('title', content: 'Compras')
+@section('title', content: 'Cotización')
 
 <x-app-layout>
     <x-slot name="header">
@@ -131,8 +131,8 @@
             </tbody>
 
         </table>
+        @if($documentos->count()>0)
         <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
             <p class="text-sm text-gray-600 ml-6">
                 Mostrando
                 <span class="font-medium">{{ $documentos->firstItem() }}</span>
@@ -142,9 +142,10 @@
                 <span class="font-medium">{{ $documentos->total() }}</span>
                 registros
             </p>
-
             {{ $documentos->links() }}
         </div>
+        @endif
+
 
     </div>
 
