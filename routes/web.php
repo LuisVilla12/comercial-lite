@@ -116,20 +116,23 @@ Route::get('/productos/buscar', function () {
 
 Route::get('/productos2/buscar', function () {
     $q = request('q');
+    $almacenId = 1; // o dinámico si luego lo necesitas
 
     return Producto::where('estatus_producto', 1)
         ->where(function ($query) use ($q) {
             $query->where('nombre_producto', 'like', "%{$q}%")
                   ->orWhere('codigo_producto', 'like', "%{$q}%");
         })
-        ->withSum(['existencias as stock' => function ($q) {
-            $q->where('almacen_id', 1);
-        }], 'cantidad')
+        ->leftJoin('existencia_productos', function ($join) use ($almacenId) {
+            $join->on('productos.id', '=', 'existencia_productos.producto_id')
+                 ->where('existencia_productos.almacen_id', $almacenId);
+        })
         ->select(
-            'id',
-            'nombre_producto as nombre',
-            'codigo_producto as codigo',
-            'precio1 as costo'
+            'productos.id',
+            'productos.nombre_producto as nombre',
+            'productos.codigo_producto as codigo',
+            'productos.precio1 as costo',
+            DB::raw('COALESCE(existencia_productos.cantidad, 0) as stock')
         )
         ->limit(10)
         ->get();
@@ -137,18 +140,18 @@ Route::get('/productos2/buscar', function () {
 
 Route::get('/debug/stock', function () {
 
-    $productoId = 2758; // un producto que sepas que existe
-    $almacenId  = 1;
+    $productoId = 4374 ;
+    $almacenId  = 3;
 
-    $stock = DB::table('existencia_productos')
+    $cantidad = DB::table('existencia_productos')
         ->where('producto_id', $productoId)
         ->where('almacen_id', $almacenId)
-        ->sum('cantidad');
+        ->value('cantidad') ?? 0;
 
     return [
         'producto_id' => $productoId,
         'almacen_id'  => $almacenId,
-        'stock'       => $stock,
+        'cantidad'       => $cantidad,
     ];
 });
 

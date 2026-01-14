@@ -13,16 +13,14 @@
                     </div>
                 </div>
 
-                <input type="text" x-model="proveedorQuery" @input.debounce.300ms="buscarProveedor"
-                    class="w-full border rounded p-2" placeholder="Buscar proveedor">
+                <input type="text" x-model="proveedorQuery" @input.debounce.300ms="buscarProveedor" class="w-full border rounded p-2" placeholder="Buscar proveedor">
                 @error('proveedor_id')
-                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
 
                 <ul x-show="proveedores.length" class="border bg-white rounded shadow mt-1 max-h-48 overflow-y-auto">
                     <template x-for="p in proveedores" :key="p.id">
-                        <li @click="seleccionarProveedor(p)" class="p-2 hover:bg-gray-100 cursor-pointer"
-                            x-text="p.nombre">
+                        <li @click="seleccionarProveedor(p)" class="p-2 hover:bg-gray-100 cursor-pointer" x-text="p.nombre">
                         </li>
                     </template>
                 </ul>
@@ -47,14 +45,10 @@
                             <tr class="border-t">
                                 <td class="p-2 text-center" x-text="item.codigo"></td>
                                 <td class="p-2 relative">
-                                    <input type="text" x-model="item.query"
-                                        @input.debounce.300ms="buscarProducto(index)" class="border rounded p-1 w-full"
-                                        placeholder="Buscar producto">
-                                    <ul x-show="item.resultados.length"
-                                        class="absolute z-10 bg-white border rounded shadow w-full">
+                                    <input type="text" x-model="item.query" @input.debounce.300ms="buscarProducto(index)" class="border rounded p-1 w-full" placeholder="Buscar producto">
+                                    <ul x-show="item.resultados.length" class="absolute z-10 bg-white border rounded shadow w-full">
                                         <template x-for="p in item.resultados" :key="p.id">
-                                            <li @click="seleccionarProducto(index, p)"
-                                                class="p-2 hover:bg-gray-100 cursor-pointer">
+                                            <li @click="seleccionarProducto(index, p)" class="p-2 hover:bg-gray-100 cursor-pointer">
                                                 <span x-text="p.nombre"></span>
                                                 <span class="text-sm text-gray-500">
                                                     ($<span x-text="p.costo"></span>)
@@ -62,39 +56,31 @@
                                             </li>
                                         </template>
                                     </ul>
-                                    <input type="hidden" :name="`productos[${index}][producto_id]`"
-                                        x-model="item.producto_id">
+                                    <input type="hidden" :name="`productos[${index}][producto_id]`" x-model="item.producto_id">
                                 </td>
                                 <td class="p-2">
                                     <div class="flex justify-center">
-                                        <input type="number" min="1" :name="`productos[${index}][cantidad]`"
-                                            x-model.number="item.cantidad" @input="calcular"
-                                            class="border rounded p-1 w-20 text-center">
+                                        <input type="number" min="1" :name="`productos[${index}][cantidad]`" x-model.number="item.cantidad" @input="calcular" class="border rounded p-1 w-20 text-center">
                                     </div>
                                 </td>
                                 <td class="p-2">
                                     <div class="flex justify-center">
-                                        <input disabled type="number" step="0.01" :name="`productos[${index}][costo]`"
-                                            x-model.number="item.costo" @input="calcular"
-                                            class="border rounded p-1 w-24 text-center">
+                                        <input disabled type="number" step="0.01" :name="`productos[${index}][costo]`" x-model.number="item.costo" @input="calcular" class="border rounded p-1 w-24 text-center">
                                     </div>
                                 </td>
                                 {{-- Existencias --}}
-                                 <td class="p-2">
+                                <td class="p-2">
                                     <div class="flex justify-center">
-                                        <input disabled type="number" step="0.01" :name="`productos[${index}][costo]`"
-                                            x-model.number="item.costo" @input="calcular"
-                                            class="border rounded p-1 w-24 text-center">
+                                        <input type="number" disabled step="1" x-model.number="item.stock" class="border rounded p-1 w-24 text-center bg-gray-100 text-gray-700">
                                     </div>
                                 </td>
                                 <td class="p-2">
                                     $<span x-text="(item.cantidad * item.costo).toFixed(2)" class="text-center"></span>
-                                    <input type="hidden":name="`productos[${index}][importe]`" :value="(item.cantidad * item.costo).toFixed(2)" class="">
+                                    <input type="hidden" :name="`productos[${index}][importe]`" :value="(item.cantidad * item.costo).toFixed(2)" class="">
                                 </td>
 
                                 <td class="p-2 text-center">
-                                    <button type="button" @click="eliminarFila(index)"
-                                        class="text-red-600 hover:text-red-800">
+                                    <button type="button" @click="eliminarFila(index)" class="text-red-600 hover:text-red-800">
                                         ❌
                                     </button>
                                 </td>
@@ -103,7 +89,7 @@
                     </tbody>
                 </table>
                 @error('productos')
-                    <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
+                <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
                 @enderror
                 <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
                     ➕ Agregar producto
@@ -132,96 +118,97 @@
             <input type="hidden" name="estatus" :value="1">
 
             <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-                <a href="{{ route('compras.index') }}"
-                    class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
+                <a href="{{ route('compras.index') }}" class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
                     Cancelar
                 </a>
 
-                <button type="submit"
-                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                     Guardar compra
                 </button>
             </div>
-    </div>
+        </div>
     </form>
 
     {{-- ================= ALPINE ================= --}}
     <script>
         function compraApp() {
-    return {
-        proveedor: null,
-        proveedorQuery: '',
-        proveedores: [],
+            return {
+                proveedor: null
+                , proveedorQuery: ''
+                , proveedores: [],
 
-        items: [],
-        total: 0,
+                items: []
+                , total: 0,
 
-        init() {
-            this.items = []
-            this.agregarFila()
-        },
+                init() {
+                    this.items = []
+                    this.agregarFila()
+                },
 
-        agregarFila() {
-            this.items.push({
-                producto_id: null,
-                codigo: '',
-                query: '',
-                cantidad: 1,
-                costo: 0,
-                resultados: []
-            })
-        },
+                agregarFila() {
+                    this.items.push({
+                        producto_id: null
+                        , codigo: ''
+                        , query: ''
+                        , cantidad: 1
+                        , costo: 0
+                        , stock: 0
+                        , resultados: []
+                    })
+                },
 
-        eliminarFila(index) {
-            if (this.items.length === 1) return
-            this.items.splice(index, 1)
-            this.calcular()
-        },
+                eliminarFila(index) {
+                    if (this.items.length === 1) return
+                    this.items.splice(index, 1)
+                    this.calcular()
+                },
 
-        async buscarProveedor() {
-            if (this.proveedorQuery.length < 2) return
-            const res = await fetch(`/clientes/buscar?q=${this.proveedorQuery}`)
-            this.proveedores = await res.json()
-        },
+                async buscarProveedor() {
+                    if (this.proveedorQuery.length < 2) return
+                    const res = await fetch(`/clientes/buscar?q=${this.proveedorQuery}`)
+                    this.proveedores = await res.json()
+                },
 
-        seleccionarProveedor(p) {
-            this.proveedor = p
-            this.proveedorQuery = p.nombre
-            this.proveedores = []
-        },
+                seleccionarProveedor(p) {
+                    this.proveedor = p
+                    this.proveedorQuery = p.nombre
+                    this.proveedores = []
+                },
 
-        async buscarProducto(index) {
-            const q = this.items[index].query
-            if (q.length < 2) return
+                async buscarProducto(index) {
+                    const q = this.items[index].query
+                    if (q.length < 2) return
 
-            const res = await fetch(`/productos2/buscar?q=${q}`)
-            this.items[index].resultados = await res.json()
-        },
+                    const res = await fetch(`/productos2/buscar?q=${q}`)
+                    this.items[index].resultados = await res.json()
+                },
 
-        seleccionarProducto(index, p) {
-            if (this.items.some(i => i.producto_id === p.id)) return
-            console.log(p);
-            const item = this.items[index]
-            item.producto_id = p.id
-            item.codigo = p.codigo
-            item.query = p.nombre
-            item.costo = parseFloat(p.costo)
-            item.resultados = []
+                seleccionarProducto(index, p) {
+                    if (this.items.some(i => i.producto_id === p.id)) return
+                    console.log(p);
+                    const item = this.items[index]
+                    item.producto_id = p.id
+                    item.codigo = p.codigo
+                    item.query = p.nombre
+                    item.costo = parseFloat(p.costo)
+                    item.stock = p.stock
+                    item.resultados = []
 
-            this.calcular()
+                    this.calcular()
 
-            if (index === this.items.length - 1) {
-                this.agregarFila()
+                    if (index === this.items.length - 1) {
+                        this.agregarFila()
+                    }
+                },
+
+                calcular() {
+                    this.total = this.items.reduce(
+                        (t, i) => t + (i.cantidad * i.costo)
+                        , 0
+                    )
+                }
             }
-        },
-
-        calcular() {
-            this.total = this.items.reduce(
-                (t, i) => t + (i.cantidad * i.costo),
-                0
-            )
         }
-    }
-}
+
     </script>
 </x-app-layout>
