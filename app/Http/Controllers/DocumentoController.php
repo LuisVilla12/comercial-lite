@@ -222,6 +222,9 @@ $productos = collect($request->productos)
             DB::rollBack();
             throw $e;
         }
+        return redirect()
+            ->route(route: 'cotizacion.index')
+            ->with('success', 'Cotizacion actualizada correctamente');
     }
     public function pdf(Documento $documento)
     {

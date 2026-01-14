@@ -1,5 +1,5 @@
 <x-app-layout>
-    <form method="POST" action="{{ route('cotizacion.store') }}">
+    <form method="POST" action="{{ route('cotizacion.update', $documento) }}">
         @csrf
         @method('PUT')
         <div x-data="documentoEdit(@js($documento->toArray()))" x-init="init()" class="max-w-7xl mx-auto py-6">
@@ -139,13 +139,13 @@
 
                 <button type="submit"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Guardar cotización
+                    Actualizar cotización
                 </button>
 
-                <a href="{{ route('cotizacion.pdf', $documento) }}" target="_blank"
+                {{-- <a href="{{ route('cotizacion.pdf', $documento) }}" target="_blank"
                     class="px-4 py-2 bg-red-600 text-white rounded">
                     📄 Imprimir PDF
-                </a>
+                </a> --}}
             </div>
         </div>
     </form>

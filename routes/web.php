@@ -202,6 +202,7 @@ Route::post('/cotizacion', action: [DocumentoController::class, 'store'])->name(
 Route::get('/cotizacion/{documento}', [DocumentoController::class, 'show'])->name('cotizacion.show');
 Route::get('/cotizacion/{documento}/edit', [DocumentoController::class, 'edit'])->name('cotizacion.edit');
 Route::put('/cotizacion/{documento}', [DocumentoController::class, 'update'])->name('cotizacion.update');
+
 Route::delete('/cotizacion/{documento}', [DocumentoController::class, 'destroy'])->name('cotizacion.destroy');
 Route::get('/cotizacion/{documento}/pdf', [DocumentoController::class, 'pdf'])
     ->name('cotizacion.pdf');

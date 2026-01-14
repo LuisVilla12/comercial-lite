@@ -24,8 +24,8 @@
         @if ($documento->estatus == 1)
         <form method="POST" action="{{ route('compras.surtir', $documento) }}">
             @csrf
-            <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                Convertir a cotización
+ <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                Surtir compra
             </button>
         </form>
         @else
