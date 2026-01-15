@@ -32,10 +32,14 @@ class DocumentoController extends Controller
     }
     public function indexFacturas(Request $request)
     {
-        $search = $request->get('search');
-        $documentos = Documento::when($search, function ($query, $search) {
-            $query->where('serie', 'like', "%{$search}%")->orWhere('folio', 'like', "%{$search}%");
-        })
+          $search = $request->get('search');
+        $documentos = Documento::where('documento_modelo_id', 2)
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('serie', 'like', "%{$search}%")
+                        ->orWhere('folio', 'like', "%{$search}%");
+                });
+            })
             ->paginate(10)
             ->withQueryString();
         return view('facturas.index', compact('documentos'));
@@ -279,36 +283,43 @@ class DocumentoController extends Controller
         }
     }
 
-    public function convertirFactura(Documento $documento){
-    DB::transaction(function () use ($documento) {
-    $folio = Documento::where('serie', 'R')->max('folio') + 1;
-    // Crear remisión
-    $remision = Documento::create([
-        'documento_modelo_id' => 2, // remisión
-        'serie'               => 'R',
-        'folio'               => Documento::nextFolio('R'),
-        'cliente_id'          => $documento->cliente_id,
-        'subtotal'            => $documento->subtotal,
-        'iva'                 => $documento->iva,
-        'total'               => $documento->total,
-        'estatus'             => 1,
-    ]);
+    public function convertirFactura(Documento $documento)
+    {
+        DB::transaction(function () use ($documento) {
+            $folio = Documento::where('serie', 'R')->lockForUpdate()->max('folio');
+            $folio = ($folio ?? 0) + 1;
+            // Crear remisión
+            $remision = Documento::create([
+                'documento_modelo_id' => 2, // remisión
+                'serie'               => 'R',
+                'folio'               => $folio,
+                'fecha'                => now(),
+                'cliente_id'          => $documento->cliente_id,
+                'almacen_id'          => $documento->almacen_id,
+                'user_id'             => $documento->user_id,
+                'subtotal'            => $documento->subtotal,
+                'impuestos'            => $documento->impuestos,
+                'total'               => $documento->total,
+                'estatus'             => 1,
+            ]);
 
-    // Copiar detalles
-    foreach ($documento->detalles as $detalle) {
-        $remision->detalles()->create([
-            'producto_id' => $detalle->producto_id,
-            'cantidad'    => $detalle->cantidad,
-            'precio'      => $detalle->precio,
-            'importe'     => $detalle->importe,
-        ]);
-    }
+            // Copiar detalles
+            foreach ($documento->detalles as $detalle) {
+                $remision->detalles()->create([
+                    'producto_id' => $detalle->producto_id,
+                    'cantidad'    => $detalle->cantidad,
+                    'costo_unitario'      => $detalle->costo_unitario,
+                    'importe'     => $detalle->importe,
+                ]);
+            }
 
-    // Marcar cotización como convertida
-    $documento->update([
-        'estatus' => 2 // convertida
-    ]);
-});
-
+            // Marcar cotización como convertida
+            $documento->update([
+                'estatus' => 2 // convertida
+            ]);
+        });
+        return redirect()
+            ->route(route: 'cotizacion.index')
+            ->with('success', 'Cotizacion convertida correctamente');
     }
 }
