@@ -196,11 +196,12 @@ Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('com
 Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
 
 //Documentos
-Route::get('/cotizacion', [DocumentoController::class, 'indexCotizacion'])->name('cotizacion.index');
-Route::get('/facturas', [DocumentoController::class, 'indexFacturas'])->name('facturas.index');
+Route::get('/cotizacion', [DocumentoController::class, 'indexCotizacion'])->name('cotizaciones.index');
+Route::get('/facturas', action: [DocumentoController::class, 'indexFacturas'])->name('facturas.index');
+Route::get('/remisiones', action: [DocumentoController::class, 'indexRemisiones'])->name('remisiones.index');
+Route::get('/documentos/create/{tipo}', [DocumentoController::class, 'create'])->name('documentos.create');
+Route::post('/documentos', action: [DocumentoController::class, 'store'])->name('documentos.store');
 
-Route::get('/cotizacion/create', [DocumentoController::class, 'create'])->name('cotizacion.create');
-Route::post('/cotizacion', action: [DocumentoController::class, 'store'])->name('cotizacion.store');
 Route::get('/cotizacion/{documento}', [DocumentoController::class, 'show'])->name('cotizacion.show');
 Route::get('/cotizacion/{documento}/edit', [DocumentoController::class, 'edit'])->name('cotizacion.edit');
 Route::put('/cotizacion/{documento}', [DocumentoController::class, 'update'])->name('cotizacion.update');

@@ -28,7 +28,7 @@ class DocumentoController extends Controller
             })
             ->paginate(10)
             ->withQueryString();
-        return view('cotizacion.index', compact('documentos'));
+        return view('cotizaciones.index', compact(var_name: 'documentos'));
     }
     public function indexFacturas(Request $request)
     {
@@ -44,19 +44,33 @@ class DocumentoController extends Controller
             ->withQueryString();
         return view('facturas.index', compact('documentos'));
     }
-
+ public function indexRemisiones(Request $request)
+    {
+        $search = $request->get('search');
+        $documentos = Documento::where('documento_modelo_id', 3)
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('serie', 'like', "%{$search}%")
+                        ->orWhere('folio', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10)
+            ->withQueryString();
+        return view('remisiones.index', compact(var_name: 'documentos'));
+    }
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($tipo)
     {
         $proveedores = Cliente::all();
         $productos = Producto::all();
         $almacenes = Almacen::all();
-        return view('cotizacion.create', [
+        return view('documentos.create', [
             'proveedores' => $proveedores,
             'productos' => $productos,
             'almacenes' => $almacenes,
+            'tipo'=>$tipo
         ]);
     }
 
@@ -79,19 +93,27 @@ class DocumentoController extends Controller
             'subtotal' => 'required|numeric',
             'impuestos' => 'required|numeric',
             'total' => 'required|numeric',
-            'productos' => 'required|array|min:1'
+            'productos' => 'required|array|min:1',
+            'tipo'=>'required'
         ]);
         DB::beginTransaction();
 
         try {
-            $serie = 'CT'; // o lo que definas
+            if($request->tipo==1){
+            $serie = 'CT';
+            }elseif($request->tipo==2){
+            $serie = 'FT';
+            }
+            else{
+            $serie = 'RT';
+            }
             $ultimoFolio = Documento::where('serie', $serie)
                 ->lockForUpdate()
                 ->max('folio');
             $siguienteFolio = $ultimoFolio ? $ultimoFolio + 1 : 1;
 
             $documento = Documento::create([
-                'documento_modelo_id' => 1,
+                'documento_modelo_id' => $request->tipo,
                 'serie' => $serie,
                 'folio' => $siguienteFolio,
                 'fecha' => $request->fecha,
@@ -126,7 +148,7 @@ class DocumentoController extends Controller
         // return redirect()->route('cotizacion.index')
         //     ->with('success', 'Cotización creada correctamente.');
         return redirect()
-            ->route('cotizacion.show', $documento)
+            ->route('documentos.show', $documento)
             ->with('open_pdf', true);
     }
 
@@ -140,7 +162,7 @@ class DocumentoController extends Controller
             'cliente',
             'detalles.producto'
         ]);
-        return view('cotizacion.show', compact('documento'));
+        return view('documentos.show', compact('documento'));
     }
 
     /**

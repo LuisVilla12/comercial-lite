@@ -1,17 +1,17 @@
-@section('title', content: 'Facturación')
+@section('title', content: 'Cotización')
 
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Facturas
+            Cotizaciones
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
         {{-- Buscador --}}
-        <form method="GET" action="{{ route('facturas.index') }}" class="w-full md:w-1/3">
+        <form method="GET" action="{{ route('cotizaciones.index') }}" class="w-full md:w-1/3">
             <div class="relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar factura..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar compra..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
                 <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -22,7 +22,7 @@
             </div>
 
             @if (request('search'))
-                <a href="{{ route('cotizacion.index') }}"
+                <a href="{{ route('cotizaciones.index') }}"
                     class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                     Limpiar búsqueda
                 </a>
@@ -30,9 +30,9 @@
         </form>
 
         {{-- Botón --}}
-        <a href="{{ route('documentos.create',2) }}"
+        <a href="{{ route('documentos.create', 1) }}"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-            Registrar Factura
+            Registrar Cotización
         </a>
 
     </div>

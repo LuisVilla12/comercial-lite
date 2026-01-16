@@ -80,9 +80,14 @@
     </div>
     <div class="mt-6 flex gap-4">
         <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-            <a href="{{ route('cotizacion.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
-                Volver
-            </a>
+ <a href="{{ route(match($documento->documento_modelo_id) {
+        1 => 'cotizaciones.index',
+        2 => 'facturas.index',
+        3 => 'remisiones.index',
+        default => 'home',
+    }) }}"
+class="px-4 py-2 bg-gray-500 text-white rounded">
+    Volver
             @if ($documento->estatus == 1)
             <a href="{{ route('cotizacion.edit',$documento) }}" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                 Actualizar cotización

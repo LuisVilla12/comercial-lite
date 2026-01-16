@@ -1,5 +1,6 @@
+@section('title', match($tipo) {'1' => 'Cotización','2' => 'Facturación','3' => 'Remisión'})
 <x-app-layout>
-    <form method="POST" action="{{ route('cotizacion.store') }}">
+    <form method="POST" action="{{ route('documentos.store') }}">
         @csrf
         <div x-data="compraApp()" x-init="init()" class="max-w-7xl mx-auto py-6">
             <div class="mb-6">
@@ -115,14 +116,16 @@
             <input type="hidden" name="impuestos" :value="(total * 1.16) - total">
             <input type="hidden" name="total" :value="(total*1.16)">
             <input type="hidden" name="estatus" :value="1">
+            <input type="hidden" name="tipo" value="{{ $tipo }}">
+
 
             <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-                <a href="{{ route('cotizacion.index') }}" class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
+                <a href="{{ route('cotizaciones.index') }}" class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
                     Cancelar
                 </a>
 
                 <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Guardar cotización
+                    Guardar {{ match($tipo) {'1' => 'Cotización','2' => 'Facturación','3' => 'Remisión'} }}
                 </button>
             </div>
         </div>

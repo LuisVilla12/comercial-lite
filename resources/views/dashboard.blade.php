@@ -102,14 +102,14 @@
         </div>
     </a>
 
-    <!-- Cotización -->
-    <a href="{{ route('cotizacion.index') }}"
+    <!-- Facturación -->
+    <a href="{{ route('cotizaciones.index') }}"
        class="flex items-center gap-4 p-6 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl shadow hover:shadow-md transition">
         <div class="p-3 bg-indigo-500 text-white rounded-lg">
             <x-heroicon-o-document-text class="w-9 h-9" />
         </div>
         <div>
-            <h3 class="text-lg font-semibold">Cotización</h3>
+            <h3 class="text-lg font-semibold">Cotizaciones</h3>
             <p class="text-sm text-gray-600 dark:text-gray-400">
                 Generar cotizaciones
             </p>
@@ -117,19 +117,30 @@
     </a>
 
     <!-- Ventas -->
-    <a href=""
+    <a href="{{ route('facturas.index') }}"
        class="flex items-center gap-4 p-6 bg-teal-50 dark:bg-teal-900/20 rounded-xl shadow hover:shadow-md transition">
         <div class="p-3 bg-teal-500 text-white rounded-lg">
             <x-heroicon-o-currency-dollar class="w-9 h-9" />
         </div>
         <div>
-            <h3 class="text-lg font-semibold">Contratos</h3>
+            <h3 class="text-lg font-semibold">Facturas </h3>
             <p class="text-sm text-gray-600 dark:text-gray-400">
-                Contratos de rentas y ventas
+                Generar facturas
             </p>
         </div>
     </a>
-
+<a href="{{ route('remisiones.index') }}"
+       class="flex items-center gap-4 p-6 bg-teal-50 dark:bg-teal-900/20 rounded-xl shadow hover:shadow-md transition">
+        <div class="p-3 bg-teal-500 text-white rounded-lg">
+            <x-heroicon-o-currency-dollar class="w-9 h-9" />
+        </div>
+        <div>
+            <h3 class="text-lg font-semibold">Remisiones </h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                Generar Remisiones
+            </p>
+        </div>
+    </a>
     <!-- Reportes -->
     <a href=""
        class="flex items-center gap-4 p-6 bg-gray-100 dark:bg-gray-700 rounded-xl shadow hover:shadow-md transition">

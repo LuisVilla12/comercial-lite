@@ -16,12 +16,14 @@
                         Inicio
                     </x-nav-link>
 
-                    <x-nav-link :href="route('cotizacion.index')" :active="request()->routeIs('cotizacion.index')">
+                    <x-nav-link :href="route('cotizaciones.index')" :active="request()->routeIs('cotizaciones.index')">
                         Cotización
                     </x-nav-link>
-
-                    <x-nav-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.index')">
-                        Contratos
+                    <x-nav-link :href="route('remisiones.index')" :active="request()->routeIs('remisiones.index')">
+                        Remisión
+                    </x-nav-link>
+                    <x-nav-link :href="route('facturas.index')" :active="request()->routeIs('facturas.index')">
+                        Facturación
                     </x-nav-link>
                     <x-nav-link :href="route('existencias.index')" :active="request()->routeIs('existencias.index')">
                         Existencias

@@ -1,15 +1,15 @@
-@section('title', content: 'Facturación')
+@section('title', content: 'Remisiones')
 
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Facturas
+            Remisiones
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
         {{-- Buscador --}}
-        <form method="GET" action="{{ route('facturas.index') }}" class="w-full md:w-1/3">
+        <form method="GET" action="{{ route('remisiones.index') }}" class="w-full md:w-1/3">
             <div class="relative">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar factura..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
@@ -30,9 +30,9 @@
         </form>
 
         {{-- Botón --}}
-        <a href="{{ route('documentos.create',2) }}"
+        <a href="{{ route('documentos.create',3) }}"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-            Registrar Factura
+            Registrar Remisión
         </a>
 
     </div>
@@ -124,7 +124,7 @@
                 @empty
                     <tr>
                         <td colspan="6" class="px-6 py-6 text-center text-md text-gray-500">
-                            No hay cotizaciones registrados
+                            No hay remisiones registrados
                         </td>
                     </tr>
                 @endforelse
