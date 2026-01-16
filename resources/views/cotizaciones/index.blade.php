@@ -11,7 +11,7 @@
         {{-- Buscador --}}
         <form method="GET" action="{{ route('cotizaciones.index') }}" class="w-full md:w-1/3">
             <div class="relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar compra..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar cotización..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
                 <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -89,7 +89,7 @@
                         <td class="px-6 py-4 text-sm text-gray-700">
                             <div class="flex flex-wrap items-center gap-4">
                                 {{-- Ver --}}
-                                 <a href="{{ route('cotizacion.show', $documento) }}"
+                                 <a href="{{ route('documentos.show', $documento) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                     <span class="hidden sm:inline">Ver</span>
@@ -97,7 +97,7 @@
                                 @if($documento->estatus==1)
                                     <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                <a href="{{ route('cotizacion.edit', $documento) }}"
+                                <a href="{{ route('documentos.edit', $documento) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>
@@ -105,7 +105,7 @@
                                 <span class="hidden sm:inline text-gray-300">•</span>
 
                                 {{-- Eliminar --}}
-                                <form action="{{ route('cotizacion.destroy', $documento) }}" method="POST" class="inline">
+                                <form action="{{ route('documentos.destroy', $documento) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
 

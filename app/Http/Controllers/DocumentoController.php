@@ -10,6 +10,8 @@ use App\Models\Cliente;
 use App\Models\DocumentosDetalle;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\InventarioService;
+
 
 class DocumentoController extends Controller
 {
@@ -172,14 +174,14 @@ class DocumentoController extends Controller
     {
         if ($documento->estatus != 1) {
             return redirect()
-                ->route('cotizacion.show', $documento)
+                ->route('documentos.show', $documento)
                 ->with('error', 'La cotización ya fue surtida');
         }
 
         // ✅ CARGAR RELACIONES PRIMERO
         $documento->load([
             'cliente',
-            'detalles.producto'
+            'detalles.producto',
         ]);
 
         // Calcula el stock
@@ -190,7 +192,7 @@ class DocumentoController extends Controller
                 ->value('cantidad') ?? 0;
         });
 
-        return view('cotizacion.edit', compact('documento'));
+        return view('documentos.edit', compact('documento'));
     }
     /**
      * Update the specified resource in storage.
@@ -206,7 +208,7 @@ class DocumentoController extends Controller
         ]);
         // Validar detalles de la compra
         $request->validate([
-            // Compra
+            'tipo'=>'required',
             'proveedor_id' => 'required|exists:clientes,id',
             'almacen_id' => 'required|exists:clientes,id',
             'user_id' => 'required|exists:users,id',
@@ -263,8 +265,8 @@ class DocumentoController extends Controller
             throw $e;
         }
         return redirect()
-            ->route(route: 'cotizacion.index')
-            ->with('success', 'Cotizacion actualizada correctamente');
+            ->route(route: match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'})
+            ->with('success', match ($documento->documento_modelo_id) {1 => 'Cotización',2 => 'Factura',3 => 'Remisión'} . " a sido actualizada");
     }
     public function pdf(Documento $documento)
     {
@@ -273,7 +275,7 @@ class DocumentoController extends Controller
             'detalles.producto'
         ]);
 
-        $pdf = Pdf::loadView('cotizacion.pdf', compact('documento'))
+        $pdf = Pdf::loadView('documentos.pdf', compact('documento'))
             ->setPaper('letter');
 
         return $pdf->stream("Cotizacion_{$documento->serie}-{$documento->folio}.pdf");
@@ -308,8 +310,9 @@ class DocumentoController extends Controller
     public function convertirFactura(Documento $documento)
     {
         DB::transaction(function () use ($documento) {
-            $folio = Documento::where('serie', 'R')->lockForUpdate()->max('folio');
+            $folio = Documento::where('serie', 'FT')->lockForUpdate()->max('folio');
             $folio = ($folio ?? 0) + 1;
+
             // Crear remisión
             $remision = Documento::create([
                 'documento_modelo_id' => 2, // remisión
@@ -341,7 +344,34 @@ class DocumentoController extends Controller
             ]);
         });
         return redirect()
-            ->route(route: 'cotizacion.index')
+            ->route(route: 'cotizaciones.index')
             ->with('success', 'Cotizacion convertida correctamente');
     }
+
+    public function surtirDocumento(Documento $documento)
+{
+    if ($documento->estatus != 1) {
+        return back()->with('error', 'La remisión ya fue surtida');
+    }
+
+    try {
+        DB::transaction(function () use ($documento) {
+            foreach ($documento->detalles as $detalle) {
+                InventarioService::restar(
+                    $detalle->producto_id,
+                    $documento->almacen_id,
+                    $detalle->cantidad
+                );
+            }
+
+            $documento->update(['estatus' => 2]);
+        });
+    } catch (\Exception $e) {
+        return back()->with('error', $e->getMessage());
+    }
+
+    return redirect()
+        ->route('documentos.show', $documento)
+        ->with('success', 'Remisión surtida correctamente');
+}
 }

@@ -126,7 +126,7 @@ class CompraController extends Controller
         ]);
         return view('compras.show', compact('compra'));
     }
-   public function surtir(Compra $compra)
+public function surtir(Compra $compra)
 {
     if ($compra->estatus != 1) {
         return redirect()

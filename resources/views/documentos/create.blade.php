@@ -120,7 +120,7 @@
 
 
             <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-                <a href="{{ route('cotizaciones.index') }}" class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
+                <a href="{{ route(match ($tipo) {'1' => 'cotizaciones.index','2' => 'facturas.index','3' => 'remisiones.index'}) }}" class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
                     Cancelar
                 </a>
 

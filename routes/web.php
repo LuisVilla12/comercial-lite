@@ -201,13 +201,11 @@ Route::get('/facturas', action: [DocumentoController::class, 'indexFacturas'])->
 Route::get('/remisiones', action: [DocumentoController::class, 'indexRemisiones'])->name('remisiones.index');
 Route::get('/documentos/create/{tipo}', [DocumentoController::class, 'create'])->name('documentos.create');
 Route::post('/documentos', action: [DocumentoController::class, 'store'])->name('documentos.store');
-
-Route::get('/cotizacion/{documento}', [DocumentoController::class, 'show'])->name('cotizacion.show');
-Route::get('/cotizacion/{documento}/edit', [DocumentoController::class, 'edit'])->name('cotizacion.edit');
-Route::put('/cotizacion/{documento}', [DocumentoController::class, 'update'])->name('cotizacion.update');
-
-Route::delete('/cotizacion/{documento}', [DocumentoController::class, 'destroy'])->name('cotizacion.destroy');
-Route::get('/cotizacion/{documento}/pdf', [DocumentoController::class, 'pdf'])
-    ->name('cotizacion.pdf');
-Route::post('/cotizacion/{documento}', [DocumentoController::class, 'convertirFactura'])->name('cotizacion.convertir');
+Route::get('/documentos/{documento}/edit', [DocumentoController::class, 'edit'])->name('documentos.edit');
+Route::get('/documentos/{documento}', [DocumentoController::class, 'show'])->name('documentos.show');
+Route::put('/documentos/{documento}', action: [DocumentoController::class, 'update'])->name('documentos.update');
+Route::delete('/documentos/{documento}', [DocumentoController::class, 'destroy'])->name('documentos.destroy');
+Route::post('/documentos/{documento}/convertir/Factura', action: [DocumentoController::class, 'convertirFactura'])->name('cotizacionToFactura');
+Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
+Route::post('/documentos/{documento}', [DocumentoController::class, 'surtirDocumento'])->name('documentos.surtir');
 

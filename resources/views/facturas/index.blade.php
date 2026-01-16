@@ -22,7 +22,7 @@
             </div>
 
             @if (request('search'))
-                <a href="{{ route('cotizacion.index') }}"
+                <a href="{{ route('facturas.index') }}"
                     class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                     Limpiar búsqueda
                 </a>
@@ -89,7 +89,7 @@
                         <td class="px-6 py-4 text-sm text-gray-700">
                             <div class="flex flex-wrap items-center gap-4">
                                 {{-- Ver --}}
-                                 <a href="{{ route('cotizacion.show', $documento) }}"
+                                 <a href="{{ route('documentos.show', $documento) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                     <span class="hidden sm:inline">Ver</span>
@@ -97,7 +97,7 @@
                                 @if($documento->estatus==1)
                                     <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                <a href="{{ route('cotizacion.edit', $documento) }}"
+                                <a href="{{ route('documentos.edit', $documento) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>
@@ -105,7 +105,7 @@
                                 <span class="hidden sm:inline text-gray-300">•</span>
 
                                 {{-- Eliminar --}}
-                                <form action="{{ route('cotizacion.destroy', $documento) }}" method="POST" class="inline">
+                                <form action="{{ route('documentos.destroy', $documento) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
 
