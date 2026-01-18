@@ -1,164 +1,110 @@
 @section('title', 'Panel de control')
 <x-app-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <!-- Proveedores -->
-    <a href="{{ route('proveedores.index') }}"
-       class="flex items-center gap-4 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-blue-500 text-white rounded-lg">
-            <x-heroicon-o-truck class="w-9 h-9" />
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+        {{-- ================= CATÁLOGOS ================= --}}
+        <div class="col-span-full">
+            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                📦 Catálogos
+            </h2>
         </div>
-        <div>
-            <h3 class="text-lg font-semibold">Proveedores</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Gestión de proveedores
-            </p>
-        </div>
-    </a>
 
-    <!-- Almacenes -->
-    <a href="{{ route('almacenes.index') }}"
-       class="flex items-center gap-4 p-6 bg-green-50 dark:bg-green-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-green-500 text-white rounded-lg">
-            <x-heroicon-o-home class="w-9 h-9" />
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold">Almacenes</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Control de almacenes
-            </p>
-        </div>
-    </a>
-<a href="{{ route(name: 'compras.index') }}"
-       class="flex items-center gap-4 p-6 bg-green-50 dark:bg-green-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-green-500 text-white rounded-lg">
-            {{-- <x-heroicon-o-home class="w-9 h-9" /> --}}
-            <x-heroicon-o-shopping-cart class="w-9 h-9" />
+        <x-dashboard-card href="{{ route('proveedores.index') }}" bg="bg-blue-50 dark:bg-blue-900/20"
+            title="Proveedores" desc="Gestión de proveedores" iconBg="bg-blue-500">
+            <x-slot:icon>
+                <x-heroicon-o-truck class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
 
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold">Compras</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Control de compras
-            </p>
-        </div>
-    </a>
-    <!-- Productos -->
-    <a href="{{ route('productos.index') }}"
-       class="flex items-center gap-4 p-6 bg-purple-50 dark:bg-purple-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-purple-500 text-white rounded-lg">
-           <x-heroicon-o-archive-box class="w-9 h-9" />
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold">Productos</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Catálogo de productos
-            </p>
-        </div>
-    </a>
+        <x-dashboard-card href="{{ route('clientes.index') }}" bg="bg-yellow-50 dark:bg-yellow-900/20" title="Clientes"
+            desc="Gestión de clientes" iconBg="bg-yellow-500">
+            <x-slot:icon>
+                <x-heroicon-o-user-group class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
 
-    <!-- Clientes -->
-    <a href="{{ route('clientes.index') }}"
-       class="flex items-center gap-4 p-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-yellow-500 text-white rounded-lg">
-            <x-heroicon-o-user-group class="w-9 h-9" />
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold">Clientes</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Gestión de clientes
-            </p>
-        </div>
-    </a>
+        <x-dashboard-card href="{{ route('productos.index') }}" bg="bg-purple-50 dark:bg-purple-900/20"
+            title="Productos" desc="Catálogo de productos" iconBg="bg-purple-500">
+            <x-slot:icon>
+                <x-heroicon-o-archive-box class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
 
-    <!-- Clasificaciones -->
-    <a href="{{ route('clasificaciones.index') }}"
-       class="flex items-center gap-4 p-6 bg-pink-50 dark:bg-pink-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-pink-500 text-white rounded-lg">
-            <x-heroicon-o-tag class="w-9 h-9" />
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold">Clasificaciones</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Organización de productos
-            </p>
-        </div>
-    </a>
+        <x-dashboard-card href="{{ route('clasificaciones.index') }}" bg="bg-pink-50 dark:bg-pink-900/20"
+            title="Clasificaciones" desc="Organización de productos" iconBg="bg-pink-500">
+            <x-slot:icon>
+                <x-heroicon-o-tag class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
 
-    <!-- Usuarios -->
-    <a href="{{ route('usuarios.index') }}"
-       class="flex items-center gap-4 p-6 bg-red-50 dark:bg-red-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-red-500 text-white rounded-lg">
-            <x-heroicon-o-users class="w-9 h-9" />
+        {{-- ================= OPERACIONES ================= --}}
+        <div class="col-span-full mt-6">
+            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                🔄 Operaciones
+            </h2>
         </div>
-        <div>
-            <h3 class="text-lg font-semibold">Usuarios</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Control de accesos
-            </p>
-        </div>
-    </a>
 
-    <!-- Facturación -->
-    <a href="{{ route('cotizaciones.index') }}"
-       class="flex items-center gap-4 p-6 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-indigo-500 text-white rounded-lg">
-            <x-heroicon-o-document-text class="w-9 h-9" />
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold">Cotizaciones</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Generar cotizaciones
-            </p>
-        </div>
-    </a>
+        <x-dashboard-card href="{{ route('compras.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20" title="Compras"
+            desc="Control de compras" iconBg="bg-emerald-500">
+            <x-slot:icon>
+                <x-heroicon-o-shopping-cart class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
 
-    <!-- Ventas -->
-    <a href="{{ route('facturas.index') }}"
-       class="flex items-center gap-4 p-6 bg-teal-50 dark:bg-teal-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-teal-500 text-white rounded-lg">
-            <x-heroicon-o-currency-dollar class="w-9 h-9" />
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold">Facturas </h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Generar facturas
-            </p>
-        </div>
-    </a>
-<a href="{{ route('remisiones.index') }}"
-       class="flex items-center gap-4 p-6 bg-teal-50 dark:bg-teal-900/20 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-teal-500 text-white rounded-lg">
-            <x-heroicon-o-currency-dollar class="w-9 h-9" />
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold">Remisiones </h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Generar Remisiones
-            </p>
-        </div>
-    </a>
-    <!-- Reportes -->
-    <a href=""
-       class="flex items-center gap-4 p-6 bg-gray-100 dark:bg-gray-700 rounded-xl shadow hover:shadow-md transition">
-        <div class="p-3 bg-gray-600 text-white rounded-lg">
-            <x-heroicon-o-chart-bar class="w-9 h-9" />
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold">Reportes</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Estadísticas y exportes
-            </p>
-        </div>
-    </a>
+        <x-dashboard-card href="{{ route('traspasos.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+            title="Traspasos" desc="Movimientos entre almacenes" iconBg="bg-emerald-500">
+            <x-slot:icon>
+                <x-heroicon-o-arrows-right-left class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
 
-</div>
-
-                </div>
-            </div>
+        {{-- ================= VENTAS ================= --}}
+        <div class="col-span-full mt-6">
+            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                💼 Ventas
+            </h2>
         </div>
+
+        <x-dashboard-card href="{{ route('cotizaciones.index') }}" bg="bg-indigo-50 dark:bg-indigo-900/20"
+            title="Cotizaciones" desc="Generar cotizaciones" iconBg="bg-indigo-500">
+            <x-slot:icon>
+                <x-heroicon-o-document-currency-dollar class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
+
+        <x-dashboard-card href="{{ route('remisiones.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Remisiones"
+            desc="Generar remisiones" iconBg="bg-teal-500">
+            <x-slot:icon>
+                <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
+
+        <x-dashboard-card href="{{ route('facturas.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Facturas"
+            desc="Generar facturas" iconBg="bg-teal-500">
+            <x-slot:icon>
+                <x-heroicon-o-document-text class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
+        <x-dashboard-card href="" bg="bg-teal-50 dark:bg-teal-900/20" title="Reportes" desc="Generar reportes"
+            iconBg="bg-teal-500">
+            <x-slot:icon>
+                <x-heroicon-o-chart-bar class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
+        @if(auth()->user()->tipo==2)
+        {{-- ================= Administracion ================= --}}
+        <div class="col-span-full mt-6">
+            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                ⚙️ Administración
+            </h2>
+        </div>
+
+        <x-dashboard-card href="{{ route('usuarios.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Usuarios"
+            desc="Administrar usuarios" iconBg="bg-teal-500">
+            <x-slot:icon>
+                <x-heroicon-o-users class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
+        @endif
     </div>
+
 </x-app-layout>

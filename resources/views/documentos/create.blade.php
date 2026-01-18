@@ -1,21 +1,28 @@
 @section('title', match($tipo) {'1' => 'Cotización','2' => 'Facturación','3' => 'Remisión'})
 <x-app-layout>
+    <x-slot name="header">
+        <div class="flex justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                Registrar {{ match($tipo) {'1' => 'Cotización','2' => 'Factura','3' => 'Remisión'} }}
+            </h2>
+            <div class="md:flex gap-4">
+                            <label class="block text-lg font-medium mb-2 mr-10 dark:text-white"></label>
+                            <label class="block text-lg font-medium mb-2 dark:text-white">Fecha: {{ now()->format('d/m/Y')
+                                }} </label>
+                        </div>
+        </div>
+    </x-slot>
     <form method="POST" action="{{ route('documentos.store') }}">
         @csrf
         <div x-data="compraApp()" x-init="init()" class="max-w-7xl mx-auto py-6">
             <div class="mb-6">
                 <div class="md:flex justify-between">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
-                    <div class="md:flex gap-4">
-                        <label class="block text-lg font-medium mb-2 mr-10 dark:text-white"></label>
-                        <label class="block text-lg font-medium mb-2 dark:text-white">Fecha: {{ now()->format('d/m/Y')
-                            }} </label>
-                    </div>
                 </div>
 
                 <input type="text" x-model="proveedorQuery" @input.debounce.300ms="buscarProveedor" class="w-full border rounded p-2" placeholder="Buscar cliente">
                 @error('proveedor_id')
-                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                <p class="text-red-600 text-xs mt-1">Debes selecciona uno.</p>
                 @enderror
 
                 <ul x-show="proveedores.length" class="border bg-white rounded shadow mt-1 max-h-48 overflow-y-auto">
@@ -167,7 +174,7 @@
 
                 async buscarProveedor() {
                     if (this.proveedorQuery.length < 2) return
-                    const res = await fetch(`/clientes/buscar?q=${this.proveedorQuery}`)
+                    const res = await fetch(`/api/clientes/buscar?q=${this.proveedorQuery}`)
                     this.proveedores = await res.json()
                 },
 
@@ -181,7 +188,7 @@
                     const q = this.items[index].query
                     if (q.length < 2) return
 
-                    const res = await fetch(`/productos2/buscar?q=${q}`)
+                    const res = await fetch(`/api/productos-existencias/buscar?q=${q}`)
                     this.items[index].resultados = await res.json()
                 },
 

@@ -1,4 +1,9 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Modificar {{ match($tipo) {'1' => 'Cotización','2' => 'Factura','3' => 'Remisión'} }}
+        </h2>
+    </x-slot>
     <form method="POST" action="{{ route('documentos.update', $documento) }}">
         @csrf
         @method('PUT')
@@ -196,7 +201,7 @@
 
                 async buscarProveedor() {
                     if (this.proveedorQuery.length < 2) return
-                    const res = await fetch(`/clientes/buscar?q=${this.proveedorQuery}`)
+                    const res = await fetch(`/api/clientes/buscar?q=${this.proveedorQuery}`)
                     this.proveedores = await res.json()
                 },
 
@@ -210,7 +215,7 @@
                     const q = this.items[index].query
                     if (q.length < 2) return
 
-                    const res = await fetch(`/productos2/buscar?q=${q}`)
+                    const res = await fetch(`/api/productos-existencias/buscar?q=${q}`)
                     this.items[index].resultados = await res.json()
                 },
 

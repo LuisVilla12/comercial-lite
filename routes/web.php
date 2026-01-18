@@ -12,11 +12,15 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\ExistenciaProductoController;
+use App\Http\Controllers\TraspasoController;
 use App\Models\Cliente;
 use App\Models\ExistenciaProducto;
 use App\Models\Producto;
+use App\Models\Traspaso;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+require __DIR__.'/auth.php';
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,37 +36,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::middleware('auth')->group(function () {
+
 //Usuarios
 Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
-require __DIR__.'/auth.php';
-
-//COMPRAS
-//Busqueda de proveedores para compras
-Route::get('/proveedores/buscar', function (Request $r) {
-    $q = $r->input('q', '');
-return Cliente::where('tipo', 3) // proveedor
-    ->where('activo', 1)
-    ->where(function ($query) use ($q) {
-        $query->where('nombre', 'like', "%{$q}%")
-    ->orWhere('codigo', 'like', "%{$q}%");
-    })
-    ->select('id', 'nombre', 'codigo')
-    ->limit(10)
-    ->get();
-});
-
-Route::get('/clientes/buscar', function (Request $r) {
-    $q = $r->input('q', '');
-return Cliente::where('tipo', 1) // proveedor
-    ->where('activo', 1)
-    ->where(function ($query) use ($q) {
-        $query->where('nombre', 'like', "%{$q}%")
-    ->orWhere('codigo', 'like', "%{$q}%");
-    })
-    ->select('id', 'nombre', 'codigo')
-    ->limit(10)
-    ->get();
-});
 
 // RUTAS DE CLIENTES
 Route::get('/clientes', [ClienteController::class, 'indexClientes'])->name('clientes.index');
@@ -74,86 +52,12 @@ Route::get('/clientes/{cliente}/{tipo}/edit', [ClienteController::class, 'edit']
 Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])->name('clientes.update');
 Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])->name('clientes.destroy');
 
-
-
 // RUTAS DE DOMICILIOS
-Route::get('/clientes/{cliente}/domicilios/create', [DomicilioController::class, 'create'])
-    ->name('domicilios.create');
-
-Route::post('/clientes/{cliente}/domicilios', [DomicilioController::class, 'store'])
-    ->name('domicilios.store');
-
-    Route::get('/clientes/{cliente}/domicilios/{domicilio}/edit', [DomicilioController::class, 'edit'])
-    ->name('domicilios.edit');
-
-      Route::put('/clientes/{cliente}/domicilios/{domicilio}', [DomicilioController::class, 'update'])
-    ->name('domicilios.update');
-
-    Route::delete('/clientes/{cliente}/domicilios/{domicilio}',
-[DomicilioController::class, 'destroy']
-)->name('domicilios.destroy');
-
-//Busqueda de productos para compras y ventas
-Route::get('/productos/buscar', function () {
-    $q = request('q', '');
-
-    if (strlen($q) < 2) return [];
-
-    return Producto::where('estatus_producto', 1)
-        ->where(function ($query) use ($q) {
-            $query->where('nombre_producto', 'like', "%{$q}%")
-                  ->orWhere('codigo_producto', 'like', "%{$q}%");
-        })
-        ->select(
-            'id',
-            'nombre_producto as nombre',
-            'codigo_producto as codigo',
-            'precio1 as costo'
-        )
-        ->limit(10)
-        ->get();
-});
-
-Route::get('/productos2/buscar', function () {
-    $q = request('q');
-    $almacenId = 1; // o dinámico si luego lo necesitas
-    return Producto::where('estatus_producto', 1)
-        ->where(function ($query) use ($q) {
-            $query->where('nombre_producto', 'like', "%{$q}%")
-                  ->orWhere('codigo_producto', 'like', "%{$q}%");
-        })
-        ->leftJoin('existencia_productos', function ($join) use ($almacenId) {
-            $join->on('productos.id', '=', 'existencia_productos.producto_id')
-                 ->where('existencia_productos.almacen_id', $almacenId);
-        })
-        ->select(
-            'productos.id',
-            'productos.nombre_producto as nombre',
-            'productos.codigo_producto as codigo',
-            'productos.precio1 as costo',
-            DB::raw('COALESCE(existencia_productos.cantidad, 0) as stock')
-        )
-        ->limit(10)
-        ->get();
-});
-
-Route::get('/debug/stock', function () {
-
-    $productoId = 4374 ;
-    $almacenId  = 3;
-
-    $cantidad = DB::table('existencia_productos')
-        ->where('producto_id', $productoId)
-        ->where('almacen_id', $almacenId)
-        ->value('cantidad') ?? 0;
-
-    return [
-        'producto_id' => $productoId,
-        'almacen_id'  => $almacenId,
-        'cantidad'       => $cantidad,
-    ];
-});
-
+Route::get('/clientes/{cliente}/domicilios/create', [DomicilioController::class, 'create'])->name('domicilios.create');
+Route::post('/clientes/{cliente}/domicilios', [DomicilioController::class, 'store']) ->name('domicilios.store');
+Route::get('/clientes/{cliente}/domicilios/{domicilio}/edit', [DomicilioController::class, 'edit'])->name('domicilios.edit');
+Route::put('/clientes/{cliente}/domicilios/{domicilio}', [DomicilioController::class, 'update'])->name('domicilios.update');
+Route::delete('/clientes/{cliente}/domicilios/{domicilio}',[DomicilioController::class, 'destroy'])->name('domicilios.destroy');
 
 // RUTAS DE PRODUCTOS
 Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
@@ -183,20 +87,20 @@ Route::put('/almacenes/{almacen}', [AlmacenController::class, 'update'])->name('
 Route::delete('/almacenes/{almacen}', [AlmacenController::class, 'destroy'])->name('almacenes.destroy');
 
 //Compras
-Route::get('/compras', [CompraController::class, 'index'])->name('compras.index');
+Route::get('/compras', action: [CompraController::class, 'index'])->name('compras.index');
 Route::get('/compras/create', [CompraController::class, 'create'])->name('compras.create');
 Route::post('/compras', [CompraController::class, 'store'])->name('compras.store');
 Route::get('/compras/{compra}', [CompraController::class, 'show'])->name('compras.show');
 Route::get('/compras/{compra}/edit', [CompraController::class, 'edit'])->name('compras.edit');
 Route::put('/compras/{compra}', [CompraController::class, 'update'])->name('compras.update');
-Route::delete('/compras/{compra}', [CompraController::class, 'destroy'])->name('compras.destroy');
+Route::delete('/compras/{compra}', action: [CompraController::class, 'destroy'])->name('compras.destroy');
 Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('compras.surtir');
 
 //Existencias
 Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
 
 //Documentos
-Route::get('/cotizacion', [DocumentoController::class, 'indexCotizacion'])->name('cotizaciones.index');
+Route::get('/cotizacion', action: [DocumentoController::class, 'indexCotizacion'])->name('cotizaciones.index');
 Route::get('/facturas', action: [DocumentoController::class, 'indexFacturas'])->name('facturas.index');
 Route::get('/remisiones', action: [DocumentoController::class, 'indexRemisiones'])->name('remisiones.index');
 Route::get('/documentos/create/{tipo}', [DocumentoController::class, 'create'])->name('documentos.create');
@@ -204,8 +108,16 @@ Route::post('/documentos', action: [DocumentoController::class, 'store'])->name(
 Route::get('/documentos/{documento}/edit', [DocumentoController::class, 'edit'])->name('documentos.edit');
 Route::get('/documentos/{documento}', [DocumentoController::class, 'show'])->name('documentos.show');
 Route::put('/documentos/{documento}', action: [DocumentoController::class, 'update'])->name('documentos.update');
-Route::delete('/documentos/{documento}', [DocumentoController::class, 'destroy'])->name('documentos.destroy');
+Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 Route::post('/documentos/{documento}/convertir/Factura', action: [DocumentoController::class, 'convertirFactura'])->name('cotizacionToFactura');
 Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
 Route::post('/documentos/{documento}', [DocumentoController::class, 'surtirDocumento'])->name('documentos.surtir');
 
+//Traspasos
+Route::get('/traspasos', action: [TraspasoController::class, 'index'])->name('traspasos.index');
+Route::get('/traspasos/create', action: [TraspasoController::class, 'create'])->name('traspasos.create');
+Route::post('/traspasos', action: [TraspasoController::class, 'store'])->name('traspasos.store');
+Route::get('/traspasos/{traspaso}', [TraspasoController::class, 'show'])->name('traspasos.show');
+Route::delete('/traspasos/{traspaso}', action: [TraspasoController::class, 'destroy'])->name('traspasos.destroy');
+
+});

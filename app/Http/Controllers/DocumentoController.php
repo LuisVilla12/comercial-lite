@@ -344,8 +344,8 @@ class DocumentoController extends Controller
             ]);
         });
         return redirect()
-            ->route(route: 'cotizaciones.index')
-            ->with('success', 'Cotizacion convertida correctamente');
+            ->route(route: 'facturas.index')
+            ->with('success', 'Factura convertida correctamente');
     }
 
     public function surtirDocumento(Documento $documento)
