@@ -42,6 +42,12 @@
                 🔄 Operaciones
             </h2>
         </div>
+         <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20" title="Almacenes"
+            desc="Control de almacenes" iconBg="bg-emerald-500">
+            <x-slot:icon>
+                <x-heroicon-o-building-storefront class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
 
         <x-dashboard-card href="{{ route('compras.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20" title="Compras"
             desc="Control de compras" iconBg="bg-emerald-500">

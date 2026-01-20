@@ -1,16 +1,24 @@
 <x-app-layout>
      <x-slot name="header">
-        <div class="flex justify-between">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Traspaso # {{ $traspaso->id }}
-        </h2>
+        <div class="flex justify-between items-center">
+        <div>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                Traspaso # {{ $traspaso->id }}
+            </h2>
+
+        </div>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                Fecha: {{ $traspaso->fecha }}
+            </h2>
          @if ($traspaso->estatus == 1)
-        <form method="POST" action="">
+        <form method="POST" action="{{ route('traspasos.surtir',$traspaso) }}">
             @csrf
             <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
                 REALIZAR TRASPASO
             </button>
         </form>
+        @else
+            <p class="px-6 py-2 bg-indigo-600 text-white rounded"> TRASPASO REALIZADO</p>
         @endif
         </div>
 
@@ -37,6 +45,7 @@
 
 
     {{-- ORIGEN --}}
+
     <div class="grid  grid-cols-2 gap-10 mt-6">
         {{-- ================= Almacen origen ================= --}}
         <div class="mb-4">
@@ -99,7 +108,7 @@
                 class="px-4 py-2 bg-gray-500 text-white rounded">
                 Volver
                 @if ($traspaso->estatus == 1)
-                <a href=""
+                <a href="{{ route('traspasos.edit',$traspaso) }}"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                     Actualizar traspaso
                 </a>

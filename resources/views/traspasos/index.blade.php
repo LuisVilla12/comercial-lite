@@ -22,7 +22,7 @@
             </div>
 
             @if (request('search'))
-                <a href="{{ route('trapasos.index') }}"
+                <a href="{{ route('traspasos.index') }}"
                     class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                     Limpiar búsqueda
                 </a>
@@ -101,7 +101,7 @@
                                 @if($traspaso->estatus==1)
                                     <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                <a href=""
+                                <a href="{{ route('traspasos.edit',$traspaso) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>

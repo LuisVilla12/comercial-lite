@@ -105,19 +105,23 @@ Route::get('/facturas', action: [DocumentoController::class, 'indexFacturas'])->
 Route::get('/remisiones', action: [DocumentoController::class, 'indexRemisiones'])->name('remisiones.index');
 Route::get('/documentos/create/{tipo}', [DocumentoController::class, 'create'])->name('documentos.create');
 Route::post('/documentos', action: [DocumentoController::class, 'store'])->name('documentos.store');
-Route::get('/documentos/{documento}/edit', [DocumentoController::class, 'edit'])->name('documentos.edit');
+Route::get('/documentos/{documento}/edit', [DocumentoController::class, 'edit'])->name(name: 'documentos.edit');
 Route::get('/documentos/{documento}', [DocumentoController::class, 'show'])->name('documentos.show');
 Route::put('/documentos/{documento}', action: [DocumentoController::class, 'update'])->name('documentos.update');
 Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 Route::post('/documentos/{documento}/convertir/Factura', action: [DocumentoController::class, 'convertirFactura'])->name('cotizacionToFactura');
 Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
-Route::post('/documentos/{documento}', [DocumentoController::class, 'surtirDocumento'])->name('documentos.surtir');
+Route::post('/documentos/{documento}', [DocumentoController::class, 'surtirDocumento'])->name(name: 'documentos.surtir');
 
 //Traspasos
 Route::get('/traspasos', action: [TraspasoController::class, 'index'])->name('traspasos.index');
 Route::get('/traspasos/create', action: [TraspasoController::class, 'create'])->name('traspasos.create');
 Route::post('/traspasos', action: [TraspasoController::class, 'store'])->name('traspasos.store');
 Route::get('/traspasos/{traspaso}', [TraspasoController::class, 'show'])->name('traspasos.show');
+Route::get('/traspasos/{traspaso}/edit', [TraspasoController::class, 'edit'])->name(name: 'traspasos.edit');
+Route::put('/traspasos/{traspaso}', action: [TraspasoController::class, 'update'])->name('traspasos.update');
+Route::post('/traspasos/{traspaso}', [TraspasoController::class, 'surtirTraspaso'])->name(name: 'traspasos.surtir');
 Route::delete('/traspasos/{traspaso}', action: [TraspasoController::class, 'destroy'])->name('traspasos.destroy');
+Route::post('/traspasos/{traspaso}', [TraspasoController::class, 'pdf'])->name(name: 'traspasos.pdf');
 
 });

@@ -1,14 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <title>
-        {{ match ($documento->documento_modelo_id) {
-            1 => 'Cotización',
-            2 => 'Factura',
-            3 => 'Remisión',
-        } }} {{ $documento->serie }} {{ $documento->folio }}</title>
+       Traspaso {{ $documento->serie }} {{ $documento->folio }}</title>
 
     <style>
         body {

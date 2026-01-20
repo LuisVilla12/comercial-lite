@@ -1,4 +1,4 @@
-@section('title','Traspaso')
+@section('title', 'Traspaso')
 <x-app-layout>
     <x-slot name="header">
         <div class="md:flex justify-between">
@@ -6,8 +6,8 @@
                 Registrar Traspaso
             </h2>
             <div class="md:flex gap-4">
-                <label class="block text-lg font-medium mb-2 dark:text-white">Fecha: {{ now()->format('d/m/Y')
-                    }} </label>
+                <label class="block text-lg font-medium mb-2 dark:text-white">Fecha: {{ now()->format('d/m/Y') }}
+                </label>
             </div>
         </div>
 
@@ -16,38 +16,48 @@
         @csrf
         <div x-data="compraApp()" x-init="init()" class="max-w-7xl mx-auto py-6">
             <div class="mb-6">
-                <div class="grid  grid-cols-2 gap-10">
+                <div class="grid  grid-cols-2 gap-10 ">
                     {{-- ================= Almacen origen ================= --}}
+                    {{-- Almacén salida --}}
                     <div class="mb-4">
-                        <div class="">
-                            <label class="block text-lg font-medium mb-2 dark:text-white">Almacen salida: *</label>
-                            <select name="almacen_origen_id" id="almacen_origen_id"
-                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                <option value="" disabled selected>Seleccione almacen de salida</option>
-                                @foreach ($almacenes as $almacen )
+                        <label class="block text-lg font-medium mb-2 dark:text-white">
+                            Almacén salida: *
+                        </label>
+
+                        <select name="almacen_origen_id" x-model="almacen_origen_id" @change="resetProductos()"
+                            class="p-2 w-full rounded-md border-gray-300">
+                            <option value="" disabled>Seleccione almacén de salida</option>
+                            @foreach ($almacenes as $almacen)
                                 <option value="{{ $almacen->id }}">{{ $almacen->nombre }}</option>
-                                @endforeach
-                            </select>
-                            @error('almacen_origen_id')
+                            @endforeach
+                        </select>
+
+                        @error('almacen_origen_id')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        @enderror
                     </div>
-                    {{-- Almacen destino --}}
+
+                    {{-- Almacén destino --}}
                     <div class="mb-6">
-                        <div class="">
-                            <label class="block text-lg font-medium mb-2 dark:text-white">Almacen entrada: *</label>
-                            <select name="almacen_destino_id" id="almacen_destino_id"
-                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                <option value="" disabled selected>Seleccione almacen de entrada</option>
-                                @foreach ($almacenes as $almacen )
-                                <option value="{{ $almacen->id }}">{{ $almacen->nombre }}</option>
-                                @endforeach
-                            </select>
-                            @error('almacen_destino_id')
+                        <label class="block text-lg font-medium mb-2 dark:text-white">
+                            Almacén entrada: *
+                        </label>
+
+                        <select name="almacen_destino_id" x-model="almacen_destino_id"
+                            class="p-2 w-full rounded-md border-gray-300">
+
+                            <option value="" disabled>Seleccione almacén de entrada</option>
+                            @foreach ($almacenes as $almacen)
+                                <option value="{{ $almacen->id }}"
+                                    :disabled="almacen_origen_id == {{ $almacen->id }}">
+                                    {{ $almacen->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        @error('almacen_destino_id')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -98,9 +108,9 @@
                                 </td>
                                 <td class="p-2">
                                     <div class="flex justify-center">
-                                        <input readonly type="number" step="0.01" :name="`productos[${index}][costo]`"
-                                            x-model.number="item.costo" @input="calcular"
-                                            class="border rounded p-1 w-24 text-center">
+                                        <input readonly type="number" step="0.01"
+                                            :name="`productos[${index}][costo]`" x-model.number="item.costo"
+                                            @input="calcular" class="border rounded p-1 w-24 text-center">
                                     </div>
                                 </td>
                                 {{-- Existencias --}}
@@ -127,7 +137,7 @@
                     </tbody>
                 </table>
                 @error('productos')
-                <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
+                    <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
                 @enderror
                 <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
                     ➕ Agregar producto
@@ -155,7 +165,7 @@
 
 
             <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-                <a href="{{ route('traspasos.index')}}"
+                <a href="{{ route('traspasos.index') }}"
                     class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
                     Cancelar
                 </a>
@@ -169,85 +179,81 @@
     </form>
 
     {{-- ================= ALPINE ================= --}}
-    <script>
-        function compraApp() {
-            return {
-                proveedor: null
-                , proveedorQuery: ''
-                , proveedores: [],
+<script>
+function compraApp() {
+    return {
+        almacen_origen_id: '',
+        almacen_destino_id: '',
 
-                items: []
-                , total: 0,
+        items: [],
+        total: 0,
 
-                init() {
-                    this.items = []
-                    this.agregarFila()
-                },
+        init() {
+            this.agregarFila()
+        },
 
-                agregarFila() {
-                    this.items.push({
-                        producto_id: null
-                        , codigo: ''
-                        , query: ''
-                        , cantidad: 1
-                        , costo: 0
-                        , stock: 0
-                        , resultados: []
-                    })
-                },
+        resetProductos() {
+            // limpia productos cuando cambia el almacén
+            this.items = []
+            this.agregarFila()
+        },
 
-                eliminarFila(index) {
-                    if (this.items.length === 1) return
-                    this.items.splice(index, 1)
-                    this.calcular()
-                },
+        agregarFila() {
+            this.items.push({
+                producto_id: null,
+                codigo: '',
+                query: '',
+                cantidad: 1,
+                costo: 0,
+                stock: 0,
+                resultados: []
+            })
+        },
 
-                async buscarProveedor() {
-                    if (this.proveedorQuery.length < 2) return
-                    const res = await fetch(`/api/clientes/buscar?q=${this.proveedorQuery}`)
-                    this.proveedores = await res.json()
-                },
+        eliminarFila(index) {
+            if (this.items.length === 1) return
+            this.items.splice(index, 1)
+            this.calcular()
+        },
 
-                seleccionarProveedor(p) {
-                    this.proveedor = p
-                    this.proveedorQuery = p.nombre
-                    this.proveedores = []
-                },
+        async buscarProducto(index) {
+            if (!this.almacen_origen_id) return
 
-                async buscarProducto(index) {
-                    const q = this.items[index].query
-                    if (q.length < 2) return
+            const q = this.items[index].query
+            if (q.length < 2) return
 
-                    const res = await fetch(`/api/productos-existencias/buscar?q=${q}`)
-                    this.items[index].resultados = await res.json()
-                },
+            const res = await fetch(
+                `/api/productos-existencias/buscar?q=${q}&almacen=${this.almacen_origen_id}`
+            )
 
-                seleccionarProducto(index, p) {
-                    if (this.items.some(i => i.producto_id === p.id)) return
-                    console.log(p);
-                    const item = this.items[index]
-                    item.producto_id = p.id
-                    item.codigo = p.codigo
-                    item.query = p.nombre
-                    item.costo = parseFloat(p.costo)
-                    item.stock = p.stock
-                    item.resultados = []
+            this.items[index].resultados = await res.json()
+        },
 
-                    this.calcular()
+        seleccionarProducto(index, p) {
+            if (this.items.some(i => i.producto_id === p.id)) return
 
-                    if (index === this.items.length - 1) {
-                        this.agregarFila()
-                    }
-                },
+            const item = this.items[index]
+            item.producto_id = p.id
+            item.codigo = p.codigo
+            item.query = p.nombre
+            item.costo = parseFloat(p.costo)
+            item.stock = p.stock
+            item.resultados = []
 
-                calcular() {
-                    this.total = this.items.reduce(
-                        (t, i) => t + (i.cantidad * i.costo)
-                        , 0
-                    )
-                }
+            this.calcular()
+
+            if (index === this.items.length - 1) {
+                this.agregarFila()
             }
-        }
+        },
 
-    </script>
+        calcular() {
+            this.total = this.items.reduce(
+                (t, i) => t + (i.cantidad * i.costo), 0
+            )
+        }
+    }
+}
+</script>
+
 </x-app-layout>

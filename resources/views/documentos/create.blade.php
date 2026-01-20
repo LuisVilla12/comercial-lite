@@ -188,7 +188,7 @@
                     const q = this.items[index].query
                     if (q.length < 2) return
 
-                    const res = await fetch(`/api/productos-existencias/buscar?q=${q}`)
+                    const res = await fetch(`/api/productos-existencias/buscar?q=${q}&almacen=4}`)
                     this.items[index].resultados = await res.json()
                 },
 

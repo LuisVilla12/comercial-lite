@@ -62,7 +62,10 @@ Route::get('productos/buscar', function () {
 //Busqueda de productos para ventas
 Route::get('productos-existencias/buscar', function () {
     $q = request('q');
-    $almacenId = 1; // o dinámico si luego lo necesitas
+    $almacenId = request('almacen');
+    if (!$almacenId) {
+    return [];
+    }
     return Producto::where('estatus_producto', 1)
         ->where(function ($query) use ($q) {
             $query->where('nombre_producto', 'like', "%{$q}%")

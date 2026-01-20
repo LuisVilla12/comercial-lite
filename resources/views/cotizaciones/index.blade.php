@@ -84,7 +84,7 @@
                             {{ $documento->cliente->nombre }}
                         </td>
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $documento->total }}
+                            {{number_format($documento->total, 2) }}
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
                             <div class="flex flex-wrap items-center gap-4">

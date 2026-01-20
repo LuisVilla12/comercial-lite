@@ -18,36 +18,53 @@
         </p>
     @endif
 
-    <div class="display flex justify-between mt-6">
-        <h1 class="block text-lg font-medium mb-2 dark:text-white">
-            {{ match ($documento->documento_modelo_id) {
-                1 => 'Cotización',
-                2 => 'Factura',
-                3 => 'Remisión'
-            } }}
-            # {{ $documento->id }}
-        </h1>
-        @if ($documento->estatus == 1 and $documento->documento_modelo_id ==1)
-            <form method="POST" action="{{ route('cotizacionToFactura', $documento) }}">
-                @csrf
-                <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                    CONVERTIR FACTURA
-                </button>
-            </form>
-        @elseif($documento->estatus == 1 and $documento->documento_modelo_id ==3)
-            <form method="POST" action="{{ route('documentos.surtir', $documento) }}">
-                @csrf
-                <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                    SURTIR REMISION
-                </button>
-            </form>
-        @endif
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                {{ match ($documento->documento_modelo_id) {
+                    1 => 'Cotización',
+                    2 => 'Factura',
+                    3 => 'Remisión',
+                } }}
+                # {{ $documento->id }} </h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                Fecha: {{ $documento->fecha }}
+            </h2>
+            <div class="flex justify-between gap-3">
+                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
+                    <form method="POST" action="{{ route('cotizacionToFactura', $documento) }}">
+                        @csrf
+                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                            CONVERTIR FACTURA
+                        </button>
+                    </form>
+                @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 1)
+                    <p class="px-6 py-2 bg-indigo-600 text-white rounded"> COTIZACIÓN TRANSFORMADA A FACTURA</p>
+                @endif
 
-    </div>
-
-
+                @if ($documento->estatus == 1 and  $documento->documento_modelo_id < 2)
+                    <form method="POST" action="{{ route('documentos.surtir', $documento) }}">
+                        @csrf
+                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                            CONVERTIR REMISION
+                        </button>
+                    </form>
+                @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 3)
+                    <p class="px-6 py-2 bg-indigo-600 text-white rounded"> REMISIÓN SURTIDA</p>
+                @endif
+                @if ($documento->estatus == 1 and  $documento->documento_modelo_id==3)
+                    <form method="POST" action="{{ route('documentos.surtir', $documento) }}">
+                        @csrf
+                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                            SURTIR REMISION
+                        </button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </x-slot>
     {{-- PROVEEDOR --}}
-    <div class="mb-6">
+    <div class="my-6">
         <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
         <input type="text" value="{{ $documento->cliente->nombre }}" disabled
             class="w-full border rounded p-2 bg-gray-100">
