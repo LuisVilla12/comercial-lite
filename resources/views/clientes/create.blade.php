@@ -57,10 +57,17 @@
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Régimen Fiscal <span class="text-red-500">*</span>
             </label>
-            <input type="text" name="regimen_fiscal"
+            {{-- <input type="text" name="regimen_fiscal"
                    placeholder="Ej. 601, 603, 612"
                    value="{{ old(key: 'regimen_fiscal') }}"
-                   class="p-2 w-full  rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full  rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500"> --}}
+            <select name="tipo" id="tipo"
+                    class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <option value="" disabled selected>Seleccione una opcion</option>
+                <option value="1" disabled @selected($almacen->tipo == 1)>MATRIZ</option>
+                <option value="2" disabled @selected($almacen->tipo == 2)>SUCURSAL</option>
+                <option value="0" disabled @selected($almacen->tipo == 0)>No asignado</option>
+            </select>
              @error('regimen_fiscal')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
