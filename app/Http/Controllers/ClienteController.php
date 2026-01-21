@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Models\Regimen;
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller
@@ -51,7 +52,8 @@ public function indexProveedores(Request $request)
     public function create(string $tipo)
     {
         //
-                return view('clientes.create', compact('tipo'));
+        $regimenes=Regimen::all();
+        return view('clientes.create', data: ['tipo'=>$tipo, 'regimenes'=>$regimenes]);
     }
 
     /**
@@ -101,7 +103,8 @@ public function indexProveedores(Request $request)
     public function edit(Cliente $cliente, string $tipo)
     {
         //
-        return view('clientes.edit', compact('cliente', 'tipo'));
+        $regimenes=Regimen::all();
+        return view('clientes.edit', ['cliente'=>$cliente, 'tipo'=>$tipo,'regimenes'=>$regimenes]);
     }
 
     /**

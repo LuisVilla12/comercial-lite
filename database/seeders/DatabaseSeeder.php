@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\RegimenSeeder as SeedersRegimenSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use RegimenSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +27,7 @@ class DatabaseSeeder extends Seeder
         DocumentosModeloSeeder::class,
         ExistenciasSeeder::class,
         UserSeeder::class,
-    ]);
+        RegimenesSeeder::class,
+        ]);
     }
 }

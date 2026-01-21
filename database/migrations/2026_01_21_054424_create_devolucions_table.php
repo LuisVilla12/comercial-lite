@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('regimenes', function (Blueprint $table) {
+        Schema::create('devolucions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer(column: 'codigo')->unique();
-            $table->string(column: 'nombre');
         });
     }
 
@@ -24,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('regimenes');
+        Schema::dropIfExists('devolucions');
     }
 };

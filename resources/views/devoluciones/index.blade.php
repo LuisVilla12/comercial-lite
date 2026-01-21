@@ -1,48 +1,38 @@
-@section('title', content: 'Remisiones')
+@section('title', content: 'Devoluciones')
 
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Remisiones
+            Catálogo de devoluciones
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
-<form method="GET" action="{{ route('remisiones.index') }}"
-      class="w-full flex flex-col md:flex-row md:items-center gap-3">
+        {{-- Buscador --}}
+        <form method="GET" action="{{ route('compras.index') }}" class="w-full md:w-1/3">
+            <div class="relative">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar compra..."
+                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
-    {{-- Buscador --}}
-    <div class="relative w-full md:w-1/2">
-        <input type="text"
-               name="search"
-               value="{{ request('search') }}"
-               placeholder="Buscar remisión..."
-               class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                    stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+                </svg>
+            </div>
 
-        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
-             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"/>
-        </svg>
-    </div>
-
-    {{-- Filtro por fecha --}}
-    <select name="fecha"
-            onchange="this.form.submit()"
-            class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
-        <option value="">Todas</option>
-        <option value="hoy" {{ request('fecha') === 'hoy' ? 'selected' : '' }}>
-            Hoy
-        </option>
-    </select>
-
-
-</form>
+            @if (request('search'))
+                <a href="{{ route('compras.index') }}"
+                    class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
+                    Limpiar búsqueda
+                </a>
+            @endif
+        </form>
 
         {{-- Botón --}}
-        <a href="{{ route('documentos.create',3) }}"
+        <a href="{{ route('compras.create') }}"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-            Registrar Remisión
+            Registrar Devolucion
         </a>
 
     </div>
@@ -94,39 +84,24 @@
                             {{ $documento->cliente->nombre }}
                         </td>
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{number_format($documento->total, 2) }}
+                            {{ number_format($documento->total,2) }}
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
                             <div class="flex flex-wrap items-center gap-4">
                                 {{-- Ver --}}
-                                 <a href="{{ route('documentos.show', $documento) }}"
+                                <a href="{{ route('documentos.show', $documento) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                     <span class="hidden sm:inline">Ver</span>
                                 </a>
-                                @if($documento->estatus==1)
                                     <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                <a href="{{ route('documentos.edit', $documento) }}"
+                                <a href=""
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>
                                 </a>
-                                <span class="hidden sm:inline text-gray-300">•</span>
 
-                                {{-- Eliminar --}}
-                                <form action="{{ route('documentos.destroy', $documento) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="submit"
-                                        class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
-                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
-                                        <x-heroicon-o-trash class="w-4 h-4" />
-                                        <span class="hidden sm:inline">Eliminar</span>
-                                    </button>
-                                </form>
-                                @endif
                             </div>
                         </td>
 
@@ -134,7 +109,7 @@
                 @empty
                     <tr>
                         <td colspan="6" class="px-6 py-6 text-center text-md text-gray-500">
-                            No hay remisiones registrados
+                            No hay compras registrados
                         </td>
                     </tr>
                 @endforelse
@@ -143,6 +118,7 @@
         </table>
         @if($documentos->count() > 0)
         <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
             <p class="text-sm text-gray-600 ml-6">
                 Mostrando
                 <span class="font-medium">{{ $documentos->firstItem() }}</span>
@@ -152,11 +128,10 @@
                 <span class="font-medium">{{ $documentos->total() }}</span>
                 registros
             </p>
+
             {{ $documentos->links() }}
-        </div>
+            </div>
         @endif
-
-
     </div>
 
 </x-app-layout>

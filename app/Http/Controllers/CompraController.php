@@ -19,13 +19,23 @@ class CompraController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->get('search');
-        $compras = Compra::when($search, function ($query, $search) {
-            $query->where('serie', 'like', "%{$search}%")->orWhere('folio', 'like', "%{$search}%");
-        })
+$compras = Compra::when($request->search, function ($q, $search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('folio', 'like', "%{$search}%")
+                        ->orWhereHas('proveedor', function ($c) use ($search) {
+                            $c->where('nombre', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->when($request->fecha === 'hoy', function ($q) {
+                $q->whereDate('fecha', now()->toDateString());
+            })
+            ->orderBy('fecha', 'desc')
             ->paginate(10)
             ->withQueryString();
-        return view('compras.index', compact('compras'));
+
+        return view('compras.index', compact(var_name: 'compras'));
+
     }
 
     /**

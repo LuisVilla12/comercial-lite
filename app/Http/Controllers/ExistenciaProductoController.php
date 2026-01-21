@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ExistenciaProducto;
 use Illuminate\Http\Request;
+use App\Models\Almacen;
 
 class ExistenciaProductoController extends Controller
 {
@@ -11,22 +12,25 @@ class ExistenciaProductoController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-    $search = $request->get('search');
-$existencias = ExistenciaProducto::with(['producto', 'almacen'])
-    ->when($search, function ($query, $search) {
-        $query->whereHas('producto', function ($q) use ($search) {
-            $q->where('nombre_producto', 'like', "%{$search}%")
-              ->orWhere('codigo_producto', 'like', "%{$search}%");
+{
+    $existencias = ExistenciaProducto::with(['producto', 'almacen'])
+        ->when($request->search, function ($q) use ($request) {
+            $q->whereHas('producto', function ($p) use ($request) {
+                $p->where('nombre_producto', 'like', '%' . $request->search . '%')
+                  ->orWhere('codigo_producto', 'like', '%' . $request->search . '%');
+            });
         })
-        ->orWhereHas('almacen', function ($q) use ($search) {
-            $q->where('nombre', 'like', "%{$search}%");
-        });
-    })
-    ->paginate(10)
-    ->withQueryString();    // dd($existencias);
-    return view('existencias.index', compact('existencias'));
-    }
+        ->when($request->almacen_id, function ($q) use ($request) {
+            $q->where('almacen_id', $request->almacen_id);
+        })
+        ->paginate(10)
+        ->withQueryString(); // mantiene search + almacen
+
+    $almacenes = Almacen::orderBy('nombre')->get();
+
+    return view('existencias.index', compact('existencias', 'almacenes'));
+}
+
 
     /**
      * Show the form for creating a new resource.

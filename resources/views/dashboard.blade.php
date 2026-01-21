@@ -63,6 +63,13 @@
             </x-slot:icon>
         </x-dashboard-card>
 
+        <x-dashboard-card href="{{route('devoluciones.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+            title="Devoluciones" desc="Devoluciónes de productos" iconBg="bg-emerald-500">
+            <x-slot:icon>
+                <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
+
         {{-- ================= VENTAS ================= --}}
         <div class="col-span-full mt-6">
             <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">

@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompraController;
+use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\ExistenciaProductoController;
 use App\Http\Controllers\TraspasoController;
@@ -123,5 +124,10 @@ Route::put('/traspasos/{traspaso}', action: [TraspasoController::class, 'update'
 Route::post('/traspasos/{traspaso}', [TraspasoController::class, 'surtirTraspaso'])->name(name: 'traspasos.surtir');
 Route::delete('/traspasos/{traspaso}', action: [TraspasoController::class, 'destroy'])->name('traspasos.destroy');
 Route::post('/traspasos/{traspaso}', [TraspasoController::class, 'pdf'])->name(name: 'traspasos.pdf');
+
+//Devoluciones
+Route::get('devoluciones', action: [DevolucionController::class, 'index'])->name('devoluciones.index');
+Route::get('devoluciones/{documento}', [DevolucionController::class, 'create'])->name('devoluciones.create');
+Route::post('devoluciones/{documento}', [DevolucionController::class, 'store'])->name('devoluciones.store');
 
 });

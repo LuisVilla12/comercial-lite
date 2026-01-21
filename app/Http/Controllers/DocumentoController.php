@@ -20,44 +20,63 @@ class DocumentoController extends Controller
      */
     public function indexCotizacion(Request $request)
     {
-        $search = $request->get('search');
         $documentos = Documento::where('documento_modelo_id', 1)
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('serie', 'like', "%{$search}%")
-                        ->orWhere('folio', 'like', "%{$search}%");
+            ->when($request->search, function ($q, $search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('folio', 'like', "%{$search}%")
+                        ->orWhereHas('cliente', function ($c) use ($search) {
+                            $c->where('nombre', 'like', "%{$search}%");
+                        });
                 });
             })
+            ->when($request->fecha === 'hoy', function ($q) {
+                $q->whereDate('fecha', now()->toDateString());
+            })
+            ->orderBy('fecha', 'desc')
             ->paginate(10)
             ->withQueryString();
-        return view('cotizaciones.index', compact(var_name: 'documentos'));
+
+        return view('cotizaciones.index', compact('documentos'));
     }
+
     public function indexFacturas(Request $request)
     {
-          $search = $request->get('search');
         $documentos = Documento::where('documento_modelo_id', 2)
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('serie', 'like', "%{$search}%")
-                        ->orWhere('folio', 'like', "%{$search}%");
+            ->when($request->search, function ($q, $search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('folio', 'like', "%{$search}%")
+                        ->orWhereHas('cliente', function ($c) use ($search) {
+                            $c->where('nombre', 'like', "%{$search}%");
+                        });
                 });
             })
+            ->when($request->fecha === 'hoy', function ($q) {
+                $q->whereDate('fecha', now()->toDateString());
+            })
+            ->orderBy('fecha', 'desc')
             ->paginate(10)
             ->withQueryString();
+
         return view('facturas.index', compact('documentos'));
     }
- public function indexRemisiones(Request $request)
+    public function indexRemisiones(Request $request)
     {
-        $search = $request->get('search');
-        $documentos = Documento::where('documento_modelo_id', 3)
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('serie', 'like', "%{$search}%")
-                        ->orWhere('folio', 'like', "%{$search}%");
+         $documentos = Documento::where('documento_modelo_id', 3)
+            ->when($request->search, function ($q, $search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('folio', 'like', "%{$search}%")
+                        ->orWhereHas('cliente', function ($c) use ($search) {
+                            $c->where('nombre', 'like', "%{$search}%");
+                        });
                 });
             })
+            ->when($request->fecha === 'hoy', function ($q) {
+                $q->whereDate('fecha', now()->toDateString());
+            })
+            ->orderBy('fecha', 'desc')
             ->paginate(10)
             ->withQueryString();
+
         return view('remisiones.index', compact(var_name: 'documentos'));
     }
     /**
@@ -72,7 +91,7 @@ class DocumentoController extends Controller
             'proveedores' => $proveedores,
             'productos' => $productos,
             'almacenes' => $almacenes,
-            'tipo'=>$tipo
+            'tipo' => $tipo
         ]);
     }
 
@@ -96,18 +115,17 @@ class DocumentoController extends Controller
             'impuestos' => 'required|numeric',
             'total' => 'required|numeric',
             'productos' => 'required|array|min:1',
-            'tipo'=>'required'
+            'tipo' => 'required'
         ]);
         DB::beginTransaction();
 
         try {
-            if($request->tipo==1){
-            $serie = 'CT';
-            }elseif($request->tipo==2){
-            $serie = 'FT';
-            }
-            else{
-            $serie = 'RT';
+            if ($request->tipo == 1) {
+                $serie = 'CT';
+            } elseif ($request->tipo == 2) {
+                $serie = 'FT';
+            } else {
+                $serie = 'RT';
             }
             $ultimoFolio = Documento::where('serie', $serie)
                 ->lockForUpdate()
@@ -208,7 +226,7 @@ class DocumentoController extends Controller
         ]);
         // Validar detalles de la compra
         $request->validate([
-            'tipo'=>'required',
+            'tipo' => 'required',
             'proveedor_id' => 'required|exists:clientes,id',
             'almacen_id' => 'required|exists:clientes,id',
             'user_id' => 'required|exists:users,id',
@@ -265,8 +283,16 @@ class DocumentoController extends Controller
             throw $e;
         }
         return redirect()
-            ->route(route: match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'})
-            ->with('success', match ($documento->documento_modelo_id) {1 => 'Cotización',2 => 'Factura',3 => 'Remisión'} . " a sido actualizada");
+            ->route(route: match ($documento->documento_modelo_id) {
+                1 => 'cotizaciones.index',
+                2 => 'facturas.index',
+                3 => 'remisiones.index'
+            })
+            ->with('success', match ($documento->documento_modelo_id) {
+                1 => 'Cotización',
+                2 => 'Factura',
+                3 => 'Remisión'
+            } . " a sido actualizada");
     }
     public function pdf(Documento $documento)
     {
@@ -349,29 +375,29 @@ class DocumentoController extends Controller
     }
 
     public function surtirDocumento(Documento $documento)
-{
-    if ($documento->estatus != 1) {
-        return back()->with('error', 'La remisión ya fue surtida');
+    {
+        if ($documento->estatus != 1) {
+            return back()->with('error', 'La remisión ya fue surtida');
+        }
+
+        try {
+            DB::transaction(function () use ($documento) {
+                foreach ($documento->detalles as $detalle) {
+                    InventarioService::restar(
+                        $detalle->producto_id,
+                        $documento->almacen_id,
+                        $detalle->cantidad
+                    );
+                }
+
+                $documento->update(['estatus' => 2]);
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return redirect()
+            ->route('documentos.show', $documento)
+            ->with('success', 'Remisión surtida correctamente');
     }
-
-    try {
-        DB::transaction(function () use ($documento) {
-            foreach ($documento->detalles as $detalle) {
-                InventarioService::restar(
-                    $detalle->producto_id,
-                    $documento->almacen_id,
-                    $detalle->cantidad
-                );
-            }
-
-            $documento->update(['estatus' => 2]);
-        });
-    } catch (\Exception $e) {
-        return back()->with('error', $e->getMessage());
-    }
-
-    return redirect()
-        ->route('documentos.show', $documento)
-        ->with('success', 'Remisión surtida correctamente');
-}
 }

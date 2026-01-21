@@ -7,27 +7,37 @@
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
+<form method="GET" action="{{ route('cotizaciones.index') }}"
+      class="w-full flex flex-col md:flex-row md:items-center gap-3">
 
-        {{-- Buscador --}}
-        <form method="GET" action="{{ route('cotizaciones.index') }}" class="w-full md:w-1/3">
-            <div class="relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar cotización..."
-                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+    {{-- Buscador --}}
+    <div class="relative w-full md:w-1/2">
+        <input type="text"
+               name="search"
+               value="{{ request('search') }}"
+               placeholder="Buscar cotización..."
+               class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
-                <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                    stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
-                </svg>
-            </div>
+        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
+             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"/>
+        </svg>
+    </div>
 
-            @if (request('search'))
-                <a href="{{ route('cotizaciones.index') }}"
-                    class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
-                    Limpiar búsqueda
-                </a>
-            @endif
-        </form>
+    {{-- Filtro por fecha --}}
+    <select name="fecha"
+            onchange="this.form.submit()"
+            class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
+        <option value="">Todas</option>
+        <option value="hoy" {{ request('fecha') === 'hoy' ? 'selected' : '' }}>
+            Hoy
+        </option>
+    </select>
+
+
+</form>
+
 
         {{-- Botón --}}
         <a href="{{ route('documentos.create', 1) }}"

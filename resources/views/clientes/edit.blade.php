@@ -59,9 +59,18 @@
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Régimen Fiscal <span class="text-red-500">*</span>
             </label>
-            <input type="text" name="regimen_fiscal"
-                   value="{{ $cliente->regimen_fiscal }}"
-                   class="p-2 w-full  rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+            <select name="regimen_fiscal" id="regimen_fiscal"
+    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+
+    <option value="" disabled>Seleccione una opción</option>
+
+    @foreach ($regimenes as $regimen)
+        <option value="{{ $regimen->codigo }}"
+            {{ old('regimen_fiscal', $cliente->regimen_fiscal) == $regimen->codigo ? 'selected' : '' }}>
+            {{ $regimen->codigo }} {{ $regimen->nombre }}
+        </option>
+    @endforeach
+</select>
             @error('regimen_fiscal')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
