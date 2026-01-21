@@ -78,7 +78,7 @@
                                 {{-- Existencias --}}
                                 <td class="p-2">
                                     <div class="flex justify-center">
-                                        <input type="number" disabled step="1" x-model.number="item.stock" class="border rounded p-1 w-24 text-center bg-gray-100 text-gray-700">
+                                        <input type="number" disabled step="1" x-model.number="item.stock" class="border rounded p-1 w-24 text-center bg-gray-100 text-gray-700 cursor-not-allowed" >
                                     </div>
                                 </td>
                                 <td class="p-2">

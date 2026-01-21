@@ -29,5 +29,8 @@ class Documento extends Model
     public function cliente() {
         return $this->belongsTo(Cliente::class, 'cliente_id');
     }
+    public function usuario() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
     }
 

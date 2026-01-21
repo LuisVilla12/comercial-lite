@@ -13,6 +13,7 @@ use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\ExistenciaProductoController;
+use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\TraspasoController;
 use App\Models\Cliente;
 use App\Models\ExistenciaProducto;
@@ -130,4 +131,7 @@ Route::get('devoluciones', action: [DevolucionController::class, 'index'])->name
 Route::get('devoluciones/{documento}', [DevolucionController::class, 'create'])->name('devoluciones.create');
 Route::post('devoluciones/{documento}', [DevolucionController::class, 'store'])->name('devoluciones.store');
 
+//Reportes
+Route::get('/reportes', [ReportesController::class,'index'])->name('reportes.index');
+Route::get('reportes/export', [ReportesController::class, 'export'])->name('reportes.export');
 });

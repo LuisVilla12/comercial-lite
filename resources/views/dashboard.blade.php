@@ -97,7 +97,7 @@
                 <x-heroicon-o-document-text class="w-6 h-6" />
             </x-slot:icon>
         </x-dashboard-card>
-        <x-dashboard-card href="" bg="bg-teal-50 dark:bg-teal-900/20" title="Reportes" desc="Generar reportes"
+        <x-dashboard-card href="{{route('reportes.index')  }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Reportes" desc="Generar reportes"
             iconBg="bg-teal-500">
             <x-slot:icon>
                 <x-heroicon-o-chart-bar class="w-6 h-6" />
