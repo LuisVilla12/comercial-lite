@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Almacen;
 use App\Models\Cliente;
+use App\Models\UsoCfdi;
 use App\Models\DocumentosDetalle;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -87,11 +88,13 @@ class DocumentoController extends Controller
         $proveedores = Cliente::all();
         $productos = Producto::all();
         $almacenes = Almacen::all();
+        $usos_cfdi=UsoCfdi::all();
         return view('documentos.create', [
             'proveedores' => $proveedores,
             'productos' => $productos,
             'almacenes' => $almacenes,
-            'tipo' => $tipo
+            'tipo' => $tipo,
+            'usos'=> $usos_cfdi
         ]);
     }
 
@@ -104,9 +107,9 @@ class DocumentoController extends Controller
         $request->merge([
             'productos' => $productos
         ]);
-        // Validar detalles de la compra
+        // dd($request);
+        // Validar detalles del documento
         $request->validate([
-            // Compra
             'proveedor_id' => 'required|exists:clientes,id',
             'almacen_id' => 'required|exists:clientes,id',
             'user_id' => 'required|exists:users,id',
@@ -115,7 +118,11 @@ class DocumentoController extends Controller
             'impuestos' => 'required|numeric',
             'total' => 'required|numeric',
             'productos' => 'required|array|min:1',
-            'tipo' => 'required'
+            'tipo' => 'required',
+            // DATOS DE PAGO
+            'metodo_pago' => 'required',
+            'forma_pago' => 'required',
+            'uso_cfdi' => 'required|exists:uso_cfdis,clave',
         ]);
         DB::beginTransaction();
 
@@ -144,6 +151,9 @@ class DocumentoController extends Controller
                 'impuestos' => $request->impuestos,
                 'total' => $request->total,
                 'estatus' => 1,
+                'metodo_pago' => $request->metodo_pago,
+                'forma_pago' => $request->forma_pago,
+                'uso_cfdi' => $request->uso_cfdi
             ]);
 
             DB::commit();

@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         ExistenciasSeeder::class,
         UserSeeder::class,
         RegimenesSeeder::class,
+        UsoCfdiSeeder::class,
         ]);
     }
 }

@@ -24,7 +24,9 @@ return new class extends Migration
             $table->decimal('subtotal', 15, 4)->nullable();
             $table->decimal('impuestos', 15, 4)->nullable();
             $table->decimal('total', 15, 4)->nullable();
+            $table->string('forma_pago')->nullable();
             $table->string('metodo_pago')->nullable();
+            $table->string('uso_cfdi')->nullable();
             $table->text('observaciones')->nullable();
             $table->integer(column: 'estatus')->default(1); //1 pendiente, 2 recibida, 3 cancelada
         });

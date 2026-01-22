@@ -34,7 +34,7 @@ return Cliente::where('tipo', 1) // proveedor
         $query->where('nombre', 'like', "%{$q}%")
     ->orWhere('codigo', 'like', "%{$q}%");
     })
-    ->select('id', 'nombre', 'codigo')
+    ->select('id', 'nombre', 'rfc', 'codigo')
     ->limit(10)
     ->get();
 });

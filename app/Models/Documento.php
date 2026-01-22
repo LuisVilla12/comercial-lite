@@ -19,6 +19,8 @@ class Documento extends Model
         'impuestos',
         'total',
         'metodo_pago',
+        'forma_pago',
+        'uso_cfdi',
         'observaciones',
         'estatus',
     ];
