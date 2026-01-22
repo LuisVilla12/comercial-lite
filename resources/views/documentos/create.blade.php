@@ -35,7 +35,7 @@
                 </div>
                 {{-- cliente, productos, totales --}}
                 <div x-show="tab === 'detalle'">
-                    <div  class="max-w-7xl mx-auto py-6">
+                    <div  class=" mx-auto py-6">
                         <div class="mb-6">
                             <div class="md:flex justify-between">
                                 <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
