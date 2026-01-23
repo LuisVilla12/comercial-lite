@@ -114,6 +114,8 @@ Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'd
 Route::post('/documentos/{documento}/convertir/Factura', action: [DocumentoController::class, 'convertirFactura'])->name('cotizacionToFactura');
 Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
 Route::post('/documentos/{documento}', [DocumentoController::class, 'surtirDocumento'])->name(name: 'documentos.surtir');
+Route::get('/devolucion/{documento}', [DocumentoController::class, 'devolucionEdit'])->name(name: 'devolucion.edit');
+Route::put('/devolucion/{documento}', action: [DocumentoController::class, 'devolucionUpdate'])->name('devolucion.update');
 
 //Traspasos
 Route::get('/traspasos', action: [TraspasoController::class, 'index'])->name('traspasos.index');
@@ -127,6 +129,8 @@ Route::delete('/traspasos/{traspaso}', action: [TraspasoController::class, 'dest
 Route::post('/traspasos/{traspaso}', [TraspasoController::class, 'pdf'])->name(name: 'traspasos.pdf');
 
 //Devoluciones
+
+
 Route::get('devoluciones', action: [DevolucionController::class, 'index'])->name('devoluciones.index');
 Route::get('devoluciones/{documento}', [DevolucionController::class, 'create'])->name('devoluciones.create');
 Route::post('devoluciones/{documento}', [DevolucionController::class, 'store'])->name('devoluciones.store');

@@ -365,7 +365,7 @@
                     },
 
                     seleccionarProveedor(p) {
-                        console.log(p)
+                        // console.log(p)
                         this.proveedor = p
                         this.proveedorQuery = p.nombre
                         this.proveedorRfc = p.rfc

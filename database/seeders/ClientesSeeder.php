@@ -37,6 +37,7 @@ class ClientesSeeder extends Seeder
                 'regimen_fiscal' => trim($row[7])?: null,
                 'telefono' => trim($row[8]) ?: null,
                 'whatsapp' => trim($row[8]) ?: null,
+                'saldo' => 0,
             ];
 
             if (count($batch) === 500) {

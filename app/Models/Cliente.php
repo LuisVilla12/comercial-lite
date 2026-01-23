@@ -18,7 +18,8 @@ class Cliente extends Model
         'whatsapp',
         'telefono',
         'regimen_fiscal',
-        'activo'
+        'activo',
+        'saldo'
     ];
 
     public function domicilios()

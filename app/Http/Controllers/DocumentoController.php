@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Almacen;
 use App\Models\Cliente;
+use App\Models\Devolucion;
 use App\Models\UsoCfdi;
 use App\Models\DocumentosDetalle;
 use Illuminate\Support\Facades\DB;
@@ -200,6 +201,8 @@ class DocumentoController extends Controller
      */
     public function edit(Documento $documento)
     {
+        // dd($documento);
+    $usos_cfdi=UsoCfdi::all();
         if ($documento->estatus != 1) {
             return redirect()
                 ->route('documentos.show', $documento)
@@ -208,7 +211,7 @@ class DocumentoController extends Controller
 
         // ✅ CARGAR RELACIONES PRIMERO
         $documento->load([
-            'cliente',
+            'cliente.domicilios',
             'detalles.producto',
         ]);
 
@@ -220,7 +223,7 @@ class DocumentoController extends Controller
                 ->value('cantidad') ?? 0;
         });
 
-        return view('documentos.edit', compact('documento'));
+        return view('documentos.edit', ['documento'=>$documento, 'usos'=>$usos_cfdi]);
     }
     /**
      * Update the specified resource in storage.
@@ -244,7 +247,10 @@ class DocumentoController extends Controller
             'subtotal' => 'required|numeric',
             'impuestos' => 'required|numeric',
             'total' => 'required|numeric',
-            'productos' => 'required|array|min:1'
+            'productos' => 'required|array|min:1',
+            'metodo_pago' => 'required',
+            'forma_pago' => 'required',
+            'uso_cfdi' => 'required',
         ]);
         try {
             DB::transaction(function () use ($request, $documento) {
@@ -255,6 +261,10 @@ class DocumentoController extends Controller
                     'subtotal' => $request->subtotal,
                     'impuestos' => $request->impuestos,
                     'total' => $request->total,
+                    'metodo_pago' => $request->metodo_pago,
+                    'forma_pago' => $request->forma_pago,
+                    'uso_cfdi' => $request->uso_cfdi,
+                    'observaciones' => $request->observaciones
                 ]);
 
                 /* ================= DETALLES ================= */
@@ -410,4 +420,114 @@ class DocumentoController extends Controller
             ->route('documentos.show', $documento)
             ->with('success', 'Remisión surtida correctamente');
     }
+     public function devolucionEdit(Documento $documento)
+    {
+        $usos_cfdi=UsoCfdi::all();
+        // ✅ CARGAR RELACIONES PRIMERO
+        $documento->load([
+            'cliente.domicilios',
+            'detalles.producto',
+        ]);
+
+        // Calcula el stock
+        $documento->detalles->each(function ($d) use ($documento) {
+            $d->stock = $d->producto
+                ->existencias()
+                ->where('almacen_id', $documento->almacen_id)
+                ->value('cantidad') ?? 0;
+        });
+
+        return view('documentos.devolucion', ['documento'=>$documento, 'usos'=>$usos_cfdi]);
+    }
+    public function devolucionUpdate(Request $request, Documento $documento)
+    {
+        $productos = collect($request->productos)
+            ->filter(fn($p) => !empty($p['producto_id']))
+            ->values()
+            ->toArray();
+        $request->merge([
+            'productos' => $productos
+        ]);
+        // Validar detalles de la compra
+        $request->validate([
+            'tipo' => 'required',
+            'almacen_id' => 'required|exists:clientes,id',
+            'user_id' => 'required|exists:users,id',
+            'fecha' => 'required|date',
+            'subtotal' => 'required|numeric',
+            'impuestos' => 'required|numeric',
+            'total' => 'required|numeric',
+            'productos' => 'required|array|min:1',
+        ]);
+        try {
+            DB::transaction(function () use ($request, $documento) {
+                /* ================= ACTUALIZAR COMPRA ================= */
+                // $documento->update([
+                //     'subtotal' => $request->subtotal,
+                //     'impuestos' => $request->impuestos,
+                //     'total' => $request->total,
+                //     'observaciones' => $request->observaciones
+                // ]);
+                $serie='DV';
+                $ultimoFolio = Documento::where('serie', $serie)
+                ->lockForUpdate()
+                ->max('folio');
+                $siguienteFolio = $ultimoFolio ? $ultimoFolio + 1 : 1;
+
+                $devolucion = Devolucion::create([
+                'serie' => $serie,
+                'folio' => $siguienteFolio,
+                'fecha' => $request->fecha,
+                'subtotal' => $request->subtotal,
+                'impuestos' => $request->impuestos,
+                'total' => $request->total,
+                'estatus' => 1,
+                'observaciones' => $request->observaciones
+            ]);
+                /* ================= DETALLES ================= */
+                $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
+                $detallesEnFormulario = [];
+                foreach ($request->productos as $producto) {
+                    $detalle = $documento->detalles()->updateOrCreate(
+                        [
+                            'id' => $producto['detalle_id'] ?? null
+                        ],
+                        [
+                            'producto_id' => $producto['producto_id'],
+                            'cantidad' => $producto['cantidad'],
+                            'costo_unitario' => $producto['costo'],
+                            'importe' => $producto['cantidad'] * $producto['costo'],
+                        ]
+                    );
+
+                    $detallesEnFormulario[] = $detalle->id;
+                }
+
+                /* ================= ELIMINAR DETALLES BORRADOS ================= */
+                $detallesParaEliminar = array_diff(
+                    $detallesExistentes,
+                    $detallesEnFormulario
+                );
+
+                if (!empty($detallesParaEliminar)) {
+                    $documento->detalles()->whereIn('id', $detallesParaEliminar)->delete();
+                }
+            });
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return redirect()
+            ->route(route: match ($documento->documento_modelo_id) {
+                1 => 'cotizaciones.index',
+                2 => 'facturas.index',
+                3 => 'remisiones.index'
+            })
+            ->with('success', match ($documento->documento_modelo_id) {
+                1 => 'Cotización',
+                2 => 'Factura',
+                3 => 'Remisión'
+            } . " a sido actualizada");
+    }
+
 }

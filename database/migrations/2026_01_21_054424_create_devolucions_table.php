@@ -14,6 +14,12 @@ return new class extends Migration
         Schema::create('devolucions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId(column: 'documento_id')->constrained('documentos')->onDelete('cascade');
+            $table->string(column: 'serie')->nullable();
+            $table->integer('folio')->nullable();
+            $table->date(column: 'fecha')->nullable();
+            $table->decimal('total', 15, 4)->nullable();
+            $table->text('observaciones')->nullable();
         });
     }
 

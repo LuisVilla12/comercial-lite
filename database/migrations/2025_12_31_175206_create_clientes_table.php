@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('telefono')->nullable();
             $table->string('whatsapp')->nullable();
             $table->boolean('activo')->default(true);
+            $table->integer('saldo')->nullable()->default(0);
 
         });
 

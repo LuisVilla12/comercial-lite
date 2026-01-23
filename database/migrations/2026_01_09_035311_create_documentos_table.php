@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId(column: 'documento_modelo_id')->constrained('documento_modelos')->onDelete('cascade');
-            $table->string('serie')->nullable();
+            $table->string(column: 'serie')->nullable();
             $table->integer('folio')->nullable();
             $table->date(column: 'fecha')->nullable();
             $table->foreignId(column: 'cliente_id')->constrained('clientes')->onDelete('cascade');

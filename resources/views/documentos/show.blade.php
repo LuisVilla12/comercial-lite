@@ -50,7 +50,8 @@
                         </button>
                     </form>
                 @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 3)
-                    <p class="px-6 py-2 bg-indigo-600 text-white rounded"> REMISIÓN SURTIDA</p>
+                    <p class="px-6 py-2 bg-green-600 text-white rounded"> REMISIÓN SURTIDA</p>
+                    <a href="{{ route('devolucion.edit',$documento) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded">DEVOLUCIÓN</a>
                 @endif
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
                     <form method="POST" action="{{ route('documentos.surtir', $documento) }}">

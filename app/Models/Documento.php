@@ -24,7 +24,7 @@ class Documento extends Model
         'observaciones',
         'estatus',
     ];
- public function detalles() {
+    public function detalles() {
         return $this->hasMany(DocumentosDetalle::class);
     }
 

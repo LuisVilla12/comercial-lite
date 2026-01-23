@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="md:flex md:justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-                Modificar
+                Devolución
                 {{ match ($documento->documento_modelo_id) {1 => 'Cotización',2 => 'Factura',3 => 'Remisión'} }} #
                 {{ $documento->folio }}
             </h2>
@@ -10,7 +10,7 @@
         </div>
     </x-slot>
 
-    <form method="POST" action="{{ route('documentos.update', $documento) }}" x-data="documentoEdit(@js($documento->toArray()))"
+    <form method="POST" action="{{ route('devolucion.update', $documento) }}" x-data="documentoEdit(@js($documento->toArray()))"
         x-init="init()">
         @csrf
         @method('PUT')
@@ -39,20 +39,12 @@
                         </div>
                     </div>
 
-                    <input type="text" x-model="proveedorQuery" @input.debounce.300ms="buscarProveedor"
-                        class="w-full border rounded p-2" placeholder="Buscar cliente">
+                    <input type="text" x-model="proveedorQuery" readonly
+                        class="w-full border rounded p-2 cursor-not-allowed" placeholder="Buscar cliente">
                     @error('proveedor_id')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
 
-                    <ul x-show="proveedores.length"
-                        class="border bg-white rounded shadow mt-1 max-h-48 overflow-y-auto">
-                        <template x-for="p in proveedores" :key="p.id">
-                            <li @click="seleccionarProveedor(p)" class="p-2 hover:bg-gray-100 cursor-pointer"
-                                x-text="p.nombre">
-                            </li>
-                        </template>
-                    </ul>
                 </div>
                 {{-- ================= PRODUCTOS ================= --}}
                 <div class="">
@@ -133,9 +125,9 @@
                     @error('productos')
                         <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
                     @enderror
-                    <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+                    {{-- <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
                         ➕ Agregar producto
-                    </button>
+                    </button> --}}
                 </div>
 
                 {{-- ================= TOTAL ================= --}}
@@ -171,8 +163,8 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             RFC: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="rfc" placeholder="RFC" x-model="proveedorRfc"
-                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <input type="text" name="rfc" placeholder="RFC" x-model="proveedorRfc" readonly
+                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
                         @error('rfc')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -182,8 +174,8 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Codigo postal: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP"
-                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP" readonly
+                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
                         @error('codigo_postal')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -192,8 +184,8 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Ciudad: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="ciudad" placeholder="Ciudad" x-model="proveedorCiudad"
-                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <input type="text" name="ciudad" placeholder="Ciudad" x-model="proveedorCiudad" readonly
+                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
                         @error('ciudad')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -203,8 +195,8 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Calle: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="calle" placeholder="calle" x-model="proveedorCalle"
-                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <input type="text" name="calle" placeholder="calle" x-model="proveedorCalle" readonly
+                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
                         @error('calle')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -213,9 +205,9 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Número interior: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="numero_interior" placeholder="Número interior"
+                        <input type="text" name="numero_interior" placeholder="Número interior" readonly
                             x-model="proveedorNumeroInterior"
-                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
                         @error('numero_interior')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -224,8 +216,8 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Colonia: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
-                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia" readonly
+                            class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
                         @error('colonia')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -240,7 +232,7 @@
                         <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
                             Metodo de pago: <span class="text-red-500">*</span>
                         </label>
-                        <select name="metodo_pago"
+                        <select name="metodo_pago" disabled
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             <option value="PUE" @selected(old('metodo_pago', $documento->metodo_pago) === 'PUE')>PUE Pago en una sola exhibición
                             </option>
@@ -256,7 +248,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                             Forma de pago:<span class="text-red-500">*</span>
                         </label>
-                        <select name="forma_pago"
+                        <select name="forma_pago" disabled
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             <option value="01" @selected(old('forma_pago', $documento->forma_pago) === '01')>01 Efectivo</option>
                             <option value="03" @selected(old('forma_pago', $documento->forma_pago) === '03')>03 Transferencia</option>
@@ -274,7 +266,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                             Uso de CFDI <span class="text-red-500">*</span>
                         </label>
-                        <select name="uso_cfdi" id="uso_cfdi"
+                        <select name="uso_cfdi" id="uso_cfdi" disabled
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @foreach ($usos as $uso)
                                 <option value="{{ $uso->clave }}" @selected(old('uso_cfdi', $documento->uso_cfdi) === $uso->clave)>
