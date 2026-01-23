@@ -75,7 +75,7 @@ class DocumentoController extends Controller
             ->when($request->fecha === 'hoy', function ($q) {
                 $q->whereDate('fecha', now()->toDateString());
             })
-            ->orderBy('fecha', 'desc')
+            ->orderBy('folio', 'desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -441,6 +441,8 @@ class DocumentoController extends Controller
     }
     public function devolucionUpdate(Request $request, Documento $documento)
     {
+
+
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -450,24 +452,16 @@ class DocumentoController extends Controller
         ]);
         // Validar detalles de la compra
         $request->validate([
-            'tipo' => 'required',
-            'almacen_id' => 'required|exists:clientes,id',
+            'proveedor_id' => 'required|exists:clientes,id',
             'user_id' => 'required|exists:users,id',
-            'fecha' => 'required|date',
-            'subtotal' => 'required|numeric',
-            'impuestos' => 'required|numeric',
+            'devoluciones' => 'required|json',
             'total' => 'required|numeric',
-            'productos' => 'required|array|min:1',
         ]);
+        // Productos que se devolvieron
+        $devoluciones = json_decode($request->devoluciones, true);
+        dd($devoluciones);
         try {
             DB::transaction(function () use ($request, $documento) {
-                /* ================= ACTUALIZAR COMPRA ================= */
-                // $documento->update([
-                //     'subtotal' => $request->subtotal,
-                //     'impuestos' => $request->impuestos,
-                //     'total' => $request->total,
-                //     'observaciones' => $request->observaciones
-                // ]);
                 $serie='DV';
                 $ultimoFolio = Documento::where('serie', $serie)
                 ->lockForUpdate()
@@ -475,43 +469,44 @@ class DocumentoController extends Controller
                 $siguienteFolio = $ultimoFolio ? $ultimoFolio + 1 : 1;
 
                 $devolucion = Devolucion::create([
+                'documento_id' => $documento->id,
+                'cliente_id' =>  $request->proveedor_id,
+                'user_id'=>$request->user_id,
                 'serie' => $serie,
                 'folio' => $siguienteFolio,
-                'fecha' => $request->fecha,
-                'subtotal' => $request->subtotal,
-                'impuestos' => $request->impuestos,
+                'fecha' => now()->format('Y-m-d'),
                 'total' => $request->total,
                 'estatus' => 1,
                 'observaciones' => $request->observaciones
             ]);
                 /* ================= DETALLES ================= */
-                $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
-                $detallesEnFormulario = [];
-                foreach ($request->productos as $producto) {
-                    $detalle = $documento->detalles()->updateOrCreate(
-                        [
-                            'id' => $producto['detalle_id'] ?? null
-                        ],
-                        [
-                            'producto_id' => $producto['producto_id'],
-                            'cantidad' => $producto['cantidad'],
-                            'costo_unitario' => $producto['costo'],
-                            'importe' => $producto['cantidad'] * $producto['costo'],
-                        ]
-                    );
+                // $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
+                // $detallesEnFormulario = [];
+                // foreach ($request->productos as $producto) {
+                //     $detalle = $documento->detalles()->updateOrCreate(
+                //         [
+                //             'id' => $producto['detalle_id'] ?? null
+                //         ],
+                //         [
+                //             'producto_id' => $producto['producto_id'],
+                //             'cantidad' => $producto['cantidad'],
+                //             'costo_unitario' => $producto['costo'],
+                //             'importe' => $producto['cantidad'] * $producto['costo'],
+                //         ]
+                //     );
 
-                    $detallesEnFormulario[] = $detalle->id;
-                }
+                //     $detallesEnFormulario[] = $detalle->id;
+                // }
 
-                /* ================= ELIMINAR DETALLES BORRADOS ================= */
-                $detallesParaEliminar = array_diff(
-                    $detallesExistentes,
-                    $detallesEnFormulario
-                );
+                // /* ================= ELIMINAR DETALLES BORRADOS ================= */
+                // $detallesParaEliminar = array_diff(
+                //     $detallesExistentes,
+                //     $detallesEnFormulario
+                // );
 
-                if (!empty($detallesParaEliminar)) {
-                    $documento->detalles()->whereIn('id', $detallesParaEliminar)->delete();
-                }
+                // if (!empty($detallesParaEliminar)) {
+                //     $documento->detalles()->whereIn('id', $detallesParaEliminar)->delete();
+                // }
             });
         } catch (\Throwable $e) {
             DB::rollBack();

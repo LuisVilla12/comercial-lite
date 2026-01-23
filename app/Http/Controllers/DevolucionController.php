@@ -14,8 +14,7 @@ class DevolucionController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-        $documentos = Documento::where('documento_modelo_id', 3)->where('estatus',2)
-            ->when($search, function ($query, $search) {
+        $devoluciones = Devolucion::when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('serie', 'like', "%{$search}%")
                         ->orWhere('folio', 'like', "%{$search}%");
@@ -23,7 +22,7 @@ class DevolucionController extends Controller
             })
             ->paginate(10)
             ->withQueryString();
-        return view('devoluciones.index', compact(var_name: 'documentos'));
+        return view('devoluciones.index', compact(var_name: 'devoluciones'));
     }
 
     /**

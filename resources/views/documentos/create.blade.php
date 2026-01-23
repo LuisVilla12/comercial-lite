@@ -216,7 +216,8 @@
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="">
+                    <div>
+                    {{-- <div class="">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                                 Número interior: <span class="text-red-500">*</span>
                             </label>
@@ -227,6 +228,19 @@
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div> --}}
+                    <div class="">
+                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
+                                Número exterior: <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="numero_exterior" placeholder="Número exterior"
+                                x-model="proveedorNumeroExterior"
+                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            @error('numero_exterior')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                         <div class="">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                                 Colonia: <span class="text-red-500">*</span>
@@ -328,6 +342,7 @@
                     proveedorCP: '',
                     proveedorCalle: '',
                     proveedorNumeroInterior: '',
+                    proveedorNumeroExterior: '',
                     proveedorCiudad: '',
                     proveedorColonia: '',
                     proveedores: [],
@@ -372,6 +387,7 @@
                         this.proveedorCalle = p.domicilios[0].calle ?? ''
                         this.proveedorCP = p.domicilios[0].cp ?? ''
                         this.proveedorNumeroInterior = p.domicilios[0].numero_interior ?? ''
+                        this.proveedorNumeroExterior = p.domicilios[0].numero_exterior ?? ''
                         this.proveedorCiudad = p.domicilios[0].ciudad ?? ''
                         this.proveedorColonia = p.domicilios[0].colonia ?? ''
                         this.proveedores = []

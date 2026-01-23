@@ -34,7 +34,7 @@ Route::get('clientes/buscar', function (Request $r) {
             $query->where('nombre', 'like', "%{$q}%")
                 ->orWhere('codigo', 'like', "%{$q}%");
         })
-        ->with('domicilios:id,cliente_id,calle,numero_interior,cp,ciudad,colonia')
+        ->with('domicilios:id,cliente_id,calle,numero_interior,numero_exterior,cp,ciudad,colonia')
         ->select('id', 'nombre', 'rfc', 'codigo')
         ->limit(10)
         ->get();

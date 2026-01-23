@@ -10,8 +10,9 @@
         </div>
     </x-slot>
 
-    <form method="POST" action="{{ route('devolucion.update', $documento) }}" x-data="documentoEdit(@js($documento->toArray()))"
-        x-init="init()">
+
+    <form method="POST" @submit.prevent="prepararEnvio" action="{{ route('devolucion.update', $documento) }}"
+        x-data="documentoEdit(@js($documento->toArray()))" x-init="init()">
         @csrf
         @method('PUT')
         <div x-data="{ tab: 'detalle' }">
@@ -174,7 +175,8 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Codigo postal: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP" readonly
+                        <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP"
+                            readonly
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
                         @error('codigo_postal')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -216,7 +218,8 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Colonia: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia" readonly
+                        <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
+                            readonly
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
                         @error('colonia')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -282,7 +285,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                             Observaciones <span class="text-red-500">*</span>
                         </label>
-                        <textarea class="w-full" name="observaciones">{{  $documento->observaciones}}</textarea>
+                        <textarea class="w-full" name="observaciones">{{ $documento->observaciones }}</textarea>
                         @error('observaciones')
                             <p class="text-red-600 text-xs mt-1"></p>
                         @enderror
@@ -291,7 +294,7 @@
             </div>
         </div>
 
-
+        <input type="hidden" name="devoluciones" x-ref="devoluciones">
         <div class="md:col-span-2 flex justify-between gap-3 mt-4">
             <a href="{{ route(match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'}) }}"
                 class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
@@ -312,8 +315,10 @@
     {{-- ================= ALPINE ================= --}}
     <script>
         function documentoEdit(documento) {
-            // console.log(documento)
             return {
+                // ======================
+                // PROVEEDOR
+                // ======================
                 proveedor: documento.cliente,
                 proveedorQuery: documento.cliente.nombre,
                 proveedorRfc: documento.cliente.rfc,
@@ -322,10 +327,20 @@
                 proveedorNumeroInterior: documento.cliente.domicilios?.[0]?.numero_interior ?? '',
                 proveedorCiudad: documento.cliente.domicilios?.[0]?.ciudad ?? '',
                 proveedorColonia: documento.cliente.domicilios?.[0]?.colonia ?? '',
+
                 proveedores: [],
+
+                // ======================
+                // PRODUCTOS
+                // ======================
                 items: [],
+                itemsOriginales: [],
+
                 total: 0,
 
+                // ======================
+                // INIT
+                // ======================
                 init() {
                     this.items = documento.detalles.map(d => ({
                         detalle_id: d.id,
@@ -333,31 +348,28 @@
                         codigo: d.producto.codigo_producto,
                         query: d.producto.nombre_producto,
                         cantidad: d.cantidad,
-                        stock: d.stock,
                         costo: parseFloat(d.costo_unitario),
+                        stock: d.stock,
                         resultados: []
                     }))
-                    // print(resultados)
+
+                    // 🔒 copia inmutable para comparar devoluciones
+                    this.itemsOriginales = JSON.parse(JSON.stringify(this.items))
+
                     this.calcular()
                 },
-                agregarFila() {
-                    this.items.push({
-                        producto_id: null,
-                        codigo: '',
-                        query: '',
-                        cantidad: 1,
-                        costo: 0,
-                        stock: 0,
-                        resultados: []
-                    })
-                },
 
+                // ======================
+                // FILAS
+                // ======================
                 eliminarFila(index) {
-                    if (this.items.length === 1) return
                     this.items.splice(index, 1)
                     this.calcular()
                 },
 
+                // ======================
+                // BUSCAR PROVEEDOR
+                // ======================
                 async buscarProveedor() {
                     if (this.proveedorQuery.length < 2) return
                     const res = await fetch(`/api/clientes/buscar?q=${this.proveedorQuery}`)
@@ -368,46 +380,109 @@
                     this.proveedor = p
                     this.proveedorQuery = p.nombre
                     this.proveedorRfc = p.rfc
-                    this.proveedorCalle = p.domicilios[0].calle ?? ''
-                    this.proveedorCP = p.domicilios[0].cp ?? ''
-                    this.proveedorNumeroInterior = p.domicilios[0].numero_interior ?? ''
-                    this.proveedorCiudad = p.domicilios[0].ciudad ?? ''
-                    this.proveedorColonia = p.domicilios[0].colonia ?? ''
+                    this.proveedorCalle = p.domicilios?.[0]?.calle ?? ''
+                    this.proveedorCP = p.domicilios?.[0]?.cp ?? ''
+                    this.proveedorNumeroInterior = p.domicilios?.[0]?.numero_interior ?? ''
+                    this.proveedorCiudad = p.domicilios?.[0]?.ciudad ?? ''
+                    this.proveedorColonia = p.domicilios?.[0]?.colonia ?? ''
                     this.proveedores = []
                 },
 
-                async buscarProducto(index) {
-                    const q = this.items[index].query
-                    if (q.length < 2) return
+                // ======================
+                // VALIDACIÓN DEVOLUCIÓN
+                // ======================
+                validarDevolucion() {
+                    for (const item of this.items) {
+                        const original = this.itemsOriginales.find(
+                            o => o.producto_id === item.producto_id
+                        )
 
-                    const res = await fetch(`/api/productos-existencias/buscar?q=${q}&almacen=4}`)
-                    this.items[index].resultados = await res.json()
-                },
-
-                seleccionarProducto(index, p) {
-                    if (this.items.some(i => i.producto_id === p.id)) return
-                    console.log(p);
-                    const item = this.items[index]
-                    item.producto_id = p.id
-                    item.codigo = p.codigo
-                    item.query = p.nombre
-                    item.costo = parseFloat(p.costo)
-                    item.stock = p.stock
-                    item.resultados = []
-
-                    this.calcular()
-
-                    if (index === this.items.length - 1) {
-                        this.agregarFila()
+                        if (original && item.cantidad > original.cantidad) {
+                            alert('❌ No puedes aumentar la cantidad en una devolución')
+                            return false
+                        }
                     }
+                    return true
                 },
 
+                // ======================
+                // DEVOLUCIONES
+                // ======================
+                obtenerDevoluciones() {
+                    const devoluciones = []
+
+                    // 🔹 devoluciones parciales
+                    this.items.forEach(item => {
+                        const original = this.itemsOriginales.find(
+                            o => o.producto_id === item.producto_id
+                        )
+
+                        if (original && item.cantidad < original.cantidad) {
+                            devoluciones.push({
+                                detalle_id: item.detalle_id,
+                                producto_id: item.producto_id,
+                                cantidad: original.cantidad - item.cantidad,
+                                costo_unitario: item.costo,
+                                importe: ((original.cantidad - item.cantidad) * item.costo).toFixed(2)
+                            })
+                        }
+                    })
+
+                    // 🔹 devoluciones totales (producto eliminado)
+                    this.itemsOriginales.forEach(original => {
+                        const existe = this.items.some(
+                            i => i.producto_id === original.producto_id
+                        )
+
+                        if (!existe) {
+                            devoluciones.push({
+                                detalle_id: original.detalle_id,
+                                producto_id: original.producto_id,
+                                cantidad: original.cantidad,
+                                costo_unitario: original.costo,
+                                importe: (original.cantidad * original.costo).toFixed(2)
+                            })
+                        }
+                    })
+
+                    return devoluciones
+                },
+
+                // ======================
+                // CALCULO
+                // ======================
                 calcular() {
                     this.total = this.items.reduce(
                         (t, i) => t + (i.cantidad * i.costo), 0
                     )
+                },
+
+                // ======================
+                // SUBMIT
+                // ======================
+                prepararEnvio() {
+                    if (!this.validarDevolucion()) return
+
+                    const devoluciones = this.obtenerDevoluciones()
+
+                    // ❌ NO hubo movimientos
+                    if (devoluciones.length === 0) {
+                        alert('⚠️ No se realizó ninguna devolución')
+                        return
+                    }
+
+                    // ✔ Guardar JSON en input hidden
+                    this.$refs.devoluciones.value = JSON.stringify(devoluciones)
+
+                    console.log('DEVOLUCIONES →', devoluciones)
+
+                    // ✔ Enviar formulario
+                    this.$el.submit()
                 }
+
+
             }
         }
     </script>
+
 </x-app-layout>

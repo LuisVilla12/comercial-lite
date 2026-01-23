@@ -15,7 +15,7 @@
         @csrf
         <div class="md:col-span-2">
             <label for="cp" class="block text-md font-medium text-gray-700 mb-1">
-                Codigo Postal<span class="text-red-500">*</span>
+                Codigo Postal: <span class="text-red-500">*</span>
             </label>
             <input type="number" id="cp" name="cp"
                    placeholder="Codigo"
@@ -29,7 +29,7 @@
         </div>
         {{-- Estado --}}
         <div class="my-2">
-            <label for="estado" class="block text-md font-medium text-gray-700 mb-1"> Estado <span class="text-red-500">*</span>
+            <label for="estado" class="block text-md font-medium text-gray-700 mb-1"> Estado: <span class="text-red-500">*</span>
             </label>
             <input type="text" name="estado" id="estado"
                    placeholder="Estado"
@@ -43,7 +43,7 @@
         {{-- Municipio --}}
         <div class="my-2">
             <label for="municipio" class="block text-md font-medium text-gray-700 mb-1">
-                Municipio <span class="text-red-500">*</span>
+                Municipio: <span class="text-red-500">*</span>
             </label>
             <input type="text" name="municipio" id="municipio"
                    placeholder="Municipio"
@@ -56,7 +56,7 @@
         {{-- Colonia --}}
         <div class="my-2">
             <label for="colonia" class="block text-md font-medium text-gray-700 mb-1">
-                Colonia<span class="text-red-500">*</span>
+                Colonia: <span class="text-red-500">*</span>
             </label>
             <select name="colonia" id="colonia"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
@@ -73,7 +73,7 @@
         </div>
         <div class="">
             <label for="calle" class="block text-md font-medium text-gray-700 mb-1">
-                Calle <span class="text-red-500">*</span>
+                Calle: <span class="text-red-500">*</span>
             </label>
             <input type="text" id="calle" name="calle"
                    placeholder="Calle"
@@ -83,10 +83,19 @@
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
+         <div class="">
+            <label for="numero_exterior" class="block text-md font-medium text-gray-700 mb-1">
+                Numero exterior: <span class="text-red-500">*</span>
+            </label>
+            <input type="number" id="numero_exterior" name="numero_exterior"
+                   placeholder="Numero exterior "
+                   value="{{old('numero_exterior')}}"
+                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+        </div>
 
         <div class="">
             <label for="numero_interior" class="block text-md font-medium text-gray-700 mb-1">
-                Numero interior <span class="text-red-500">*</span>
+                Numero interior:
             </label>
             <input type="number" id="numero_interior" name="numero_interior"
                    placeholder="Numero interior"
@@ -95,16 +104,6 @@
             @error('numero_interior')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
-        </div>
-
-         <div class="">
-            <label for="numero_exterior" class="block text-md font-medium text-gray-700 mb-1">
-                Numero exterior
-            </label>
-            <input type="number" id="numero_exterior" name="numero_exterior"
-                   placeholder="Numero exterior "
-                   value="{{old('numero_exterior')}}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
 
         {{-- Botones --}}

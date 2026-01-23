@@ -30,10 +30,10 @@
         </form>
 
         {{-- Botón --}}
-        <a href="{{ route('compras.create') }}"
+        {{-- <a href="{{ route('compras.create') }}"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
             Registrar Devolucion
-        </a>
+        </a> --}}
 
     </div>
     @if (session('success'))
@@ -69,7 +69,7 @@
             </thead>
 
             <tbody class="bg-white divide-y divide-gray-100">
-                @forelse ($documentos as $documento)
+                @forelse ($devoluciones as $documento)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 text-md text-gray-700">
                             {{ $documento->fecha }}
@@ -96,11 +96,11 @@
                                 </a>
                                     <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                <a href=""
+                                {{-- <a href=""
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>
-                                </a>
+                                </a> --}}
 
                             </div>
                         </td>
@@ -109,27 +109,27 @@
                 @empty
                     <tr>
                         <td colspan="6" class="px-6 py-6 text-center text-md text-gray-500">
-                            No hay compras registrados
+                            No hay devoluciones registrados
                         </td>
                     </tr>
                 @endforelse
             </tbody>
 
         </table>
-        @if($documentos->count() > 0)
+        @if($devoluciones->count() > 0)
         <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
             <p class="text-sm text-gray-600 ml-6">
                 Mostrando
-                <span class="font-medium">{{ $documentos->firstItem() }}</span>
+                <span class="font-medium">{{ $devoluciones->firstItem() }}</span>
                 a
-                <span class="font-medium">{{ $documentos->lastItem() }}</span>
+                <span class="font-medium">{{ $devoluciones->lastItem() }}</span>
                 de
-                <span class="font-medium">{{ $documentos->total() }}</span>
+                <span class="font-medium">{{ $devoluciones->total() }}</span>
                 registros
             </p>
 
-            {{ $documentos->links() }}
+            {{ $devoluciones->links() }}
             </div>
         @endif
     </div>

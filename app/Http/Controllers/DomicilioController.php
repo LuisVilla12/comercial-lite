@@ -35,7 +35,7 @@ class DomicilioController extends Controller
         'municipio' => 'required|string|max:100',
         'colonia' => 'required|string|max:100',
         'calle' => 'required|string|max:255',
-        'numero_interior' => 'required|string|max:50',
+        // 'numero_interior' => 'required|string|max:50',
         'numero_exterior' => 'nullable|string|max:50',
         'cp' => 'required|string|max:10',
     ]);

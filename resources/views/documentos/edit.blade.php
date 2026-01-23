@@ -209,7 +209,7 @@
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="">
+                    {{-- <div class="">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Número interior: <span class="text-red-500">*</span>
                         </label>
@@ -219,84 +219,95 @@
                         @error('numero_interior')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
-                    </div>
+                    </div> --}}
                     <div class="">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                            Colonia: <span class="text-red-500">*</span>
+                            Número exterior: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
+                        <input type="text" name="numero_exterior" placeholder="Número exterior"
+                            x-model="proveedorNumeroExterior"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        @error('colonia')
+                        @error('numero_exterior')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="col-span-full">
-                        <label for="metodo_pago" class="block text-xl font-medium text-gray-700 dark:text-white mb-1">
-                            Datos del pago: </span>
-                        </label>
-                    </div>
-                    {{-- Metodo de pago --}}
-                    <div class="">
-                        <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
-                            Metodo de pago: <span class="text-red-500">*</span>
-                        </label>
-                        <select name="metodo_pago"
-                            class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            <option value="PUE" @selected(old('metodo_pago', $documento->metodo_pago) === 'PUE')>PUE Pago en una sola exhibición
+                <div class="">
+                    <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
+                        Colonia: <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
+                        class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    @error('colonia')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="col-span-full">
+                    <label for="metodo_pago" class="block text-xl font-medium text-gray-700 dark:text-white mb-1">
+                        Datos del pago: </span>
+                    </label>
+                </div>
+                {{-- Metodo de pago --}}
+                <div class="">
+                    <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
+                        Metodo de pago: <span class="text-red-500">*</span>
+                    </label>
+                    <select name="metodo_pago"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <option value="PUE" @selected(old('metodo_pago', $documento->metodo_pago) === 'PUE')>PUE Pago en una sola exhibición
+                        </option>
+                        <option value="PPD" @selected(old('metodo_pago', $documento->metodo_pago) === 'PPD')>PPD Pago en Parcialidades o Diferido
+                        </option>
+                    </select>
+                    @error('metodo_pago')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                {{-- Forma de pago --}}
+                <div class="">
+                    <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                        Forma de pago:<span class="text-red-500">*</span>
+                    </label>
+                    <select name="forma_pago"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <option value="01" @selected(old('forma_pago', $documento->forma_pago) === '01')>01 Efectivo</option>
+                        <option value="03" @selected(old('forma_pago', $documento->forma_pago) === '03')>03 Transferencia</option>
+                        <option value="04" @selected(old('forma_pago', $documento->forma_pago) === '04')>04 Tarjeta de crédito</option>
+                        <option value="28" @selected(old('forma_pago', $documento->forma_pago) === '28')>28 Tarjeta de débito</option>
+                        <option value="05" @selected(old('forma_pago', $documento->forma_pago) === '05')>05 Monedero electrónico</option>
+                        <option value="02" @selected(old('forma_pago', $documento->forma_pago) === '02')>02 Cheque nominativo</option>
+                    </select>
+                    @error('forma_pago')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                {{-- Uso de cfdi --}}
+                <div class="">
+                    <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                        Uso de CFDI <span class="text-red-500">*</span>
+                    </label>
+                    <select name="uso_cfdi" id="uso_cfdi"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        @foreach ($usos as $uso)
+                            <option value="{{ $uso->clave }}" @selected(old('uso_cfdi', $documento->uso_cfdi) === $uso->clave)>
+                                {{ $uso->clave }} - {{ $uso->descripcion }}
                             </option>
-                            <option value="PPD" @selected(old('metodo_pago', $documento->metodo_pago) === 'PPD')>PPD Pago en Parcialidades o Diferido
-                            </option>
-                        </select>
-                        @error('metodo_pago')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    {{-- Forma de pago --}}
-                    <div class="">
-                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                            Forma de pago:<span class="text-red-500">*</span>
-                        </label>
-                        <select name="forma_pago"
-                            class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            <option value="01" @selected(old('forma_pago', $documento->forma_pago) === '01')>01 Efectivo</option>
-                            <option value="03" @selected(old('forma_pago', $documento->forma_pago) === '03')>03 Transferencia</option>
-                            <option value="04" @selected(old('forma_pago', $documento->forma_pago) === '04')>04 Tarjeta de crédito</option>
-                            <option value="28" @selected(old('forma_pago', $documento->forma_pago) === '28')>28 Tarjeta de débito</option>
-                            <option value="05" @selected(old('forma_pago', $documento->forma_pago) === '05')>05 Monedero electrónico</option>
-                            <option value="02" @selected(old('forma_pago', $documento->forma_pago) === '02')>02 Cheque nominativo</option>
-                        </select>
-                        @error('forma_pago')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    {{-- Uso de cfdi --}}
-                    <div class="">
-                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                            Uso de CFDI <span class="text-red-500">*</span>
-                        </label>
-                        <select name="uso_cfdi" id="uso_cfdi"
-                            class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @foreach ($usos as $uso)
-                                <option value="{{ $uso->clave }}" @selected(old('uso_cfdi', $documento->uso_cfdi) === $uso->clave)>
-                                    {{ $uso->clave }} - {{ $uso->descripcion }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('uso_cfdi')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                            Observaciones <span class="text-red-500">*</span>
-                        </label>
-                        <textarea class="w-full" name="observaciones">{{  $documento->observaciones}}</textarea>
-                        @error('observaciones')
-                            <p class="text-red-600 text-xs mt-1"></p>
-                        @enderror
-                    </div>
+                        @endforeach
+                    </select>
+                    @error('uso_cfdi')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                        Observaciones <span class="text-red-500">*</span>
+                    </label>
+                    <textarea class="w-full" name="observaciones">{{ $documento->observaciones }}</textarea>
+                    @error('observaciones')
+                        <p class="text-red-600 text-xs mt-1"></p>
+                    @enderror
                 </div>
             </div>
+        </div>
         </div>
 
 
@@ -330,6 +341,7 @@
                 proveedorNumeroInterior: documento.cliente.domicilios?.[0]?.numero_interior ?? '',
                 proveedorCiudad: documento.cliente.domicilios?.[0]?.ciudad ?? '',
                 proveedorColonia: documento.cliente.domicilios?.[0]?.colonia ?? '',
+                proveedorNumeroExterior: documento.cliente.domicilios?.[0]?.numero_exterior ?? '',
                 proveedores: [],
                 items: [],
                 total: 0,
@@ -379,6 +391,7 @@
                     this.proveedorCalle = p.domicilios[0].calle ?? ''
                     this.proveedorCP = p.domicilios[0].cp ?? ''
                     this.proveedorNumeroInterior = p.domicilios[0].numero_interior ?? ''
+                    this.proveedorNumeroExterior = p.domicilios[0].numero_exterior ?? ''
                     this.proveedorCiudad = p.domicilios[0].ciudad ?? ''
                     this.proveedorColonia = p.domicilios[0].colonia ?? ''
                     this.proveedores = []
