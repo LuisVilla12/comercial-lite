@@ -35,7 +35,7 @@
                 </div>
                 {{-- cliente, productos, totales --}}
                 <div x-show="tab === 'detalle'">
-                    <div  class=" mx-auto py-6">
+                    <div class=" mx-auto py-6">
                         <div class="mb-6">
                             <div class="md:flex justify-between">
                                 <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
@@ -170,7 +170,7 @@
                 <div x-show="tab === 'info'" x-cloak class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 mt-4">
                         <div class="col-span-full">
-                            <label for="metodo_pago" class="block text-xl font-medium text-gray-700 dark:text-white">
+                            <label class="block text-xl font-medium text-gray-700 dark:text-white">
                                 Datos del cliente: </span>
                             </label>
                         </div>
@@ -187,7 +187,7 @@
 
                         <div class="">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Codigo postal:  <span class="text-red-500">*</span>
+                                Codigo postal: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
@@ -197,7 +197,7 @@
                         </div>
                         <div class="">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Ciudad:  <span class="text-red-500">*</span>
+                                Ciudad: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="ciudad" placeholder="Ciudad" x-model="proveedorCiudad"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
@@ -208,7 +208,7 @@
                         {{--  --}}
                         <div class="">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Calle:  <span class="text-red-500">*</span>
+                                Calle: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="calle" placeholder="calle" x-model="proveedorCalle"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
@@ -220,7 +220,8 @@
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                                 Número interior: <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="numero_interior" placeholder="Número interior" x-model="proveedorNumeroInterior"
+                            <input type="text" name="numero_interior" placeholder="Número interior"
+                                x-model="proveedorNumeroInterior"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('numero_interior')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -228,7 +229,7 @@
                         </div>
                         <div class="">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Colonia:  <span class="text-red-500">*</span>
+                                Colonia: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
@@ -257,17 +258,16 @@
                             @enderror
                         </div>
                         {{-- Forma de pago --}}
-                        <div class="my-2">
+                        <div class="">
                             <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                                 Forma de pago:<span class="text-red-500">*</span>
                             </label>
                             <select name="forma_pago" id="forma_pago"
                                 class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                <option value="" disabled>Seleccione una opcion</option>
                                 <option value="01" selected>01 Efectivo</option>
                                 <option value="03">03 Transferencia</option>
                                 <option value="04">04 Tarjeta de crédito</option>
-                                <option value="28">28 Tarjeta de debito</option>
+                                <option value="28">28 Tarjeta de débito</option>
                                 <option value="05">05 Monedero electrónico</option>
                                 <option value="02">02 Cheque nominativo</option>
                             </select>
@@ -276,7 +276,7 @@
                             @enderror
                         </div>
                         {{-- Uso de cfdi --}}
-                        <div class="my-2">
+                        <div class="">
                             <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                                 Uso de CFDI <span class="text-red-500">*</span>
                             </label>
@@ -289,6 +289,15 @@
                                 @endforeach
                             </select>
                             @error('uso_cfdi')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                Observaciones <span class="text-red-500">*</span>
+                            </label>
+                            <textarea class="w-full" name="observaciones"></textarea>
+                            @error('observaciones')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>

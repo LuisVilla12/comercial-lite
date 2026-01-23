@@ -33,7 +33,7 @@ class DocumentoController extends Controller
             ->when($request->fecha === 'hoy', function ($q) {
                 $q->whereDate('fecha', now()->toDateString());
             })
-            ->orderBy('fecha', 'desc')
+            ->orderBy('folio','desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -54,7 +54,7 @@ class DocumentoController extends Controller
             ->when($request->fecha === 'hoy', function ($q) {
                 $q->whereDate('fecha', now()->toDateString());
             })
-            ->orderBy('fecha', 'desc')
+            ->orderBy('folio','desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -153,7 +153,8 @@ class DocumentoController extends Controller
                 'estatus' => 1,
                 'metodo_pago' => $request->metodo_pago,
                 'forma_pago' => $request->forma_pago,
-                'uso_cfdi' => $request->uso_cfdi
+                'uso_cfdi' => $request->uso_cfdi,
+                'observaciones' => $request->observaciones
             ]);
 
             DB::commit();
@@ -187,13 +188,12 @@ class DocumentoController extends Controller
      */
     public function show(Documento $documento)
     {
-        // dd(vars: $documento);
+        $usos_cfdi=UsoCfdi::all();
         $documento->load([
             'cliente',
             'detalles.producto'
         ]);
-        return view('documentos.show', compact('documento'));
-    }
+    return view('documentos.show', [ 'documento' => $documento,'usos'=> $usos_cfdi,]);    }
 
     /**
      * Show the form for editing the specified resource.
