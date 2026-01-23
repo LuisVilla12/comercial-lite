@@ -15,30 +15,30 @@ Route::get('codigos-postales/{cp}', [CodigoPostalController::class, 'buscar']);
 //Busqueda de proveedores para compras
 Route::get('proveedores/buscar', function (Request $r) {
     $q = $r->input('q', '');
-return Cliente::where('tipo', 3) // proveedor
-    ->where('activo', 1)
-    ->where(function ($query) use ($q) {
-        $query->where('nombre', 'like', "%{$q}%")
-    ->orWhere('codigo', 'like', "%{$q}%");
-    })
-    ->select('id', 'nombre', 'codigo')
-    ->limit(10)
-    ->get();
+    return Cliente::where('tipo', 3) // proveedor
+        ->where('activo', 1)
+        ->where(function ($query) use ($q) {
+            $query->where('nombre', 'like', "%{$q}%")
+                ->orWhere('codigo', 'like', "%{$q}%");
+        })
+        ->select('id', 'nombre', 'codigo')
+        ->limit(10)
+        ->get();
 });
-// Busqueda de clientes para compras
+//  Busqueda de clientes para compras
 Route::get('clientes/buscar', function (Request $r) {
     $q = $r->input('q', '');
-return Cliente::where('tipo', 1) // proveedor
-    ->where('activo', 1)
-    ->where(function ($query) use ($q) {
-        $query->where('nombre', 'like', "%{$q}%")
-    ->orWhere('codigo', 'like', "%{$q}%");
-    })
-    ->select('id', 'nombre', 'rfc', 'codigo')
-    ->limit(10)
-    ->get();
+    return Cliente::where('tipo', 1) // proveedor
+        ->where('activo', 1)
+        ->where(function ($query) use ($q) {
+            $query->where('nombre', 'like', "%{$q}%")
+                ->orWhere('codigo', 'like', "%{$q}%");
+        })
+        ->with('domicilios:id,cliente_id,calle,numero_interior,cp,ciudad,colonia')
+        ->select('id', 'nombre', 'rfc', 'codigo')
+        ->limit(10)
+        ->get();
 });
-
 //Busqueda de productos para compras
 Route::get('productos/buscar', function () {
     $q = request('q', '');
@@ -48,7 +48,7 @@ Route::get('productos/buscar', function () {
     return Producto::where('estatus_producto', 1)
         ->where(function ($query) use ($q) {
             $query->where('nombre_producto', 'like', "%{$q}%")
-                  ->orWhere('codigo_producto', 'like', "%{$q}%");
+                ->orWhere('codigo_producto', 'like', "%{$q}%");
         })
         ->select(
             'id',
@@ -64,16 +64,16 @@ Route::get('productos-existencias/buscar', function () {
     $q = request('q');
     $almacenId = request('almacen');
     if (!$almacenId) {
-    return [];
+        return [];
     }
     return Producto::where('estatus_producto', 1)
         ->where(function ($query) use ($q) {
             $query->where('nombre_producto', 'like', "%{$q}%")
-                  ->orWhere('codigo_producto', 'like', "%{$q}%");
+                ->orWhere('codigo_producto', 'like', "%{$q}%");
         })
         ->leftJoin('existencia_productos', function ($join) use ($almacenId) {
             $join->on('productos.id', '=', 'existencia_productos.producto_id')
-                 ->where('existencia_productos.almacen_id', $almacenId);
+                ->where('existencia_productos.almacen_id', $almacenId);
         })
         ->select(
             'productos.id',
@@ -88,7 +88,7 @@ Route::get('productos-existencias/buscar', function () {
 
 Route::get('/debug/stock', function () {
 
-    $productoId = 4374 ;
+    $productoId = 4374;
     $almacenId  = 3;
 
     $cantidad = DB::table('existencia_productos')
@@ -102,4 +102,3 @@ Route::get('/debug/stock', function () {
         'cantidad'       => $cantidad,
     ];
 });
-

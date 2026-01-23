@@ -24,13 +24,13 @@
                     <button type="button" @click="tab='detalle'"
                         :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
                         class="block text-lg font-medium mb-2 dark:text-white">
-                        [1] Datos generales
+                        [1] Movimientos
                     </button>
 
                     <button type="button" @click="tab='info'"
                         :class="tab === 'info' ? 'border-b-2 border-blue-500' : ''"
                         class="block text-lg font-medium mb-2 dark:text-white">
-                        [2] Información adicional
+                        [2] Datos generales
                     </button>
                 </div>
                 {{-- cliente, productos, totales --}}
@@ -87,7 +87,7 @@
                                                             class="p-2 hover:bg-gray-100 cursor-pointer">
                                                             <span x-text="p.nombre"></span>
                                                             <span class="text-sm text-gray-500">
-                                                                ($<span x-text="p.costo"></span>)
+                                                                ($<span x-text="p.codigo"></span>)
                                                             </span>
                                                         </li>
                                                     </template>
@@ -170,27 +170,79 @@
                 <div x-show="tab === 'info'" x-cloak class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 mt-4">
                         <div class="col-span-full">
-                            <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
-                                Datos del cliente </span>
+                            <label for="metodo_pago" class="block text-xl font-medium text-gray-700 dark:text-white">
+                                Datos del cliente: </span>
                             </label>
                         </div>
                         <div class="">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                RFC <span class="text-red-500">*</span>
+                                RFC: <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="rfc" placeholder="RFC" x-model="proveedorRfc" readonly
+                            <input type="text" name="rfc" placeholder="RFC" x-model="proveedorRfc"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('rfc')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        <div class="">
+                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
+                                Codigo postal:  <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP"
+                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            @error('codigo_postal')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="">
+                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
+                                Ciudad:  <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="ciudad" placeholder="Ciudad" x-model="proveedorCiudad"
+                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            @error('ciudad')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        {{--  --}}
+                        <div class="">
+                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
+                                Calle:  <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="calle" placeholder="calle" x-model="proveedorCalle"
+                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            @error('calle')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="">
+                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
+                                Número interior: <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="numero_interior" placeholder="Número interior" x-model="proveedorNumeroInterior"
+                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            @error('numero_interior')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="">
+                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
+                                Colonia:  <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
+                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            @error('colonia')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
                         <div class="col-span-full">
-                            <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
-                                Datos del pago</span>
+                            <label for="metodo_pago" class="block text-xl font-medium text-gray-700 dark:text-white mb-1">
+                                Datos del pago: </span>
                             </label>
                         </div>
                         {{-- Metodo de pago --}}
-                        <div class="my-2">
+                        <div class="">
                             <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
                                 Metodo de pago: <span class="text-red-500">*</span>
                             </label>
@@ -264,6 +316,11 @@
                     proveedor: null,
                     proveedorQuery: '',
                     proveedorRfc: '',
+                    proveedorCP: '',
+                    proveedorCalle: '',
+                    proveedorNumeroInterior: '',
+                    proveedorCiudad: '',
+                    proveedorColonia: '',
                     proveedores: [],
 
                     items: [],
@@ -299,9 +356,15 @@
                     },
 
                     seleccionarProveedor(p) {
+                        console.log(p)
                         this.proveedor = p
                         this.proveedorQuery = p.nombre
                         this.proveedorRfc = p.rfc
+                        this.proveedorCalle = p.domicilios[0].calle ?? ''
+                        this.proveedorCP = p.domicilios[0].cp ?? ''
+                        this.proveedorNumeroInterior = p.domicilios[0].numero_interior ?? ''
+                        this.proveedorCiudad = p.domicilios[0].ciudad ?? ''
+                        this.proveedorColonia = p.domicilios[0].colonia ?? ''
                         this.proveedores = []
                     },
 
@@ -315,7 +378,7 @@
 
                     seleccionarProducto(index, p) {
                         if (this.items.some(i => i.producto_id === p.id)) return
-                        console.log(p);
+                        // console.log(p);
                         const item = this.items[index]
                         item.producto_id = p.id
                         item.codigo = p.codigo
