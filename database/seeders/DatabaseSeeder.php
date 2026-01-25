@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         UserSeeder::class,
         RegimenesSeeder::class,
         UsoCfdiSeeder::class,
+        SucursalSeeder::class,
         ]);
     }
 }

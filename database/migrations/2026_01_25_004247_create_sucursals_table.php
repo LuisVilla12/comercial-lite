@@ -1,0 +1,46 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('sucursales', function (Blueprint $table) {
+            $table->id();
+            // Datos generales
+            $table->string('nombre');
+
+            // SERIES
+            $table->string('serie_cotizacion', 10)->default('C');
+            $table->string('serie_remision', 10)->default('R');
+            $table->string('serie_factura', 10)->default('F');
+
+            // FOLIOS
+            $table->unsignedBigInteger('folio_cotizacion')->default(0);
+            $table->unsignedBigInteger('folio_remision')->default(0);
+            $table->unsignedBigInteger('folio_factura')->default(0);
+
+            // Relación con almacén (opcional pero recomendado)
+            $table->foreignId('almacen_id')->nullable()
+                  ->constrained()
+                  ->nullOnDelete();
+
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('sucursales');
+    }
+};
