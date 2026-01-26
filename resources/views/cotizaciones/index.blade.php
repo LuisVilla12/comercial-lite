@@ -3,44 +3,43 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Cotizaciones
+            Cotizaciones {{ $sucursal->nombre }}
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
-<form method="GET" action="{{ route('cotizaciones.index') }}"
-      class="w-full flex flex-col md:flex-row md:items-center gap-3">
+        <form method="GET" action="{{ route('cotizaciones.index', $sucursal) }}"
+            class="w-full flex flex-col md:flex-row md:items-center gap-3">
 
-    {{-- Buscador --}}
-    <div class="relative w-full md:w-1/2">
-        <input type="text"
-               name="search"
-               value="{{ request('search') }}"
-               placeholder="Buscar cotización..."
-               class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+            {{-- Buscador --}}
+            <div class="relative w-full md:w-1/2">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar cotización..."
+                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
-        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
-             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"/>
-        </svg>
-    </div>
+                <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                    stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+                </svg>
+            </div>
 
-    {{-- Filtro por fecha --}}
-    <select name="fecha"
-            onchange="this.form.submit()"
-            class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
-        <option value="">Todas</option>
-        <option value="hoy" {{ request('fecha') === 'hoy' ? 'selected' : '' }}>
-            Hoy
-        </option>
-    </select>
+            {{-- Filtro por fecha --}}
+            <select name="fecha" onchange="this.form.submit()"
+                class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
+                <option value="">Todas</option>
+                <option value="hoy" {{ request('fecha') === 'hoy' ? 'selected' : '' }}>
+                    Hoy
+                </option>
+            </select>
 
 
-</form>
+        </form>
 
 
         {{-- Botón --}}
-        <a href="{{ route('documentos.create', 1) }}"
+        <a href="{{ route('documentos.create', [
+            'sucursal' => $sucursal,
+            'tipo' => 1,
+        ]) }}"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
             Registrar Cotización
         </a>
@@ -94,38 +93,39 @@
                             {{ $documento->cliente->nombre }}
                         </td>
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{number_format($documento->total, 2) }}
+                            {{ number_format($documento->total, 2) }}
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
                             <div class="flex flex-wrap items-center gap-4">
                                 {{-- Ver --}}
-                                 <a href="{{ route('documentos.show', $documento) }}"
+                                <a href="{{ route('documentos.show', $documento) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                     <span class="hidden sm:inline">Ver</span>
                                 </a>
-                                @if($documento->estatus==1)
+                                @if ($documento->estatus == 1)
                                     <span class="hidden sm:inline text-gray-300">•</span>
-                                {{-- Editar --}}
-                                <a href="{{ route('documentos.edit', $documento) }}"
-                                    class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
-                                    <x-heroicon-o-pencil-square class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Editar</span>
-                                </a>
-                                <span class="hidden sm:inline text-gray-300">•</span>
+                                    {{-- Editar --}}
+                                    <a href="{{ route('documentos.edit', $documento) }}"
+                                        class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
+                                        <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                        <span class="hidden sm:inline">Editar</span>
+                                    </a>
+                                    <span class="hidden sm:inline text-gray-300">•</span>
 
-                                {{-- Eliminar --}}
-                                <form action="{{ route('documentos.destroy', $documento) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
+                                    {{-- Eliminar --}}
+                                    <form action="{{ route('documentos.destroy', $documento) }}" method="POST"
+                                        class="inline">
+                                        @csrf
+                                        @method('DELETE')
 
-                                    <button type="submit"
-                                        class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
-                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
-                                        <x-heroicon-o-trash class="w-4 h-4" />
-                                        <span class="hidden sm:inline">Eliminar</span>
-                                    </button>
-                                </form>
+                                        <button type="submit"
+                                            class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                            onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                            <x-heroicon-o-trash class="w-4 h-4" />
+                                            <span class="hidden sm:inline">Eliminar</span>
+                                        </button>
+                                    </form>
                                 @endif
                             </div>
                         </td>
@@ -141,19 +141,19 @@
             </tbody>
 
         </table>
-        @if($documentos->count() > 0)
-        <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <p class="text-sm text-gray-600 ml-6">
-                Mostrando
-                <span class="font-medium">{{ $documentos->firstItem() }}</span>
-                a
-                <span class="font-medium">{{ $documentos->lastItem() }}</span>
-                de
-                <span class="font-medium">{{ $documentos->total() }}</span>
-                registros
-            </p>
-            {{ $documentos->links() }}
-        </div>
+        @if ($documentos->count() > 0)
+            <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <p class="text-sm text-gray-600 ml-6">
+                    Mostrando
+                    <span class="font-medium">{{ $documentos->firstItem() }}</span>
+                    a
+                    <span class="font-medium">{{ $documentos->lastItem() }}</span>
+                    de
+                    <span class="font-medium">{{ $documentos->total() }}</span>
+                    registros
+                </p>
+                {{ $documentos->links() }}
+            </div>
         @endif
 
 

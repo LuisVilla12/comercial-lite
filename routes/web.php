@@ -15,10 +15,12 @@ use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\ExistenciaProductoController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\TraspasoController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SucursalController;
 use App\Models\Cliente;
 use App\Models\ExistenciaProducto;
 use App\Models\Producto;
-use App\Models\Traspaso;
+use App\Models\Sucursal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 require __DIR__.'/auth.php';
@@ -28,9 +30,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified']) ->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -101,6 +102,7 @@ Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('com
 //Existencias
 Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
 
+Route::prefix('sucursales/{sucursal}')->group(function () {
 //Documentos
 Route::get('/cotizacion', action: [DocumentoController::class, 'indexCotizacion'])->name('cotizaciones.index');
 Route::get('/facturas', action: [DocumentoController::class, 'indexFacturas'])->name('facturas.index');
@@ -111,6 +113,9 @@ Route::get('/documentos/{documento}/edit', [DocumentoController::class, 'edit'])
 Route::get('/documentos/{documento}', [DocumentoController::class, 'show'])->name('documentos.show');
 Route::put('/documentos/{documento}', action: [DocumentoController::class, 'update'])->name('documentos.update');
 Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
+
+});
+
 Route::post('/documentos/{documento}/convertir/Factura', action: [DocumentoController::class, 'convertirFactura'])->name('cotizacionToFactura');
 Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
 Route::post('/documentos/{documento}', [DocumentoController::class, 'surtirDocumento'])->name(name: 'documentos.surtir');
@@ -138,4 +143,13 @@ Route::post('devoluciones/{documento}', [DevolucionController::class, 'store'])-
 //Reportes
 Route::get('/reportes', [ReportesController::class,'index'])->name('reportes.index');
 Route::get('reportes/export', [ReportesController::class, 'export'])->name('reportes.export');
+
+//Sucursales
+Route::get('/sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
+Route::get('/sucursales/create', [SucursalController::class, 'create'])->name('sucursales.create');
+Route::post('/sucursales', [SucursalController::class, 'store'])->name('sucursales.store');
+Route::get('/sucursales/{sucursal}/edit', [SucursalController::class, 'edit'])->name('sucursales.edit');
+Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
+Route::get('/sucursales/{sucursal}', [SucursalController::class, 'show'])->name('sucursales.show');
+
 });

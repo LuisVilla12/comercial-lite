@@ -12,13 +12,15 @@ class SucursalSeeder extends Seeder
     {
         Sucursal::insert([
     [
-        'nombre' => 'Sucursal Centro',
+        'codigo' => ' 001',
+        'nombre' => ' Centro',
         'serie_cotizacion' => 'CEN-C',
         'serie_remision'   => 'CEN-R',
         'serie_factura'    => 'CEN-F',
     ],
     [
-        'nombre' => 'Sucursal Norte',
+        'codigo' => ' 002',
+        'nombre' => ' Norte',
         'serie_cotizacion' => 'NOR-C',
         'serie_remision'   => 'NOR-R',
         'serie_factura'    => 'NOR-F',

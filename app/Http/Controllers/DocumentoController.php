@@ -9,6 +9,7 @@ use App\Models\Almacen;
 use App\Models\Cliente;
 use App\Models\Devolucion;
 use App\Models\UsoCfdi;
+use App\Models\Sucursal;
 use App\Models\DocumentosDetalle;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -20,7 +21,7 @@ class DocumentoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function indexCotizacion(Request $request)
+    public function indexCotizacion(Request $request, Sucursal $sucursal)
     {
         $documentos = Documento::where('documento_modelo_id', 1)
             ->when($request->search, function ($q, $search) {
@@ -38,7 +39,7 @@ class DocumentoController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('cotizaciones.index', compact('documentos'));
+        return view('cotizaciones.index', ['documentos'=>$documentos, 'sucursal'=>$sucursal]);
     }
 
     public function indexFacturas(Request $request)

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('sucursales', function (Blueprint $table) {
             $table->id();
             // Datos generales
+            $table->string('codigo');
             $table->string('nombre');
-
             // SERIES
             $table->string('serie_cotizacion', 10)->default('C');
             $table->string('serie_remision', 10)->default('R');

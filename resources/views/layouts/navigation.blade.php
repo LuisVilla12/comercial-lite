@@ -16,7 +16,7 @@
                         Inicio
                     </x-nav-link>
 
-                    <x-nav-link :href="route('cotizaciones.index')" :active="request()->routeIs('cotizaciones.index')">
+                    {{-- <x-nav-link :href="route('cotizaciones.index')" :active="request()->routeIs('cotizaciones.index')">
                         Cotización
                     </x-nav-link>
                     <x-nav-link :href="route('remisiones.index')" :active="request()->routeIs('remisiones.index')">
@@ -24,7 +24,7 @@
                     </x-nav-link>
                     <x-nav-link :href="route('facturas.index')" :active="request()->routeIs('facturas.index')">
                         Facturación
-                    </x-nav-link>
+                    </x-nav-link> --}}
                     <x-nav-link :href="route('existencias.index')" :active="request()->routeIs('existencias.index')">
                         Existencias
                     </x-nav-link>

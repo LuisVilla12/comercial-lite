@@ -8,8 +8,8 @@
             </h2>
         </div>
 
-        <x-dashboard-card href="{{ route('proveedores.index') }}" bg="bg-blue-50 dark:bg-blue-900/20"
-            title="Proveedores" desc="Gestión de proveedores" iconBg="bg-blue-500">
+        <x-dashboard-card href="{{ route('proveedores.index') }}" bg="bg-blue-50 dark:bg-blue-900/20" title="Proveedores"
+            desc="Gestión de proveedores" iconBg="bg-blue-500">
             <x-slot:icon>
                 <x-heroicon-o-truck class="w-6 h-6" />
             </x-slot:icon>
@@ -42,8 +42,8 @@
                 🔄 Operaciones
             </h2>
         </div>
-         <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20" title="Almacenes"
-            desc="Control de almacenes" iconBg="bg-emerald-500">
+        <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+            title="Almacenes" desc="Control de almacenes" iconBg="bg-emerald-500">
             <x-slot:icon>
                 <x-heroicon-o-building-storefront class="w-6 h-6" />
             </x-slot:icon>
@@ -63,7 +63,7 @@
             </x-slot:icon>
         </x-dashboard-card>
 
-        <x-dashboard-card href="{{route('devoluciones.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+        <x-dashboard-card href="{{ route('devoluciones.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Devoluciones" desc="Devoluciónes de productos" iconBg="bg-emerald-500">
             <x-slot:icon>
                 <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
@@ -77,46 +77,62 @@
             </h2>
         </div>
 
-        <x-dashboard-card href="{{ route('cotizaciones.index') }}" bg="bg-indigo-50 dark:bg-indigo-900/20"
-            title="Cotizaciones" desc="Generar cotizaciones" iconBg="bg-indigo-500">
-            <x-slot:icon>
-                <x-heroicon-o-document-currency-dollar class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
+        @foreach ($sucursales as $sucursal)
+            <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
+                title="Cotizaciones {{ $sucursal->nombre }}" desc="Generar cotizaciones"
+                bg="bg-indigo-50 dark:bg-indigo-900/20" iconBg="bg-indigo-500">
+                <x-slot:icon>
+                    <x-heroicon-o-document-currency-dollar class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+        @endforeach
+        @foreach ($sucursales as $sucursal)
+            <x-dashboard-card href="{{ route('remisiones.index', $sucursal) }}" bg="bg-teal-50 dark:bg-teal-900/20"
+                title="Remisiones {{ $sucursal->nombre }}" desc="Generar remisiones" iconBg="bg-teal-500">
+                <x-slot:icon>
+                    <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+        @endforeach
+        @foreach ($sucursales as $sucursal)
+            <x-dashboard-card href="{{ route('facturas.index', $sucursal) }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Facturas {{ $sucursal->nombre }}"
+                desc="Generar facturas" iconBg="bg-teal-500">
+                <x-slot:icon>
+                    <x-heroicon-o-document-text class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+        @endforeach
 
-        <x-dashboard-card href="{{ route('remisiones.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Remisiones"
-            desc="Generar remisiones" iconBg="bg-teal-500">
-            <x-slot:icon>
-                <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
 
-        <x-dashboard-card href="{{ route('facturas.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Facturas"
-            desc="Generar facturas" iconBg="bg-teal-500">
-            <x-slot:icon>
-                <x-heroicon-o-document-text class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
-        <x-dashboard-card href="{{route('reportes.index')  }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Reportes" desc="Generar reportes"
-            iconBg="bg-teal-500">
+
+
+
+        <x-dashboard-card href="{{ route('reportes.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Reportes"
+            desc="Generar reportes" iconBg="bg-teal-500">
             <x-slot:icon>
                 <x-heroicon-o-chart-bar class="w-6 h-6" />
             </x-slot:icon>
         </x-dashboard-card>
-        @if(auth()->user()->tipo==2)
-        {{-- ================= Administracion ================= --}}
-        <div class="col-span-full mt-6">
-            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
-                ⚙️ Administración
-            </h2>
-        </div>
+        @if (auth()->user()->tipo == 2)
+            {{-- ================= Administracion ================= --}}
+            <div class="col-span-full mt-6">
+                <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                    ⚙️ Administración
+                </h2>
+            </div>
 
-        <x-dashboard-card href="{{ route('usuarios.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Usuarios"
-            desc="Administrar usuarios" iconBg="bg-teal-500">
-            <x-slot:icon>
-                <x-heroicon-o-users class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
+            <x-dashboard-card href="{{ route('usuarios.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Usuarios"
+                desc="Administrar usuarios" iconBg="bg-teal-500">
+                <x-slot:icon>
+                    <x-heroicon-o-users class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+            <x-dashboard-card href="{{ route('sucursales.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Sucursales"
+                desc="Administrar sucursales" iconBg="bg-teal-500">
+                <x-slot:icon>
+                    <x-heroicon-o-building-office class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
         @endif
     </div>
 

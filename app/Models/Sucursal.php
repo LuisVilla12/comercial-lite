@@ -10,6 +10,7 @@ class Sucursal extends Model
     protected $table = 'sucursales';
 
     protected $fillable = [
+        'codigo',
         'nombre',
 
         // SERIES
