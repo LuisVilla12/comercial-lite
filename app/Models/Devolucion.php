@@ -14,7 +14,8 @@ class Devolucion extends Model
     'folio',
     'fecha',
     'total',
-    'observaciones'
+    'observaciones',
+    'estatus'
     ];
 public function detalles() {
         return $this->hasMany(DevolucionesDetalles::class);

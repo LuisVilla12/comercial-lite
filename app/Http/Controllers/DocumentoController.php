@@ -469,6 +469,7 @@ class DocumentoController extends Controller
         // dd($devoluciones);
         try {
             DB::transaction(function () use ($request, $documento) {
+                // TODO: colocar serie de la sucursal asiganda
                 $serie = 'DV';
                 $ultimoFolio = Documento::where('serie', $serie)
                     ->lockForUpdate()
@@ -479,11 +480,12 @@ class DocumentoController extends Controller
                     'documento_id' => $documento->id,
                     'cliente_id' =>  $request->proveedor_id,
                     'user_id' => $request->user_id,
+                    'almacen_id' => $request->almacen_id,
                     'serie' => $serie,
                     'folio' => $siguienteFolio,
                     'fecha' => now()->format('Y-m-d'),
                     'total' => $request->total,
-                    'estatus' => 1,
+                    'estatus' => 2,
                     'observaciones' => $request->observaciones
                 ]);
                 DB::commit();
@@ -511,7 +513,9 @@ class DocumentoController extends Controller
                         ->first();
 
                     if ($existencia) {
-                        $existencia->decrement('cantidad', $item['cantidad']);
+                        // Restar existencia
+                        // $existencia->decrement(column: 'cantidad', $item['cantidad']);
+                        $existencia->increment('cantidad', $item['cantidad']);
                     } else {
                         // Si no existe registro, créalo en negativo
                         ExistenciaProducto::create([

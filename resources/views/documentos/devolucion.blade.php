@@ -143,7 +143,7 @@
 
                 {{-- -ENVIO DE DATOS --}}
                 <input type="hidden" name="proveedor_id" :value="proveedor?.id">
-                <input type="hidden" name="almacen_id" value="1">
+                <input type="hidden" name="almacen_id" value="{{ $sucursal->almacen_id }}">
                 <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                 <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
                 <input type="hidden" name="subtotal" x-model="total">
