@@ -13,7 +13,6 @@ class ClientesSeeder extends Seeder
     public function run(): void
     {
         $file = storage_path('app/clientes-proveedores.csv');
-
         if (!file_exists($file)) {
             $this->command->error('❌ Archivo clientes-proveedores.csv no encontrado');
             return;
@@ -27,6 +26,8 @@ class ClientesSeeder extends Seeder
         while (($row = fgetcsv($handle, 0, ',')) !== false) {
 
             $batch[] = [
+                // TODO: extraer el id de los clientes desde el csv
+                // 'id' => intval($row[0]),
                 'codigo' => trim($row[0]),
                 'nombre' => trim($row[1]),
                 'rfc' => trim($row[2]),

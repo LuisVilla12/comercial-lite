@@ -17,14 +17,16 @@ return new class extends Migration
             $table->string('codigo');
             $table->string('nombre');
             // SERIES
-            $table->string('serie_cotizacion', 10)->default('C');
-            $table->string('serie_remision', 10)->default('R');
-            $table->string('serie_factura', 10)->default('F');
+            $table->string('serie_cotizacion', 10);
+            $table->string('serie_remision', 10);
+            $table->string('serie_factura', 10);
+            $table->string('serie_devolucion', 10);
 
             // FOLIOS
             $table->unsignedBigInteger('folio_cotizacion')->default(0);
             $table->unsignedBigInteger('folio_remision')->default(0);
             $table->unsignedBigInteger('folio_factura')->default(0);
+            $table->unsignedBigInteger('folio_devolucion')->default(0);
 
             // Relación con almacén (opcional pero recomendado)
             $table->foreignId('almacen_id')->nullable()

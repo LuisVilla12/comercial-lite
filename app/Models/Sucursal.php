@@ -17,11 +17,13 @@ class Sucursal extends Model
         'serie_cotizacion',
         'serie_remision',
         'serie_factura',
+        'serie_devolucion',
 
         // FOLIOS
         'folio_cotizacion',
         'folio_remision',
         'folio_factura',
+        'folio_devolucion',
 
         // RELACIONES
         'almacen_id',

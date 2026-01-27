@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empresa;
+use App\Models\Regimen;
 use Illuminate\Http\Request;
+
+use function Ramsey\Uuid\v1;
 
 class EmpresaController extends Controller
 {
@@ -12,7 +15,9 @@ class EmpresaController extends Controller
      */
     public function index()
     {
-        //
+        $empresas = Empresa::paginate(10)->withQueryString();
+        // dd($empresas);
+        return view('empresas.index', ['empresas' => $empresas]);
     }
 
     /**
@@ -21,6 +26,8 @@ class EmpresaController extends Controller
     public function create()
     {
         //
+        $regimenes = Regimen::all();
+        return view('empresas.create', ['regimenes' => $regimenes]);
     }
 
     /**
@@ -29,6 +36,26 @@ class EmpresaController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'codigo' => 'required|string|max:50',
+            'nombre' => 'required|string|max:250',
+            'rfc' => 'required|string|max:13',
+            'regimen_fiscal' => 'required|string|max:250',
+            'curp' => 'required|string|max:18',
+            'email' => 'required|email',
+            'telefono' => 'required|string|max:250',
+        ]);
+        $empresa = Empresa::create([
+            'codigo' => $request->codigo,
+            'nombre' => $request->nombre,
+            'rfc' => $request->rfc,
+            'regimen_fiscal' => $request->regimen_fiscal,
+            'curp' => $request->curp,
+            'email' => $request->email,
+            'telefono' => $request->telefono,
+            'activo' => 1,
+        ]);
+        return view('empresas.index')->with('success',   'La empresa ha sido registrada.');
     }
 
     /**

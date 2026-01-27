@@ -16,6 +16,7 @@ use App\Http\Controllers\ExistenciaProductoController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\TraspasoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\SucursalController;
 use App\Models\Cliente;
 use App\Models\ExistenciaProducto;
@@ -149,5 +150,8 @@ Route::post('/sucursales', [SucursalController::class, 'store'])->name('sucursal
 Route::get('/sucursales/{sucursal}/edit', [SucursalController::class, 'edit'])->name('sucursales.edit');
 Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
 Route::get('/sucursales/{sucursal}', [SucursalController::class, 'show'])->name('sucursales.show');
-
+//Empresas
+Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
+Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('empresas.create');
+Route::post('/empresas', [EmpresaController::class, 'store'])->name('empresas.store');
 });

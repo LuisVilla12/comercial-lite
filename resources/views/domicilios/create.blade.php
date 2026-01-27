@@ -28,7 +28,7 @@
 
         </div>
         {{-- Estado --}}
-        <div class="my-2">
+        <div class="md:my-2">
             <label for="estado" class="block text-md font-medium text-gray-700 mb-1"> Estado: <span class="text-red-500">*</span>
             </label>
             <input type="text" name="estado" id="estado"
@@ -41,7 +41,7 @@
         </div>
 
         {{-- Municipio --}}
-        <div class="my-2">
+        <div class="md:my-2">
             <label for="municipio" class="block text-md font-medium text-gray-700 mb-1">
                 Municipio: <span class="text-red-500">*</span>
             </label>
@@ -53,8 +53,17 @@
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
+        <div class="md:my-2">
+            <label for="ciudad" class="block text-md font-medium text-gray-700 mb-1">
+                Ciudad: </span>
+            </label>
+            <input type="text" name="ciudad" id="ciudad"
+                   placeholder="Ciudad"
+                   value="{{old(key: 'ciudad')}}"
+                   class="p-2 w-full uppercase   rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+        </div>
         {{-- Colonia --}}
-        <div class="my-2">
+        <div class="md:my-2">
             <label for="colonia" class="block text-md font-medium text-gray-700 mb-1">
                 Colonia: <span class="text-red-500">*</span>
             </label>
@@ -144,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 document.getElementById('estado').value = data[0].d_estado;
                 document.getElementById('municipio').value = data[0].d_mnpio;
+                document.getElementById('ciudad').value = data[0].d_ciudad;
 
                 const coloniaSelect = document.getElementById('colonia');
                 coloniaSelect.innerHTML = '<option value="">Seleccione colonia</option>';

@@ -17,6 +17,7 @@ class SucursalSeeder extends Seeder
         'serie_cotizacion' => 'ORI-C',
         'serie_remision'   => 'ORI-R',
         'serie_factura'    => 'ORI-F',
+        'serie_devolucion'    => 'ORI-DEV',
         'almacen_id'    => 1,
     ],
     [
@@ -25,6 +26,7 @@ class SucursalSeeder extends Seeder
         'serie_cotizacion' => 'ZAR-C',
         'serie_remision'   => 'ZAR-R',
         'serie_factura'    => 'ZAR-F',
+        'serie_devolucion'    => 'ZAR-DEV',
         'almacen_id'    => 3,
     ],
     [
@@ -33,6 +35,7 @@ class SucursalSeeder extends Seeder
         'serie_cotizacion' => 'REB-C',
         'serie_remision'   => 'REB-R',
         'serie_factura'    => 'REB-F',
+        'serie_devolucion'    => 'REB-DEV',
         'almacen_id'    => 4,
     ],
 ]);

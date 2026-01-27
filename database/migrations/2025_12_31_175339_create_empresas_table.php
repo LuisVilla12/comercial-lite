@@ -14,6 +14,14 @@ return new class extends Migration
         Schema::create('empresas', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string(column: 'codigo');
+            $table->string(column: 'nombre');
+            $table->string('rfc', 20);
+            $table->string(column: 'regimen_fiscal')->nullable();
+            $table->string('curp', 18)->nullable();
+            $table->string(column: 'email')->nullable();
+            $table->string(column: 'telefono')->nullable();
+            $table->boolean('activo')->default(true);
         });
     }
 

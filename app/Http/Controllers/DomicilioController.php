@@ -30,6 +30,7 @@ class DomicilioController extends Controller
      */
   public function store(Request $request, Cliente $cliente)
 {
+
     $request->validate([
         'estado' => 'required|string|max:100',
         'municipio' => 'required|string|max:100',
@@ -39,19 +40,19 @@ class DomicilioController extends Controller
         'numero_exterior' => 'nullable|string|max:50',
         'cp' => 'required|string|max:10',
     ]);
+    // dd($request);
     $domicilio = Domicilio::create([
-            'pais' => 'MEXICO',
+            'pais' => 'Mexico',
             'estado' => $request->estado,
-            'ciudad' => $request->municipio,
+            'municipio' => $request->municipio,
+            'ciudad' => $request->ciudad??'',
             'colonia' => $request->colonia,
             'calle' => $request->calle,
-            'numero_interior' => $request->numero_interior,
+            'numero_interior' => $request->numero_interior??'',
             'numero_exterior' => $request->numero_exterior,
             'cp' => $request->cp,
             'cliente_id' => $cliente->id,
         ]);
-
-
     return redirect()
         ->route('clientes.show', [$cliente, $cliente->tipo])
         ->with('success', value: 'Domicilio agregado correctamente.');
@@ -93,7 +94,8 @@ class DomicilioController extends Controller
         $domicilio->update([
             'pais' => 'MEXICO',
             'estado' => $request->estado,
-            'ciudad' => $request->municipio,
+            'municipio' => $request->municipio,
+            'ciudad' => $request->ciudad??'',
             'colonia' => $request->colonia,
             'calle' => $request->calle,
             'numero_interior' => $request->numero_interior,

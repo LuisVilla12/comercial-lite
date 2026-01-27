@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
         RegimenesSeeder::class,
         UsoCfdiSeeder::class,
         SucursalSeeder::class,
+        // DomiciliosSeeder::class,
         ]);
     }
 }

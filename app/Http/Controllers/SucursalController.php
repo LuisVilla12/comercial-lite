@@ -53,9 +53,11 @@ class SucursalController extends Controller
                 'serie_cotizacion'      => $request->serie_cotizacion,
                 'serie_remision'        => $request->serie_remision,
                 'serie_facturacion'     => $request->serie_facturacion,
+                'serie_devolucion'     => $request->serie_facturacion,
                 'folio_cotizacion' => $request->folio_cotizacion,
                 'folio_remision' => $request->folio_remision,
                 'folio_facturacion'      => $request->folio_facturacion,
+                'folio_devolucion'      => $request->folio_facturacion,
             ]);
         return redirect()->route('sucursales.index')
             ->with('success', 'Sucursal creada correctamente.');
@@ -91,9 +93,11 @@ class SucursalController extends Controller
             'serie_cotizacion'=>'required|string|max:50',
             'serie_remision'=>'required|string|max:50',
             'serie_facturacion'=>'required|string|max:50',
+            'serie_devolucion'=>'required|string|max:50',
             'folio_cotizacion'=>'required',
             'folio_remision'=>'required',
             'folio_facturacion'=>'required',
+            'folio_devolucion'=>'required',
         ]);
         $sucursal->update($request->all());
         return redirect()->route('sucursales.index')

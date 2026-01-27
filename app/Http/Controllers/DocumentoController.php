@@ -468,9 +468,9 @@ class DocumentoController extends Controller
         $devoluciones = json_decode($request->devoluciones, true);
         // dd($devoluciones);
         try {
-            DB::transaction(function () use ($request, $documento) {
-                // TODO: colocar serie de la sucursal asiganda
-                $serie = 'DV';
+            DB::transaction(function () use ($request,$sucursal, $documento) {
+
+                $serie = $sucursal->serie_devolucion;
                 $ultimoFolio = Documento::where('serie', $serie)
                     ->lockForUpdate()
                     ->max('folio');

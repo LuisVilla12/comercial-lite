@@ -10,12 +10,14 @@ class Domicilio extends Model
         protected $fillable = [
             'pais',
             'estado',
+            'municipio',
             'ciudad',
             'colonia',
             'calle',
             'numero_interior',
             'numero_exterior',
             'cp',
+            'tipo',
             'cliente_id'
         ];
 
