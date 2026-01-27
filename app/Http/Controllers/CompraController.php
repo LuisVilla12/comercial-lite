@@ -19,14 +19,14 @@ class CompraController extends Controller
      */
     public function index(Request $request)
     {
-$compras = Compra::when($request->search, function ($q, $search) {
-                $q->where(function ($query) use ($search) {
-                    $query->where('folio', 'like', "%{$search}%")
-                        ->orWhereHas('proveedor', function ($c) use ($search) {
-                            $c->where('nombre', 'like', "%{$search}%");
-                        });
-                });
-            })
+        $compras = Compra::when($request->search, function ($q, $search) {
+            $q->where(function ($query) use ($search) {
+                $query->where('folio', 'like', "%{$search}%")
+                    ->orWhereHas('proveedor', function ($c) use ($search) {
+                        $c->where('nombre', 'like', "%{$search}%");
+                    });
+            });
+        })
             ->when($request->fecha === 'hoy', function ($q) {
                 $q->whereDate('fecha', now()->toDateString());
             })
@@ -35,7 +35,6 @@ $compras = Compra::when($request->search, function ($q, $search) {
             ->withQueryString();
 
         return view('compras.index', compact(var_name: 'compras'));
-
     }
 
     /**
@@ -136,45 +135,45 @@ $compras = Compra::when($request->search, function ($q, $search) {
         ]);
         return view('compras.show', compact('compra'));
     }
-public function surtir(Compra $compra)
-{
-    if ($compra->estatus != 1) {
-        return redirect()
-            ->route('compras.show', $compra)
-            ->with('error', 'La compra ya fue surtida');
-    }
-
-    DB::transaction(function () use ($compra) {
-
-        foreach ($compra->detalles as $detalle) {
-
-            $existencia = ExistenciaProducto::where('producto_id', $detalle->producto_id)
-                ->where('almacen_id', $compra->almacen_id)
-                ->lockForUpdate()
-                ->first();
-
-            if ($existencia) {
-                // 🔄 Sumar stock
-                $existencia->increment('cantidad', $detalle->cantidad);
-            } else {
-                // 🆕 Crear stock
-                ExistenciaProducto::create([
-                    'producto_id' => $detalle->producto_id,
-                    'almacen_id' => $compra->almacen_id,
-                    'cantidad' => $detalle->cantidad,
-                ]);
-            }
+    public function surtir(Compra $compra)
+    {
+        if ($compra->estatus != 1) {
+            return redirect()
+                ->route('compras.show', $compra)
+                ->with('error', 'La compra ya fue surtida');
         }
 
-        $compra->update([
-            'estatus' => 2
-        ]);
-    });
+        DB::transaction(function () use ($compra) {
 
-    return redirect()
-        ->route('compras.show', $compra)
-        ->with('success', 'Compra surtida correctamente');
-}
+            foreach ($compra->detalles as $detalle) {
+
+                $existencia = ExistenciaProducto::where('producto_id', $detalle->producto_id)
+                    ->where('almacen_id', $compra->almacen_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($existencia) {
+                    // 🔄 Sumar stock
+                    $existencia->increment('cantidad', $detalle->cantidad);
+                } else {
+                    // 🆕 Crear stock
+                    ExistenciaProducto::create([
+                        'producto_id' => $detalle->producto_id,
+                        'almacen_id' => $compra->almacen_id,
+                        'cantidad' => $detalle->cantidad,
+                    ]);
+                }
+            }
+
+            $compra->update([
+                'estatus' => 2
+            ]);
+        });
+
+        return redirect()
+            ->route('compras.show', $compra)
+            ->with('success', 'Compra surtida correctamente');
+    }
 
 
     /**
@@ -184,8 +183,8 @@ public function surtir(Compra $compra)
     {
         if ($compra->estatus != 1) {
             return redirect()
-            ->route('compras.show', $compra)
-            ->with('error', 'La compra ya fue surtida');
+                ->route('compras.show', $compra)
+                ->with('error', 'La compra ya fue surtida');
         }
 
         // dd($compra->)

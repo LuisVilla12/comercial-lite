@@ -3,11 +3,11 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Facturas
+            Facturas {{ $sucursal->nombre }}
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
-<form method="GET" action="{{ route('facturas.index') }}"
+<form method="GET" action="{{ route('facturas.index',$sucursal) }}"
       class="w-full flex flex-col md:flex-row md:items-center gap-3">
 
     {{-- Buscador --}}
@@ -38,7 +38,10 @@
 
 </form>
         {{-- Botón --}}
-        <a href="{{ route('documentos.create',2) }}"
+        <a href="{{ route('documentos.create', [
+            'sucursal' => $sucursal,
+            'tipo' => 2,
+        ]) }}"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
             Registrar Factura
         </a>
@@ -97,7 +100,7 @@
                         <td class="px-6 py-4 text-sm text-gray-700">
                             <div class="flex flex-wrap items-center gap-4">
                                 {{-- Ver --}}
-                                 <a href="{{ route('documentos.show', $documento) }}"
+                                 <a href="{{ route('documentos.show',  ['sucursal'=>$sucursal, 'documento'=>$documento]) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                     <span class="hidden sm:inline">Ver</span>
@@ -105,7 +108,7 @@
                                 @if($documento->estatus==1)
                                     <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                <a href="{{ route('documentos.edit', $documento) }}"
+                                <a href="{{ route('documentos.edit',  ['sucursal'=>$sucursal, 'documento'=>$documento]) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>
@@ -113,7 +116,7 @@
                                 <span class="hidden sm:inline text-gray-300">•</span>
 
                                 {{-- Eliminar --}}
-                                <form action="{{ route('documentos.destroy', $documento) }}" method="POST" class="inline">
+                                <form action="{{ route('documentos.destroy',  ['sucursal'=>$sucursal, 'documento'=>$documento]) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
 

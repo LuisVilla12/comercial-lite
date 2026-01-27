@@ -3,15 +3,14 @@
         <div class="md:flex md:justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
                 Devolución
-                {{ match ($documento->documento_modelo_id) {1 => 'Cotización',2 => 'Factura',3 => 'Remisión'} }} #
-                {{ $documento->folio }}
+                {{ match ($documento->documento_modelo_id) {1 => 'Cotización',2 => 'Factura',3 => 'Remisión'} }}
+                {{$sucursal->nombre ."#" . $documento->folio }}
             </h2>
             <label class="block text-lg font-medium mb-2 dark:text-white">Fecha: {{ now()->format('d/m/Y') }}
         </div>
     </x-slot>
 
-
-    <form method="POST" @submit.prevent="prepararEnvio" action="{{ route('devolucion.update', $documento) }}"
+    <form method="POST" @submit.prevent="prepararEnvio" action="{{ route('devolucion.update', parameters: ['sucursal'=>$sucursal, 'documento'=>$documento]) }}"
         x-data="documentoEdit(@js($documento->toArray()))" x-init="init()">
         @csrf
         @method('PUT')
@@ -67,9 +66,9 @@
                                 <tr class="border-t">
                                     <td class="p-2 text-center" x-text="item.codigo"></td>
                                     <td class="p-2 relative">
-                                        <input type="text" x-model="item.query"
+                                        <input type="text" x-model="item.query" readonly
                                             @input.debounce.300ms="buscarProducto(index)"
-                                            class="border rounded p-1 w-full" placeholder="Buscar producto">
+                                            class="border rounded p-1 w-full cursor-not-allowed" placeholder="Buscar producto">
                                         <ul x-show="item.resultados.length"
                                             class="absolute z-10 bg-white border rounded shadow w-full">
                                             <template x-for="p in item.resultados" :key="p.id">
@@ -96,14 +95,14 @@
                                         <div class="flex justify-center">
                                             <input readonly type="number" step="0.01"
                                                 :name="`productos[${index}][costo]`" x-model.number="item.costo"
-                                                @input="calcular" class="border rounded p-1 w-24 text-center">
+                                                @input="calcular" class="border rounded p-1 w-24 text-center cursor-not-allowed">
                                         </div>
                                     </td>
                                     {{-- Existencias --}}
                                     <td class="p-2">
                                         <div class="flex justify-center">
-                                            <input type="number" disabled step="1" x-model.number="item.stock"
-                                                class="border rounded p-1 w-24 text-center bg-gray-100 text-gray-700">
+                                            <input type="number" readonly step="1" x-model.number="item.stock"
+                                                class="border rounded  cursor-not-allowed p-1 w-24 text-center bg-gray-100 text-gray-700">
                                         </div>
                                     </td>
                                     <td class="p-2">
@@ -296,15 +295,13 @@
 
         <input type="hidden" name="devoluciones" x-ref="devoluciones">
         <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-            <a href="{{ route(match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'}) }}"
+            <a href="{{ route(match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'}, $sucursal) }}"
                 class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
                 Cancelar
             </a>
             <button type="submit"
                 class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                Actualizar
-                {{ match ($documento->documento_modelo_id) {1 => 'Cotización',2 => 'Factura',3 => 'Remisión'} }}
-            </button>
+                Realizar devolucion            </button>
             {{-- <a href="{{ route('cotizacion.pdf', $documento) }}" target="_blank"
                     class="px-4 py-2 bg-red-600 text-white rounded">
                     📄 Imprimir PDF

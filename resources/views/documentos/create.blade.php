@@ -8,7 +8,7 @@
         <x-slot name="header">
             <div class="flex justify-between">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-                    Registrar {{ match ($tipo) {'1' => 'Cotización','2' => 'Factura','3' => 'Remisión'} }}
+                    Registrar {{ match ($tipo) {'1' => 'Cotización','2' => 'Factura','3' => 'Remisión'} . " ". $sucursal->nombre }}
                 </h2>
                 <div class="md:flex gap-4">
                     <label class="block text-lg font-medium mb-2 mr-10 dark:text-white"></label>
@@ -17,7 +17,8 @@
                 </div>
             </div>
         </x-slot>
-        <form method="POST" action="{{ route('documentos.store') }}" x-data="compraApp()" x-init="init()">
+        <form method="POST" action="{{ route('documentos.store', $sucursal) }}" x-data="compraApp()"
+            x-init="init()">
             @csrf
             <div x-data="{ tab: 'detalle' }">
                 <div class="flex gap-4 border-b mt-4">
@@ -157,7 +158,7 @@
 
                         {{-- -ENVIO DE DATOS --}}
                         <input type="hidden" name="proveedor_id" :value="proveedor?.id">
-                        <input type="hidden" name="almacen_id" value="1">
+                        <input type="hidden" name="almacen_id" value="{{ $sucursal->almacen_id }}">
                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                         <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
                         <input type="hidden" name="subtotal" x-model="total">
@@ -165,6 +166,7 @@
                         <input type="hidden" name="total" :value="(total * 1.16)">
                         <input type="hidden" name="estatus" :value="1">
                         <input type="hidden" name="tipo" value="{{ $tipo }}">
+                        {{-- <input type="hidden" name="sucursal" value="{{ $sucursal->id }}"> --}}
                     </div>
                 </div>
                 <div x-show="tab === 'info'" x-cloak class="space-y-4">
@@ -216,8 +218,8 @@
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                    <div>
-                    {{-- <div class="">
+                        <div>
+                            {{-- <div class="">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                                 Número interior: <span class="text-red-500">*</span>
                             </label>
@@ -229,18 +231,18 @@
                             @enderror
                         </div>
                     </div> --}}
-                    <div class="">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Número exterior: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="numero_exterior" placeholder="Número exterior"
-                                x-model="proveedorNumeroExterior"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('numero_exterior')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                            <div class="">
+                                <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
+                                    Número exterior: <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="numero_exterior" placeholder="Número exterior"
+                                    x-model="proveedorNumeroExterior"
+                                    class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                @error('numero_exterior')
+                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
-                    </div>
                         <div class="">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                                 Colonia: <span class="text-red-500">*</span>
@@ -318,11 +320,17 @@
                     </div>
                 </div>
                 <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-                    <a href="{{ route(match ($tipo) {'1' => 'cotizaciones.index','2' => 'facturas.index','3' => 'remisiones.index'}) }}"
+
+                    <a href="{{ route(
+                        match ($tipo) {
+                            '1' => 'cotizaciones.index',
+                            '2' => 'facturas.index',
+                            '3' => 'remisiones.index',
+                        },['sucursal' => $sucursal],
+                    ) }}"
                         class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
                         Cancelar
                     </a>
-
                     <button type="submit"
                         class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                         Guardar {{ match ($tipo) {'1' => 'Cotización','2' => 'Facturación','3' => 'Remisión'} }}
@@ -334,6 +342,7 @@
 
         {{-- ================= ALPINE ================= --}}
         <script>
+            const ALMACEN_ID = {{ $sucursal->almacen_id }};
             function compraApp() {
                 return {
                     proveedor: null,
@@ -397,7 +406,7 @@
                         const q = this.items[index].query
                         if (q.length < 2) return
 
-                        const res = await fetch(`/api/productos-existencias/buscar?q=${q}&almacen=4}`)
+                        const res = await fetch(`/api/productos-existencias/buscar?q=${q}&almacen=${ALMACEN_ID}}`)
                         this.items[index].resultados = await res.json()
                     },
 

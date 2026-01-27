@@ -9,6 +9,7 @@ class Devolucion extends Model
     'documento_id',
     'cliente_id',
     'user_id',
+    'almacen_id',
     'serie',
     'folio',
     'fecha',

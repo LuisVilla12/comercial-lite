@@ -36,6 +36,7 @@
 
 
         {{-- Botón --}}
+
         <a href="{{ route('documentos.create', [
             'sucursal' => $sucursal,
             'tipo' => 1,
@@ -98,7 +99,7 @@
                         <td class="px-6 py-4 text-sm text-gray-700">
                             <div class="flex flex-wrap items-center gap-4">
                                 {{-- Ver --}}
-                                <a href="{{ route('documentos.show', $documento) }}"
+                                <a href="{{ route('documentos.show', ['sucursal'=>$sucursal, 'documento'=>$documento]) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                     <span class="hidden sm:inline">Ver</span>
@@ -106,7 +107,7 @@
                                 @if ($documento->estatus == 1)
                                     <span class="hidden sm:inline text-gray-300">•</span>
                                     {{-- Editar --}}
-                                    <a href="{{ route('documentos.edit', $documento) }}"
+                                    <a href="{{ route('documentos.edit',  ['sucursal'=>$sucursal, 'documento'=>$documento]) }}"
                                         class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                         <x-heroicon-o-pencil-square class="w-4 h-4" />
                                         <span class="hidden sm:inline">Editar</span>
@@ -114,7 +115,7 @@
                                     <span class="hidden sm:inline text-gray-300">•</span>
 
                                     {{-- Eliminar --}}
-                                    <form action="{{ route('documentos.destroy', $documento) }}" method="POST"
+                                    <form action="{{ route('documentos.destroy',  ['sucursal'=>$sucursal, 'documento'=>$documento]) }}" method="POST"
                                         class="inline">
                                         @csrf
                                         @method('DELETE')

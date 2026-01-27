@@ -26,7 +26,7 @@
                     2 => 'Factura',
                     3 => 'Remisión',
                 } }}
-                # {{ $documento->id }} </h2>
+                 {{ $documento->serie . " #". $documento->id }} </h2>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
                 Fecha: {{ $documento->fecha }}
             </h2>
@@ -43,7 +43,7 @@
                 @endif
 
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id < 2)
-                    <form method="POST" action="{{ route('documentos.surtir', $documento) }}">
+                    <form method="POST" action="{{ route('documentos.surtir', ['sucursal'=>$sucursal, 'documento'=>$documento]) }}">
                         @csrf
                         <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
                             CONVERTIR REMISION
@@ -51,10 +51,11 @@
                     </form>
                 @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 3)
                     <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed"> REMISIÓN SURTIDA</p>
-                    <a href="{{ route('devolucion.edit',$documento) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded">DEVOLUCIÓN</a>
+                    <a
+                        href="{{ route('devolucion.edit',['sucursal'=>$sucursal, 'documento'=>$documento] ) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded">DEVOLUCIÓN</a>
                 @endif
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-                    <form method="POST" action="{{ route('documentos.surtir', $documento) }}">
+                    <form method="POST" action="{{ route('documentos.surtir', ['sucursal'=>$sucursal, 'documento'=>$documento]) }}">
                         @csrf
                         <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
                             SURTIR REMISION
@@ -143,10 +144,16 @@
                     <input type="text" value="{{ optional($documento->cliente->domicilios->first())->calle }}"
                         disabled class="w-full border rounded p-2 bg-gray-100">
                 </div>
-                <div class="">
+                {{-- <div class="">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Numero interior: </label>
                     <input type="text"
                         value="{{ optional($documento->cliente->domicilios->first())->numero_interior }}" disabled
+                        class="w-full border rounded p-2 bg-gray-100">
+                </div> --}}
+                <div class="">
+                    <label class="block text-lg font-medium mb-2 dark:text-white">Numero exterior: </label>
+                    <input type="text"
+                        value="{{ optional($documento->cliente->domicilios->first())->numero_exterior }}" disabled
                         class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <div class="">
@@ -186,8 +193,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                         Uso de CFDI <span class="text-red-500">*</span>
                     </label>
-                    <select
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    <select class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         @foreach ($usos as $uso)
                             <option value="{{ $uso->clave }}" @selected(old('uso_cfdi', $documento->uso_cfdi) === $uso->clave)>
                                 {{ $uso->clave }} - {{ $uso->descripcion }}
@@ -208,11 +214,18 @@
         </div>
         <div class="mt-6 flex gap-4">
             <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-                <a href="{{ route(match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'}) }}"
+                <a href="{{ route(
+                    match ($documento->documento_modelo_id) {
+                        1 => 'cotizaciones.index',
+                        2 => 'facturas.index',
+                        3 => 'remisiones.index',
+                    },
+                    ['sucursal' => $sucursal],
+                ) }}"
                     class="px-4 py-2 bg-gray-500 text-white rounded">
-                    Volver
+                    Volver</a>
                     @if ($documento->estatus == 1)
-                        <a href="{{ route('documentos.edit', $documento) }}"
+                        <a href="{{ route('documentos.edit', ['sucursal'=>$sucursal,'documento'=>$documento]) }}"
                             class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                             Actualizar
                             {{ match ($documento->documento_modelo_id) {

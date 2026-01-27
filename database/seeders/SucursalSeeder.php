@@ -13,17 +13,27 @@ class SucursalSeeder extends Seeder
         Sucursal::insert([
     [
         'codigo' => ' 001',
-        'nombre' => ' Centro',
-        'serie_cotizacion' => 'CEN-C',
-        'serie_remision'   => 'CEN-R',
-        'serie_factura'    => 'CEN-F',
+        'nombre' => ' Orizaba',
+        'serie_cotizacion' => 'ORI-C',
+        'serie_remision'   => 'ORI-R',
+        'serie_factura'    => 'ORI-F',
+        'almacen_id'    => 1,
     ],
     [
         'codigo' => ' 002',
-        'nombre' => ' Norte',
-        'serie_cotizacion' => 'NOR-C',
-        'serie_remision'   => 'NOR-R',
-        'serie_factura'    => 'NOR-F',
+        'nombre' => ' Zaragoza',
+        'serie_cotizacion' => 'ZAR-C',
+        'serie_remision'   => 'ZAR-R',
+        'serie_factura'    => 'ZAR-F',
+        'almacen_id'    => 3,
+    ],
+    [
+        'codigo' => ' 003',
+        'nombre' => ' Rebsamen',
+        'serie_cotizacion' => 'REB-C',
+        'serie_remision'   => 'REB-R',
+        'serie_factura'    => 'REB-F',
+        'almacen_id'    => 4,
     ],
 ]);
     }

@@ -8,9 +8,11 @@ use App\Models\Producto;
 use App\Models\Almacen;
 use App\Models\Cliente;
 use App\Models\Devolucion;
+use App\Models\DevolucionesDetalles;
 use App\Models\UsoCfdi;
 use App\Models\Sucursal;
 use App\Models\DocumentosDetalle;
+use App\Models\ExistenciaProducto;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\InventarioService;
@@ -23,48 +25,7 @@ class DocumentoController extends Controller
      */
     public function indexCotizacion(Request $request, Sucursal $sucursal)
     {
-        $documentos = Documento::where('documento_modelo_id', 1)
-            ->when($request->search, function ($q, $search) {
-                $q->where(function ($query) use ($search) {
-                    $query->where('folio', 'like', "%{$search}%")
-                        ->orWhereHas('cliente', function ($c) use ($search) {
-                            $c->where('nombre', 'like', "%{$search}%");
-                        });
-                });
-            })
-            ->when($request->fecha === 'hoy', function ($q) {
-                $q->whereDate('fecha', now()->toDateString());
-            })
-            ->orderBy('folio','desc')
-            ->paginate(10)
-            ->withQueryString();
-
-        return view('cotizaciones.index', ['documentos'=>$documentos, 'sucursal'=>$sucursal]);
-    }
-
-    public function indexFacturas(Request $request)
-    {
-        $documentos = Documento::where('documento_modelo_id', 2)
-            ->when($request->search, function ($q, $search) {
-                $q->where(function ($query) use ($search) {
-                    $query->where('folio', 'like', "%{$search}%")
-                        ->orWhereHas('cliente', function ($c) use ($search) {
-                            $c->where('nombre', 'like', "%{$search}%");
-                        });
-                });
-            })
-            ->when($request->fecha === 'hoy', function ($q) {
-                $q->whereDate('fecha', now()->toDateString());
-            })
-            ->orderBy('folio','desc')
-            ->paginate(10)
-            ->withQueryString();
-
-        return view('facturas.index', compact('documentos'));
-    }
-    public function indexRemisiones(Request $request)
-    {
-         $documentos = Documento::where('documento_modelo_id', 3)
+        $documentos = Documento::where('documento_modelo_id', 1)->where('serie', $sucursal->serie_cotizacion)
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($query) use ($search) {
                     $query->where('folio', 'like', "%{$search}%")
@@ -80,28 +41,72 @@ class DocumentoController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('remisiones.index', compact(var_name: 'documentos'));
+        return view('cotizaciones.index', ['documentos' => $documentos, 'sucursal' => $sucursal]);
+    }
+
+    public function indexFacturas(Request $request, Sucursal $sucursal)
+    {
+        $documentos = Documento::where('documento_modelo_id', 2)->where('serie', $sucursal->serie_factura)
+            ->when($request->search, function ($q, $search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('folio', 'like', "%{$search}%")
+                        ->orWhereHas('cliente', function ($c) use ($search) {
+                            $c->where('nombre', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->when($request->fecha === 'hoy', function ($q) {
+                $q->whereDate('fecha', now()->toDateString());
+            })
+            ->orderBy('folio', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('facturas.index', ['documentos' => $documentos, 'sucursal' => $sucursal]);
+    }
+    public function indexRemisiones(Request $request, Sucursal $sucursal)
+    {
+        $documentos = Documento::where('documento_modelo_id', 3)->where('serie', $sucursal->serie_remision)
+            ->when($request->search, function ($q, $search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('folio', 'like', "%{$search}%")
+                        ->orWhereHas('cliente', function ($c) use ($search) {
+                            $c->where('nombre', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->when($request->fecha === 'hoy', function ($q) {
+                $q->whereDate('fecha', now()->toDateString());
+            })
+            ->orderBy('folio', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('remisiones.index', ['documentos' => $documentos, 'sucursal' => $sucursal]);
     }
     /**
      * Show the form for creating a new resource.
      */
-    public function create($tipo)
+    public function create(Sucursal $sucursal, $tipo)
     {
         $proveedores = Cliente::all();
         $productos = Producto::all();
         $almacenes = Almacen::all();
-        $usos_cfdi=UsoCfdi::all();
+        $usos_cfdi = UsoCfdi::all();
+        // dd($sucursal);
         return view('documentos.create', [
+            'sucursal' => $sucursal,
             'proveedores' => $proveedores,
             'productos' => $productos,
             'almacenes' => $almacenes,
             'tipo' => $tipo,
-            'usos'=> $usos_cfdi
+            'usos' => $usos_cfdi
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Sucursal $sucursal, Request $request)
     {
+        // dd($sucursal);
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -109,8 +114,6 @@ class DocumentoController extends Controller
         $request->merge([
             'productos' => $productos
         ]);
-        // dd($request);
-        // Validar detalles del documento
         $request->validate([
             'proveedor_id' => 'required|exists:clientes,id',
             'almacen_id' => 'required|exists:clientes,id',
@@ -130,11 +133,13 @@ class DocumentoController extends Controller
 
         try {
             if ($request->tipo == 1) {
-                $serie = 'CT';
+                $serie = $sucursal->serie_cotizacion;
             } elseif ($request->tipo == 2) {
-                $serie = 'FT';
+                $serie = $sucursal->serie_factura;
+            } elseif ($request->tipo == 3) {
+                $serie = $sucursal->serie_remision;
             } else {
-                $serie = 'RT';
+                $serie = 'XX';
             }
             $ultimoFolio = Documento::where('serie', $serie)
                 ->lockForUpdate()
@@ -181,29 +186,30 @@ class DocumentoController extends Controller
         // return redirect()->route('cotizacion.index')
         //     ->with('success', 'Cotización creada correctamente.');
         return redirect()
-            ->route('documentos.show', $documento)
+            ->route('documentos.show', ['sucursal' => $sucursal->id, 'documento' => $documento])
             ->with('open_pdf', true);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Documento $documento)
+    public function show(Sucursal $sucursal, Documento $documento)
     {
-        $usos_cfdi=UsoCfdi::all();
+        $usos_cfdi = UsoCfdi::all();
         $documento->load([
             'cliente',
             'detalles.producto'
         ]);
-    return view('documentos.show', [ 'documento' => $documento,'usos'=> $usos_cfdi,]);    }
+        return view('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi,]);
+    }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Documento $documento)
+    public function edit(Sucursal $sucursal, Documento $documento)
     {
         // dd($documento);
-    $usos_cfdi=UsoCfdi::all();
+        $usos_cfdi = UsoCfdi::all();
         if ($documento->estatus != 1) {
             return redirect()
                 ->route('documentos.show', $documento)
@@ -224,12 +230,12 @@ class DocumentoController extends Controller
                 ->value('cantidad') ?? 0;
         });
 
-        return view('documentos.edit', ['documento'=>$documento, 'usos'=>$usos_cfdi]);
+        return view('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi]);
     }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Documento $documento)
+    public function update(Sucursal $sucursal, Request $request, Documento $documento)
     {
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
@@ -303,12 +309,14 @@ class DocumentoController extends Controller
             DB::rollBack();
             throw $e;
         }
-        return redirect()
-            ->route(route: match ($documento->documento_modelo_id) {
+        return redirect()->route(
+            match ($documento->documento_modelo_id) {
                 1 => 'cotizaciones.index',
                 2 => 'facturas.index',
-                3 => 'remisiones.index'
-            })
+                3 => 'remisiones.index',
+            },
+            $sucursal
+        )
             ->with('success', match ($documento->documento_modelo_id) {
                 1 => 'Cotización',
                 2 => 'Factura',
@@ -395,7 +403,7 @@ class DocumentoController extends Controller
             ->with('success', 'Factura convertida correctamente');
     }
 
-    public function surtirDocumento(Documento $documento)
+    public function surtirDocumento(Sucursal $sucursal, Documento $documento)
     {
         if ($documento->estatus != 1) {
             return back()->with('error', 'La remisión ya fue surtida');
@@ -418,12 +426,12 @@ class DocumentoController extends Controller
         }
 
         return redirect()
-            ->route('documentos.show', $documento)
+            ->route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento])
             ->with('success', 'Remisión surtida correctamente');
     }
-     public function devolucionEdit(Documento $documento)
+    public function devolucionEdit(Sucursal $sucursal, Documento $documento)
     {
-        $usos_cfdi=UsoCfdi::all();
+        $usos_cfdi = UsoCfdi::all();
         // ✅ CARGAR RELACIONES PRIMERO
         $documento->load([
             'cliente.domicilios',
@@ -438,12 +446,10 @@ class DocumentoController extends Controller
                 ->value('cantidad') ?? 0;
         });
 
-        return view('documentos.devolucion', ['documento'=>$documento, 'usos'=>$usos_cfdi]);
+        return view('documentos.devolucion', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi]);
     }
-    public function devolucionUpdate(Request $request, Documento $documento)
+    public function devolucionUpdate(Request $request, Sucursal $sucursal, Documento $documento)
     {
-
-
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -460,70 +466,65 @@ class DocumentoController extends Controller
         ]);
         // Productos que se devolvieron
         $devoluciones = json_decode($request->devoluciones, true);
-        dd($devoluciones);
+        // dd($devoluciones);
         try {
             DB::transaction(function () use ($request, $documento) {
-                $serie='DV';
+                $serie = 'DV';
                 $ultimoFolio = Documento::where('serie', $serie)
-                ->lockForUpdate()
-                ->max('folio');
+                    ->lockForUpdate()
+                    ->max('folio');
                 $siguienteFolio = $ultimoFolio ? $ultimoFolio + 1 : 1;
 
                 $devolucion = Devolucion::create([
-                'documento_id' => $documento->id,
-                'cliente_id' =>  $request->proveedor_id,
-                'user_id'=>$request->user_id,
-                'serie' => $serie,
-                'folio' => $siguienteFolio,
-                'fecha' => now()->format('Y-m-d'),
-                'total' => $request->total,
-                'estatus' => 1,
-                'observaciones' => $request->observaciones
-            ]);
+                    'documento_id' => $documento->id,
+                    'cliente_id' =>  $request->proveedor_id,
+                    'user_id' => $request->user_id,
+                    'serie' => $serie,
+                    'folio' => $siguienteFolio,
+                    'fecha' => now()->format('Y-m-d'),
+                    'total' => $request->total,
+                    'estatus' => 1,
+                    'observaciones' => $request->observaciones
+                ]);
+                DB::commit();
                 /* ================= DETALLES ================= */
-                // $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
-                // $detallesEnFormulario = [];
-                // foreach ($request->productos as $producto) {
-                //     $detalle = $documento->detalles()->updateOrCreate(
-                //         [
-                //             'id' => $producto['detalle_id'] ?? null
-                //         ],
-                //         [
-                //             'producto_id' => $producto['producto_id'],
-                //             'cantidad' => $producto['cantidad'],
-                //             'costo_unitario' => $producto['costo'],
-                //             'importe' => $producto['cantidad'] * $producto['costo'],
-                //         ]
-                //     );
+                foreach ($request->productos as $item) {
 
-                //     $detallesEnFormulario[] = $detalle->id;
-                // }
+                    // Evitar filas vacías (fila extra de Alpine)
+                    if (empty($item['producto_id'])) {
+                        continue;
+                    }
 
-                // /* ================= ELIMINAR DETALLES BORRADOS ================= */
-                // $detallesParaEliminar = array_diff(
-                //     $detallesExistentes,
-                //     $detallesEnFormulario
-                // );
+                    // Guardar detalle de devolución
+                    DevolucionesDetalles::create([
+                        'devolucion_id' => $devolucion->id,
+                        'producto_id'   => $item['producto_id'],
+                        'cantidad'      => $item['cantidad'],
+                        'costo_unitario' => $item['costo'],
+                        'importe'       => $item['importe'],
+                    ]);
 
-                // if (!empty($detallesParaEliminar)) {
-                //     $documento->detalles()->whereIn('id', $detallesParaEliminar)->delete();
-                // }
+                    // Restar inventario (permite negativo)
+                    $existencia = ExistenciaProducto::where('producto_id', $item['producto_id'])
+                        ->where('almacen_id', $devolucion->almacen_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($existencia) {
+                        $existencia->decrement('cantidad', $item['cantidad']);
+                    } else {
+                        // Si no existe registro, créalo en negativo
+                        ExistenciaProducto::create([
+                            'producto_id' => $item['producto_id'],
+                            'almacen_id'  => $devolucion->almacen_id,
+                            'cantidad'    => -$item['cantidad'],
+                        ]);
+                    }
+                }
             });
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
         }
-        return redirect()
-            ->route(route: match ($documento->documento_modelo_id) {
-                1 => 'cotizaciones.index',
-                2 => 'facturas.index',
-                3 => 'remisiones.index'
-            })
-            ->with('success', match ($documento->documento_modelo_id) {
-                1 => 'Cotización',
-                2 => 'Factura',
-                3 => 'Remisión'
-            } . " a sido actualizada");
     }
-
 }

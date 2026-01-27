@@ -20,7 +20,7 @@
             <input type="number" id="cp" name="cp"
                    placeholder="Codigo"
                    value="{{ old(key: 'cp') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
 
             @error('cp')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -78,7 +78,7 @@
             <input type="text" id="calle" name="calle"
                    placeholder="Calle"
                    value="{{old(key: 'calle')}}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('calle')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -90,7 +90,7 @@
             <input type="number" id="numero_exterior" name="numero_exterior"
                    placeholder="Numero exterior "
                    value="{{old('numero_exterior')}}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
 
         <div class="">
@@ -100,7 +100,7 @@
             <input type="number" id="numero_interior" name="numero_interior"
                    placeholder="Numero interior"
                    value="{{old(key: 'numero_interior')}}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('numero_interior')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror

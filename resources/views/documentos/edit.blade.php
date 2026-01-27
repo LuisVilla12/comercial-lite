@@ -10,7 +10,7 @@
         </div>
     </x-slot>
 
-    <form method="POST" action="{{ route('documentos.update', $documento) }}" x-data="documentoEdit(@js($documento->toArray()))"
+    <form method="POST" action="{{ route('documentos.update', ['sucursal'=>$sucursal, 'documento'=>$documento]) }}" x-data="documentoEdit(@js($documento->toArray()))"
         x-init="init()">
         @csrf
         @method('PUT')
@@ -312,7 +312,14 @@
 
 
         <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-            <a href="{{ route(match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'}) }}"
+            <a href="{{ route(
+                    match ($documento->documento_modelo_id) {
+                        1 => 'cotizaciones.index',
+                        2 => 'facturas.index',
+                        3 => 'remisiones.index',
+                    },
+                    ['sucursal' => $sucursal],
+                ) }}"
                 class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
                 Cancelar
             </a>
