@@ -27,17 +27,17 @@ class ClientesSeeder extends Seeder
 
             $batch[] = [
                 // TODO: extraer el id de los clientes desde el csv
-                // 'id' => intval($row[0]),
-                'codigo' => trim($row[0]),
-                'nombre' => trim($row[1]),
-                'rfc' => trim($row[2]),
-                'curp' => trim($row[3])?: null,
-                'tipo' => trim($row[4]),
-                'email1' => trim($row[5]) ?: null,
-                'email2' => trim($row[6]) ?: null,
-                'regimen_fiscal' => trim($row[7])?: null,
-                'telefono' => trim($row[8]) ?: null,
-                'whatsapp' => trim($row[8]) ?: null,
+                'id' => intval($row[0]),
+                'codigo' => trim($row[1])?: '',
+                'nombre' => trim($row[2])?: '',
+                'rfc' => trim($row[3])?: '',
+                'curp' => trim($row[4])?: null,
+                'tipo' => trim($row[5])?:4,
+                'email1' => trim($row[6]) ?: '',
+                'email2' => trim($row[7]) ?: '',
+                'regimen_fiscal' => trim($row[8])?: null,
+                'telefono' =>  null,
+                'whatsapp' =>  null,
                 'saldo' => 0,
             ];
 
