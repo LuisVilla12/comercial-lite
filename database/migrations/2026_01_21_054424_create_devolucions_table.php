@@ -23,7 +23,7 @@ return new class extends Migration
             $table->date(column: 'fecha')->nullable();
             $table->decimal('total', 15, 4)->nullable();
             $table->text('observaciones')->nullable();
-            $table->integer('status')->default(1);
+            $table->integer('estatus')->default(1);
         });
     }
 

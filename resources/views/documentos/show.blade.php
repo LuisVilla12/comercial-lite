@@ -55,7 +55,7 @@
                             CONVERTIR FACTURA
                         </button>
                     </form>
-                @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 3)
+                @elseif($documento->estatus == 4 and $documento->documento_modelo_id == 3)
                     <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed"> REMISIÓN SURTIDA</p>
                     <a
                         href="{{ route('devolucion.edit',['sucursal'=>$sucursal, 'documento'=>$documento] ) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded">DEVOLUCIÓN</a>

@@ -594,8 +594,8 @@ class DocumentoController extends Controller
                     'folio' => $siguienteFolio,
                     'fecha' => now()->format('Y-m-d'),
                     'total' => $request->total,
-                    'estatus' => 2,
-                    'observaciones' => $request->observaciones
+                    'estatus' => 4,
+                    'observaciones' => $request->observaciones,
                 ]);
                 DB::commit();
                 /* ================= DETALLES ================= */
