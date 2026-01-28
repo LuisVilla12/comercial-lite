@@ -17,38 +17,44 @@ class DocumentosExport implements
     WithColumnWidths
 {
     public function __construct(
-        protected int $documentoModeloId,
+        protected array $series,
+        protected array $documentoModeloIds,
         protected string $fechaInicio,
         protected string $fechaFin
     ) {}
 
     /**
-     * Datos del Excel
+     * ================= DATOS DEL EXCEL =================
      */
     public function collection()
     {
         return Documento::with(['cliente', 'usuario'])
-            ->where('documento_modelo_id', $this->documentoModeloId)
+            ->whereIn('documento_modelo_id', $this->documentoModeloIds)
+            ->whereIn('serie', $this->series)
+            ->where('estatus', 4)
             ->whereBetween('fecha', [$this->fechaInicio, $this->fechaFin])
+            ->orderBy('fecha')
             ->get()
             ->map(function ($doc) {
                 return [
-                    'folio'        => $doc->folio,
-                    'fecha'        => $doc->fecha,
-                    'cliente'      => $doc->cliente->nombre ?? '',
-                    'usuario'      => $doc->usuario->name ?? '',
-                    'metodo_pago'  => $doc->metodo_pago,
-                    'total'        => $doc->total,
+                    'serie'      => $doc->serie,
+                    'folio'      => $doc->folio,
+                    'fecha'      => $doc->fecha,
+                    'cliente'    => $doc->cliente->nombre ?? '',
+                    'usuario'    => $doc->usuario->name ?? '',
+                    'forma_pago' => $this->getFormaPagoTexto($doc->forma_pago),
+                    'total'      => $doc->total,
                 ];
             });
     }
 
     /**
-     * Encabezados (van en la fila 3)
+     * ================= ENCABEZADOS =================
      */
     public function headings(): array
     {
         return [
+            'Serie',
             'Folio',
             'Fecha',
             'Cliente',
@@ -59,51 +65,48 @@ class DocumentosExport implements
     }
 
     /**
-     * Ancho de columnas
+     * ================= ANCHO DE COLUMNAS =================
      */
     public function columnWidths(): array
     {
         return [
-            'A' => 10,
-            'B' => 15,
-            'C' => 25,
-            'D' => 10,
-            'E' => 10,
-            'F' => 15,
+            'A' =>7,
+            'B' => 7,
+            'C' => 12,
+            'D' => 20,
+            'E' => 12,
+            'F' => 12,
+            'G' => 12,
         ];
     }
 
     /**
-     * Estilos, título y bordes
+     * ================= EVENTOS / ESTILOS =================
      */
     public function registerEvents(): array
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
 
-                // Insertar filas para el título
+                /* ===== TÍTULO ===== */
                 $event->sheet->insertNewRowBefore(1, 2);
 
-                $titulo = "Reporte de ventas {$this->documentoModeloId} "
-                        . "del {$this->fechaInicio} al {$this->fechaFin}";
+                $titulo = "Reporte de ventas ({$this->getTiposTexto()}) "
+                    . "del {$this->fechaInicio} al {$this->fechaFin}";
 
-                // Título
                 $event->sheet->setCellValue('A1', $titulo);
-                $event->sheet->mergeCells('A1:F1');
+                $event->sheet->mergeCells('A1:G1');
 
                 $event->sheet->getStyle('A1')->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                        'size' => 14,
-                    ],
+                    'font' => ['bold' => true, 'size' => 14],
                     'alignment' => [
                         'horizontal' => 'center',
                         'vertical' => 'center',
                     ],
                 ]);
 
-                // Encabezados (fila 3)
-                $headerRange = 'A3:F3';
+                /* ===== ENCABEZADOS ===== */
+                $headerRange = 'A3:G3';
 
                 $event->sheet->getStyle($headerRange)->applyFromArray([
                     'font' => [
@@ -112,7 +115,7 @@ class DocumentosExport implements
                     ],
                     'fill' => [
                         'fillType' => 'solid',
-                        'startColor' => ['rgb' => '4F46E5'], // Indigo
+                        'startColor' => ['rgb' => '4F46E5'],
                     ],
                     'alignment' => [
                         'horizontal' => 'center',
@@ -125,13 +128,96 @@ class DocumentosExport implements
                     ],
                 ]);
 
-                // Bordes para todo el contenido
-                $lastRow = $event->sheet->getHighestRow();
-                $event->sheet->getStyle("A3:F{$lastRow}")
+                /* ===== BORDES DEL CONTENIDO ===== */
+                $lastDataRow = $event->sheet->getHighestRow();
+
+                $event->sheet->getStyle("A3:G{$lastDataRow}")
                     ->getBorders()
                     ->getAllBorders()
                     ->setBorderStyle(Border::BORDER_THIN);
+
+                /* ================= RESUMEN POR FORMA DE PAGO ================= */
+                $inicioDatos = 4; // después del título y encabezados
+                $totales = [];
+
+                for ($row = $inicioDatos; $row <= $lastDataRow; $row++) {
+
+                    $formaPagoTexto = $event->sheet->getCell("F{$row}")->getValue();
+                    $total = (float) $event->sheet->getCell("G{$row}")->getValue();
+
+                    if (!$formaPagoTexto) {
+                        continue;
+                    }
+
+                    $codigo = substr($formaPagoTexto, 0, 2);
+                    $grupo = $this->getGrupoFormaPago($codigo);
+
+                    $totales[$grupo] = ($totales[$grupo] ?? 0) + $total;
+                }
+
+                // Insertar resumen
+                $resumenInicio = $lastDataRow + 2;
+
+                $event->sheet->setCellValue("F{$resumenInicio}", 'RESUMEN');
+                $event->sheet->getStyle("F{$resumenInicio}")->getFont()->setBold(true);
+
+                $fila = $resumenInicio + 1;
+                $sumaGeneral = 0;
+
+                foreach ($totales as $grupo => $monto) {
+                    $event->sheet->setCellValue("F{$fila}", $grupo);
+                    $event->sheet->setCellValue("G{$fila}", $monto);
+                    $sumaGeneral += $monto;
+                    $fila++;
+                }
+
+                // TOTAL GENERAL
+                $event->sheet->setCellValue("F{$fila}", 'TOTAL GENERAL');
+                $event->sheet->setCellValue("G{$fila}", $sumaGeneral);
+                $event->sheet->getStyle("F{$fila}:G{$fila}")->getFont()->setBold(true);
             },
         ];
+    }
+
+    /**
+     * ================= HELPERS =================
+     */
+
+    private function getTiposTexto(): string
+    {
+        $mapa = [
+            2 => 'Facturas',
+            3 => 'Remisiones',
+        ];
+
+        return collect($this->documentoModeloIds)
+            ->map(fn ($id) => $mapa[$id] ?? 'Desconocido')
+            ->implode(' y ');
+    }
+
+    private function getFormaPagoTexto(?string $codigo): string
+    {
+        $formas = [
+            '01' => '01 Efectivo',
+            '02' => '02 Cheque nominativo',
+            '03' => '03 Transferencia electrónica',
+            '04' => '04 Tarjeta de crédito',
+            '05' => '05 Monedero electrónico',
+            '28' => '28 Tarjeta de débito',
+        ];
+
+        return $formas[$codigo] ?? $codigo ?? '';
+    }
+
+    private function getGrupoFormaPago(string $codigo): string
+    {
+        return match ($codigo) {
+            '01' => 'Efectivo',
+            '03' => 'Transferencia',
+            '02' => 'Cheque',
+            '04', '28' => 'Tarjeta',
+            '05' => 'Monedero electrónico',
+            default => 'Otros',
+        };
     }
 }

@@ -113,14 +113,15 @@ Route::post('/documentos', action: [DocumentoController::class, 'store'])->name(
 Route::get('/documentos/{documento}/edit', [DocumentoController::class, 'edit'])->name(name: 'documentos.edit');
 Route::get('/documentos/{documento}', [DocumentoController::class, 'show'])->name('documentos.show');
 Route::put('/documentos/{documento}', action: [DocumentoController::class, 'update'])->name('documentos.update');
-Route::post('/documentos/{documento}', [DocumentoController::class, 'surtirDocumento'])->name(name: 'documentos.surtir');
+Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrar'])->name(name: 'documentos.timbrar');
+Route::post('/documentos/{documento}/surtir', [DocumentoController::class, 'surtir'])->name(name: 'documentos.surtir');
 
 Route::get('/devolucion/{documento}', [DocumentoController::class, 'devolucionEdit'])->name(name: 'devolucion.edit');
-Route::put('/devolucion/{documento}', action: [DocumentoController::class, 'devolucionUpdate'])->name('devolucion.update');
-
+Route::put('/devolucion/{documento}', action: [DocumentoController::class, 'devolucionUpdate'])->name(name: 'devolucion.update');
+Route::post('/documentos/{documento}/convertir/{tipo}', action: [DocumentoController::class, 'convertir'])->name('convertir');
 });
+
 Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
-Route::post('/documentos/{documento}/convertir/Factura', action: [DocumentoController::class, 'convertirFactura'])->name('cotizacionToFactura');
 Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
 
 //Traspasos

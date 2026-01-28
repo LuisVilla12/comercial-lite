@@ -237,14 +237,94 @@ class DocumentoController extends Controller
      */
     public function update(Sucursal $sucursal, Request $request, Documento $documento)
     {
+        // $productos = collect($request->productos)
+        //     ->filter(fn($p) => !empty($p['producto_id']))
+        //     ->values()
+        //     ->toArray();
+        // $request->merge([
+        //     'productos' => $productos
+        // ]);
+        // // Validar detalles de la compra
+        // $request->validate([
+        //     'tipo' => 'required',
+        //     'proveedor_id' => 'required|exists:clientes,id',
+        //     'almacen_id' => 'required|exists:clientes,id',
+        //     'user_id' => 'required|exists:users,id',
+        //     'fecha' => 'required|date',
+        //     'subtotal' => 'required|numeric',
+        //     'impuestos' => 'required|numeric',
+        //     'total' => 'required|numeric',
+        //     'productos' => 'required|array|min:1',
+        //     'metodo_pago' => 'required',
+        //     'forma_pago' => 'required',
+        //     'uso_cfdi' => 'required',
+        // ]);
+        // try {
+        //     $documento = DB::transaction(function () use ($request, $documento) {
+        //         /* ================= ACTUALIZAR COMPRA ================= */
+        //         $documento->update([
+        //             'proveedor_id' => $request->proveedor_id,
+        //             'subtotal' => $request->subtotal,
+        //             'impuestos' => $request->impuestos,
+        //             'total' => $request->total,
+        //             'metodo_pago' => $request->metodo_pago,
+        //             'forma_pago' => $request->forma_pago,
+        //             'uso_cfdi' => $request->uso_cfdi,
+        //             'observaciones' => $request->observaciones
+        //         ]);
+
+        //         /* ================= DETALLES ================= */
+        //         $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
+        //         $detallesEnFormulario = [];
+
+        //         foreach ($request->productos as $producto) {
+
+        //             $detalle = $documento->detalles()->updateOrCreate(
+        //                 [
+        //                     'id' => $producto['detalle_id'] ?? null
+        //                 ],
+        //                 [
+        //                     'producto_id' => $producto['producto_id'],
+        //                     'cantidad' => $producto['cantidad'],
+        //                     'costo_unitario' => $producto['costo'],
+        //                     'importe' => $producto['cantidad'] * $producto['costo'],
+        //                 ]
+        //             );
+
+        //             $detallesEnFormulario[] = $detalle->id;
+        //         }
+
+        //         /* ================= ELIMINAR DETALLES BORRADOS ================= */
+        //         $detallesParaEliminar = array_diff(
+        //             $detallesExistentes,
+        //             $detallesEnFormulario
+        //         );
+
+        //         if (!empty($detallesParaEliminar)) {
+        //             $documento->detalles()->whereIn('id', $detallesParaEliminar)->delete();
+        //         }
+        //     });
+        // } catch (\Throwable $e) {
+        //     DB::rollBack();
+        //     throw $e;
+        // }
+        // return redirect()->route('documentos.show', [
+        //     'sucursal' => $sucursal,
+        //     'documento' => $documento
+        // ])->with('success', match ($documento->documento_modelo_id) {
+        //     1 => 'Cotización',
+        //     2 => 'Factura',
+        //     3 => 'Remisión'
+        // } . " a sido actualizada");;
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
             ->toArray();
+
         $request->merge([
             'productos' => $productos
         ]);
-        // Validar detalles de la compra
+
         $request->validate([
             'tipo' => 'required',
             'proveedor_id' => 'required|exists:clientes,id',
@@ -259,69 +339,68 @@ class DocumentoController extends Controller
             'forma_pago' => 'required',
             'uso_cfdi' => 'required',
         ]);
-        try {
-            DB::transaction(function () use ($request, $documento) {
 
-                /* ================= ACTUALIZAR COMPRA ================= */
-                $documento->update([
-                    'proveedor_id' => $request->proveedor_id,
-                    'subtotal' => $request->subtotal,
-                    'impuestos' => $request->impuestos,
-                    'total' => $request->total,
-                    'metodo_pago' => $request->metodo_pago,
-                    'forma_pago' => $request->forma_pago,
-                    'uso_cfdi' => $request->uso_cfdi,
-                    'observaciones' => $request->observaciones
-                ]);
+        $documento = DB::transaction(function () use ($request, $documento) {
 
-                /* ================= DETALLES ================= */
-                $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
-                $detallesEnFormulario = [];
+            /* ================= ACTUALIZAR DOCUMENTO ================= */
+            $documento->update([
+                'proveedor_id' => $request->proveedor_id,
+                'subtotal' => $request->subtotal,
+                'impuestos' => $request->impuestos,
+                'total' => $request->total,
+                'metodo_pago' => $request->metodo_pago,
+                'forma_pago' => $request->forma_pago,
+                'uso_cfdi' => $request->uso_cfdi,
+                'observaciones' => $request->observaciones,
+            ]);
 
-                foreach ($request->productos as $producto) {
+            /* ================= DETALLES ================= */
+            $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
+            $detallesEnFormulario = [];
 
-                    $detalle = $documento->detalles()->updateOrCreate(
-                        [
-                            'id' => $producto['detalle_id'] ?? null
-                        ],
-                        [
-                            'producto_id' => $producto['producto_id'],
-                            'cantidad' => $producto['cantidad'],
-                            'costo_unitario' => $producto['costo'],
-                            'importe' => $producto['cantidad'] * $producto['costo'],
-                        ]
-                    );
+            foreach ($request->productos as $producto) {
 
-                    $detallesEnFormulario[] = $detalle->id;
-                }
-
-                /* ================= ELIMINAR DETALLES BORRADOS ================= */
-                $detallesParaEliminar = array_diff(
-                    $detallesExistentes,
-                    $detallesEnFormulario
+                $detalle = $documento->detalles()->updateOrCreate(
+                    [
+                        'id' => $producto['detalle_id'] ?? null
+                    ],
+                    [
+                        'producto_id' => $producto['producto_id'],
+                        'cantidad' => $producto['cantidad'],
+                        'costo_unitario' => $producto['costo'],
+                        'importe' => $producto['cantidad'] * $producto['costo'],
+                    ]
                 );
 
-                if (!empty($detallesParaEliminar)) {
-                    $documento->detalles()->whereIn('id', $detallesParaEliminar)->delete();
-                }
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
-        return redirect()->route(
+                $detallesEnFormulario[] = $detalle->id;
+            }
+
+            /* ================= ELIMINAR DETALLES BORRADOS ================= */
+            $detallesParaEliminar = array_diff(
+                $detallesExistentes,
+                $detallesEnFormulario
+            );
+
+            if (!empty($detallesParaEliminar)) {
+                $documento->detalles()
+                    ->whereIn('id', $detallesParaEliminar)
+                    ->delete();
+            }
+
+            return $documento;
+        });
+
+        return redirect()->route('documentos.show', [
+            'sucursal'  => $sucursal->id,
+            'documento' => $documento->id,
+        ])->with(
+            'success',
             match ($documento->documento_modelo_id) {
-                1 => 'cotizaciones.index',
-                2 => 'facturas.index',
-                3 => 'remisiones.index',
-            },
-            $sucursal
-        )
-            ->with('success', match ($documento->documento_modelo_id) {
                 1 => 'Cotización',
                 2 => 'Factura',
-                3 => 'Remisión'
-            } . " a sido actualizada");
+                3 => 'Remisión',
+            } . ' ha sido actualizada'
+        );
     }
     public function pdf(Documento $documento)
     {
@@ -361,49 +440,78 @@ class DocumentoController extends Controller
             return back()->withErrors('Error al eliminar la cotización');
         }
     }
-
-    public function convertirFactura(Documento $documento)
+    //
+    public function convertir(Sucursal $sucursal, Documento $documento, $tipo)
     {
-        DB::transaction(function () use ($documento) {
-            $folio = Documento::where('serie', 'FT')->lockForUpdate()->max('folio');
-            $folio = ($folio ?? 0) + 1;
+        $documento_convertido = DB::transaction(function () use ($documento, $sucursal, $tipo) {
 
-            // Crear remisión
-            $remision = Documento::create([
-                'documento_modelo_id' => 2, // remisión
-                'serie'               => 'R',
-                'folio'               => $folio,
-                'fecha'                => now(),
+            if ($tipo == '2') {
+                $serie = $sucursal->serie_factura;
+            } elseif ($tipo == '3') {
+                $serie = $sucursal->serie_remision;
+            } else {
+                $serie = 'XX';
+            }
+
+            $ultimoFolio = Documento::where('serie', $serie)
+                ->lockForUpdate()
+                ->max('folio');
+
+            $siguienteFolio = $ultimoFolio ? $ultimoFolio + 1 : 1;
+
+            // Crear documento
+            $documento_convertido = Documento::create([
+                'documento_modelo_id' => $tipo,
+                'serie'               => $serie,
+                'folio'               => $siguienteFolio,
+                'fecha'               => now(),
                 'cliente_id'          => $documento->cliente_id,
                 'almacen_id'          => $documento->almacen_id,
                 'user_id'             => $documento->user_id,
                 'subtotal'            => $documento->subtotal,
-                'impuestos'            => $documento->impuestos,
+                'impuestos'           => $documento->impuestos,
                 'total'               => $documento->total,
                 'estatus'             => 1,
+                'metodo_pago'         => $documento->metodo_pago,
+                'forma_pago'          => $documento->forma_pago,
+                'uso_cfdi'            => $documento->uso_cfdi,
+                'observaciones'       => $documento->observaciones,
             ]);
 
             // Copiar detalles
             foreach ($documento->detalles as $detalle) {
-                $remision->detalles()->create([
-                    'producto_id' => $detalle->producto_id,
-                    'cantidad'    => $detalle->cantidad,
-                    'costo_unitario'      => $detalle->costo_unitario,
-                    'importe'     => $detalle->importe,
+                $documento_convertido->detalles()->create([
+                    'producto_id'   => $detalle->producto_id,
+                    'cantidad'      => $detalle->cantidad,
+                    'costo_unitario' => $detalle->costo_unitario,
+                    'importe'       => $detalle->importe,
                 ]);
             }
 
-            // Marcar cotización como convertida
+            // Marcar documento original como convertido
             $documento->update([
-                'estatus' => 2 // convertida
+                'estatus' => 2,
             ]);
+
+            return $documento_convertido;
         });
+
         return redirect()
-            ->route(route: 'facturas.index')
-            ->with('success', 'Factura convertida correctamente');
+            ->route('documentos.show', [
+                'sucursal' => $sucursal,
+                'documento' => $documento_convertido
+            ])
+            ->with(
+                'success',
+                match ($tipo) {
+                    '2' => 'Factura',
+                    '3' => 'Remisión',
+                } . ' ha sido transformada'
+            );
     }
 
-    public function surtirDocumento(Sucursal $sucursal, Documento $documento)
+
+    public function surtir(Sucursal $sucursal, Documento $documento)
     {
         if ($documento->estatus != 1) {
             return back()->with('error', 'La remisión ya fue surtida');
@@ -411,6 +519,7 @@ class DocumentoController extends Controller
 
         try {
             DB::transaction(function () use ($documento) {
+                // Resta a inventario
                 foreach ($documento->detalles as $detalle) {
                     InventarioService::restar(
                         $detalle->producto_id,
@@ -418,8 +527,8 @@ class DocumentoController extends Controller
                         $detalle->cantidad
                     );
                 }
-
-                $documento->update(['estatus' => 2]);
+                //Documento afectado
+                $documento->update(['estatus' => 4]);
             });
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -468,7 +577,7 @@ class DocumentoController extends Controller
         $devoluciones = json_decode($request->devoluciones, true);
         // dd($devoluciones);
         try {
-            DB::transaction(function () use ($request,$sucursal, $documento) {
+            DB::transaction(function () use ($request, $sucursal, $documento) {
 
                 $serie = $sucursal->serie_devolucion;
                 $ultimoFolio = Documento::where('serie', $serie)
@@ -530,5 +639,33 @@ class DocumentoController extends Controller
             DB::rollBack();
             throw $e;
         }
+    }
+    // TIMBRAR FACTURA
+    public function timbrar(Sucursal $sucursal, Documento $documento)
+    {
+        if ($documento->estatus != 1) {
+            return back()->with('error', 'Factura ya fue surtida');
+        }
+
+        try {
+            DB::transaction(function () use ($documento) {
+                // Resta a inventario
+                foreach ($documento->detalles as $detalle) {
+                    InventarioService::restar(
+                        $detalle->producto_id,
+                        $documento->almacen_id,
+                        $detalle->cantidad
+                    );
+                }
+                //Documento afectado
+                $documento->update(['estatus' => 4]);
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return redirect()
+            ->route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento])
+            ->with('success', 'Factura timbrada correctamente');
     }
 }

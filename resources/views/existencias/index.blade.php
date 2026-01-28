@@ -80,7 +80,7 @@
                 @forelse ($existencias as $existencia)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 text-md text-gray-700">
-                            {{ $existencia->producto->id ." ". $existencia->producto->codigo_producto}}
+                            {{$existencia->producto->codigo_producto}}
                         </td>
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
                             {{ $existencia->producto->nombre_producto}}

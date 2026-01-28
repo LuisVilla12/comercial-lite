@@ -32,21 +32,27 @@
             </h2>
             <div class="flex justify-between gap-3">
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
-                    <form method="POST" action="{{ route('cotizacionToFactura', $documento) }}">
+                    <form method="POST" action="{{ route('convertir', ['sucursal'=>$sucursal, 'documento'=>$documento, 'tipo'=>2]) }}">
                         @csrf
                         <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
                             CONVERTIR FACTURA
                         </button>
                     </form>
-                @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 1)
-                    <p class="px-6 py-2 bg-indigo-600 text-white rounded"> COTIZACIÓN TRANSFORMADA A FACTURA</p>
-                @endif
-
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id < 2)
-                    <form method="POST" action="{{ route('documentos.surtir', ['sucursal'=>$sucursal, 'documento'=>$documento]) }}">
+                    <form method="POST" action="{{ route('convertir', ['sucursal'=>$sucursal, 'documento'=>$documento,'tipo'=>3]) }}">
                         @csrf
                         <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                            CONVERTIR REMISION
+                            CONVERTIR REMISIÓN
+                        </button>
+                    </form>
+                @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 1)
+                    <p class="px-6 py-2 bg-indigo-600 text-white rounded">TRANSFORMADA</p>
+                @endif
+
+                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
+                    <form method="POST" action="{{ route('convertir', ['sucursal'=>$sucursal, 'documento'=>$documento, 'tipo'=>2]) }}">
+                        @csrf
+                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                            CONVERTIR FACTURA
                         </button>
                     </form>
                 @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 3)
@@ -55,10 +61,18 @@
                         href="{{ route('devolucion.edit',['sucursal'=>$sucursal, 'documento'=>$documento] ) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded">DEVOLUCIÓN</a>
                 @endif
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-                    <form method="POST" action="{{ route('documentos.surtir', ['sucursal'=>$sucursal, 'documento'=>$documento]) }}">
+                    <form method="POST" action="{{ route('documentos.surtir',['sucursal'=>$sucursal, 'documento'=>$documento]) }}">
                         @csrf
                         <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
                             SURTIR REMISION
+                        </button>
+                    </form>
+                @endif
+                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
+                    <form method="POST" action="{{ route('documentos.timbrar', ['sucursal'=>$sucursal, 'documento'=>$documento]) }}">
+                        @csrf
+                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase">
+                            Timbrar
                         </button>
                     </form>
                 @endif
