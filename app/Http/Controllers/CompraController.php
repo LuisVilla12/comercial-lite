@@ -129,6 +129,7 @@ class CompraController extends Controller
      */
     public function show(Compra $compra)
     {
+        // $almacenes = Almacen::all();
         $compra->load([
             'proveedor',
             'detalles.producto'

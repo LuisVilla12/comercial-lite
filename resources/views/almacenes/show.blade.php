@@ -1,3 +1,4 @@
+@section('title', content: 'Ver Almacen')
 
 <x-app-layout>
     <x-slot name="header">
@@ -5,7 +6,7 @@
             Detalles Almacen
         </h2>
     </x-slot>
-    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6 grid grid-cols-2 gap-2">
 <div class="md:col-span-2">
             <label class="block text-md font-medium text-gray-700 mb-2">
                 Codigo: <span class="text-red-500">*</span>
@@ -14,7 +15,7 @@
                    placeholder="Codigo"
                    disabled
                    value="{{ $almacen->codigo?? old('codigo') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('codigo')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -29,7 +30,7 @@
                    placeholder="Nombre del almacen"
                    disabled
                    value="{{ $almacen->nombre?? old('nombre') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
              @error('nombre')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -39,7 +40,7 @@
                 Tipo: <span class="text-red-500">*</span>
             </label>
             <select name="tipo" id="tipo"
-                    class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 <option value="" disabled selected>Seleccione una opcion</option>
                 <option value="1" disabled @selected($almacen->tipo == 1)>MATRIZ</option>
                 <option value="2" disabled @selected($almacen->tipo == 2)>SUCURSAL</option>

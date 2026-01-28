@@ -1,4 +1,4 @@
-@section('title', 'Traspaso')
+@section('title', 'Registrar traspaso')
 <x-app-layout>
     <x-slot name="header">
         <div class="md:flex justify-between">
@@ -91,7 +91,7 @@
                                                 class="p-2 hover:bg-gray-100 cursor-pointer">
                                                 <span x-text="p.nombre"></span>
                                                 <span class="text-sm text-gray-500">
-                                                    ($<span x-text="p.costo"></span>)
+                                                    ($<span x-text="p.codigo"></span>)
                                                 </span>
                                             </li>
                                         </template>

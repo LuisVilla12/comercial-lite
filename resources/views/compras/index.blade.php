@@ -71,9 +71,12 @@
                         Razon social
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Total
+                        Almacen
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Total
+                    </th>
+                    <th class="px-6 py-3  text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">
                         Acciones
                     </th>
                 </tr>
@@ -93,6 +96,9 @@
                         </td>
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
                             {{ $compra->proveedor->nombre }}
+                        </td>
+                        <td class="px-6 py-4 text-md font-medium text-gray-900">
+                            {{ $compra->almacen->nombre }}
                         </td>
                         <td class="px-6 py-4 text-md font-medium text-gray-900">
                             {{ number_format($compra->total,2) }}

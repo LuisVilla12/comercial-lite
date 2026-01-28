@@ -54,9 +54,9 @@
                 {{-- Clave sat --}}
                 <div class="mb-1">
                     <label class="block text-md font-medium text-gray-700 mb-1">
-                        Clave sat: <span class="text-red-500">*</span>
+                        Clave sat: <span class="text-red-500"></span>
                     </label>
-                    <input type="text" name="clave_sat" placeholder="Ej. 601, 603, 612"
+                    <input type="number" name="clave_sat" placeholder="Ej. 601, 603, 612"
                         value="{{ old(key: 'clave_sat') }}"
                         class="p-2 w-full  rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     @error('clave_sat')
@@ -67,10 +67,10 @@
                 {{-- Peso producto --}}
                 <div class="mb-1">
                     <label class="block text-md font-medium text-gray-700 mb-1">
-                        Peso producto:
+                        Peso producto (KG):
                     </label>
-                    <input type="text" name="peso_producto" value="{{ old(key: 'peso_producto') }}"
-                        placeholder="Peso del producto" step="0.01"
+                    <input type="number" name="peso_producto" value="{{ old(key: 'peso_producto') }}"
+                        placeholder="Peso del producto KG" step="0.01"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 </div>
 
@@ -202,9 +202,12 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Exento de impuesto:
                     </label>
-                    <input type="number" name="exento_impuesto" value="{{ old(key: 'exento_impuesto') }}"
-                        placeholder="Exento de impuesto"
+                    <select name="exento_impuesto" id="exento_impuesto"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <option value="" disabled selected>Seleccione</option>
+                        <option value="1" >Si</option>
+                        <option value="0">No</option>
+                    </select>
                 </div>
             </div>
             {{-- Botones --}}

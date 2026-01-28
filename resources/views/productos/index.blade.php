@@ -65,9 +65,9 @@
                     Precio
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Proveedor
+                    Clasificación
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Acciones
                 </th>
             </tr>
@@ -83,7 +83,7 @@
                         {{ $producto->nombre_producto }}
                     </td>
                     <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $producto->precio1 }}
+                        {{ number_format($producto->precio1, 2)}}
                     </td>
                     <td class="px-6 py-4 text-md text-gray-700">
                         {{ $producto->clasificacion1->nombre ?? 'N/A' }}

@@ -1,7 +1,7 @@
 @section('title',
     match ($tipo) {
-    1 => 'Datos generales del Cliente',
-    2 => 'Datos generales del Proveedor',
+    '1' => 'Datos generales del Cliente',
+    '3' => 'Datos generales del Proveedor',
     })
 
 <x-app-layout>
@@ -10,7 +10,7 @@
             Detalles del {{ $tipo == 1 ? 'Cliente' : 'Proveedor' }}
         </h2>
     </x-slot>
-    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+    <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
         @if (session('success'))
             <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
                 class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">
@@ -107,7 +107,7 @@
                         <label class="block  text-md font-medium text-gray-700 my-2">
                             Ciudad: <span>{{ $dom->ciudad }}</span></label>
                         <label class="block  text-md font-medium text-gray-700 my-2">
-                            Ciudad: <span>{{ $dom->colonia }}</span></label>
+                            Colonia: <span>{{ $dom->colonia }}</span></label>
                         <label class="block  text-md font-medium text-gray-700 my-2">
                             Calle: <span>{{ $dom->calle }}</span></label>
                         <label class="block  text-md font-medium text-gray-700 my-2">

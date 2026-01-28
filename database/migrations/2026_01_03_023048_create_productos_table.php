@@ -32,7 +32,7 @@ return new class extends Migration
             $table->decimal('precio4', 15, 4)->default(0);
             $table->decimal('precio5', 15, 4)->default(0);
             $table->decimal('precio_calculado', 15, 4)->default(0);
-            $table->boolean('exento_impuesto')->default(false);
+            $table->integer('exento_impuesto')->default(0);
             $table->string('codigo_alterno')->nullable();
             $table->string('clave_sat')->nullable();
         });
