@@ -1,9 +1,9 @@
-@section('title', 'Traspaso')
+@section('title', 'Editar Traspaso')
 <x-app-layout>
     <x-slot name="header">
         <div class="md:flex justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-                Registrar Traspaso
+                Editar Traspaso
             </h2>
             <div class="md:flex gap-4">
                 <label class="block text-lg font-medium mb-2 dark:text-white">Fecha: {{ now()->format('d/m/Y') }}
@@ -25,7 +25,7 @@
                             Almacén salida: *
                         </label>
 
-                        <select name="almacen_origen_id" x-model="almacen_origen_id"  @change="cambioAlmacenOrigen"
+                        <select name="almacen_origen_id" x-model="almacen_origen_id" @change="cambioAlmacenOrigen"
                             class="p-2 w-full rounded-md border-gray-300">
                             <option value="" disabled>Seleccione almacén de salida</option>
                             @foreach ($almacenes as $almacen)
@@ -73,7 +73,7 @@
                             <th class="p-2">Cantidad</th>
                             {{-- <th class="p-2">Precio</th> --}}
                             <th class="p-2">Existencia</th>
-                            {{-- <th class="p-2">Importe</th> --}}
+                            <th class="p-2">Restaria</th>
                             <th class="p-2"></th>
                         </tr>
                     </thead>
@@ -104,8 +104,7 @@
                                 <td class="p-2">
                                     <div class="flex justify-center">
                                         <input type="number" min="1" :name="`productos[${index}][cantidad]`"
-                                            x-model.number="item.cantidad"
-                                            class="border rounded p-1 w-20 text-center">
+                                            x-model.number="item.cantidad" class="border rounded p-1 w-20 text-center">
                                     </div>
                                 </td>
                                 {{-- <td class="p-2">
@@ -128,6 +127,11 @@
                                         :value="(item.cantidad * item.costo).toFixed(2)" class="">
                                 </td> --}}
 
+                                <td class="p-2">
+                                    <div class="flex justify-center">
+                                    <span x-text="item.stock - item.cantidad " class="text-center"></span>
+                                    </div>
+                                </td>
                                 <td class="p-2 text-center">
                                     <button type="button" @click="eliminarFila(index)"
                                         class="text-red-600 hover:text-red-800">
@@ -181,84 +185,84 @@
     </form>
 
     {{-- ================= ALPINE ================= --}}
-  <script>
-function trasladoEdit(traspaso = null) {
-    return {
-        almacen_origen_id: traspaso?.almacen_origen_id ?? '',
-        almacen_destino_id: traspaso?.almacen_destino_id ?? '',
-        items: [],
-        total: 0,
+    <script>
+        function trasladoEdit(traspaso = null) {
+            return {
+                almacen_origen_id: traspaso?.almacen_origen_id ?? '',
+                almacen_destino_id: traspaso?.almacen_destino_id ?? '',
+                items: [],
+                total: 0,
 
-        init() {
-            if (traspaso && traspaso.detalles?.length) {
-                this.items = traspaso.detalles.map(d => ({
-                    detalle_id: d.id,
-                    producto_id: d.producto_id,
-                    codigo: d.producto.codigo_producto,
-                    query: d.producto.nombre_producto,
-                    cantidad: d.cantidad,
-                    costo: parseFloat(d.costo ?? 0),
-                    stock: d.stock ?? 0,
-                    resultados: []
-                }))
-            } else {
-                this.agregarFila()
-            }
-        },
+                init() {
+                    if (traspaso && traspaso.detalles?.length) {
+                        this.items = traspaso.detalles.map(d => ({
+                            detalle_id: d.id,
+                            producto_id: d.producto_id,
+                            codigo: d.producto.codigo_producto,
+                            query: d.producto.nombre_producto,
+                            cantidad: d.cantidad,
+                            costo: parseFloat(d.costo ?? 0),
+                            stock: d.stock ?? 0,
+                            resultados: []
+                        }))
+                    } else {
+                        this.agregarFila()
+                    }
+                },
 
-        cambioAlmacenOrigen() {
-            this.items = []
-            this.agregarFila()
-        },
+                cambioAlmacenOrigen() {
+                    this.items = []
+                    this.agregarFila()
+                },
 
-        agregarFila() {
-            this.items.push({
-                detalle_id: null,
-                producto_id: null,
-                codigo: '',
-                query: '',
-                cantidad: 1,
-                costo: 0,
-                stock: 0,
-                resultados: []
-            })
-        },
+                agregarFila() {
+                    this.items.push({
+                        detalle_id: null,
+                        producto_id: null,
+                        codigo: '',
+                        query: '',
+                        cantidad: 1,
+                        costo: 0,
+                        stock: 0,
+                        resultados: []
+                    })
+                },
 
-        eliminarFila(index) {
-            if (this.items.length === 1) return
-            this.items.splice(index, 1)
-        },
+                eliminarFila(index) {
+                    if (this.items.length === 1) return
+                    this.items.splice(index, 1)
+                },
 
-        async buscarProducto(index) {
-            if (!this.almacen_origen_id) return
+                async buscarProducto(index) {
+                    if (!this.almacen_origen_id) return
 
-            const q = this.items[index].query
-            if (q.length < 2) return
+                    const q = this.items[index].query
+                    if (q.length < 2) return
 
-            const res = await fetch(
-                `/api/productos-existencias/buscar?q=${q}&almacen=${this.almacen_origen_id}`
-            )
-            this.items[index].resultados = await res.json()
-        },
+                    const res = await fetch(
+                        `/api/productos-existencias/buscar?q=${q}&almacen=${this.almacen_origen_id}`
+                    )
+                    this.items[index].resultados = await res.json()
+                },
 
-        seleccionarProducto(index, p) {
-            if (this.items.some(i => i.producto_id === p.id)) return
+                seleccionarProducto(index, p) {
+                    if (this.items.some(i => i.producto_id === p.id)) return
 
-            const item = this.items[index]
-            item.producto_id = p.id
-            item.codigo = p.codigo
-            item.query = p.nombre
-            item.costo = parseFloat(p.costo ?? 0)
-            item.stock = p.stock
-            item.resultados = []
+                    const item = this.items[index]
+                    item.producto_id = p.id
+                    item.codigo = p.codigo
+                    item.query = p.nombre
+                    item.costo = parseFloat(p.costo ?? 0)
+                    item.stock = p.stock
+                    item.resultados = []
 
-            if (index === this.items.length - 1) {
-                this.agregarFila()
+                    if (index === this.items.length - 1) {
+                        this.agregarFila()
+                    }
+                }
             }
         }
-    }
-}
-</script>
+    </script>
 
 
 </x-app-layout>

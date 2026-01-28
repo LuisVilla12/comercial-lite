@@ -206,7 +206,7 @@ public function update(Request $request, Traspaso $traspaso)
         }
     }
 
-     public function surtirTraspaso(Traspaso $traspaso)
+     public function surtir(Traspaso $traspaso)
 {
     if ($traspaso->estatus != 1) {
         return back()->with('error', 'El traspaso ya fue surtida');
@@ -245,6 +245,7 @@ public function update(Request $request, Traspaso $traspaso)
         ->route('traspasos.show', $traspaso)
         ->with('success', 'Traspaso surtido correctamente');
 }
+
     public function pdf(Traspaso $traspaso)
     {
       $traspaso->load([

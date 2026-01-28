@@ -69,9 +69,9 @@
                             <th class="p-2">Código</th>
                             <th class="p-2">Producto</th>
                             <th class="p-2">Cantidad</th>
-                            <th class="p-2">Precio</th>
+                            {{-- <th class="p-2">Precio</th> --}}
                             <th class="p-2">Existencia</th>
-                            <th class="p-2">Importe</th>
+                            <th class="p-2">Restarian</th>
                             <th class="p-2"></th>
                         </tr>
                     </thead>
@@ -91,7 +91,7 @@
                                                 class="p-2 hover:bg-gray-100 cursor-pointer">
                                                 <span x-text="p.nombre"></span>
                                                 <span class="text-sm text-gray-500">
-                                                    ($<span x-text="p.codigo"></span>)
+                                                    (<span x-text="p.codigo"></span>)
                                                 </span>
                                             </li>
                                         </template>
@@ -101,18 +101,12 @@
                                 </td>
                                 <td class="p-2">
                                     <div class="flex justify-center">
-                                        <input type="number" min="1" :name="`productos[${index}][cantidad]`"
+                                        <input type="number" min="0" :name="`productos[${index}][cantidad]`"
                                             x-model.number="item.cantidad" @input="calcular"
                                             class="border rounded p-1 w-20 text-center">
                                     </div>
                                 </td>
-                                <td class="p-2">
-                                    <div class="flex justify-center">
-                                        <input readonly type="number" step="0.01"
-                                            :name="`productos[${index}][costo]`" x-model.number="item.costo"
-                                            @input="calcular" class="border rounded p-1 w-24 text-center">
-                                    </div>
-                                </td>
+
                                 {{-- Existencias --}}
                                 <td class="p-2">
                                     <div class="flex justify-center">
@@ -120,10 +114,16 @@
                                             class="border rounded p-1 w-24 text-center bg-gray-100 text-gray-700">
                                     </div>
                                 </td>
+                                {{-- Restarian --}}
                                 <td class="p-2">
-                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)" class="text-center"></span>
+                                    {{-- <span x-text="(item.cantidad * item.costo).toFixed(2)" class="text-center"></span> --}}
+                                    <span x-text="item.stock - item.cantidad " class="text-center"></span>
+
                                     <input type="hidden" :name="`productos[${index}][importe]`"
                                         :value="(item.cantidad * item.costo).toFixed(2)" class="">
+                                    <input type="hidden" step="0.01" :name="`productos[${index}][costo]`"
+                                        x-model.number="item.costo" @input="calcular"
+                                        class="border rounded p-1 w-24 text-center">
                                 </td>
 
                                 <td class="p-2 text-center">
@@ -179,81 +179,81 @@
     </form>
 
     {{-- ================= ALPINE ================= --}}
-<script>
-function compraApp() {
-    return {
-        almacen_origen_id: '',
-        almacen_destino_id: '',
+    <script>
+        function compraApp() {
+            return {
+                almacen_origen_id: '',
+                almacen_destino_id: '',
 
-        items: [],
-        total: 0,
+                items: [],
+                total: 0,
 
-        init() {
-            this.agregarFila()
-        },
+                init() {
+                    this.agregarFila()
+                },
 
-        resetProductos() {
-            // limpia productos cuando cambia el almacén
-            this.items = []
-            this.agregarFila()
-        },
+                resetProductos() {
+                    // limpia productos cuando cambia el almacén
+                    this.items = []
+                    this.agregarFila()
+                },
 
-        agregarFila() {
-            this.items.push({
-                producto_id: null,
-                codigo: '',
-                query: '',
-                cantidad: 1,
-                costo: 0,
-                stock: 0,
-                resultados: []
-            })
-        },
+                agregarFila() {
+                    this.items.push({
+                        producto_id: null,
+                        codigo: '',
+                        query: '',
+                        cantidad: 0,
+                        costo: 0,
+                        stock: 0,
+                        resultados: []
+                    })
+                },
 
-        eliminarFila(index) {
-            if (this.items.length === 1) return
-            this.items.splice(index, 1)
-            this.calcular()
-        },
+                eliminarFila(index) {
+                    if (this.items.length === 1) return
+                    this.items.splice(index, 1)
+                    this.calcular()
+                },
 
-        async buscarProducto(index) {
-            if (!this.almacen_origen_id) return
+                async buscarProducto(index) {
+                    if (!this.almacen_origen_id) return
 
-            const q = this.items[index].query
-            if (q.length < 2) return
+                    const q = this.items[index].query
+                    if (q.length < 2) return
 
-            const res = await fetch(
-                `/api/productos-existencias/buscar?q=${q}&almacen=${this.almacen_origen_id}`
-            )
+                    const res = await fetch(
+                        `/api/productos-existencias/buscar?q=${q}&almacen=${this.almacen_origen_id}`
+                    )
 
-            this.items[index].resultados = await res.json()
-        },
+                    this.items[index].resultados = await res.json()
+                },
 
-        seleccionarProducto(index, p) {
-            if (this.items.some(i => i.producto_id === p.id)) return
+                seleccionarProducto(index, p) {
+                    if (this.items.some(i => i.producto_id === p.id)) return
 
-            const item = this.items[index]
-            item.producto_id = p.id
-            item.codigo = p.codigo
-            item.query = p.nombre
-            item.costo = parseFloat(p.costo)
-            item.stock = p.stock
-            item.resultados = []
+                    const item = this.items[index]
+                    item.producto_id = p.id
+                    item.codigo = p.codigo
+                    item.query = p.nombre
+                    item.costo = parseFloat(p.costo)
+                    item.stock = p.stock
+                    item.resultados = []
 
-            this.calcular()
+                    this.calcular()
 
-            if (index === this.items.length - 1) {
-                this.agregarFila()
+                    if (index === this.items.length - 1) {
+                        this.agregarFila()
+                    }
+                },
+
+                calcular() {
+                    this.total = this.items.reduce(
+                        (t, i) => t + (i.cantidad * i.costo), 0
+                    )
+                }
             }
-        },
-
-        calcular() {
-            this.total = this.items.reduce(
-                (t, i) => t + (i.cantidad * i.costo), 0
-            )
         }
-    }
-}
-</script>
+    </script>
 
 </x-app-layout>
