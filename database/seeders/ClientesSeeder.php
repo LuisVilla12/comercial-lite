@@ -26,7 +26,6 @@ class ClientesSeeder extends Seeder
         while (($row = fgetcsv($handle, 0, ',')) !== false) {
 
             $batch[] = [
-                // TODO: extraer el id de los clientes desde el csv
                 'id' => intval($row[0]),
                 'codigo' => trim($row[1])?: '',
                 'nombre' => trim($row[2])?: '',

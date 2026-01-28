@@ -29,9 +29,7 @@ return new class extends Migration
             $table->unsignedBigInteger('folio_devolucion')->default(0);
 
             // Relación con almacén (opcional pero recomendado)
-            $table->foreignId('almacen_id')->nullable()
-                  ->constrained()
-                  ->nullOnDelete();
+            $table->foreignId('almacen_id');
 
 
             $table->timestamps();

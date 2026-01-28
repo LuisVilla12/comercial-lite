@@ -15,7 +15,7 @@
             <input type="text" name="codigo"
                    placeholder="Codigo"
                    value="{{ $almacen->codigo?? old('codigo') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('codigo')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -29,7 +29,7 @@
             <input type="text" name="nombre"
                    placeholder="Nombre del almacen"
                    value="{{ $almacen->nombre?? old('nombre') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
              @error('nombre')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -39,7 +39,7 @@
                 Tipo:<span class="text-red-500">*</span>
             </label>
             <select name="tipo" id="tipo"
-                    class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 <option value="" disabled selected>Seleccione una opcion</option>
                 <option value="1"  @selected($almacen->tipo == 1)>MATRIZ</option>
                 <option value="2" @selected($almacen->tipo == 2)>SUCURSAL</option>

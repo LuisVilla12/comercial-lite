@@ -70,7 +70,7 @@ class CompraController extends Controller
         $request->validate([
             // Compra
             'proveedor_id' => 'required|exists:clientes,id',
-            'almacen_id'        => 'required|exists:clientes,id',
+            'almacen_id'        => 'required|exists:almacens,id',
             'user_id'      => 'required|exists:users,id',
             'fecha'        => 'required|date',
             'subtotal'        => 'required|numeric',

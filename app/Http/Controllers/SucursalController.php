@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sucursal;
+use App\Models\Almacen;
 use Illuminate\Http\Request;
 
 class SucursalController extends Controller
@@ -28,7 +29,8 @@ class SucursalController extends Controller
     public function create()
     {
         //
-        return view('sucursales.create');
+        $almacenes=Almacen::all();
+        return view('sucursales.create',['almacenes'=>$almacenes]);
     }
 
     /**
@@ -42,25 +44,30 @@ class SucursalController extends Controller
             'nombre'=>'required|string|max:50',
             'serie_cotizacion'=>'required|string|max:50',
             'serie_remision'=>'required|string|max:50',
-            'serie_facturacion'=>'required|string|max:50',
+            'serie_factura'=>'required|string|max:50',
+            'serie_devolucion'=>'required|string|max:50',
             'folio_cotizacion'=>'required',
             'folio_remision'=>'required',
-            'folio_facturacion'=>'required',
+            'folio_factura'=>'required',
+            'folio_devolucion'=>'required',
+            'almacen_id'=>'required|exists:almacens,id|unique:sucursales,almacen_id',
         ]);
         $sucursal = Sucursal::create([
+                'almacen_id' => $request->almacen_id,
                 'codigo' => $request->codigo,
                 'nombre'   => $request->nombre,
                 'serie_cotizacion'      => $request->serie_cotizacion,
                 'serie_remision'        => $request->serie_remision,
-                'serie_facturacion'     => $request->serie_facturacion,
-                'serie_devolucion'     => $request->serie_facturacion,
+                'serie_factura'     => $request->serie_factura,
+                'serie_devolucion'     => $request->serie_devolucion,
                 'folio_cotizacion' => $request->folio_cotizacion,
                 'folio_remision' => $request->folio_remision,
-                'folio_facturacion'      => $request->folio_facturacion,
-                'folio_devolucion'      => $request->folio_facturacion,
+                'folio_factura'      => $request->folio_factura,
+                'folio_devolucion'      => $request->folio_devolucion,
             ]);
-        return redirect()->route('sucursales.index')
-            ->with('success', 'Sucursal creada correctamente.');
+
+         return redirect()->route('sucursales.index')
+             ->with('success', 'Sucursal creada correctamente');
     }
 
     /**
@@ -68,7 +75,8 @@ class SucursalController extends Controller
      */
     public function show(Sucursal $sucursal)
     {
-        return view('sucursales.show', ['sucursal'=>$sucursal]);
+        $almacenes=Almacen::all();
+        return view('sucursales.show', ['sucursal'=>$sucursal,'almacenes'=>$almacenes]);
 
     }
 
@@ -78,7 +86,8 @@ class SucursalController extends Controller
     public function edit(Sucursal $sucursal)
     {
         //
-        return view('sucursales.edit', ['sucursal'=>$sucursal]);
+        $almacenes=Almacen::all();
+        return view('sucursales.edit', ['sucursal'=>$sucursal,'almacenes'=>$almacenes]);
     }
 
     /**
@@ -92,14 +101,15 @@ class SucursalController extends Controller
             'nombre'=>'required|string|max:50',
             'serie_cotizacion'=>'required|string|max:50',
             'serie_remision'=>'required|string|max:50',
-            'serie_facturacion'=>'required|string|max:50',
+            'serie_factura'=>'required|string|max:50',
             'serie_devolucion'=>'required|string|max:50',
             'folio_cotizacion'=>'required',
             'folio_remision'=>'required',
-            'folio_facturacion'=>'required',
+            'folio_factura'=>'required',
             'folio_devolucion'=>'required',
         ]);
         $sucursal->update($request->all());
+
         return redirect()->route('sucursales.index')
             ->with('success', 'Sucursal ha sido actualizada correctamente.');
 

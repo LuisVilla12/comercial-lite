@@ -20,13 +20,29 @@
 
             </div>
             {{-- Nombre --}}
-            <div class="col-span-3">
+            <div class="col-span-2">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Nombre de la sucursal: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="nombre" placeholder="Nombre de la sucursal" value="{{ old('nombre') }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('nombre')
+                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="">
+                <label class="block text-md font-medium text-gray-700 mb-1 ">
+                    Seleccionar almacen: <span class="text-red-500">*</span>
+                </label>
+                <select name="almacen_id" id="almacen_id"
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    <option value="" disabled selected>Seleccione una opcion</option>
+                    @foreach ($almacenes as $almacen)
+                        <option  value="{{ $almacen->id }}">
+                            {{ $almacen->nombre}}</option>
+                    @endforeach
+                </select>
+                @error('almacen_id')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -45,7 +61,7 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Serie remisión: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="serie_remision" placeholder="Serie de cotización"
+                <input type="text" name="serie_remision" placeholder="Serie de remisión"
                     value="{{ old('serie_remision') }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('serie_remision')
@@ -56,10 +72,10 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Serie facturación: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="serie_facturacion" placeholder="Serie de cotización"
-                    value="{{ old('serie_facturacion') }}"
+                <input type="text" name="serie_factura" placeholder="Serie de facturación"
+                    value="{{ old('serie_factura') }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                @error('serie_facturacion')
+                @error('serie_factura')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -67,7 +83,7 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Serie devolución: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="serie_devolucion" placeholder="Serie de cotización"
+                <input type="text" name="serie_devolucion" placeholder="Serie de devolución"
                     value="{{ old('serie_devolucion') }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('serie_devolucion')
@@ -89,7 +105,7 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Folio remisión: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="folio_remision" placeholder="Folio de cotización"
+                <input type="text" name="folio_remision" placeholder="Folio de remisión"
                     value="{{ old('folio_remision') }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('folio_remision')
@@ -100,10 +116,10 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Folio facturación: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="folio_facturacion" placeholder="Folio de cotización"
-                    value="{{ old('folio_facturacion') }}"
+                <input type="text" name="folio_factura" placeholder="Folio de facturación"
+                    value="{{ old('folio_factura') }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                @error('folio_facturacion')
+                @error('folio_factura')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -111,7 +127,7 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Folio devolución: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="folio_devolucion" placeholder="Folio de cotización"
+                <input type="text" name="folio_devolucion" placeholder="Folio de devolución"
                     value="{{ old('folio_devolucion') }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('folio_devolucion')

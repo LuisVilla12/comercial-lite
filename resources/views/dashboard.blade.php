@@ -92,11 +92,6 @@
             </x-slot:icon>
         </x-dashboard-card>
         @endforeach
-
-
-
-
-
         <x-dashboard-card href="{{ route('reportes.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Reportes" desc="Generar reportes" iconBg="bg-teal-500">
             <x-slot:icon>
                 <x-heroicon-o-chart-bar class="w-6 h-6" />

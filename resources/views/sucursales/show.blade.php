@@ -6,12 +6,12 @@
     </x-slot>
 
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 md:gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 md:gap-4">
             <div class="">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Codigo: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="codigo" placeholder="Codigo" value="{{ $sucursal->codigo}}" readonly
+                <input type="text" name="codigo" placeholder="Codigo" value="{{ $sucursal->codigo }}" readonly
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('codigo')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -23,9 +23,25 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Nombre de la sucursal: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="nombre" placeholder="Nombre de la sucursal" value="{{ $sucursal->nombre }}" readonly
-                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <input type="text" name="nombre" placeholder="Nombre de la sucursal" value="{{ $sucursal->nombre }}"
+                    readonly class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('nombre')
+                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="">
+                <label class="block text-md font-medium text-gray-700 mb-1 ">
+                    Seleccionar almacen: <span class="text-red-500">*</span>
+                </label>
+                <select name="almacen_id" id="almacen_id"
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    <option value="" disabled>Seleccione una opcion</option>
+                    @foreach ($almacenes as $almacen)
+                        <option {{ old('almacen_id', $sucursal->almacen_id) == $almacen->id ? 'selected' : '' }}
+                            value="{{ $almacen->id }}">{{ $almacen->nombre }}</option>
+                    @endforeach
+                </select>
+                @error('almacen_id')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -56,7 +72,7 @@
                     Serie facturación: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="serie_facturacion" placeholder="Serie de cotización" readonly
-                    value="{{$sucursal->serie_factura }}"
+                    value="{{ $sucursal->serie_factura }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('serie_facturacion')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -64,10 +80,22 @@
             </div>
             <div class="">
                 <label class="block text-md font-medium text-gray-700 mb-1">
+                    Serie devolución: <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="serie_devolucion" placeholder="Serie de devolución"
+                    value="{{ $sucursal->serie_devolucion }}"
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                @error('serie_devolucion')
+                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="">
+                <label class="block text-md font-medium text-gray-700 mb-1">
                     Folio cotización: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="folio_cotizacion" placeholder="Folio de cotización" readonly
-                    value="{{$sucursal->folio_cotizacion }}"
+                    value="{{ $sucursal->folio_cotizacion }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('folio_cotizacion')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -95,8 +123,19 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
+            <div class="">
+                <label class="block text-md font-medium text-gray-700 mb-1">
+                    Folio devolución: <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="folio_devolucion" placeholder="Folio de devolución"
+                    value="{{ $sucursal->folio_devolucion }}"
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                @error('folio_devolucion')
+                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
             {{-- Botones --}}
-            <div class="md:col-span-3 flex justify-end gap-3 mt-4">
+            <div class="md:col-span-full flex justify-end gap-3 mt-4">
                 <a href="{{ route('sucursales.index') }}"
                     class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
                     Regresar
