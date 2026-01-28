@@ -51,7 +51,8 @@ class ProductoController extends Controller
             'codigo_producto' => 'required|unique:productos,codigo_producto|string|max:50',
             'nombre_producto' => 'required|string|max:255',
             'clave_sat' => 'required|string|max:13',
-            'precio1' => 'required|string|max:255'
+            'precio1' => 'required|string|max:255',
+            'unidad_medida' => 'required'
         ]);
         $cliente = Producto::create([
             'codigo_producto' => $request->codigo_producto,

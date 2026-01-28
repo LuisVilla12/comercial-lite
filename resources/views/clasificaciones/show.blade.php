@@ -1,3 +1,5 @@
+@section('title', content: 'Detalles de una clasificación')
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
@@ -15,7 +17,7 @@
                    placeholder="Codigo"
                    disabled
                    value="{{ $clasificacion->codigo ?? 'N/A'}}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('codigo')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -30,7 +32,7 @@
                    placeholder="Nombre de la clasificacion"
                    disabled
                    value="{{$clasificacion->nombre ?? 'N/A'}}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
              @error('nombre')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror

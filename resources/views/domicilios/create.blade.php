@@ -1,3 +1,5 @@
+@section('title', content: 'Registrar domicilio' )
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
@@ -28,7 +30,7 @@
 
         </div>
         {{-- Estado --}}
-        <div class="md:my-2">
+        <div class="md:mb-1">
             <label for="estado" class="block text-md font-medium text-gray-700 mb-1"> Estado: <span class="text-red-500">*</span>
             </label>
             <input type="text" name="estado" id="estado"
@@ -41,7 +43,7 @@
         </div>
 
         {{-- Municipio --}}
-        <div class="md:my-2">
+        <div class="md:mb-1">
             <label for="municipio" class="block text-md font-medium text-gray-700 mb-1">
                 Municipio: <span class="text-red-500">*</span>
             </label>
@@ -53,7 +55,7 @@
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
-        <div class="md:my-2">
+        <div class="md:mb-1">
             <label for="ciudad" class="block text-md font-medium text-gray-700 mb-1">
                 Ciudad: </span>
             </label>
@@ -63,7 +65,7 @@
                    class="p-2 w-full uppercase   rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Colonia --}}
-        <div class="md:my-2">
+        <div class="md:mb-1">
             <label for="colonia" class="block text-md font-medium text-gray-700 mb-1">
                 Colonia: <span class="text-red-500">*</span>
             </label>

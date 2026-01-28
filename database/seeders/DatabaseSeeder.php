@@ -19,18 +19,19 @@ class DatabaseSeeder extends Seeder
     {
         // Definir los Seeder a ejecutar
         $this->call([
-        ClasificacionSeeder::class,
-        ProductosSeeder::class,
-        ClientesSeeder::class,
-        CodigosPostalesSeeder::class,
-        AlmacenSeeder::class,
-        DocumentosModeloSeeder::class,
-        ExistenciasSeeder::class,
-        UserSeeder::class,
         RegimenesSeeder::class,
         UsoCfdiSeeder::class,
-        SucursalSeeder::class,
-        DomiciliosSeeder::class,
+        CodigosPostalesSeeder::class,
+        DocumentosModeloSeeder::class,
+        UserSeeder::class,
+        //
+        // ClasificacionSeeder::class,
+        // ProductosSeeder::class,
+        // ClientesSeeder::class,
+        // AlmacenSeeder::class,
+        // ExistenciasSeeder::class,
+        // SucursalSeeder::class,
+        // DomiciliosSeeder::class,
         ]);
     }
 }

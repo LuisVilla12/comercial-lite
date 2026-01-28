@@ -1,4 +1,6 @@
 
+@section('title', content: 'Editar' )
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
@@ -21,7 +23,7 @@
             </label>
             <input type="text" name="codigo"
                    value="{{ $cliente->codigo }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('codigo')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -34,7 +36,7 @@
             </label>
             <input type="text" name="nombre"
                    value="{{ $cliente->nombre }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('nombre')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -42,7 +44,7 @@
 
 
         {{-- RFC --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 RFC <span class="text-red-500">*</span>
             </label>
@@ -55,7 +57,7 @@
         </div>
 
         {{-- Régimen Fiscal --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Régimen Fiscal <span class="text-red-500">*</span>
             </label>
@@ -77,7 +79,7 @@
         </div>
 
         {{-- CURP --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 CURP
             </label>
@@ -87,7 +89,7 @@
         </div>
 
         {{-- Email 1 --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Correo electrónico principal
             </label>
@@ -100,7 +102,7 @@
         </div>
 
         {{-- Email 2 --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Correo electrónico alterno
             </label>
@@ -110,7 +112,7 @@
         </div>
 
         {{-- Teléfono --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Teléfono
             </label>
@@ -120,7 +122,7 @@
         </div>
 
         {{-- WhatsApp --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 WhatsApp
             </label>

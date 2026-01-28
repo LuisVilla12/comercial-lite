@@ -13,12 +13,12 @@
 
         <div class="md:col-span-2">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                Codigo <span class="text-red-500">*</span>
+                Codigo: <span class="text-red-500">*</span>
             </label>
             <input type="text" name="codigo"
                    placeholder="Codigo"
                    value="{{ old('codigo') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('codigo')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -27,21 +27,21 @@
         {{-- Nombre --}}
         <div class="md:col-span-2">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                Nombre / Razón Social <span class="text-red-500">*</span>
+                Nombre / Razón Social: <span class="text-red-500">*</span>
             </label>
             <input type="text" name="nombre"
                    placeholder="Nombre o razón social"
                    value="{{ old('nombre') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
              @error('nombre')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
 
         {{-- RFC --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                RFC <span class="text-red-500">*</span>
+                RFC: <span class="text-red-500">*</span>
             </label>
             <input type="text" name="rfc"
                    placeholder="RFC"
@@ -53,9 +53,9 @@
         </div>
 
         {{-- Régimen Fiscal --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                Régimen Fiscal <span class="text-red-500">*</span>
+                Régimen Fiscal: <span class="text-red-500">*</span>
             </label>
             <select name="regimen_fiscal" id="regimen_fiscal"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
@@ -70,9 +70,9 @@
         </div>
 
         {{-- CURP --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                CURP
+                CURP:
             </label>
             <input type="text" name="curp" max="18"
                 value="{{ old(key: 'curp') }}"
@@ -81,9 +81,9 @@
         </div>
 
         {{-- Email 1 --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                Correo electrónico principal  <span class="text-red-500">*</span>
+                Correo electrónico principal:<span class="text-red-500">*</span>
             </label>
             <input type="email" name="email1"
                    placeholder="correo@ejemplo.com"
@@ -95,9 +95,9 @@
         </div>
 
         {{-- Email 2 --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                Correo electrónico alterno
+                Correo electrónico alterno:
             </label>
             <input type="email" name="email2"
                    placeholder="correo2@ejemplo.com"
@@ -106,9 +106,9 @@
         </div>
 
         {{-- Teléfono --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                Teléfono
+                Teléfono:
             </label>
             <input type="number" name="telefono"
                     value="{{ old(key: 'telefono') }}"
@@ -117,9 +117,9 @@
         </div>
 
         {{-- WhatsApp --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                WhatsApp
+                WhatsApp:
             </label>
             <input type="number" name="whatsapp"
                 value="{{ old(key: 'whatsapp') }}"

@@ -1,3 +1,4 @@
+@section('title', content: 'Editar una clasificación')
 
 <x-app-layout>
     <x-slot name="header">
@@ -16,7 +17,7 @@
             <input type="text" name="codigo"
                    placeholder="Codigo"
                    value="{{ $clasificacion->codigo ?? old('codigo') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('codigo')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -30,7 +31,7 @@
             <input type="text" name="nombre"
                    placeholder="Nombre de la clasificacion"
                    value="{{ $clasificacion->nombre }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
              @error('nombre')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror

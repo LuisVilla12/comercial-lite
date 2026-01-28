@@ -1,3 +1,5 @@
+@section('title', content: 'Editar producto')
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
@@ -21,7 +23,7 @@
             <input name="codigo_producto"
                    placeholder="Codigo"
                    value="{{ $producto->codigo_producto ?? old('codigo_producto') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('codigo_producto')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -35,14 +37,14 @@
             <input type="text" name="nombre_producto"
                    placeholder="Nombre del producto"
                 value="{{ $producto->nombre_producto ?? old('nombre_producto') }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
              @error('nombre_producto')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
 
         {{-- Codigo alterno --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Codigo alterno:
             </label>
@@ -56,7 +58,7 @@
         </div>
 
         {{-- Clave sat --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Clave sat: <span class="text-red-500">*</span>
             </label>
@@ -70,7 +72,7 @@
         </div>
 
         {{-- Peso producto --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Peso producto:
             </label>
@@ -82,7 +84,7 @@
         </div>
 
         {{-- Unidad--}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Unidad de medida:<span class="text-red-500">*</span>
             </label>
@@ -98,9 +100,9 @@
             @enderror
         </div>
         {{-- Clasificacion--}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
-                Clasificación:<span class="text-red-500">*</span>
+                Clasificación:<span class="text-red-500"></span>
             </label>
             <select name="valor_clasificacion1" id="valor_clasificacion1"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
@@ -122,7 +124,7 @@
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         {{-- Precio1 --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Precio 1: <span class="text-red-500">*</span>
             </label>
@@ -134,7 +136,7 @@
         </div>
 
         {{-- Precio 2 --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Precio 2:
             </label>
@@ -146,7 +148,7 @@
         </div>
 
         {{-- Precio 3 --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Precio 3:
             </label>
@@ -157,7 +159,7 @@
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Precio 4 --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Precio 4:
             </label>
@@ -168,7 +170,7 @@
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
          {{-- Precio 5 --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Precio 5:
             </label>
@@ -179,7 +181,7 @@
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Precio Calculado --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Precio Calculado:
             </label>
@@ -190,7 +192,7 @@
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Impuesto --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Impuesto:
             </label>
@@ -200,7 +202,7 @@
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
         {{-- Retencion --}}
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Retención:
             </label>
@@ -209,7 +211,7 @@
                    placeholder="Retención"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
-         <div class="my-2">
+         <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Importe extra:
             </label>
@@ -219,7 +221,7 @@
                    step="0.01"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
-        <div class="my-2">
+        <div class="mb-1">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Exento de impuesto:
             </label>

@@ -1,22 +1,29 @@
+@section('title',
+    match ($tipo) {
+    1 => 'Datos generales del Cliente',
+    2 => 'Datos generales del Proveedor',
+    })
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Registrar {{ $tipo == 1 ? 'Cliente' : 'Proveedor' }}
+            Detalles del {{ $tipo == 1 ? 'Cliente' : 'Proveedor' }}
         </h2>
     </x-slot>
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
         @if (session('success'))
-        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
-            class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">{{ session('success') }}
-        </p>
+            <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
+                class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">
+                {{ session('success') }}
+            </p>
         @endif
         <h2 class="text-xl font-semibold">{{ $tipo == 1 ? 'Cliente' : 'Proveedor' }} : {{ $cliente->nombre }}</h2>
 
         <div class="grid md:grid-cols-2 gap-6 ">
 
             <div class="mt-6 bg-white shadow rounded p-4">
-                <h4 class="block text-lg font-semibold text-gray-700 my-2">Información del {{ $tipo == 1 ? 'cliente' :
-                    'proveedor' }}</h4>
+                <h4 class="block text-lg font-semibold text-gray-700 my-2">Información del
+                    {{ $tipo == 1 ? 'cliente' : 'proveedor' }}</h4>
                 <div class="md:col-span-2">
                     <label class="block  text-md font-medium text-gray-700 my-2">
                         Codigo <span class="text-red-500">*</span>: <span>{{ $cliente->codigo }}</span>
@@ -82,34 +89,34 @@
                 <div class="flex justify-between items-center ">
                     <h4 class="block text-lg font-semibold text-gray-700 mt-2 p-4">Domicilio</h4>
                     @if ($cliente->domicilios->count() == 0)
-                    <a href="{{ route('domicilios.create', $cliente->id) }}"
-                        class="bg-blue-600 text-white px-3 py-2 rounded">Agregar domicilio
-                    </a>
+                        <a href="{{ route('domicilios.create', $cliente->id) }}"
+                            class="bg-blue-600 text-white px-3 py-2 rounded">Agregar domicilio
+                        </a>
                     @endif
                 </div>
                 @if ($cliente->domicilios->count())
-                @foreach ($cliente->domicilios as $dom)
-                <label class="block  text-md font-medium text-gray-700 my-2">
-                    Pais: <span>{{ $dom->pais }}</span>
-                </label>
-                <label class="block  text-md font-medium text-gray-700 my-2">
-                    Estado: <span>{{ $dom->estado }}</span>
-                </label>
-                <label class="block  text-md font-medium text-gray-700 my-2">
-                    Municipio: <span>{{ $dom->municipio }}</span></label>
-                <label class="block  text-md font-medium text-gray-700 my-2">
-                    Ciudad: <span>{{ $dom->ciudad }}</span></label>
-                <label class="block  text-md font-medium text-gray-700 my-2">
-                    Calle: <span>{{ $dom->calle }}</span></label>
-<label class="block  text-md font-medium text-gray-700 my-2">
-                    Numero exterior: <span>{{ $dom->numero_exterior }}</span></label>
-                <label class="block  text-md font-medium text-gray-700 my-2">
-                    Numero interior : <span>{{ $dom->numero_interior }}</span></label>
-
-
-                @endforeach
+                    @foreach ($cliente->domicilios as $dom)
+                        <label class="block  text-md font-medium text-gray-700 my-2">
+                            Pais: <span>{{ $dom->pais }}</span>
+                        </label>
+                        <label class="block  text-md font-medium text-gray-700 my-2">
+                            Estado: <span>{{ $dom->estado }}</span>
+                        </label>
+                        <label class="block  text-md font-medium text-gray-700 my-2">
+                            Municipio: <span>{{ $dom->municipio }}</span></label>
+                        <label class="block  text-md font-medium text-gray-700 my-2">
+                            Ciudad: <span>{{ $dom->ciudad }}</span></label>
+                        <label class="block  text-md font-medium text-gray-700 my-2">
+                            Ciudad: <span>{{ $dom->colonia }}</span></label>
+                        <label class="block  text-md font-medium text-gray-700 my-2">
+                            Calle: <span>{{ $dom->calle }}</span></label>
+                        <label class="block  text-md font-medium text-gray-700 my-2">
+                            Numero exterior: <span>{{ $dom->numero_exterior }}</span></label>
+                        <label class="block  text-md font-medium text-gray-700 my-2">
+                            Numero interior : <span>{{ $dom->numero_interior }}</span></label>
+                    @endforeach
                 @else
-                <p class="text-gray-500 text-sm">Sin domicilio registrado</p>
+                    <p class="text-gray-500 text-sm">Sin domicilio registrado</p>
                 @endif
             </div>
 
@@ -117,7 +124,7 @@
             <div class="md:col-span-2 flex justify-end gap-3 mt-4">
                 <a href="{{ route($tipo == 1 ? 'clientes.index' : 'proveedores.index') }}"
                     class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
-                    Regresar a {{ $tipo == 1 ? 'clientes' : 'proveedores'}}
+                    Regresar a {{ $tipo == 1 ? 'clientes' : 'proveedores' }}
                 </a>
 
             </div>
