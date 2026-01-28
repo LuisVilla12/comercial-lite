@@ -24,6 +24,9 @@ use App\Models\Producto;
 use App\Models\Sucursal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
+
 require __DIR__.'/auth.php';
 
 
@@ -33,6 +36,10 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified']) ->name('dashboard');
 
+Route::get('/test-email', function () {
+    Mail::to('luisjivl.01@gmail.com')->send(new TestMail());
+    return 'Correo enviado correctamente';
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -156,3 +163,4 @@ Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.ind
 Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('empresas.create');
 Route::post('/empresas', [EmpresaController::class, 'store'])->name('empresas.store');
 });
+
