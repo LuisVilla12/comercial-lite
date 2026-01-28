@@ -28,7 +28,7 @@
         </div>
 
         @if(request('search'))
-            <a href="{{ route('almacenes.index') }}"
+            <a href="{{ route('usuarios.index') }}"
                class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                 Limpiar búsqueda
             </a>
@@ -48,7 +48,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 4000)"
-                    class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md"
+                    class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-2"
                 >{{ session('success') }}</p>
     @endif
 
@@ -81,7 +81,7 @@
                         {{ $usuario->name }}
                     </td>
                     <td class="px-6 py-4 text-md text-gray-700">
-                        {{ $usuario->name }}
+                        {{ $usuario->username }}
                     </td>
                     <td class="px-6 py-4 text-md font-medium text-gray-900">
                         {{ $usuario->email }}
@@ -99,7 +99,7 @@
                             <div class="flex flex-wrap items-center gap-4">
 
                                 {{-- Ver --}}
-                                <a href=""
+                                <a href="{{route('usuarios.show',$usuario)  }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                     <span class="hidden sm:inline">Ver</span>
@@ -117,10 +117,9 @@
                                 <span class="hidden sm:inline text-gray-300">•</span>
 
                                 {{-- Eliminar --}}
-                                <form action="" method="POST" class="inline">
+                                <form action="{{ route('usuarios.destroy',$usuario) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-
                                     <button type="submit"
                                         class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
                                         onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
@@ -142,7 +141,7 @@
         </tbody>
 
     </table>
-@if($usuario->count() > 0)
+@if($usuarios->count() > 0)
 <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
     <p class="text-sm text-gray-600 ml-6">

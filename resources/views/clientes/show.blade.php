@@ -19,9 +19,9 @@
         @endif
         <h2 class="text-xl font-semibold">{{ $tipo == 1 ? 'Cliente' : 'Proveedor' }} : {{ $cliente->nombre }}</h2>
 
-        <div class="grid md:grid-cols-2 gap-6 ">
+        <div class="grid md:grid-cols-2 gap-2 md:gap-4 ">
 
-            <div class="mt-6 bg-white shadow rounded p-4">
+            <div class="mt-2 bg-white shadow rounded p-4">
                 <h4 class="block text-lg font-semibold text-gray-700 my-2">Información del
                     {{ $tipo == 1 ? 'cliente' : 'proveedor' }}</h4>
                 <div class="md:col-span-2">
@@ -85,12 +85,12 @@
                 </div>
             </div>
 
-            <div class="mt-6 bg-white shadow rounded px-4">
-                <div class="flex justify-between items-center ">
+            <div class="mt-2 bg-white shadow rounded px-4">
+                <div class="lg:flex lg:justify-between items-center ">
                     <h4 class="block text-lg font-semibold text-gray-700 mt-2 p-4">Domicilio</h4>
                     @if ($cliente->domicilios->count() == 0)
                         <a href="{{ route('domicilios.create', $cliente->id) }}"
-                            class="bg-blue-600 text-white px-3 py-2 rounded">Agregar domicilio
+                            class="block bg-blue-600 text-white px-3 py-2 rounded text-center">Agregar domicilio
                         </a>
                     @endif
                 </div>
@@ -116,7 +116,7 @@
                             Numero interior : <span>{{ $dom->numero_interior }}</span></label>
                     @endforeach
                 @else
-                    <p class="text-gray-500 text-sm">Sin domicilio registrado</p>
+                    <p class="text-gray-500 text-sm mt-4 mb-6 md:mb-0">Sin domicilio registrado</p>
                 @endif
             </div>
 

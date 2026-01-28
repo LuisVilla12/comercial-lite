@@ -41,7 +41,7 @@
     </p>
     @endif
 
-    <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200  w-3/5 mx-auto">
+    <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200  w-4/5 mx-auto">
         <table class="min-w-full divide-y divide-gray-200 text-sm">
             <thead class="bg-gray-100">
                 <tr>

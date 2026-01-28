@@ -11,7 +11,7 @@
         @csrf
         <input type="hidden" name="tipo" value="{{ $tipo }}">
 
-        <div class="md:col-span-2">
+        <div class="">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Codigo: <span class="text-red-500">*</span>
             </label>
@@ -25,7 +25,7 @@
 
         </div>
         {{-- Nombre --}}
-        <div class="md:col-span-2">
+        <div class="">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Nombre / Razón Social: <span class="text-red-500">*</span>
             </label>
@@ -128,7 +128,7 @@
         </div>
 
         {{-- Botones --}}
-        <div class="md:col-span-2 flex justify-end gap-3 mt-4">
+        <div class="md:col-span-2 flex justify-end items-center gap-3 mt-4">
             <a href="{{ route($tipo == 1 ? 'clientes.index' : 'proveedores.index') }}"
                class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
                 Cancelar
@@ -136,7 +136,7 @@
 
             <button type="submit"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
-                Guardar {{ $tipo == 1 ? 'Cliente' : 'Proveedor' }}
+                Guardar
             </button>
         </div>
 

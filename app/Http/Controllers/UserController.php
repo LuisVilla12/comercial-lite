@@ -23,4 +23,18 @@ class UserController extends Controller
 
     return view('users.index', compact('usuarios', 'search'));
     }
+    public function show(User $usuario){
+        return view('users.show',['usuario'=> $usuario]);
+    }
+
+    public function destroy(User $usuario)
+    {
+    $usuario->delete();
+
+    return redirect()
+        ->route('usuarios.index')
+        ->with(
+            'success', 'El usuario se ha eliminado correctamente.'
+        );
+    }
 }

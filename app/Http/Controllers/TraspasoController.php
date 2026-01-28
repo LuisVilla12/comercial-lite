@@ -19,7 +19,7 @@ class TraspasoController extends Controller
                     $q->where('serie', 'like', "%{$search}%")
                         ->orWhere('folio', 'like', "%{$search}%");
                 });
-            })
+            })->orderBy('folio', 'desc')
             ->paginate(10)
             ->withQueryString();
         return view('traspasos.index', compact(var_name: 'traspasos'));

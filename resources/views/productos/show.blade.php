@@ -7,7 +7,7 @@
         </h2>
     </x-slot>
     <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
-        <div class="md:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3  lg:grid-cols-4 gap-4">
             {{-- Codigo --}}
             <div class="">
                 <label class="block text-md font-medium text-gray-700 mb-1">
@@ -174,7 +174,7 @@
                     value="{{ $producto->importe_extra == '' ? '0' : $producto->importe_extra }}" disabled
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             </div>
-            <div class="mb-1">
+            <div class="mb-1 col-span-1 md:col-span-2 lg:col-span-1">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Exento de impuesto:
                     </label>

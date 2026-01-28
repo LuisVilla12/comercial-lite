@@ -1,7 +1,7 @@
 @section('title', 'Editar Traspaso')
 <x-app-layout>
     <x-slot name="header">
-        <div class="md:flex justify-between">
+        <div class="flex justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
                 Editar Traspaso
             </h2>
@@ -17,7 +17,7 @@
         @method('PUT')
         <div x-data="trasladoEdit(@js($traspaso ?? null))" x-init="init()" class="max-w-7xl mx-auto py-6">
             <div class="mb-6">
-                <div class="grid  grid-cols-2 gap-10 ">
+                <div class="grid  md:grid-cols-2 md:gap-6 ">
                     {{-- ================= Almacen origen ================= --}}
                     {{-- Almacén salida --}}
                     <div class="mb-4">
@@ -65,83 +65,141 @@
             </div>
             {{-- ================= PRODUCTOS ================= --}}
             <div class="">
-                <table class="w-full border bg-white shadow rounded p-4">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="p-2">Código</th>
-                            <th class="p-2">Producto</th>
-                            <th class="p-2">Cantidad</th>
-                            {{-- <th class="p-2">Precio</th> --}}
-                            <th class="p-2">Existencia</th>
-                            <th class="p-2">Restaria</th>
-                            <th class="p-2"></th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <template x-for="(item, index) in items" :key="index">
-                            <tr class="border-t">
-                                <td class="p-2 text-center" x-text="item.codigo"></td>
-                                <td class="p-2 relative">
-                                    <input type="text" x-model="item.query"
-                                        @input.debounce.300ms="buscarProducto(index)" class="border rounded p-1 w-full"
-                                        placeholder="Buscar producto">
-                                    <ul x-show="item.resultados.length"
-                                        class="absolute z-10 bg-white border rounded shadow w-full">
-                                        <template x-for="p in item.resultados" :key="p.id">
-                                            <li @click="seleccionarProducto(index, p)"
-                                                class="p-2 hover:bg-gray-100 cursor-pointer">
-                                                <span x-text="p.nombre"></span>
-                                                <span class="text-sm text-gray-500">
-                                                    ($<span x-text="p.costo"></span>)
-                                                </span>
-                                            </li>
-                                        </template>
-                                    </ul>
-                                    <input type="hidden" :name="`productos[${index}][producto_id]`"
-                                        x-model="item.producto_id">
-                                </td>
-                                <td class="p-2">
-                                    <div class="flex justify-center">
-                                        <input type="number" min="1" :name="`productos[${index}][cantidad]`"
-                                            x-model.number="item.cantidad" class="border rounded p-1 w-20 text-center">
-                                    </div>
-                                </td>
-                                {{-- <td class="p-2">
-                                    <div class="flex justify-center">
-                                        <input readonly type="number" step="0.01"
-                                            :name="`productos[${index}][costo]`" x-model.number="item.costo"
-                                            class="border rounded p-1 w-24 text-center">
-                                    </div>
-                                </td> - --}}
-                                {{-- Existencias --}}
-                                <td class="p-2">
-                                    <div class="flex justify-center">
-                                        <input type="number" disabled step="1" x-model.number="item.stock"
-                                            class="border rounded p-1 w-24 text-center bg-gray-100 text-gray-700">
-                                    </div>
-                                </td>
-                                {{-- <td class="p-2">
-                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)" class="text-center"></span>
-                                    <input type="hidden" :name="`productos[${index}][importe]`"
-                                        :value="(item.cantidad * item.costo).toFixed(2)" class="">
-                                </td> --}}
-
-                                <td class="p-2">
-                                    <div class="flex justify-center">
-                                    <span x-text="item.stock - item.cantidad " class="text-center"></span>
-                                    </div>
-                                </td>
-                                <td class="p-2 text-center">
-                                    <button type="button" @click="eliminarFila(index)"
-                                        class="text-red-600 hover:text-red-800">
-                                        ❌
-                                    </button>
-                                </td>
+                <div class="hidden lg:block">
+                    <table class="w-full border border-gray-200 bg-white shadow-lg rounded-xl overflow-hidden">
+                        <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
+                            <tr>
+                                <th class="px-4 py-3 text-center">Código</th>
+                                <th class="px-4 py-3 text-left">Producto</th>
+                                <th class="px-4 py-3 text-center">Cantidad</th>
+                                <th class="px-4 py-3 text-center">Existencia</th>
+                                <th class="px-4 py-3 text-center">Restaría</th>
+                                <th class="px-4 py-3"></th>
                             </tr>
-                        </template>
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-200 text-sm">
+                            <template x-for="(item, index) in items" :key="index">
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-4 py-2 text-center font-mono" x-text="item.codigo"></td>
+
+                                    <td class="px-4 py-2 relative">
+                                        <input type="text" x-model="item.query"
+                                            @input.debounce.300ms="buscarProducto(index)"
+                                            class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 text-sm px-3 py-2"
+                                            placeholder="Buscar producto">
+
+                                        <ul x-show="item.resultados.length"
+                                            class="absolute z-20 mt-1 w-full bg-white border rounded-lg shadow max-h-48 overflow-auto">
+                                            <template x-for="p in item.resultados" :key="p.id">
+                                                <li @click="seleccionarProducto(index, p)"
+                                                    class="px-4 py-2 hover:bg-blue-50 cursor-pointer flex justify-between">
+                                                    <span x-text="p.nombre"></span>
+                                                    <span class="text-xs text-gray-500">$<span
+                                                            x-text="p.costo"></span></span>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </td>
+
+                                    <td class="px-4 py-2 text-center">
+                                        <input type="number" min="1" x-model.number="item.cantidad"
+                                            class="w-20 rounded-lg border-gray-300 text-center">
+                                    </td>
+
+                                    <td class="px-4 py-2 text-center">
+                                        <input type="number" disabled x-model.number="item.stock"
+                                            class="w-24 bg-gray-100 text-gray-600 text-center rounded-lg border">
+                                    </td>
+
+                                    <td class="px-4 py-2 text-center">
+                                        <span x-text="item.stock - item.cantidad"
+                                            :class="(item.stock - item.cantidad) < 0
+                                                ?
+                                                'text-red-600 font-bold' :
+                                                'text-green-600 font-semibold'">
+                                        </span>
+                                    </td>
+
+                                    <td class="px-4 py-2 text-center">
+                                        <button @click="eliminarFila(index)"
+                                            class="text-red-500 hover:text-red-700 transition">
+                                            ❌
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lg:hidden space-y-4">
+                    <template x-for="(item, index) in items" :key="index">
+                        <div class="bg-white rounded-xl shadow border p-4 space-y-3">
+
+                            <!-- Header -->
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">Código</span>
+                                <span class="font-mono font-semibold" x-text="item.codigo"></span>
+                            </div>
+
+                            <!-- Producto -->
+                            <div class="relative">
+                                <label class="text-xs text-gray-500">Producto</label>
+                                <input type="text" x-model="item.query" @input.debounce.300ms="buscarProducto(index)"
+                                    class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 px-3 py-2"
+                                    placeholder="Buscar producto">
+
+                                <ul x-show="item.resultados.length"
+                                    class="absolute z-20 mt-1 w-full bg-white border rounded-lg shadow max-h-48 overflow-auto">
+                                    <template x-for="p in item.resultados" :key="p.id">
+                                        <li @click="seleccionarProducto(index, p)"
+                                            class="px-4 py-2 hover:bg-blue-50 cursor-pointer flex justify-between">
+                                            <span x-text="p.nombre"></span>
+                                            <span class="text-xs text-gray-500">$<span x-text="p.costo"></span></span>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+
+                            <!-- Cantidad / Stock -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs text-gray-500">Cantidad</label>
+                                    <input type="number" min="1" x-model.number="item.cantidad"
+                                        class="w-full rounded-lg border-gray-300 text-center">
+                                </div>
+
+                                <div>
+                                    <label class="text-xs text-gray-500">Existencia</label>
+                                    <input type="number" disabled x-model.number="item.stock"
+                                        class="w-full bg-gray-100 text-gray-600 text-center rounded-lg border">
+                                </div>
+                            </div>
+
+                            <!-- Restaría -->
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">Restaría</span>
+                                <span x-text="item.stock - item.cantidad"
+                                    :class="(item.stock - item.cantidad) < 0
+                                        ?
+                                        'text-red-600 font-bold' :
+                                        'text-green-600 font-semibold'"
+                                    class="px-3 py-1 rounded-full bg-gray-100">
+                                </span>
+                            </div>
+
+                            <!-- Acción -->
+                            <div class="flex justify-end">
+                                <button @click="eliminarFila(index)"
+                                    class="text-red-500 hover:text-red-700 transition">
+                                    ❌ Eliminar
+                                </button>
+                            </div>
+
+                        </div>
+                    </template>
+                </div>
+
                 @error('productos')
                     <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
                 @enderror
@@ -178,7 +236,7 @@
 
                 <button type="submit"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Guardar Traspaso
+                    Actualizar
                 </button>
             </div>
         </div>

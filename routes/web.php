@@ -52,6 +52,9 @@ Route::middleware('auth')->group(function () {
 
 //Usuarios
 Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
+Route::get('/usuarios/{usuario}', [UserController::class, 'show'])->name('usuarios.show');
+Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+Route::get('/usuarios/{usuario}/edit', [UserController::class, 'edit'])->name('usuarios.edit');
 
 // RUTAS DE CLIENTES
 Route::get('/clientes', [ClienteController::class, 'indexClientes'])->name('clientes.index');

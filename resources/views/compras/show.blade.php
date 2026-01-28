@@ -32,9 +32,9 @@
 
     </div>
 
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid md:grid-cols-2 md:gap-4 mb-4">
         {{-- PROVEEDOR --}}
-        <div class="mb-6">
+        <div class="mb-2">
             <label class="block text-lg font-medium mb-2 dark:text-white">Proveedor: *</label>
             <input type="text" value="{{ $compra->proveedor->nombre }}" disabled
                 class="w-full border rounded p-2 bg-gray-100">
@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <table class="w-full border bg-white shadow rounded">
+    {{-- <table class="w-full border bg-white shadow rounded">
         <thead class="bg-gray-100">
             <tr>
                 <th class="p-2">Código</th>
@@ -72,7 +72,90 @@
                 </tr>
             @endforeach
         </tbody>
-    </table>
+    </table> --}}
+<div class="w-full">
+
+    <!-- ===== TABLA (DESKTOP) ===== -->
+    <div class="hidden md:block">
+        <table class="w-full border bg-white shadow rounded">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="p-2">Código</th>
+                    <th class="p-2">Producto</th>
+                    <th class="p-2">Cantidad</th>
+                    <th class="p-2">Costo</th>
+                    <th class="p-2">Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($compra->detalles as $detalle)
+                    <tr class="border-t">
+                        <td class="p-2 text-center">
+                            {{ $detalle->producto->codigo_producto }}
+                        </td>
+                        <td class="p-2">
+                            {{ $detalle->producto->nombre_producto }}
+                        </td>
+                        <td class="p-2 text-center">
+                            {{ $detalle->cantidad }}
+                        </td>
+                        <td class="p-2 text-right">
+                            ${{ number_format($detalle->costo_unitario, 2) }}
+                        </td>
+                        <td class="p-2 text-right">
+                            ${{ number_format($detalle->importe, 2) }}
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ===== CARDS (MÓVIL) ===== -->
+    <div class="md:hidden space-y-4">
+        @foreach ($compra->detalles as $detalle)
+            <div class="border rounded-lg shadow bg-white p-4 space-y-2">
+
+                <div class="text-sm text-gray-500">
+                    Código:
+                    <span class="font-medium text-gray-800">
+                        {{ $detalle->producto->codigo_producto }}
+                    </span>
+                </div>
+
+                <div>
+                    <span class="text-sm text-gray-500">Producto</span>
+                    <div class="font-medium">
+                        {{ $detalle->producto->nombre_producto }}
+                    </div>
+                </div>
+
+                <div class="flex justify-between text-sm">
+                    <div>
+                        <span class="text-gray-500">Cantidad:</span>
+                        <span class="font-medium">{{ $detalle->cantidad }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Costo:</span>
+                        <span class="font-medium">
+                            ${{ number_format($detalle->costo_unitario, 2) }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-2 border-t">
+                    <span class="font-semibold">Importe</span>
+                    <span class="text-lg font-bold">
+                        ${{ number_format($detalle->importe, 2) }}
+                    </span>
+                </div>
+
+            </div>
+        @endforeach
+    </div>
+
+</div>
+
     <div class="text-right mt-6 space-y-1">
         <p class="uppercase block text-lg font-medium mb-2 dark:text-white">Subtotal:
             ${{ number_format($compra->subtotal, 2) }}</p>
@@ -82,15 +165,15 @@
             Total: ${{ number_format($compra->total, 2) }}
         </p>
     </div>
-    <div class="mt-6 flex gap-4">
-        <div class="md:col-span-2 flex justify-between gap-3 mt-4">
+    <div class="mt-6  gap-4">
+        <div class="flex justify-end gap-3 mt-4">
             <a href="{{ route('compras.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
                 Volver
             </a>
             @if ($compra->estatus == 1)
                 <a href="{{ route('compras.edit', $compra) }}"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Actualizar compra
+                    Actualizar
                 </a>
             @endif
         </div>

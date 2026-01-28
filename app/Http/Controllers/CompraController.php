@@ -30,7 +30,7 @@ class CompraController extends Controller
             ->when($request->fecha === 'hoy', function ($q) {
                 $q->whereDate('fecha', now()->toDateString());
             })
-            ->orderBy('fecha', 'desc')
+            ->orderBy('folio', 'desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -189,11 +189,12 @@ class CompraController extends Controller
         }
 
         // dd($compra->)
+        $almacenes = Almacen::all();
         $compra->load([
             'proveedor',
             'detalles.producto'
         ]);
-        return view('compras.edit', compact('compra'));
+        return view('compras.edit', ['compra'=>$compra, 'almacenes'=> $almacenes]);
     }
 
     /**
@@ -209,6 +210,7 @@ class CompraController extends Controller
         $request->merge([
             'productos' => $productos
         ]);
+
         $request->validate([
             'proveedor_id' => 'required|exists:clientes,id',
             'almacen_id'        => 'required|exists:clientes,id',
@@ -218,7 +220,7 @@ class CompraController extends Controller
             'impuestos'        => 'required|numeric',
             'total'        => 'required|numeric',
             //Detalles compra
-            'productos' => 'required|array|min:2'
+            'productos' => 'required|array|min:1'
         ]);
         try {
             DB::transaction(function () use ($request, $compra) {
