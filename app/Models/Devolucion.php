@@ -17,7 +17,7 @@ class Devolucion extends Model
     'observaciones',
     'estatus'
     ];
-public function detalles() {
+    public function detalles() {
         return $this->hasMany(DevolucionesDetalles::class);
     }
 
@@ -27,4 +27,5 @@ public function detalles() {
     public function usuario() {
         return $this->belongsTo(User::class, 'user_id');
     }
+
 }

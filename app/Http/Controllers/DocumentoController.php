@@ -185,7 +185,7 @@ class DocumentoController extends Controller
         }
         return redirect()
             ->route('documentos.show', ['sucursal' => $sucursal->id, 'documento' => $documento]);
-            // ->with('open_pdf', true);
+        // ->with('open_pdf', true);
     }
 
     /**
@@ -571,60 +571,63 @@ class DocumentoController extends Controller
             'devoluciones' => 'required|json',
             'total' => 'required|numeric',
         ]);
-        // Productos que se devolvieron
-        $devoluciones = json_decode($request->devoluciones, true);
         // dd($devoluciones);
+        $devolucion = null;
+
         try {
-            DB::transaction(function () use ($request, $sucursal, $documento) {
+            DB::transaction(function () use ($request, $sucursal, $documento, &$devolucion) {
+
+                // Actualizar estatus del documento original
+                $documento->update([
+                    'estatus' => 5
+                ]);
 
                 $serie = $sucursal->serie_devolucion;
-                $ultimoFolio = Documento::where('serie', $serie)
+
+                $ultimoFolio = Devolucion::where('serie', $serie)
                     ->lockForUpdate()
                     ->max('folio');
+
                 $siguienteFolio = $ultimoFolio ? $ultimoFolio + 1 : 1;
 
                 $devolucion = Devolucion::create([
                     'documento_id' => $documento->id,
-                    'cliente_id' =>  $request->proveedor_id,
-                    'user_id' => $request->user_id,
-                    'almacen_id' => $request->almacen_id,
-                    'serie' => $serie,
-                    'folio' => $siguienteFolio,
-                    'fecha' => now()->format('Y-m-d'),
-                    'total' => $request->total,
-                    'estatus' => 4,
+                    'cliente_id'   => $request->proveedor_id,
+                    'user_id'      => $request->user_id,
+                    'almacen_id'   => $request->almacen_id,
+                    'serie'        => $serie,
+                    'folio'        => $siguienteFolio,
+                    'fecha'        => now()->format('Y-m-d'),
+                    'total'        => $request->total,
+                    'estatus'      => 5,
                     'observaciones' => $request->observaciones,
                 ]);
-                DB::commit();
-                /* ================= DETALLES ================= */
-                foreach ($request->productos as $item) {
 
-                    // Evitar filas vacías (fila extra de Alpine)
+                /* ================= DETALLES ================= */
+                // Arreglo de productos que devolvio
+                $devoluciones = json_decode($request->devoluciones, true);
+                foreach ($devoluciones as $item) {
+
                     if (empty($item['producto_id'])) {
                         continue;
                     }
 
-                    // Guardar detalle de devolución
                     DevolucionesDetalles::create([
-                        'devolucion_id' => $devolucion->id,
-                        'producto_id'   => $item['producto_id'],
-                        'cantidad'      => $item['cantidad'],
-                        'costo_unitario' => $item['costo'],
-                        'importe'       => $item['importe'],
+                        'devolucion_id'  => $devolucion->id,
+                        'producto_id'    => $item['producto_id'],
+                        'cantidad'       => $item['cantidad'],
+                        'costo_unitario' => $item['costo_unitario'],
+                        'importe'        => $item['importe'],
                     ]);
 
-                    // Restar inventario (permite negativo)
                     $existencia = ExistenciaProducto::where('producto_id', $item['producto_id'])
                         ->where('almacen_id', $devolucion->almacen_id)
                         ->lockForUpdate()
                         ->first();
 
                     if ($existencia) {
-                        // Restar existencia
-                        // $existencia->decrement(column: 'cantidad', $item['cantidad']);
                         $existencia->increment('cantidad', $item['cantidad']);
                     } else {
-                        // Si no existe registro, créalo en negativo
                         ExistenciaProducto::create([
                             'producto_id' => $item['producto_id'],
                             'almacen_id'  => $devolucion->almacen_id,
@@ -634,11 +637,15 @@ class DocumentoController extends Controller
                 }
             });
         } catch (\Throwable $e) {
-            DB::rollBack();
             throw $e;
         }
-        // TODO: redigir cuando se crea una devolución
+        $usos_cfdi = UsoCfdi::all();
 
+        return view('devoluciones.show', [
+            'sucursal' => $sucursal,
+            'documento' => $devolucion,
+            'usos' => $usos_cfdi,
+        ]);
     }
     // TIMBRAR FACTURA
     public function timbrar(Sucursal $sucursal, Documento $documento)

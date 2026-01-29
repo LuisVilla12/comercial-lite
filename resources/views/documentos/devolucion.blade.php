@@ -4,13 +4,14 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
                 Devolución
                 {{ match ($documento->documento_modelo_id) {1 => 'Cotización',2 => 'Factura',3 => 'Remisión'} }}
-                {{$sucursal->nombre ."#" . $documento->folio }}
+                {{ $sucursal->nombre . '#' . $documento->folio }}
             </h2>
             <label class="block text-lg font-medium mb-2 dark:text-white">Fecha: {{ now()->format('d/m/Y') }}
         </div>
     </x-slot>
 
-    <form method="POST" @submit.prevent="prepararEnvio" action="{{ route('devolucion.update', parameters: ['sucursal'=>$sucursal, 'documento'=>$documento]) }}"
+    <form method="POST" @submit.prevent="prepararEnvio"
+        action="{{ route('devolucion.update', parameters: ['sucursal' => $sucursal, 'documento' => $documento]) }}"
         x-data="documentoEdit(@js($documento->toArray()))" x-init="init()">
         @csrf
         @method('PUT')
@@ -47,74 +48,58 @@
 
                 </div>
                 {{-- ================= PRODUCTOS ================= --}}
-                <div class="">
-                    <table class="w-full border bg-white shadow rounded p-4">
-                        <thead class="bg-gray-100">
+                <div class="hidden md:block">
+                    <table class="w-full bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
+                        <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
                             <tr>
-                                <th class="p-2">Código</th>
-                                <th class="p-2">Producto</th>
-                                <th class="p-2">Cantidad</th>
-                                <th class="p-2">Precio</th>
-                                <th class="p-2">Existencia</th>
-                                <th class="p-2">Importe</th>
-                                <th class="p-2"></th>
+                                <th class="p-3 text-center">Código</th>
+                                <th class="p-3">Producto</th>
+                                <th class="p-3 text-center">Cantidad</th>
+                                <th class="p-3 text-center">Precio</th>
+                                <th class="p-3 text-center">Existencia</th>
+                                <th class="p-3 text-center">Importe</th>
+                                <th class="p-3"></th>
                             </tr>
                         </thead>
 
                         <tbody>
                             <template x-for="(item, index) in items" :key="index">
-                                <tr class="border-t">
-                                    <td class="p-2 text-center" x-text="item.codigo"></td>
-                                    <td class="p-2 relative">
+                                <tr class="border-t hover:bg-gray-50 transition">
+                                    <td class="p-3 text-center font-medium" x-text="item.codigo"></td>
+
+                                    <td class="p-3">
                                         <input type="text" x-model="item.query" readonly
-                                            @input.debounce.300ms="buscarProducto(index)"
-                                            class="border rounded p-1 w-full cursor-not-allowed" placeholder="Buscar producto">
-                                        <ul x-show="item.resultados.length"
-                                            class="absolute z-10 bg-white border rounded shadow w-full">
-                                            <template x-for="p in item.resultados" :key="p.id">
-                                                <li @click="seleccionarProducto(index, p)"
-                                                    class="p-2 hover:bg-gray-100 cursor-pointer">
-                                                    <span x-text="p.nombre"></span>
-                                                    <span class="text-sm text-gray-500">
-                                                        ($<span x-text="p.costo"></span>)
-                                                    </span>
-                                                </li>
-                                            </template>
-                                        </ul>
+                                            class="border rounded-md p-2 w-full bg-gray-100 cursor-not-allowed">
                                         <input type="hidden" :name="`productos[${index}][producto_id]`"
                                             x-model="item.producto_id">
                                     </td>
-                                    <td class="p-2">
-                                        <div class="flex justify-center">
-                                            <input type="number" min="1" :name="`productos[${index}][cantidad]`"
-                                                x-model.number="item.cantidad" @input="calcular"
-                                                class="border rounded p-1 w-20 text-center">
-                                        </div>
-                                    </td>
-                                    <td class="p-2">
-                                        <div class="flex justify-center">
-                                            <input readonly type="number" step="0.01"
-                                                :name="`productos[${index}][costo]`" x-model.number="item.costo"
-                                                @input="calcular" class="border rounded p-1 w-24 text-center cursor-not-allowed">
-                                        </div>
-                                    </td>
-                                    {{-- Existencias --}}
-                                    <td class="p-2">
-                                        <div class="flex justify-center">
-                                            <input type="number" readonly step="1" x-model.number="item.stock"
-                                                class="border rounded  cursor-not-allowed p-1 w-24 text-center bg-gray-100 text-gray-700">
-                                        </div>
-                                    </td>
-                                    <td class="p-2">
-                                        $<span x-text="(item.cantidad * item.costo).toFixed(2)"
-                                            class="text-center"></span>
-                                        <input type="hidden" :name="`productos[${index}][importe]`"
-                                            :value="(item.cantidad * item.costo).toFixed(2)" class="">
+
+                                    <td class="p-3 text-center">
+                                        <input type="number" min="1" :name="`productos[${index}][cantidad]`"
+                                            x-model.number="item.cantidad" @input="calcular"
+                                            class="border rounded-md p-2 w-20 text-center">
                                     </td>
 
-                                    <td class="p-2 text-center">
+                                    <td class="p-3 text-center">
+                                        <input readonly type="number" step="0.01"
+                                            :name="`productos[${index}][costo]`" x-model.number="item.costo"
+                                            class="border rounded-md p-2 w-24 text-center bg-gray-100">
+                                    </td>
+
+                                    <td class="p-3 text-center">
+                                        <input readonly type="number" x-model.number="item.stock"
+                                            class="border rounded-md p-2 w-24 text-center bg-gray-100">
+                                    </td>
+
+                                    <td class="p-3 text-center font-semibold">
+                                        $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
+                                        <input type="hidden" :name="`productos[${index}][importe]`"
+                                            :value="(item.cantidad * item.costo).toFixed(2)">
+                                    </td>
+
+                                    <td class="p-3 text-center">
                                         <button type="button" @click="eliminarFila(index)"
-                                            class="text-red-600 hover:text-red-800">
+                                            class="text-red-500 hover:text-red-700 text-lg">
                                             ❌
                                         </button>
                                     </td>
@@ -122,12 +107,62 @@
                             </template>
                         </tbody>
                     </table>
-                    @error('productos')
-                        <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
-                    @enderror
-                    {{-- <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-                        ➕ Agregar producto
-                    </button> --}}
+                </div>
+                <div class="md:hidden space-y-4">
+                    <template x-for="(item, index) in items" :key="index">
+                        <div class="bg-white border rounded-lg shadow-sm p-4 space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-500">Código</span>
+                                <span class="font-semibold" x-text="item.codigo"></span>
+                            </div>
+
+                            <div>
+                                <span class="text-sm text-gray-500">Producto</span>
+                                <input type="text" x-model="item.query" readonly
+                                    class="border rounded-md p-2 w-full bg-gray-100 cursor-not-allowed mt-1">
+                                <input type="hidden" :name="`productos[${index}][producto_id]`"
+                                    x-model="item.producto_id">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <span class="text-sm text-gray-500">Cantidad</span>
+                                    <input type="number" min="1" :name="`productos[${index}][cantidad]`"
+                                        x-model.number="item.cantidad" @input="calcular"
+                                        class="border rounded-md p-2 w-full text-center">
+                                </div>
+
+                                <div>
+                                    <span class="text-sm text-gray-500">Precio</span>
+                                    <input readonly type="number" :name="`productos[${index}][costo]`"
+                                        x-model.number="item.costo"
+                                        class="border rounded-md p-2 w-full text-center bg-gray-100">
+                                </div>
+
+                                <div>
+                                    <span class="text-sm text-gray-500">Existencia</span>
+                                    <input readonly type="number" x-model.number="item.stock"
+                                        class="border rounded-md p-2 w-full text-center bg-gray-100">
+                                </div>
+
+                                <div>
+                                    <span class="text-sm text-gray-500">Importe</span>
+                                    <div class="font-semibold text-center mt-2">
+                                        $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
+                                        <input type="hidden" :name="`productos[${index}][importe]`"
+                                            :value="(item.cantidad * item.costo).toFixed(2)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end">
+                                <button type="button" @click="eliminarFila(index)"
+                                    class="text-red-500 hover:text-red-700">
+                                    ❌ Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </template>
                 </div>
 
                 {{-- ================= TOTAL ================= --}}
@@ -155,7 +190,8 @@
             <div x-show="tab === 'info'" x-cloak class="space-y-4">
                 <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
                     <div class="col-span-full">
-                        <label class="block text-xl text-center md:text-left  mt-4  font-medium text-gray-700 dark:text-white">
+                        <label
+                            class="block text-xl text-center md:text-left  mt-4  font-medium text-gray-700 dark:text-white">
                             Datos del cliente: </span>
                         </label>
                     </div>
@@ -296,13 +332,13 @@
 
         <input type="hidden" name="devoluciones" x-ref="devoluciones">
         <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-            <a href="{{ route(match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'}, $sucursal) }}"
+            <a href="{{ route(match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'},$sucursal) }}"
                 class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
                 Cancelar
             </a>
             <button type="submit"
                 class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                Realizar devolucion            </button>
+                Realizar </button>
             {{-- <a href="{{ route('cotizacion.pdf', $documento) }}" target="_blank"
                     class="px-4 py-2 bg-red-600 text-white rounded">
                     📄 Imprimir PDF

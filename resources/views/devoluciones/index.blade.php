@@ -3,7 +3,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Catálogo de devoluciones
+            Catálogo de devoluciones {{ $sucursal->nombre }}
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
@@ -78,36 +78,11 @@
                                 <td class="px-6 py-4 text-sm text-gray-700">
                                     <div class="flex flex-wrap items-center gap-4">
                                         {{-- Ver --}}
-                                        <a href="{{ route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                                        <a href="{{ route('devoluciones.show', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
                                             class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                             <x-heroicon-o-eye class="w-4 h-4" />
                                             <span class="hidden sm:inline">Ver</span>
                                         </a>
-                                        @if ($documento->estatus == 1)
-                                            <span class="hidden sm:inline text-gray-300">•</span>
-                                            {{-- Editar --}}
-                                            <a href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
-                                                class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
-                                                <x-heroicon-o-pencil-square class="w-4 h-4" />
-                                                <span class="hidden sm:inline">Editar</span>
-                                            </a>
-                                            <span class="hidden sm:inline text-gray-300">•</span>
-
-                                            {{-- Eliminar --}}
-                                            <form
-                                                action="{{ route('documentos.destroy', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
-                                                method="POST" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button type="submit"
-                                                    class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
-                                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
-                                                    <x-heroicon-o-trash class="w-4 h-4" />
-                                                    <span class="hidden sm:inline">Eliminar</span>
-                                                </button>
-                                            </form>
-                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -158,36 +133,11 @@
                         </div>
                         <div class="flex flex-wrap items-center justify-end mt-4 gap-4">
                             {{-- Ver --}}
-                            <a href="{{ route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                            <a href="{{ route('devoluciones.show', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
                                 class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                 <x-heroicon-o-eye class="w-4 h-4" />
                                 <span class="hidden sm:inline">Ver</span>
                             </a>
-                            @if ($documento->estatus == 1)
-                                <span class="hidden sm:inline text-gray-300">•</span>
-                                {{-- Editar --}}
-                                <a href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
-                                    class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
-                                    <x-heroicon-o-pencil-square class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Editar</span>
-                                </a>
-                                <span class="hidden sm:inline text-gray-300">•</span>
-
-                                {{-- Eliminar --}}
-                                <form
-                                    action="{{ route('documentos.destroy', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
-                                    method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="submit"
-                                        class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
-                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
-                                        <x-heroicon-o-trash class="w-4 h-4" />
-                                        <span class="hidden sm:inline">Eliminar</span>
-                                    </button>
-                                </form>
-                            @endif
                         </div>
                     </div>
                 @endforeach

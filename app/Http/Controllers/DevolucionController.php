@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Devolucion;
 use App\Models\Documento;
 use App\Models\Sucursal;
+use App\Models\UsoCfdi;
 use Illuminate\Http\Request;
 
 class DevolucionController extends Controller
@@ -12,18 +13,26 @@ class DevolucionController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Sucursal $sucursal,Request $request)
     {
-        $search = $request->get('search');
-        $devoluciones = Devolucion::when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('serie', 'like', "%{$search}%")
-                        ->orWhere('folio', 'like', "%{$search}%");
+        $documentos = Devolucion::where('serie', $sucursal->serie_devolucion)
+            ->when($request->search, function ($q, $search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('folio', 'like', "%{$search}%")
+                        ->orWhereHas('cliente', function ($c) use ($search) {
+                            $c->where('nombre', 'like', "%{$search}%");
+                        });
                 });
             })
+            ->when($request->fecha === 'hoy', function ($q) {
+                $q->whereDate('fecha', now()->toDateString());
+            })
+            ->orderBy('folio', 'desc')
             ->paginate(10)
             ->withQueryString();
-        return view('devoluciones.index', ['sucursal'=>$sucursal,'devoluciones'=>$devoluciones]);
+
+        return view('devoluciones.index', ['devoluciones' => $documentos, 'sucursal' => $sucursal]);
     }
 
     /**
@@ -45,9 +54,14 @@ class DevolucionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Devolucion $devolucion)
+     public function show(Sucursal $sucursal, Devolucion $documento)
     {
-        //
+        $usos_cfdi = UsoCfdi::all();
+        $documento->load([
+            'cliente',
+            'detalles.producto'
+        ]);
+        return view('devoluciones.show', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi,]);
     }
 
     /**

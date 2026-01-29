@@ -15,4 +15,13 @@ class DevolucionesDetalles extends Model
         'costo_unitario',
         'importe'
     ];
+     public function documento()
+    {
+        return $this->belongsTo(Devolucion::class);
+    }
+      public function producto()
+    {
+        return $this->belongsTo(Producto::class);
+    }
+
 }
