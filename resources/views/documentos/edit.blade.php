@@ -503,9 +503,9 @@
 
                     this.calcular()
 
-                    if (index === this.items.length - 1) {
-                        this.agregarFila()
-                    }
+                    // if (index === this.items.length - 1) {
+                    //     this.agregarFila()
+                    // }
                 },
 
                 calcular() {

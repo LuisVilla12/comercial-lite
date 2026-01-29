@@ -276,6 +276,7 @@
                                 </option>
                             @endforeach
                         </select>
+
                         @error('uso_cfdi')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror

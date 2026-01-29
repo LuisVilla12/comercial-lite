@@ -1,11 +1,11 @@
 <x-app-layout>
-    @if (session('open_pdf'))
+    {{-- @if (session('open_pdf'))
         <script>
             if (confirm('¿Deseas imprimir la cotización?')) {
                 window.open("{{ route('documentos.pdf', $documento) }}", "_blank");
             }
         </script>
-    @endif
+    @endif --}}
     @if (session('success'))
         <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
             class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4 mt-4">
@@ -34,16 +34,16 @@
         <div class="md:flex md:justify-between md:gap-3 mt-4 md:mt-2">
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
                 <form method="POST"
-                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
+                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}" class="w-f">
                     @csrf
-                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
+                    <button class="block px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
                         CONVERTIR FACTURA
                     </button>
                 </form>
                 <form method="POST"
                     action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 3]) }}">
                     @csrf
-                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
+                    <button class="block px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full ">
                         CONVERTIR REMISIÓN
                     </button>
                 </form>
@@ -55,20 +55,20 @@
                 <form method="POST"
                     action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
                     @csrf
-                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mb-4 md:mb-0">
                         CONVERTIR FACTURA
                     </button>
                 </form>
             @elseif($documento->estatus == 4 and $documento->documento_modelo_id == 3)
-                <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed"> REMISIÓN SURTIDA</p>
+                <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed text-center"> REMISIÓN SURTIDA</p>
                 <a
-                    href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded mt-2">DEVOLUCIÓN</a>
+                    href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded mt-4  md:mt-0 text-center">DEVOLUCIÓN</a>
             @endif
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
                 <form method="POST"
                     action="{{ route('documentos.surtir', ['sucursal' => $sucursal, 'documento' => $documento]) }}">
                     @csrf
-                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mb-4 md:mb-0">
                         SURTIR REMISION
                     </button>
                 </form>
@@ -77,7 +77,7 @@
                 <form method="POST"
                     action="{{ route('documentos.timbrar', ['sucursal' => $sucursal, 'documento' => $documento]) }}">
                     @csrf
-                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase">
+                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase w-full">
                         Timbrar
                     </button>
                 </form>

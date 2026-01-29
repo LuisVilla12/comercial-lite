@@ -63,7 +63,7 @@
             </x-slot:icon>
         </x-dashboard-card>
         @foreach ($sucursales as $sucursal)
-            <x-dashboard-card href="{{ route('devoluciones.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+            <x-dashboard-card href="{{ route('devoluciones.index',$sucursal) }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
                 title="Devoluciones {{ $sucursal->nombre }}" desc="Devoluciónes de productos" iconBg="bg-emerald-500">
                 <x-slot:icon>
                     <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />

@@ -47,61 +47,133 @@
         </p>
     @endif
 
-    <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Fecha
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Serie
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Folio
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Almacen salida
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Almacen entrada
-                    </th>
-                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Acciones
-                    </th>
-                </tr>
-            </thead>
+    <div class=" shadow-md overflow-x-auto rounded-lg">
+        @if ($traspasos->count() > 0)
+            <div class="hidden md:block">
+                <table class="w-full border bg-white shadow rounded">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2">Fecha</th>
+                            <th class="p-2">Serie</th>
+                            <th class="p-2">Folio</th>
+                            <th class="p-2">Almacen salida</th>
+                            <th class="p-2">Almacen entrada</th>
+                            <th class="p-2">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($traspasos as $traspaso)
+                            <tr class="border-t">
+                                <td class="p-2 text-center">
+                                    {{ $traspaso->fecha }}
+                                </td>
+                                <td class="p-2">
+                                    {{ $traspaso->serie }}
+                                </td>
+                                <td class="p-2 text-center">
+                                    {{ $traspaso->folio }}
+                                </td>
+                                <td class="p-2 text-center">
+                                    {{ $traspaso->almacenOrigen->nombre }}
+                                </td>
+                                <td class="p-2 text-center">
+                                    {{ $traspaso->almacenDestino->nombre }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    <div class="flex flex-wrap items-center gap-4">
+                                        {{-- Ver --}}
+                                        <a href="{{ route('traspasos.show', ['traspaso' => $traspaso]) }}"
+                                            class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
+                                            <x-heroicon-o-eye class="w-4 h-4" />
+                                            <span class="hidden sm:inline">Ver</span>
+                                        </a>
+                                        @if ($traspaso->estatus == 1)
+                                            <span class="hidden sm:inline text-gray-300">•</span>
+                                            {{-- Editar --}}
+                                            <a href="{{ route('traspasos.edit', ['traspaso' => $traspaso]) }}"
+                                                class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
+                                                <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                                <span class="hidden sm:inline">Editar</span>
+                                            </a>
+                                            <span class="hidden sm:inline text-gray-300">•</span>
 
-            <tbody class="bg-white divide-y divide-gray-100">
-                @forelse ($traspasos as $traspaso)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 text-md text-gray-700">
-                            {{ $traspaso->fecha }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $traspaso->serie }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $traspaso->folio }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $traspaso->almacenOrigen->nombre }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $traspaso->almacenDestino->nombre }}
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-700">
-                            <div class="flex flex-wrap items-center gap-4">
-                                {{-- Ver --}}
-                                <a href="{{route('traspasos.show', $traspaso)}}"
-                                    class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
-                                    <x-heroicon-o-eye class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Ver</span>
-                                </a>
-                                @if($traspaso->estatus==1)
-                                    <span class="hidden sm:inline text-gray-300">•</span>
+                                            {{-- Eliminar --}}
+                                            <form
+                                                action="{{ route('traspasos.destroy', ['traspaso' => $traspaso]) }}"
+                                                method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit"
+                                                    class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                                    <x-heroicon-o-trash class="w-4 h-4" />
+                                                    <span class="hidden sm:inline">Eliminar</span>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <!-- CARDS: visible en tablet y móvil -->
+            <div class="md:hidden space-y-4">
+                @foreach ($traspasos as $trapaso)
+                    <div class="border rounded-lg shadow bg-white p-4">
+                        <div class="flex justify-between mt-2">
+                            <div class=" text-sm text-gray-500">
+                                <span>Fecha</span>
+                                <span class="font-medium text-gray-800">
+                                    {{ $trapaso->fecha }}
+                                </span>
+                            </div>
+                            <div class="">
+                                <p class="text-sm">Serie:
+                                    <span class="font-semibold">
+                                        {{ $trapaso->serie }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-sm">Folio:
+                                    <span class="font-semibold">
+                                        {{ $trapaso->folio }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-2 mb-3 text-sm">
+                            <div>
+                                <p class="text-gray-500">Almacen salida
+                                    <span class="font-semibold  text-gray-800">
+                                        {{ $traspaso->almacenOrigen->nombre }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-2 mb-3 text-sm">
+                            <div>
+                                <p class="text-gray-500">Almacen salida
+                                    <span class="font-semibold  text-gray-800">
+                                        {{ $traspaso->almacenDestino->nombre }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-end mt-4 gap-4">
+                            {{-- Ver --}}
+                            <a href="{{ route('traspasos.show', ['traspaso' => $traspaso]) }}"
+                                class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
+                                <x-heroicon-o-eye class="w-4 h-4" />
+                                <span class="hidden sm:inline">Ver</span>
+                            </a>
+                            @if ($traspaso->estatus == 1)
+                                <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                <a href="{{ route('traspasos.edit',$traspaso) }}"
+                                <a href="{{ route('traspasos.edit', ['traspaso' => $traspaso]) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>
@@ -109,7 +181,9 @@
                                 <span class="hidden sm:inline text-gray-300">•</span>
 
                                 {{-- Eliminar --}}
-                                <form action="{{ route('traspasos.destroy', $traspaso) }}" method="POST" class="inline">
+                                <form
+                                    action="{{ route('traspasos.destroy', ['traspaso' => $traspaso]) }}"
+                                    method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
 
@@ -120,35 +194,30 @@
                                         <span class="hidden sm:inline">Eliminar</span>
                                     </button>
                                 </form>
-                                @endif
-                            </div>
-                        </td>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="bg-white py-4 mt-3">
+                <p class="text-sm text-gray-600 ml-6 text-center"> No hay trapasos</p>
+            </div>
+        @endif
+        @if ($traspasos->count() > 0)
+            <div class="bg-white py-4 my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" class="px-6 py-6 text-center text-md text-gray-500">
-                            No hay traspasos registrados
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
+                <p class="text-sm text-gray-600 ml-6">
+                    Mostrando
+                    <span class="font-medium">{{ $traspasos->firstItem() }}</span>
+                    a
+                    <span class="font-medium">{{ $traspasos->lastItem() }}</span>
+                    de
+                    <span class="font-medium">{{ $traspasos->total() }}</span>
+                    registros
+                </p>
 
-        </table>
-        @if($traspasos->count() > 0)
-        <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-            <p class="text-sm text-gray-600 ml-6">
-                Mostrando
-                <span class="font-medium">{{ $traspasos->firstItem() }}</span>
-                a
-                <span class="font-medium">{{ $traspasos->lastItem() }}</span>
-                de
-                <span class="font-medium">{{ $traspasos->total() }}</span>
-                registros
-            </p>
-
-            {{ $traspasos->links() }}
+                {{ $traspasos->links() }}
             </div>
         @endif
     </div>

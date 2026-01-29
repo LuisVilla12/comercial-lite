@@ -9,9 +9,9 @@
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
         {{-- Buscador --}}
-        <form method="GET" action="{{ route('compras.index') }}" class="w-full md:w-1/3">
+        <form method="GET" action="{{ route('devoluciones.index',$sucursal) }}" class="w-full md:w-1/3">
             <div class="relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar compra..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar devolucion..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
                 <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -43,93 +43,174 @@
     @endif
 
 
-    <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Fecha
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Serie
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Folio
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Razon social
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Total
-                    </th>
-                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Acciones
-                    </th>
-                </tr>
-            </thead>
+    <div class="shadow-md overflow-x-auto rounded-lg">
+        @if ($devoluciones->count() > 0)
+            <div class="hidden md:block">
+                <table class="w-full border bg-white shadow rounded">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2">Fecha</th>
+                            <th class="p-2">Serie</th>
+                            <th class="p-2">Folio</th>
+                            <th class="p-2">Razón social</th>
+                            <th class="p-2">Total</th>
+                            <th class="p-2">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($devoluciones as $documento)
+                            <tr class="border-t">
+                                <td class="p-2 text-center">
+                                    {{ $documento->fecha }}
+                                </td>
+                                <td class="p-2">
+                                    {{ $documento->serie }}
+                                </td>
+                                <td class="p-2 text-center">
+                                    {{ $documento->folio }}
+                                </td>
+                                <td class="p-2 text-center">
+                                    {{ $documento->cliente->nombre }}
+                                </td>
+                                <td class="p-2 text-right">
+                                    {{ number_format($documento->total, 2) }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    <div class="flex flex-wrap items-center gap-4">
+                                        {{-- Ver --}}
+                                        <a href="{{ route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                                            class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
+                                            <x-heroicon-o-eye class="w-4 h-4" />
+                                            <span class="hidden sm:inline">Ver</span>
+                                        </a>
+                                        @if ($documento->estatus == 1)
+                                            <span class="hidden sm:inline text-gray-300">•</span>
+                                            {{-- Editar --}}
+                                            <a href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                                                class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
+                                                <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                                <span class="hidden sm:inline">Editar</span>
+                                            </a>
+                                            <span class="hidden sm:inline text-gray-300">•</span>
 
-            <tbody class="bg-white divide-y divide-gray-100">
-                @forelse ($devoluciones as $documento)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 text-md text-gray-700">
-                            {{ $documento->fecha }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $documento->serie }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $documento->folio }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $documento->cliente->nombre }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ number_format($documento->total,2) }}
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-700">
-                            <div class="flex flex-wrap items-center gap-4">
-                                {{-- Ver --}}
-                                <a href="{{ route('documentos.show', $documento) }}"
-                                    class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
-                                    <x-heroicon-o-eye class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Ver</span>
-                                </a>
-                                    <span class="hidden sm:inline text-gray-300">•</span>
+                                            {{-- Eliminar --}}
+                                            <form
+                                                action="{{ route('documentos.destroy', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                                                method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit"
+                                                    class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                                    <x-heroicon-o-trash class="w-4 h-4" />
+                                                    <span class="hidden sm:inline">Eliminar</span>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <!-- CARDS: visible en tablet y móvil -->
+            <div class="md:hidden space-y-4">
+                @foreach ($devoluciones as $documento)
+                    <div class="border rounded-lg shadow bg-white p-4">
+                        <div class="flex justify-between mt-2">
+                            <div class=" text-sm text-gray-500">
+                                <span>Fecha</span>
+                                <span class="font-medium text-gray-800">
+                                    {{ $documento->fecha }}
+                                </span>
+                            </div>
+                            <div class="">
+                                <p class="text-sm">Serie:
+                                    <span class="font-semibold">
+                                        {{ $documento->serie }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-sm">Folio:
+                                    <span class="font-semibold">
+                                        {{ $documento->folio }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-2 mb-3 text-sm">
+                            <div>
+                                <p class="text-gray-500">Cliente
+                                    <span class="font-semibold  text-gray-800">
+                                        {{ $documento->cliente->nombre }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-3 border-t pt-2 flex justify-between">
+                            <span class="text-gray-500 text-sm">Importe</span>
+                            <span class="font-semibold text-lg">
+                                ${{ number_format($documento->total, 2) }}
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-end mt-4 gap-4">
+                            {{-- Ver --}}
+                            <a href="{{ route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                                class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
+                                <x-heroicon-o-eye class="w-4 h-4" />
+                                <span class="hidden sm:inline">Ver</span>
+                            </a>
+                            @if ($documento->estatus == 1)
+                                <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                {{-- <a href=""
+                                <a href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>
-                                </a> --}}
+                                </a>
+                                <span class="hidden sm:inline text-gray-300">•</span>
 
-                            </div>
-                        </td>
+                                {{-- Eliminar --}}
+                                <form
+                                    action="{{ route('documentos.destroy', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                                    method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
 
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" class="px-6 py-6 text-center text-md text-gray-500">
-                            No hay devoluciones registrados
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
+                                    <button type="submit"
+                                        class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                        <x-heroicon-o-trash class="w-4 h-4" />
+                                        <span class="hidden sm:inline">Eliminar</span>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="bg-white py-4 mt-3">
+                <p class="text-sm text-gray-600 ml-6 text-center"> No hay remisiones</p>
+            </div>
+        @endif
+        @if ($devoluciones->count() > 0)
+            <div class="bg-white py-4 my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-        </table>
-        @if($devoluciones->count() > 0)
-        <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <p class="text-sm text-gray-600 ml-6">
+                    Mostrando
+                    <span class="font-medium">{{ $devoluciones->firstItem() }}</span>
+                    a
+                    <span class="font-medium">{{ $devoluciones->lastItem() }}</span>
+                    de
+                    <span class="font-medium">{{ $devoluciones->total() }}</span>
+                    registros
+                </p>
 
-            <p class="text-sm text-gray-600 ml-6">
-                Mostrando
-                <span class="font-medium">{{ $devoluciones->firstItem() }}</span>
-                a
-                <span class="font-medium">{{ $devoluciones->lastItem() }}</span>
-                de
-                <span class="font-medium">{{ $devoluciones->total() }}</span>
-                registros
-            </p>
-
-            {{ $devoluciones->links() }}
+                {{ $devoluciones->links() }}
             </div>
         @endif
     </div>

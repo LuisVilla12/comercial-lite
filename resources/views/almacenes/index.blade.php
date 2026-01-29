@@ -42,106 +42,160 @@
         </p>
     @endif
 
-    <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Codigo
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Nombre
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Tipo
-                    </th>
-                    <th class="px-6 py-3  text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">
-                        Acciones
-                    </th>
-                </tr>
-            </thead>
+    <div class="shadow-md overflow-x-auto rounded-lg ">
+        @if ($almacenes->count() > 0)
+            <div class="hidden md:block">
+                <table class="w-full border bg-white shadow rounded">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2">Codigo</th>
+                            <th class="p-2">Nombre</th>
+                            <th class="p-2">Tipo</th>
+                            <th class="p-2">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($almacenes as $almacen)
+                            <tr class="border-t">
+                                <td class="p-2 text-center">
+                                    {{ $almacen->codigo }}
+                                </td>
+                                <td class="p-2">
+                                    {{ $almacen->nombre }}
+                                </td>
+                                <td class="p-2 text-center">
+                                    @if ($almacen->tipo == 1)
+                                        MATRIZ
+                                    @elseif($almacen->tipo == 2)
+                                        SUCURSAL
+                                    @else
+                                        No asignado
+                                    @endif
 
-            <tbody class="bg-white divide-y divide-gray-100">
-                @forelse ($almacenes as $almacen)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 text-md text-gray-700">
-                            {{ $almacen->codigo }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            {{ $almacen->nombre }}
-                        </td>
-                        <td class="px-6 py-4 text-md font-medium text-gray-900">
-                            @if ($almacen->tipo == 1)
-                                MATRIZ
-                            @elseif($almacen->tipo == 2)
-                                SUCURSAL
-                            @else
-                                No asignado
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-700">
-                            <div class="flex flex-wrap items-center gap-4">
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    <div class="flex flex-wrap items-center gap-4">
+                                        {{-- Ver --}}
+                                        <a href="{{ route('almacenes.show', ['almacen' => $almacen]) }}"
+                                            class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
+                                            <x-heroicon-o-eye class="w-4 h-4" />
+                                            <span class="hidden sm:inline">Ver</span>
+                                        </a>
+                                        <span class="hidden sm:inline text-gray-300">•</span>
+                                        {{-- Editar --}}
+                                        <a href="{{ route('almacenes.edit', ['almacen' => $almacen]) }}"
+                                            class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
+                                            <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                            <span class="hidden sm:inline">Editar</span>
+                                        </a>
+                                        <span class="hidden sm:inline text-gray-300">•</span>
 
-                                {{-- Ver --}}
-                                <a href="{{ route('almacenes.show', $almacen) }}"
-                                    class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
-                                    <x-heroicon-o-eye class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Ver</span>
-                                </a>
+                                        {{-- Eliminar --}}
+                                        <form action="{{ route('almacenes.destroy', ['almacen' => $almacen]) }}"
+                                            method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
 
-                                <span class="hidden sm:inline text-gray-300">•</span>
-
-                                {{-- Editar --}}
-                                <a href="{{ route('almacenes.edit', $almacen) }}"
-                                    class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
-                                    <x-heroicon-o-pencil-square class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Editar</span>
-                                </a>
-
-                                <span class="hidden sm:inline text-gray-300">•</span>
-
-                                {{-- Eliminar --}}
-                                <form action="{{ route('almacenes.destroy', $almacen) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="submit"
-                                        class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
-                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
-                                        <x-heroicon-o-trash class="w-4 h-4" />
-                                        <span class="hidden sm:inline">Eliminar</span>
-                                    </button>
-                                </form>
-
+                                            <button type="submit"
+                                                class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                                onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                                <x-heroicon-o-trash class="w-4 h-4" />
+                                                <span class="hidden sm:inline">Eliminar</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <!-- CARDS: visible en tablet y móvil -->
+            <div class="md:hidden space-y-4">
+                @foreach ($almacenes as $almacen)
+                    <div class="border rounded-lg shadow bg-white p-4">
+                        <div class="mt-2">
+                            <div class="mb-2 text-sm text-gray-500">
+                                <span>Codigo:</span>
+                                <span class="font-medium text-gray-800">
+                                    {{ $almacen->codigo }}
+                                </span>
                             </div>
-                        </td>
+                            <div class="">
+                                <p class="mb-2 text-sm">Nombre:
+                                    <span class="font-semibold">
+                                        {{ $almacen->nombre }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="mb-2 text-sm">Folio:
+                                    <span class="font-semibold">
+                                        @if ($almacen->tipo == 1)
+                                            MATRIZ
+                                        @elseif($almacen->tipo == 2)
+                                            SUCURSAL
+                                        @else
+                                            No asignado
+                                        @endif
 
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="px-6 py-6 text-center text-md text-gray-500">
-                            No hay almacenes registrados
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-end mt-4 gap-4">
+                            {{-- Ver --}}
+                            <a href="{{ route('almacenes.show', ['almacen' => $almacen]) }}"
+                                class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
+                                <x-heroicon-o-eye class="w-4 h-4" />
+                                <span class="hidden sm:inline">Ver</span>
+                            </a>
+                            <span class="hidden sm:inline text-gray-300">•</span>
+                            {{-- Editar --}}
+                            <a href="{{ route('almacenes.edit', ['almacen' => $almacen]) }}"
+                                class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
+                                <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                <span class="hidden sm:inline">Editar</span>
+                            </a>
+                            <span class="hidden sm:inline text-gray-300">•</span>
 
-        </table>
-        @if($almacenes->count() > 0)
-        <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            {{-- Eliminar --}}
+                            <form action="{{ route('almacenes.destroy', ['almacen' => $almacen]) }}" method="POST"
+                                class="inline">
+                                @csrf
+                                @method('DELETE')
 
-            <p class="text-sm text-gray-600 ml-6">
-                Mostrando
-                <span class="font-medium">{{ $almacenes->firstItem() }}</span>
-                a
-                <span class="font-medium">{{ $almacenes->lastItem() }}</span>
-                de
-                <span class="font-medium">{{ $almacenes->total() }}</span>
-                registros
-            </p>
+                                <button type="submit"
+                                    class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                    <x-heroicon-o-trash class="w-4 h-4" />
+                                    <span class="hidden sm:inline">Eliminar</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="bg-white py-4 mt-3">
+                <p class="text-sm text-gray-600 ml-6 text-center"> No hay cotizaciones</p>
+            </div>
+        @endif
+        @if ($almacenes->count() > 0)
+            <div class="bg-white py-4 my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-            {{ $almacenes->links() }}
-        </div>
+                <p class="text-sm text-gray-600 ml-6">
+                    Mostrando
+                    <span class="font-medium">{{ $almacenes->firstItem() }}</span>
+                    a
+                    <span class="font-medium">{{ $almacenes->lastItem() }}</span>
+                    de
+                    <span class="font-medium">{{ $almacenes->total() }}</span>
+                    registros
+                </p>
+
+                {{ $almacenes->links() }}
+            </div>
         @endif
 
     </div>

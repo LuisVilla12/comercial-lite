@@ -183,11 +183,9 @@ class DocumentoController extends Controller
             DB::rollBack();
             throw $e;
         }
-        // return redirect()->route('cotizacion.index')
-        //     ->with('success', 'Cotización creada correctamente.');
         return redirect()
-            ->route('documentos.show', ['sucursal' => $sucursal->id, 'documento' => $documento])
-            ->with('open_pdf', true);
+            ->route('documentos.show', ['sucursal' => $sucursal->id, 'documento' => $documento]);
+            // ->with('open_pdf', true);
     }
 
     /**

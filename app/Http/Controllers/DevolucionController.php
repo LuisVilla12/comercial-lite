@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Devolucion;
 use App\Models\Documento;
+use App\Models\Sucursal;
 use Illuminate\Http\Request;
 
 class DevolucionController extends Controller
@@ -11,7 +12,7 @@ class DevolucionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Sucursal $sucursal,Request $request)
     {
         $search = $request->get('search');
         $devoluciones = Devolucion::when($search, function ($query, $search) {
@@ -22,7 +23,7 @@ class DevolucionController extends Controller
             })
             ->paginate(10)
             ->withQueryString();
-        return view('devoluciones.index', compact(var_name: 'devoluciones'));
+        return view('devoluciones.index', ['sucursal'=>$sucursal,'devoluciones'=>$devoluciones]);
     }
 
     /**
