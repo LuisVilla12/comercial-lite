@@ -216,6 +216,7 @@
                 Total: $<span x-text="(total * 1.16).toFixed(2)"></span>
             </div> --}}
 
+
             {{-- -ENVIO DE DATOS --}}
             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
             <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">

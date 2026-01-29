@@ -153,13 +153,13 @@
                 <input type="hidden" name="tipo" value="{{ $documento->documento_modelo_id }}">
             </div>
             <div x-show="tab === 'info'" x-cloak class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 mt-4">
+                <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
                     <div class="col-span-full">
-                        <label class="block text-xl font-medium text-gray-700 dark:text-white">
+                        <label class="block text-xl text-center md:text-left  mt-4  font-medium text-gray-700 dark:text-white">
                             Datos del cliente: </span>
                         </label>
                     </div>
-                    <div class="">
+                    <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             RFC: <span class="text-red-500">*</span>
                         </label>
@@ -170,7 +170,7 @@
                         @enderror
                     </div>
 
-                    <div class="">
+                    <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Codigo postal: <span class="text-red-500">*</span>
                         </label>
@@ -181,7 +181,7 @@
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="">
+                    <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Ciudad: <span class="text-red-500">*</span>
                         </label>
@@ -192,7 +192,7 @@
                         @enderror
                     </div>
                     {{--  --}}
-                    <div class="">
+                    <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Calle: <span class="text-red-500">*</span>
                         </label>
@@ -202,7 +202,7 @@
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="">
+                    <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Número interior: <span class="text-red-500">*</span>
                         </label>
@@ -213,7 +213,7 @@
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="">
+                    <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Colonia: <span class="text-red-500">*</span>
                         </label>
@@ -230,7 +230,7 @@
                         </label>
                     </div>
                     {{-- Metodo de pago --}}
-                    <div class="">
+                    <div class="mb-2">
                         <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
                             Metodo de pago: <span class="text-red-500">*</span>
                         </label>
@@ -246,7 +246,7 @@
                         @enderror
                     </div>
                     {{-- Forma de pago --}}
-                    <div class="">
+                    <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                             Forma de pago:<span class="text-red-500">*</span>
                         </label>
@@ -264,7 +264,7 @@
                         @enderror
                     </div>
                     {{-- Uso de cfdi --}}
-                    <div class="">
+                    <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                             Uso de CFDI <span class="text-red-500">*</span>
                         </label>

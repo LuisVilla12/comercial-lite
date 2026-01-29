@@ -24,14 +24,14 @@ class DatabaseSeeder extends Seeder
         CodigosPostalesSeeder::class,
         DocumentosModeloSeeder::class,
         UserSeeder::class,
-        //
-        // ClasificacionSeeder::class,
-        // ProductosSeeder::class,
-        // ClientesSeeder::class,
-        // AlmacenSeeder::class,
-        // ExistenciasSeeder::class,
-        // SucursalSeeder::class,
-        // DomiciliosSeeder::class,
+
+         ClasificacionSeeder::class,
+         ProductosSeeder::class,
+         ClientesSeeder::class,
+         AlmacenSeeder::class,
+         ExistenciasSeeder::class,
+         SucursalSeeder::class,
+         DomiciliosSeeder::class,
         ]);
     }
 }

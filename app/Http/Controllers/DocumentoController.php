@@ -640,6 +640,7 @@ class DocumentoController extends Controller
             throw $e;
         }
         // TODO: redigir cuando se crea una devolución
+
     }
     // TIMBRAR FACTURA
     public function timbrar(Sucursal $sucursal, Documento $documento)

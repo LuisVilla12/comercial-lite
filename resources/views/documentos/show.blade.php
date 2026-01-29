@@ -19,64 +19,69 @@
     @endif
 
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+        <div class="md:flex md:justify-between md:items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
                 {{ match ($documento->documento_modelo_id) {
                     1 => 'Cotización',
                     2 => 'Factura',
                     3 => 'Remisión',
                 } }}
-                 {{ $documento->serie . " #". $documento->id }} </h2>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                {{ $documento->serie . ' #' . $documento->id }} </h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
                 Fecha: {{ $documento->fecha }}
             </h2>
-            <div class="flex justify-between gap-3">
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
-                    <form method="POST" action="{{ route('convertir', ['sucursal'=>$sucursal, 'documento'=>$documento, 'tipo'=>2]) }}">
-                        @csrf
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                            CONVERTIR FACTURA
-                        </button>
-                    </form>
-                    <form method="POST" action="{{ route('convertir', ['sucursal'=>$sucursal, 'documento'=>$documento,'tipo'=>3]) }}">
-                        @csrf
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                            CONVERTIR REMISIÓN
-                        </button>
-                    </form>
-                @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 1)
-                    <p class="px-6 py-2 bg-indigo-600 text-white rounded">TRANSFORMADA</p>
-                @endif
+        </div>
+        <div class="md:flex md:justify-between md:gap-3 mt-4 md:mt-2">
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
+                <form method="POST"
+                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
+                    @csrf
+                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
+                        CONVERTIR FACTURA
+                    </button>
+                </form>
+                <form method="POST"
+                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 3]) }}">
+                    @csrf
+                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
+                        CONVERTIR REMISIÓN
+                    </button>
+                </form>
+            @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 1)
+                <p class="px-6 py-2 bg-indigo-600 text-white rounded">TRANSFORMADA</p>
+            @endif
 
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-                    <form method="POST" action="{{ route('convertir', ['sucursal'=>$sucursal, 'documento'=>$documento, 'tipo'=>2]) }}">
-                        @csrf
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                            CONVERTIR FACTURA
-                        </button>
-                    </form>
-                @elseif($documento->estatus == 4 and $documento->documento_modelo_id == 3)
-                    <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed"> REMISIÓN SURTIDA</p>
-                    <a
-                        href="{{ route('devolucion.edit',['sucursal'=>$sucursal, 'documento'=>$documento] ) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded">DEVOLUCIÓN</a>
-                @endif
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-                    <form method="POST" action="{{ route('documentos.surtir',['sucursal'=>$sucursal, 'documento'=>$documento]) }}">
-                        @csrf
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                            SURTIR REMISION
-                        </button>
-                    </form>
-                @endif
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
-                    <form method="POST" action="{{ route('documentos.timbrar', ['sucursal'=>$sucursal, 'documento'=>$documento]) }}">
-                        @csrf
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase">
-                            Timbrar
-                        </button>
-                    </form>
-                @endif
-            </div>
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
+                <form method="POST"
+                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
+                    @csrf
+                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                        CONVERTIR FACTURA
+                    </button>
+                </form>
+            @elseif($documento->estatus == 4 and $documento->documento_modelo_id == 3)
+                <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed"> REMISIÓN SURTIDA</p>
+                <a
+                    href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded mt-2">DEVOLUCIÓN</a>
+            @endif
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
+                <form method="POST"
+                    action="{{ route('documentos.surtir', ['sucursal' => $sucursal, 'documento' => $documento]) }}">
+                    @csrf
+                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                        SURTIR REMISION
+                    </button>
+                </form>
+            @endif
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
+                <form method="POST"
+                    action="{{ route('documentos.timbrar', ['sucursal' => $sucursal, 'documento' => $documento]) }}">
+                    @csrf
+                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase">
+                        Timbrar
+                    </button>
+                </form>
+            @endif
         </div>
     </x-slot>
     <div x-data="{ tab: 'detalle' }">
@@ -98,7 +103,7 @@
                 <input type="text" value="{{ $documento->cliente->nombre }}" disabled
                     class="w-full border rounded p-2 bg-gray-100">
             </div>
-            <table class="w-full border bg-white shadow rounded">
+            {{-- <table class="w-full border bg-white shadow rounded">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="p-2">Código</th>
@@ -123,7 +128,84 @@
                         </tr>
                     @endforeach
                 </tbody>
-            </table>
+            </table> --}}
+            <!-- TABLE: solo visible en desktop -->
+            <div class="hidden md:block">
+                <table class="w-full border bg-white shadow rounded">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2">Código</th>
+                            <th class="p-2">Producto</th>
+                            <th class="p-2">Cantidad</th>
+                            <th class="p-2">Costo</th>
+                            <th class="p-2">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($documento->detalles as $detalle)
+                            <tr class="border-t">
+                                <td class="p-2 text-center">
+                                    {{ $detalle->producto->codigo_producto }}
+                                </td>
+                                <td class="p-2">
+                                    {{ $detalle->producto->nombre_producto }}
+                                </td>
+                                <td class="p-2 text-center">
+                                    {{ $detalle->cantidad }}
+                                </td>
+                                <td class="p-2 text-right">
+                                    ${{ number_format($detalle->costo_unitario, 2) }}
+                                </td>
+                                <td class="p-2 text-right">
+                                    ${{ number_format($detalle->importe, 2) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <!-- CARDS: visible en tablet y móvil -->
+            <div class="md:hidden space-y-4">
+                @foreach ($documento->detalles as $detalle)
+                    <div class="border rounded-lg shadow bg-white p-4">
+                        <div class="flex justify-between text-sm text-gray-500">
+                            <span>Código</span>
+                            <span class="font-medium text-gray-800">
+                                {{ $detalle->producto->codigo_producto }}
+                            </span>
+                        </div>
+
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">Producto</p>
+                            <p class="font-semibold">
+                                {{ $detalle->producto->nombre_producto }}
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+                            <div>
+                                <p class="text-gray-500">Cantidad</p>
+                                <p class="font-medium">{{ $detalle->cantidad }}</p>
+                            </div>
+
+                            <div>
+                                <p class="text-gray-500">Costo</p>
+                                <p class="font-medium">
+                                    ${{ number_format($detalle->costo_unitario, 2) }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 border-t pt-2 flex justify-between">
+                            <span class="text-gray-500 text-sm">Importe</span>
+                            <span class="font-semibold text-lg">
+                                ${{ number_format($detalle->importe, 2) }}
+                            </span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
             <div class="text-right mt-6 space-y-1">
                 <p class="uppercase block text-lg font-medium mb-2 dark:text-white">Subtotal:
                     ${{ number_format($documento->subtotal, 2) }}</p>
@@ -135,25 +217,26 @@
             </div>
         </div>
         <div x-show="tab === 'info'" x-cloak class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 mt-4">
-                <label class="col-span-full block text-xl font-medium text-gray-700 dark:text-white"> Datos del cliente:
-                    </span></label>
-                <div class="">
+            <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
+                <label
+                    class="mt-4 col-span-full block text-center md:text-left text-xl font-medium text-gray-700 dark:text-white">
+                    Datos del cliente:</label>
+                <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">RFC: </label>
-                    <input type="text" value="{{ $documento->cliente->rfc }}" disabled
+                    <input type="text" value="{{ $documento->cliente->rfc }}"
                         class="w-full border rounded p-2 bg-gray-100">
                 </div>
-                <div class="">
+                <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Codigo Postal: </label>
                     <input type="text" value="{{ optional($documento->cliente->domicilios->first())->cp }}" disabled
                         class="w-full border rounded p-2 bg-gray-100">
                 </div>
-                <div class="">
+                <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Ciudad: </label>
                     <input type="text" value="{{ optional($documento->cliente->domicilios->first())->ciudad }}"
                         disabled class="w-full border rounded p-2 bg-gray-100">
                 </div>
-                <div class="">
+                <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Calle: </label>
                     <input type="text" value="{{ optional($documento->cliente->domicilios->first())->calle }}"
                         disabled class="w-full border rounded p-2 bg-gray-100">
@@ -164,24 +247,26 @@
                         value="{{ optional($documento->cliente->domicilios->first())->numero_interior }}" disabled
                         class="w-full border rounded p-2 bg-gray-100">
                 </div> --}}
-                <div class="">
+                <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Numero exterior: </label>
                     <input type="text"
                         value="{{ optional($documento->cliente->domicilios->first())->numero_exterior }}" disabled
                         class="w-full border rounded p-2 bg-gray-100">
                 </div>
-                <div class="">
+                <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Colonia: </label>
                     <input type="text" value="{{ optional($documento->cliente->domicilios->first())->colonia }}"
                         disabled class="w-full border rounded p-2 bg-gray-100">
                 </div>
-                <label class="col-span-full block text-xl font-medium text-gray-700 dark:text-white"> Datos del pago:
+                <label
+                    class="col-span-full block text-xl text-center md:text-left font-medium text-gray-700 dark:text-white mt-4">
+                    Datos del pago:
                     </span></label>
-                <div class="">
+                <div class="mb-2">
                     <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
                         Metodo de pago: <span class="text-red-500">*</span>
                     </label>
-                    <select class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    <select class="p-2 w-full  rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="PUE" @selected(old('metodo_pago', $documento->metodo_pago) === 'PUE')>PUE Pago en una sola exhibición</option>
                         <option value="PPD" @selected(old('metodo_pago', $documento->metodo_pago) === 'PPD')>PPD Pago en Parcialidades o Diferido
                         </option>
@@ -190,7 +275,7 @@
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-                <div class="">
+                <div class="mb-2">
                     <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                         Forma de pago:<span class="text-red-500">*</span>
                     </label>
@@ -203,7 +288,7 @@
                         <option value="02" @selected(old('forma_pago', $documento->forma_pago) === '02')>02 Cheque nominativo</option>
                     </select>
                 </div>
-                <div class="">
+                <div class="mb-2">
                     <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                         Uso de CFDI <span class="text-red-500">*</span>
                     </label>
@@ -238,22 +323,17 @@
                 ) }}"
                     class="px-4 py-2 bg-gray-500 text-white rounded">
                     Volver</a>
-                    @if ($documento->estatus == 1)
-                        <a href="{{ route('documentos.edit', ['sucursal'=>$sucursal,'documento'=>$documento]) }}"
-                            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                            Actualizar
-                            {{ match ($documento->documento_modelo_id) {
-                                1 => 'Cotización',
-                                2 => 'Factura',
-                                3 => 'Remisión',
-                                default => 'Documento',
-                            } }}
-                        </a>
-                    @endif
-                    <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
-                        class="px-4 py-2 bg-red-600 text-white rounded">
-                        📄 Imprimir PDF
+                @if ($documento->estatus == 1)
+                    <a href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                        Actualizar
+
                     </a>
+                @endif
+                <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
+                    class="px-4 py-2 bg-red-600 text-white rounded">
+                    Imprimir
+                </a>
             </div>
         </div>
     </div>

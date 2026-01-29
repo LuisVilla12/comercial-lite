@@ -65,15 +65,73 @@
             </div>
             {{-- ================= PRODUCTOS ================= --}}
             <div class="">
+                {{-- <table class="w-full border bg-white shadow rounded p-4">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2">Código</th>
+                            <th class="p-2">Producto</th>
+                            <th class="p-2">Cantidad</th>
+                            <th class="p-2">Existencia</th>
+                            <th class="p-2"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <template x-for="(item, index) in items" :key="index">
+                            <tr class="border-t">
+                                <td class="p-2 text-center" x-text="item.codigo"></td>
+                                <td class="p-2 relative">
+                                    <input type="text" x-model="item.query"
+                                        @input.debounce.300ms="buscarProducto(index)" class="border rounded p-1 w-full"
+                                        placeholder="Buscar producto">
+                                    <ul x-show="item.resultados.length"
+                                        class="absolute z-10 bg-white border rounded shadow w-full">
+                                        <template x-for="p in item.resultados" :key="p.id">
+                                            <li @click="seleccionarProducto(index, p)"
+                                                class="p-2 hover:bg-gray-100 cursor-pointer">
+                                                <span x-text="p.nombre"></span>
+                                                <span class="text-sm text-gray-500">
+                                                    ($<span x-text="p.costo"></span>)
+                                                </span>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                    <input type="hidden" :name="`productos[${index}][producto_id]`"
+                                        x-model="item.producto_id">
+                                </td>
+                                <td class="p-2">
+                                    <div class="flex justify-center">
+                                        <input type="number" min="1" :name="`productos[${index}][cantidad]`"
+                                            x-model.number="item.cantidad" class="border rounded p-1 w-20 text-center">
+                                    </div>
+                                </td>
+
+                                <td class="p-2">
+                                    <div class="flex justify-center">
+                                        <input type="number" disabled step="1" x-model.number="item.stock"
+                                            class="border rounded p-1 w-24 text-center bg-gray-100 text-gray-700">
+                                    </div>
+                                </td>
+
+
+                                <td class="p-2 text-center">
+                                    <button type="button" @click="eliminarFila(index)"
+                                        class="text-red-600 hover:text-red-800">
+                                        ❌
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table> --}}
                 <div class="hidden lg:block">
-                    <table class="w-full border border-gray-200 bg-white shadow-lg rounded-xl overflow-hidden">
+                    <table class="w-full bg-white shadow-xl rounded-xl overflow-hidden border border-gray-200">
                         <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
                             <tr>
                                 <th class="px-4 py-3 text-center">Código</th>
                                 <th class="px-4 py-3 text-left">Producto</th>
                                 <th class="px-4 py-3 text-center">Cantidad</th>
                                 <th class="px-4 py-3 text-center">Existencia</th>
-                                <th class="px-4 py-3 text-center">Restaría</th>
                                 <th class="px-4 py-3"></th>
                             </tr>
                         </thead>
@@ -86,7 +144,7 @@
                                     <td class="px-4 py-2 relative">
                                         <input type="text" x-model="item.query"
                                             @input.debounce.300ms="buscarProducto(index)"
-                                            class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 text-sm px-3 py-2"
+                                            class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 px-3 py-2 text-sm"
                                             placeholder="Buscar producto">
 
                                         <ul x-show="item.resultados.length"
@@ -95,34 +153,30 @@
                                                 <li @click="seleccionarProducto(index, p)"
                                                     class="px-4 py-2 hover:bg-blue-50 cursor-pointer flex justify-between">
                                                     <span x-text="p.nombre"></span>
-                                                    <span class="text-xs text-gray-500">$<span
-                                                            x-text="p.costo"></span></span>
+                                                    <span class="text-xs text-gray-500">
+                                                        $<span x-text="p.costo"></span>
+                                                    </span>
                                                 </li>
                                             </template>
                                         </ul>
+
+                                        <input type="hidden" :name="`productos[${index}][producto_id]`"
+                                            x-model="item.producto_id">
                                     </td>
 
                                     <td class="px-4 py-2 text-center">
-                                        <input type="number" min="1" x-model.number="item.cantidad"
+                                        <input type="number" min="1" :name="`productos[${index}][cantidad]`"
+                                            x-model.number="item.cantidad"
                                             class="w-20 rounded-lg border-gray-300 text-center">
                                     </td>
 
                                     <td class="px-4 py-2 text-center">
-                                        <input type="number" disabled x-model.number="item.stock"
-                                            class="w-24 bg-gray-100 text-gray-600 text-center rounded-lg border">
+                                        <input type="number" disabled step="1" x-model.number="item.stock"
+                                            class="w-24 rounded-lg border bg-gray-100 text-gray-600 text-center">
                                     </td>
 
                                     <td class="px-4 py-2 text-center">
-                                        <span x-text="item.stock - item.cantidad"
-                                            :class="(item.stock - item.cantidad) < 0
-                                                ?
-                                                'text-red-600 font-bold' :
-                                                'text-green-600 font-semibold'">
-                                        </span>
-                                    </td>
-
-                                    <td class="px-4 py-2 text-center">
-                                        <button @click="eliminarFila(index)"
+                                        <button type="button" @click="eliminarFila(index)"
                                             class="text-red-500 hover:text-red-700 transition">
                                             ❌
                                         </button>
@@ -134,11 +188,11 @@
                 </div>
                 <div class="lg:hidden space-y-4">
                     <template x-for="(item, index) in items" :key="index">
-                        <div class="bg-white rounded-xl shadow border p-4 space-y-3">
+                        <div class="bg-white border shadow rounded-xl p-4 space-y-3">
 
-                            <!-- Header -->
+                            <!-- Código -->
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">Código</span>
+                                <span class="text-xs text-gray-500">Código</span>
                                 <span class="font-mono font-semibold" x-text="item.codigo"></span>
                             </div>
 
@@ -155,61 +209,59 @@
                                         <li @click="seleccionarProducto(index, p)"
                                             class="px-4 py-2 hover:bg-blue-50 cursor-pointer flex justify-between">
                                             <span x-text="p.nombre"></span>
-                                            <span class="text-xs text-gray-500">$<span x-text="p.costo"></span></span>
+                                            <span class="text-xs text-gray-500">
+                                                $<span x-text="p.costo"></span>
+                                            </span>
                                         </li>
                                     </template>
                                 </ul>
+
+                                <input type="hidden" :name="`productos[${index}][producto_id]`"
+                                    x-model="item.producto_id">
                             </div>
 
-                            <!-- Cantidad / Stock -->
+                            <!-- Cantidad / Existencia -->
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="text-xs text-gray-500">Cantidad</label>
-                                    <input type="number" min="1" x-model.number="item.cantidad"
+                                    <input type="number" min="1" :name="`productos[${index}][cantidad]`"
+                                        x-model.number="item.cantidad"
                                         class="w-full rounded-lg border-gray-300 text-center">
                                 </div>
 
                                 <div>
                                     <label class="text-xs text-gray-500">Existencia</label>
-                                    <input type="number" disabled x-model.number="item.stock"
-                                        class="w-full bg-gray-100 text-gray-600 text-center rounded-lg border">
+                                    <input type="number" disabled step="1" x-model.number="item.stock"
+                                        class="w-full rounded-lg border bg-gray-100 text-gray-600 text-center">
                                 </div>
-                            </div>
 
-                            <!-- Restaría -->
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">Restaría</span>
-                                <span x-text="item.stock - item.cantidad"
-                                    :class="(item.stock - item.cantidad) < 0
-                                        ?
-                                        'text-red-600 font-bold' :
-                                        'text-green-600 font-semibold'"
-                                    class="px-3 py-1 rounded-full bg-gray-100">
-                                </span>
                             </div>
 
                             <!-- Acción -->
                             <div class="flex justify-end">
-                                <button @click="eliminarFila(index)"
-                                    class="text-red-500 hover:text-red-700 transition">
+                                <button type="button" @click="eliminarFila(index)"
+                                    class="text-red-500 hover:text-red-700 transition text-sm">
                                     ❌ Eliminar
                                 </button>
                             </div>
-
                         </div>
                     </template>
                 </div>
 
-                @error('productos')
-                    <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
-                @enderror
+
                 <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
                     ➕ Agregar producto
                 </button>
             </div>
 
-            {{-- ================= TOTAL ================= --}}
-            {{-- <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
+            @error('productos')
+                <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
+            @enderror
+
+        </div>
+
+        {{-- ================= TOTAL ================= --}}
+        {{-- <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
                 Subtotal: $<span x-text="total.toFixed(2)"></span>
             </div>
             <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
@@ -219,26 +271,26 @@
                 Total: $<span x-text="(total * 1.16).toFixed(2)"></span>
             </div> --}}
 
-            {{-- -ENVIO DE DATOS --}}
-            <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-            <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
-            {{-- <input type="hidden" name="subtotal" x-model="total"> --}}
-            {{-- <input type="hidden" name="impuestos" :value="(total * 1.16) - total"> --}}
-            {{-- <input type="hidden" name="total" :value="(total*1.16)"> --}}
-            <input type="hidden" name="estatus" :value="1">
+        {{-- -ENVIO DE DATOS --}}
+        <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+        <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
+        {{-- <input type="hidden" name="subtotal" x-model="total"> --}}
+        {{-- <input type="hidden" name="impuestos" :value="(total * 1.16) - total"> --}}
+        {{-- <input type="hidden" name="total" :value="(total*1.16)"> --}}
+        <input type="hidden" name="estatus" :value="1">
 
 
-            <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-                <a href="{{ route('traspasos.index') }}"
-                    class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
-                    Cancelar
-                </a>
+        <div class="md:col-span-2 flex justify-between gap-3 mt-4">
+            <a href="{{ route('traspasos.index') }}"
+                class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
+                Cancelar
+            </a>
 
-                <button type="submit"
-                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Actualizar
-                </button>
-            </div>
+            <button type="submit"
+                class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                Actualizar
+            </button>
+        </div>
         </div>
     </form>
 
