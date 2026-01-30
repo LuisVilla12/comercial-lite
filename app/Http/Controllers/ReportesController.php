@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\DocumentosExport;
 use App\Models\Sucursal;
+use App\Models\User;
 
 class ReportesController extends Controller
 {
@@ -13,13 +14,16 @@ class ReportesController extends Controller
     public function index()
     {
         $sucursales = Sucursal::all();
-        return view("reportes.index", ["sucursales" => $sucursales]);
+        $usuarios = User::all();
+        return view("reportes.index", ["sucursales" => $sucursales,'usuarios'=>$usuarios]);
     }
     public function export(Request $request)
     {
+        // dd(vars: $request);
         $request->validate([
             'sucursal_id' => 'required|exists:sucursales,id',
             'documento_modelo_id' => 'required|in:2,3,4',
+            'user_id' => 'required',
         ]);
 
         $sucursal = Sucursal::findOrFail($request->sucursal_id);
@@ -52,7 +56,8 @@ class ReportesController extends Controller
                 $series,
                 $tipos,
                 $request->fecha_inicio,
-                $request->fecha_fin
+                $request->fecha_fin,
+                $request->user_id,
             ),
             'reporte.xlsx'
         );

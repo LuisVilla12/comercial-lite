@@ -10,7 +10,7 @@
     <div class="max-w-4xl mx-auto mt-6 bg-white p-6 rounded-lg shadow">
 
         <form method="GET" action="{{ route('reportes.export') }}">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -37,6 +37,20 @@
                         required>
                         <option value="" selected disabled>Seleccione un tipo</option>
                     </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Usuario
+                    </label>
+                    <select name="user_id" id="user_id"
+                        class="w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                        <option value="" selected disabled>Seleccione un tipo</option>
+                        @foreach ($usuarios as $usuario)
+                            <option value="{{ $usuario->id }}">{{$usuario->name }}</option>
+                        @endforeach
+                    </select>
+
                 </div>
                 {{-- Fecha inicio --}}
                 <div>
@@ -70,22 +84,21 @@
     </div>
 </x-app-layout>
 <script>
-        document.getElementById('sucursal_select').addEventListener('change', function() {
-            const tipoSelect = document.getElementById('tipo_documento_select');
-            tipoSelect.innerHTML = '<option value="" disabled selected>Seleccione un tipo</option>';
+    document.getElementById('sucursal_select').addEventListener('change', function() {
+        const tipoSelect = document.getElementById('tipo_documento_select');
+        tipoSelect.innerHTML = '<option value="" disabled selected>Seleccione un tipo</option>';
 
-            if (!this.value) {
-                tipoSelect.disabled = true;
-                return;
-            }
-            // Remisión
-            tipoSelect.innerHTML += `<option value="3">Remisión</option>`;
-            // Factura
-            tipoSelect.innerHTML += `<option value="2">Factura</option>`;
-             // Ambos
-            tipoSelect.innerHTML += `<option value="4">Factura y Remisión</option>`;
+        if (!this.value) {
+            tipoSelect.disabled = true;
+            return;
+        }
+        // Remisión
+        tipoSelect.innerHTML += `<option value="3">Remisión</option>`;
+        // Factura
+        tipoSelect.innerHTML += `<option value="2">Factura</option>`;
+        // Ambos
+        tipoSelect.innerHTML += `<option value="4">Factura y Remisión</option>`;
 
-            tipoSelect.disabled = false;
-        });
-
+        tipoSelect.disabled = false;
+    });
 </script>

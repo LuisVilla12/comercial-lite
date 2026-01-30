@@ -20,7 +20,8 @@ class DocumentosExport implements
         protected array $series,
         protected array $documentoModeloIds,
         protected string $fechaInicio,
-        protected string $fechaFin
+        protected string $fechaFin,
+        protected string $user_id,
     ) {}
 
     /**
@@ -32,6 +33,7 @@ class DocumentosExport implements
             ->whereIn('documento_modelo_id', $this->documentoModeloIds)
             ->whereIn('serie', $this->series)
             ->where('estatus', 4)
+            ->where('user_id', $this->user_id)
             ->whereBetween('fecha', [$this->fechaInicio, $this->fechaFin])
             ->orderBy('fecha')
             ->get()
