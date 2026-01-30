@@ -17,6 +17,7 @@ use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\TraspasoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\PuntosController;
 use App\Http\Controllers\SucursalController;
 use App\Models\Cliente;
 use App\Models\ExistenciaProducto;
@@ -162,7 +163,11 @@ Route::get('/sucursales/create', [SucursalController::class, 'create'])->name('s
 Route::post('/sucursales', [SucursalController::class, 'store'])->name('sucursales.store');
 Route::get('/sucursales/{sucursal}/edit', [SucursalController::class, 'edit'])->name('sucursales.edit');
 Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
-Route::get('/sucursales/{sucursal}', [SucursalController::class, 'show'])->name('sucursales.show');
+Route::get('/sucursales/{sucursal}', action: [SucursalController::class, 'show'])->name('sucursales.show');
+
+//Puntos
+Route::get('/puntos', action: [PuntosController::class, 'index'])->name('puntos.index');
+
 //Empresas
 Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
 Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('empresas.create');

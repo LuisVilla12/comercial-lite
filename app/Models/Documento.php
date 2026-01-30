@@ -28,6 +28,7 @@ class Documento extends Model
         return $this->hasMany(DocumentosDetalle::class);
     }
 
+
     public function cliente() {
         return $this->belongsTo(Cliente::class, 'cliente_id');
     }

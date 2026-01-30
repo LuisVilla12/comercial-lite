@@ -11,6 +11,7 @@ use App\Models\Devolucion;
 use App\Models\DevolucionesDetalles;
 use App\Models\UsoCfdi;
 use App\Models\Sucursal;
+use App\Models\Punto;
 use App\Models\DocumentosDetalle;
 use App\Models\ExistenciaProducto;
 use Illuminate\Support\Facades\DB;
@@ -130,7 +131,7 @@ class DocumentoController extends Controller
             'uso_cfdi' => 'required|exists:uso_cfdis,clave',
         ]);
         DB::beginTransaction();
-
+        // EFECTUAR LA COMPRA
         try {
             if ($request->tipo == 1) {
                 $serie = $sucursal->serie_cotizacion;
@@ -183,6 +184,9 @@ class DocumentoController extends Controller
             DB::rollBack();
             throw $e;
         }
+
+
+
         return redirect()
             ->route('documentos.show', ['sucursal' => $sucursal->id, 'documento' => $documento]);
         // ->with('open_pdf', true);
@@ -235,85 +239,6 @@ class DocumentoController extends Controller
      */
     public function update(Sucursal $sucursal, Request $request, Documento $documento)
     {
-        // $productos = collect($request->productos)
-        //     ->filter(fn($p) => !empty($p['producto_id']))
-        //     ->values()
-        //     ->toArray();
-        // $request->merge([
-        //     'productos' => $productos
-        // ]);
-        // // Validar detalles de la compra
-        // $request->validate([
-        //     'tipo' => 'required',
-        //     'proveedor_id' => 'required|exists:clientes,id',
-        //     'almacen_id' => 'required|exists:clientes,id',
-        //     'user_id' => 'required|exists:users,id',
-        //     'fecha' => 'required|date',
-        //     'subtotal' => 'required|numeric',
-        //     'impuestos' => 'required|numeric',
-        //     'total' => 'required|numeric',
-        //     'productos' => 'required|array|min:1',
-        //     'metodo_pago' => 'required',
-        //     'forma_pago' => 'required',
-        //     'uso_cfdi' => 'required',
-        // ]);
-        // try {
-        //     $documento = DB::transaction(function () use ($request, $documento) {
-        //         /* ================= ACTUALIZAR COMPRA ================= */
-        //         $documento->update([
-        //             'proveedor_id' => $request->proveedor_id,
-        //             'subtotal' => $request->subtotal,
-        //             'impuestos' => $request->impuestos,
-        //             'total' => $request->total,
-        //             'metodo_pago' => $request->metodo_pago,
-        //             'forma_pago' => $request->forma_pago,
-        //             'uso_cfdi' => $request->uso_cfdi,
-        //             'observaciones' => $request->observaciones
-        //         ]);
-
-        //         /* ================= DETALLES ================= */
-        //         $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
-        //         $detallesEnFormulario = [];
-
-        //         foreach ($request->productos as $producto) {
-
-        //             $detalle = $documento->detalles()->updateOrCreate(
-        //                 [
-        //                     'id' => $producto['detalle_id'] ?? null
-        //                 ],
-        //                 [
-        //                     'producto_id' => $producto['producto_id'],
-        //                     'cantidad' => $producto['cantidad'],
-        //                     'costo_unitario' => $producto['costo'],
-        //                     'importe' => $producto['cantidad'] * $producto['costo'],
-        //                 ]
-        //             );
-
-        //             $detallesEnFormulario[] = $detalle->id;
-        //         }
-
-        //         /* ================= ELIMINAR DETALLES BORRADOS ================= */
-        //         $detallesParaEliminar = array_diff(
-        //             $detallesExistentes,
-        //             $detallesEnFormulario
-        //         );
-
-        //         if (!empty($detallesParaEliminar)) {
-        //             $documento->detalles()->whereIn('id', $detallesParaEliminar)->delete();
-        //         }
-        //     });
-        // } catch (\Throwable $e) {
-        //     DB::rollBack();
-        //     throw $e;
-        // }
-        // return redirect()->route('documentos.show', [
-        //     'sucursal' => $sucursal,
-        //     'documento' => $documento
-        // ])->with('success', match ($documento->documento_modelo_id) {
-        //     1 => 'Cotización',
-        //     2 => 'Factura',
-        //     3 => 'Remisión'
-        // } . " a sido actualizada");;
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -532,6 +457,28 @@ class DocumentoController extends Controller
             return back()->with('error', $e->getMessage());
         }
 
+        // EJECUTA PUNTOS
+        try {
+            $puntos = Punto::firstOrCreate([
+                'cliente_id' => $documento->cliente_id
+            ]);
+            DB::transaction(function () use ($puntos,$documento) {
+                $puntos->increment('total_puntos', 10);
+
+                $puntos->movimientos()->create([
+                    'puntos_id' => $puntos->id,
+                    'documento_id' => $documento->id,
+                    'tipo' => 'suma',
+                    'concepto' => 'Compra',
+                    'puntos' => 10,
+                    'referencia' => $documento->serie . $documento->folio,
+                ]);
+            });
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
         return redirect()
             ->route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento])
             ->with('success', 'Remisión surtida correctamente');
@@ -670,6 +617,28 @@ class DocumentoController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+         // EJECUTA PUNTOS
+        try {
+            $puntos = Punto::firstOrCreate([
+                'cliente_id' => $documento->cliente_id
+            ]);
+            DB::transaction(function () use ($puntos,$documento) {
+                $puntos->increment('total_puntos', 10);
+
+                $puntos->movimientos()->create([
+                    'puntos_id' => $puntos->id,
+                    'documento_id' => $documento->id,
+                    'tipo' => 'suma',
+                    'concepto' => 'Factura',
+                    'puntos' => 10,
+                    'referencia' => $documento->serie . $documento->folio,
+                ]);
+            });
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
 
         return redirect()
             ->route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento])
