@@ -17,7 +17,8 @@ use App\Models\ExistenciaProducto;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\InventarioService;
-
+use App\Mail\DocumentoMail;
+use Illuminate\Support\Facades\Mail;
 
 class DocumentoController extends Controller
 {
@@ -462,7 +463,7 @@ class DocumentoController extends Controller
             $puntos = Punto::firstOrCreate([
                 'cliente_id' => $documento->cliente_id
             ]);
-            DB::transaction(function () use ($puntos,$documento) {
+            DB::transaction(function () use ($puntos, $documento) {
                 $puntos->increment('total_puntos', 10);
 
                 $puntos->movimientos()->create([
@@ -617,12 +618,12 @@ class DocumentoController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
-         // EJECUTA PUNTOS
+        // EJECUTA PUNTOS
         try {
             $puntos = Punto::firstOrCreate([
                 'cliente_id' => $documento->cliente_id
             ]);
-            DB::transaction(function () use ($puntos,$documento) {
+            DB::transaction(function () use ($puntos, $documento) {
                 $puntos->increment('total_puntos', 10);
 
                 $puntos->movimientos()->create([
@@ -643,5 +644,18 @@ class DocumentoController extends Controller
         return redirect()
             ->route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento])
             ->with('success', 'Factura timbrada correctamente');
+    }
+    public function enviarCorreo(Request $request, Documento $documento)
+    {
+        // dd('ENTRÓ', $request->all(), $documento->id);
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        Mail::to($request->email)
+            ->send(new DocumentoMail($documento));
+        return redirect()
+            ->back()
+            ->with('success', '📧 Cotización enviada correctamente');
     }
 }

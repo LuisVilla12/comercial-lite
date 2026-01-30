@@ -14,11 +14,9 @@ return new class extends Migration
         Schema::create('promociones_productos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('promocion_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('producto_id')->constrained()->cascadeOnDelete();
-            $table->timestamps();
-
-            $table->unique(['promocion_id', 'producto_id']);
+            // $table->foreignId('promocion_id')->constrained('promocion')->cascadeOnDelete();
+            // $table->foreignId('producto_id')->constrained('producto')->cascadeOnDelete();
+            // $table->unique(['promocion_id', 'producto_id']);
         });
     }
 

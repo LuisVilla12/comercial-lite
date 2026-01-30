@@ -20,7 +20,6 @@ return new class extends Migration
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
             $table->boolean('activo')->default(true);
-            $table->timestamps();
         });
     }
 

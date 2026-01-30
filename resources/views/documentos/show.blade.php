@@ -31,10 +31,15 @@
                 Fecha: {{ $documento->fecha }}
             </h2>
         </div>
+        {{-- <a href="{{ route('documentos.enviarCorreo', $documento->id) }}" class="text-blue-600 hover:underline"
+            onclick="return confirm('¿Enviar documento por correo?')">
+            📧 Enviar por correo
+        </a> --}}
         <div class="md:flex md:justify-between md:gap-3 mt-4 md:mt-2">
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
                 <form method="POST"
-                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}" class="w-f">
+                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}"
+                    class="w-f">
                     @csrf
                     <button class="block px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
                         CONVERTIR FACTURA
@@ -43,7 +48,7 @@
                 <form method="POST"
                     action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 3]) }}">
                     @csrf
-                    <button class="block px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full ">
+                    <button class="block px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
                         CONVERTIR REMISIÓN
                     </button>
                 </form>
@@ -62,7 +67,8 @@
                     </button>
                 </form>
             @elseif($documento->estatus == 4 and $documento->documento_modelo_id == 3)
-                <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed text-center"> REMISIÓN SURTIDA</p>
+                <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed text-center"> REMISIÓN SURTIDA
+                </p>
                 <a
                     href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded mt-4  md:mt-0 text-center">DEVOLUCIÓN</a>
             @endif
@@ -84,8 +90,20 @@
                     </button>
                 </form>
             @endif
+
         </div>
     </x-slot>
+    <div class="flex justify-end mt-4 items-center ">
+        <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
+            class="px-4 py-2 bg-red-600 text-white rounded flex items-center">
+                <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
+        </a>
+        <button type="button" onclick="openEmailModal()" class="flex items-center px-4 py-2 ml-6 bg-yellow-500 text-white rounded"
+            title="Enviar por correo">
+             <x-heroicon-o-envelope class="w-5 h-5 mr-2" /> Enviar
+
+        </button>
+    </div>
     <div x-data="{ tab: 'detalle' }">
         <div class="flex gap-4 border-b mt-4">
             <button type="button" @click="tab='detalle'"
@@ -105,32 +123,6 @@
                 <input type="text" value="{{ $documento->cliente->nombre }}" disabled
                     class="w-full border rounded p-2 bg-gray-100">
             </div>
-            {{-- <table class="w-full border bg-white shadow rounded">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="p-2">Código</th>
-                        <th class="p-2">Producto</th>
-                        <th class="p-2">Cantidad</th>
-                        <th class="p-2">Costo</th>
-                        <th class="p-2">Importe</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($documento->detalles as $detalle)
-                        <tr class="border-t">
-                            <td class="p-2 text-center">{{ $detalle->producto->codigo_producto }}</td>
-                            <td class="p-2">{{ $detalle->producto->nombre_producto }}</td>
-                            <td class="p-2 text-center">{{ $detalle->cantidad }}</td>
-                            <td class="p-2 text-right">
-                                ${{ number_format($detalle->costo_unitario, 2) }}
-                            </td>
-                            <td class="p-2 text-right">
-                                ${{ number_format($detalle->importe, 2) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table> --}}
             <!-- TABLE: solo visible en desktop -->
             <div class="hidden md:block">
                 <table class="w-full border bg-white shadow rounded">
@@ -207,7 +199,7 @@
                     </div>
                 @endforeach
             </div>
-
+            {{-- TOTALES --}}
             <div class="text-right mt-6 space-y-1">
                 <p class="uppercase block text-lg font-medium mb-2 dark:text-white">Subtotal:
                     ${{ number_format($documento->subtotal, 2) }}</p>
@@ -230,8 +222,8 @@
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Codigo Postal: </label>
-                    <input type="text" value="{{ optional($documento->cliente->domicilios->first())->cp }}" disabled
-                        class="w-full border rounded p-2 bg-gray-100">
+                    <input type="text" value="{{ optional($documento->cliente->domicilios->first())->cp }}"
+                        disabled class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Ciudad: </label>
@@ -313,8 +305,8 @@
                 </div>
             </div>
         </div>
-        <div class="mt-6 flex gap-4">
-            <div class="md:col-span-2 flex justify-between gap-3 mt-4">
+        <div class="mt-6  gap-4">
+            <div class="flex justify-between gap-3 mt-4">
                 <a href="{{ route(
                     match ($documento->documento_modelo_id) {
                         1 => 'cotizaciones.index',
@@ -332,12 +324,54 @@
 
                     </a>
                 @endif
-                <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
-                    class="px-4 py-2 bg-red-600 text-white rounded">
-                    Imprimir
-                </a>
+
             </div>
         </div>
     </div>
+    <div id="emailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg w-full max-w-md p-6">
+            <h2 class="text-lg font-semibold mb-4">
+                Enviar
+                {{ match ($documento->documento_modelo_id) {
+                    1 => 'Cotización',
+                    2 => 'Factura',
+                    3 => 'Remisión',
+                } }}
+                por correo
+            </h2>
 
+            <form method="POST" action="{{ route('documentos.enviarCorreo', $documento->id) }}">
+                @csrf
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Correo electrónico
+                </label>
+
+                <input type="email" name="email" value="{{ $documento->cliente->email1 }}" required
+                    class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="closeEmailModal()" class="px-4 py-2 border rounded">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">
+                        Enviar
+                    </button>
+
+                </div>
+            </form>
+        </div>
+    </div>
 </x-app-layout>
+<script>
+    function openEmailModal() {
+        document.getElementById('emailModal').classList.remove('hidden');
+        document.getElementById('emailModal').classList.add('flex');
+    }
+
+    function closeEmailModal() {
+        document.getElementById('emailModal').classList.add('hidden');
+        document.getElementById('emailModal').classList.remove('flex');
+    }
+</script>

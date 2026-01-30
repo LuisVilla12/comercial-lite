@@ -40,7 +40,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::get('/test-email', function () {
     Mail::to('luisjivl.01@gmail.com')->send(new TestMail());
     return 'Correo enviado correctamente';
-});
+})->middleware('auth');;
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -137,6 +137,14 @@ Route::get('/devoluciones/{documento}/show', action: [DevolucionController::clas
 
 Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
+//Envio por correo
+Route::post('/documentos/{documento}/enviar-correo', [DocumentoController::class, 'enviarCorreo'])->name('documentos.enviarCorreo');
+// Route::get('/documentos/{documento}/enviar-correo', [DocumentoController::class, 'enviarCorreo'])->name('documentos.enviarCorreo');
+
+Route::post('/debug-email', function () {
+    dd('ENTRÓ A LA RUTA');
+});
+
 
 //Devoluciones
 Route::get('/devoluciones/{documento}', [DevolucionController::class, 'create'])->name('devoluciones.create');

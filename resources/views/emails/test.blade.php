@@ -5,3 +5,4 @@
     <p>Laravel está enviando correos correctamente.</p>
 </body>
 </html>
+
