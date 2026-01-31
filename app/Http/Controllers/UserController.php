@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Sucursal;
 use Illuminate\Http\Request;
 use App\Models\User;
 class UserController extends Controller
@@ -24,7 +26,18 @@ class UserController extends Controller
     return view('users.index', compact('usuarios', 'search'));
     }
     public function show(User $usuario){
+        $usuario->load([
+            'sucursal',
+        ]);
+
         return view('users.show',['usuario'=> $usuario]);
+    }
+
+     public function edit(User $usuario)
+    {
+        // dd($usuario);
+        $sucursales=Sucursal::all();
+        return view('users.edit', ['usuario'=>$usuario,'sucursales'=>$sucursales]);
     }
 
     public function destroy(User $usuario)
@@ -35,6 +48,23 @@ class UserController extends Controller
         ->route('usuarios.index')
         ->with(
             'success', 'El usuario se ha eliminado correctamente.'
+        );
+    }
+    public function update(Request $request, User $usuario){
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'tipo' => ['required', 'integer', 'in:1,2'],
+            'sucursal_id' => ['required', 'integer'],
+        ]);
+
+        $usuario->update($request->all());
+
+ return redirect()
+        ->route('usuarios.index')
+        ->with(
+            'success', 'El usuario se ha actualizado correctamente.'
         );
     }
 }

@@ -56,6 +56,7 @@ Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index'
 Route::get('/usuarios/{usuario}', [UserController::class, 'show'])->name('usuarios.show');
 Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
 Route::get('/usuarios/{usuario}/edit', [UserController::class, 'edit'])->name('usuarios.edit');
+Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
 
 // RUTAS DE CLIENTES
 Route::get('/clientes', [ClienteController::class, 'indexClientes'])->name('clientes.index');
@@ -114,7 +115,7 @@ Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('com
 //Existencias
 Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
 
-Route::prefix('sucursales/{sucursal}')->group(function () {
+Route::prefix('sucursales/{sucursal}') ->middleware('check.sucursal')->group(function () {
 //Documentos
 Route::get('/cotizacion', action: [DocumentoController::class, 'indexCotizacion'])->name('cotizaciones.index');
 Route::get('/facturas', action: [DocumentoController::class, 'indexFacturas'])->name('facturas.index');

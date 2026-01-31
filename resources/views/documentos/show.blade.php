@@ -1,11 +1,7 @@
+@section('title', content: 'Documento')
+
 <x-app-layout>
-    {{-- @if (session('open_pdf'))
-        <script>
-            if (confirm('¿Deseas imprimir la cotización?')) {
-                window.open("{{ route('documentos.pdf', $documento) }}", "_blank");
-            }
-        </script>
-    @endif --}}
+
     @if (session('success'))
         <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
             class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4 mt-4">
@@ -93,16 +89,21 @@
 
         </div>
     </x-slot>
-    <div class="flex justify-end mt-4 items-center ">
-        <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
-            class="px-4 py-2 bg-red-600 text-white rounded flex items-center">
-                <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
-        </a>
-        <button type="button" onclick="openEmailModal()" class="flex items-center px-4 py-2 ml-6 bg-yellow-500 text-white rounded"
-            title="Enviar por correo">
-             <x-heroicon-o-envelope class="w-5 h-5 mr-2" /> Enviar
-
+    <div class="flex justify-end mt-4 items-center gap-2 ">
+        <button type="button" onclick="openCambioModal()"
+            class="flex items-center px-4 py-2 ml-6 bg-green-500 text-white rounded" title="Enviar por correo">
+            <x-heroicon-o-currency-dollar class="w-5 h-5 mr-2" /> Cambio
         </button>
+
+        <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
+            class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
+            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
+        </a>
+        <button type="button" onclick="openEmailModal()"
+            class="flex items-center px-4 py-2 ml-6 bg-yellow-500 text-white rounded" title="Enviar por correo">
+            <x-heroicon-o-envelope class="w-5 h-5 mr-2" /> Enviar
+        </button>
+
     </div>
     <div x-data="{ tab: 'detalle' }">
         <div class="flex gap-4 border-b mt-4">
@@ -354,7 +355,6 @@
                     <button type="button" onclick="closeEmailModal()" class="px-4 py-2 border rounded">
                         Cancelar
                     </button>
-
                     <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">
                         Enviar
                     </button>
@@ -362,6 +362,59 @@
                 </div>
             </form>
         </div>
+    </div>
+
+    <div id="cambioModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl w-full max-w-md p-6 shadow-lg">
+            <h2 class="text-xl font-semibold mb-6 text-gray-800 text-center">
+                Cálcular cambio
+            </h2>
+
+            <div class="space-y-4">
+                <!-- Total -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Total a pagar
+                    </label>
+                    <input type="number" id="total" value="{{ number_format($documento->total, 2) }}" readonly
+                        class="w-full p-2 border rounded-md bg-gray-100 text-gray-700">
+                </div>
+
+                <!-- Pago -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Pago del cliente
+                    </label>
+                    <input type="number" id="pago" step="0.01" placeholder="Ingrese el pago"
+                        oninput="calcularCambio()"
+                        class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Cambio -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Cambio
+                    </label>
+                    <input type="number" id="cambio" readonly
+                        class="w-full p-2 border rounded-md bg-gray-100 text-gray-700">
+                    <p id="mensaje" class="text-sm mt-1"></p>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex justify-end gap-2 mt-6">
+                <button type="button" onclick="closeCambioModal()"
+                    class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100">
+                    Cancelar
+                </button>
+
+                {{-- <button type="button" onclick="calcularCambio()"
+                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                    Calcular
+                </button> --}}
+            </div>
+        </div>
+
     </div>
 </x-app-layout>
 <script>
@@ -373,5 +426,40 @@
     function closeEmailModal() {
         document.getElementById('emailModal').classList.add('hidden');
         document.getElementById('emailModal').classList.remove('flex');
+    }
+
+    function openCambioModal() {
+        document.getElementById('cambioModal').classList.remove('hidden');
+        document.getElementById('cambioModal').classList.add('flex');
+    }
+
+    function closeCambioModal() {
+        document.getElementById('cambioModal').classList.add('hidden');
+        document.getElementById('cambioModal').classList.remove('flex');
+    }
+
+    function calcularCambio() {
+        const total = parseFloat(document.getElementById('total').value) || 0;
+        const pago = parseFloat(document.getElementById('pago').value) || 0;
+        const cambioInput = document.getElementById('cambio');
+        const mensaje = document.getElementById('mensaje');
+
+        const cambio = pago - total;
+
+        if (pago === 0) {
+            cambioInput.value = '';
+            mensaje.textContent = '';
+            return;
+        }
+
+        if (cambio < 0) {
+            cambioInput.value = '';
+            mensaje.textContent = '⚠️ El pago es insuficiente';
+            mensaje.className = 'text-sm mt-1 text-red-600';
+        } else {
+            cambioInput.value = cambio.toFixed(2);
+            mensaje.textContent = '✔️ Pago correcto';
+            mensaje.className = 'text-sm mt-1 text-green-600';
+        }
     }
 </script>

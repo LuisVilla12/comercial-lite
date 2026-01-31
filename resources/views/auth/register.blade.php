@@ -1,4 +1,4 @@
-@section('title', content: 'Registrar usuario' )
+@section('title', content: 'Registrar usuario')
 
 <x-app-layout>
     <x-slot name="header">
@@ -48,6 +48,22 @@
                         <option value="2">Operador</option>
                     </select>
                     @error('tipo')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="mt-4">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Sucursal:<span class="text-red-500">*</span>
+                    </label>
+                    <select name="sucursal_id" id="sucursal_id"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <option value="" disabled selected>Seleccione una opcion</option>
+                        @foreach ($sucursales as $sucursal)
+                            <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }} </option>
+                        @endforeach
+                    </select>
+
+                    @error('sucursal_id')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>

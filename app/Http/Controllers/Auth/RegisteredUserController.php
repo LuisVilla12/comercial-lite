@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Sucursal;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +20,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $sucursales=Sucursal::all();
+        return view('auth.register',['sucursales'=>$sucursales]);
     }
 
     /**
@@ -33,6 +35,7 @@ class RegisteredUserController extends Controller
             'username' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'tipo' => ['required', 'integer', 'in:1,2'],
+            'sucursal_id' => ['required', 'integer'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -41,6 +44,7 @@ class RegisteredUserController extends Controller
             'username' => $request->name,
             'email' => $request->email,
             'tipo' => $request->tipo,
+            'sucursal_id' => $request->sucursal_id,
             'password' => Hash::make($request->password),
         ]);
         return redirect()->route('usuarios.index')->with('success', 'Registro exitoso');

@@ -15,14 +15,32 @@ class UserSeeder extends Seeder
             'username'=>'luis',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('qazqazqaz9'),
-            'tipo'=>'2'
+            'tipo'=>'1',
+            'sucursal_id'=>'1'
         ]);
          User::create([
-            'name' => 'Alberto Campuzano',
-            'username'=>'ORIZABA',
-            'email' => 'ORIZABA@gmail.com',
+            'name' => 'Daniel cardenas moreno',
+            'username'=>'Ventas ZARAGOZA',
+            'email' => 'zaragoza@gmail.com',
             'password' => Hash::make('Sucursal21'),
-            'tipo'=>'1'
+            'tipo'=>'2',
+            'sucursal_id'=>'2'
         ]);
+         User::create([
+            'name' => 'Angel',
+            'username'=>'ORIZABA',
+            'email' => 'orizaba@gmail.com',
+            'password' => Hash::make('Sucursal21'),
+            'tipo'=>'2',
+            'sucursal_id'=>'1'
+        ]);
+        // User::create([
+        //     'name' => 'Freddy',
+        //     'username'=>'REBSAMEn',
+        //     'email' => 'rebsamen@gmail.com',
+        //     'password' => Hash::make('Sucursal21'),
+        //     'tipo'=>'2',
+        //     'sucursal_id'=>'4'
+        // ]);
     }
 }

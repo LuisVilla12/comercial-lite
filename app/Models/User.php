@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'tipo',
         'estatus',
+        'sucursal_id',
     ];
 
     /**
@@ -47,5 +48,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class);
+    }
+    public function isAdmin()
+    {
+        return $this->tipo == 1;
+    }
+
+    public function isNormal()
+    {
+        return $this->tipo == 2;
     }
 }

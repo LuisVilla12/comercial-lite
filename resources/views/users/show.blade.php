@@ -38,14 +38,14 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Tipo:<span class="text-red-500">*</span>
                     </label>
-                    <select name="tipo" id="tipo"
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
-                        <option value="1" @selected($usuario->tipo == 1)>Administrador</option>
-                        <option value="2" @selected($usuario->tipo == 1)>Operador</option>
-                    </select>
-                    @error('tipo')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                    <x-text-input id="tipo" class="block mt-1 w-full cursor-not-allowed" type="text" name="tipo"
+                        :value="$usuario->tipo=='1'?'Administrador':'Operador'"  readonly required autofocus autocomplete="tipo" />
+                </div>
+                <div class="mt-4">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Sucursal asignada:<span class="text-red-500">*</span>
+                    </label>
+                    <x-text-input id="sucursal_id" class="block mt-1 w-full cursor-not-allowed" type="text" name="sucursal_id" :value="$usuario->sucursal->nombre"  readonly required autofocus autocomplete="name" />
                 </div>
             </div>
 
