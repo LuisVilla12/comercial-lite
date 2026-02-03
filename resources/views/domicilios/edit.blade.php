@@ -7,7 +7,7 @@
         </h2>
     </x-slot>
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
-<form method="POST" action="{{ route('domicilios.update', [$cliente->id, $domicilio->id]) }}"  class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<form method="POST" action="{{ route('domicilios.update', ['modeloTipo'=>$modeloTipo,'domicilio'=>$domicilio]) }}"  class="grid grid-cols-1 md:grid-cols-2 gap-2">
     @method('PUT')
     @csrf
         <div class="md:col-span-2">
@@ -83,7 +83,7 @@
             <input type="text" id="calle" name="calle"
                    placeholder="Calle"
                     value="{{ $domicilio->calle }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('calle')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -96,7 +96,7 @@
             <input type="number" id="numero_interior" name="numero_interior"
                    placeholder="Numero interior"
                    value="{{ $domicilio->numero_interior }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             @error('numero_interior')
             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
             @enderror
@@ -109,15 +109,15 @@
             <input type="number" id="numero_exterior" name="numero_exterior"
                    placeholder="Numero exterior "
                    value="{{ $domicilio->numero_exterior }}"
-                   class="p-4 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
 
         {{-- Botones --}}
         <div class="md:col-span-2 flex justify-end gap-3 mt-4">
-            <a href="{{ route('clientes.edit', [$cliente, $cliente->tipo]) }}"
+            {{-- <a href="{{ route('clientes.edit', [$cliente, $cliente->tipo]) }}"
                class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
                 Cancelar
-            </a>
+            </a> --}}
             <button type="submit"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
                 Actualizar domicilio

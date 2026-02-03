@@ -69,6 +69,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
     Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('empresas.create');
     Route::post('/empresas', [EmpresaController::class, 'store'])->name('empresas.store');
+    Route::get('/empresas/{empresa}/edit', [EmpresaController::class, 'edit'])->name('empresas.edit');
+    Route::put('/empresas/{empresa}', [EmpresaController::class, 'update'])->name('empresas.update');
     Route::get('/empresas/{empresa}', action: [EmpresaController::class, 'show'])->name('empresas.show');
 
 });
@@ -87,12 +89,12 @@ Route::middleware('auth')->group(function () {
     // RUTAS DE DOMICILIOS
     // Route::get('/clientes/{cliente}/domicilios/create', [DomicilioController::class, 'create'])->name('domicilios.create');
     // Route::post('/clientes/{cliente}/domicilios', [DomicilioController::class, 'store'])->name('domicilios.store');
-    Route::get('/clientes/{cliente}/domicilios/{domicilio}/edit', [DomicilioController::class, 'edit'])->name('domicilios.edit');
-    Route::put('/clientes/{cliente}/domicilios/{domicilio}', [DomicilioController::class, 'update'])->name('domicilios.update');
     Route::delete('/clientes/{cliente}/domicilios/{domicilio}', [DomicilioController::class, 'destroy'])->name('domicilios.destroy');
 
     Route::get('/{modeloTipo}/{id}/domicilios/create/', [DomicilioController::class, 'create'])->where('modeloTipo', 'clientes|sucursales|empresas')->name('domicilios.create');
     Route::post('/{modeloTipo}/{id}/domicilios', [DomicilioController::class, 'store'])->where('modeloTipo', 'clientes|sucursales|empresas')->name('domicilios.store');
+    Route::get('/{modeloTipo}/domicilios/{domicilio}/edit', [DomicilioController::class, 'edit'])->where('modeloTipo', 'cliente|sucursal|empresa')->name('domicilios.edit');
+    Route::put('/{modeloTipo} /domicilios/{domicilio}', [DomicilioController::class, 'update'])->name('domicilios.update');
 
 
     // RUTAS DE PRODUCTOS

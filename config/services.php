@@ -35,10 +35,10 @@ return [
         ],
     ],
     //SERVICIO DE TIMBRADO
-    'facturama' => [
-    'user' => env('FACTURAMA_USER'),
-    'key' => env('FACTURAMA_KEY'),
-    'url' => env('FACTURAMA_URL'),
-],
+//     'facturama' => [
+//     'user' => env('FACTURAMA_USER'),
+//     'key' => env('FACTURAMA_KEY'),
+//     'url' => env('FACTURAMA_URL'),
+// ],
 
 ];

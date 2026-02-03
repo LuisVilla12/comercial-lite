@@ -17,9 +17,13 @@ class Empresa extends Model
         'activo',
     ];
 
-    public function domicilios()
-    {
-        return $this->hasMany(Domicilio::class, 'cliente_id');
+//     public function domicilios()
+//     {
+//         return $this->hasMany(Domicilio::class, 'cliente_id');
+// }
+public function domicilios()
+{
+    return $this->morphMany(Domicilio::class, 'domiciliable');
 }
 }
 

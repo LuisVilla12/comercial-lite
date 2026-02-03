@@ -112,7 +112,7 @@ public function indexProveedores(Request $request)
     public function update(Request $request, Cliente $cliente)
     {
         //
-         $request->validate([
+        $request->validate([
             'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:255',
             'rfc' => 'required|string|max:13',

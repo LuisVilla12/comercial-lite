@@ -14,6 +14,7 @@
         <p>{{ session('success') }}</p>
     </div>
 @endif
+
     <form method="POST" action="{{ route('clientes.update', $cliente->id) }}" class="grid grid-cols-1 md:grid-cols-2 gap-1">
         @csrf
         @method('PUT')
@@ -145,7 +146,7 @@
             @if($domicilio)
 
                 <a class="bg-blue-600 text-white px-6 py-2 rounded" href="{{ route('domicilios.edit', [
-                    'cliente' => $cliente->id,
+                    'modeloTipo' => 'cliente',
                     'domicilio' => $domicilio->id
                 ]) }}">
                     Editar domicilio

@@ -676,26 +676,29 @@ class DocumentoController extends Controller
         }
         $empresa = Empresa::where('id', 1)->first();
 
-        $data = $this->buildFacturamaJson($documento,$empresa);
+        $data = $this->buildFacturamaJson($documento, $empresa);
         dd($data);
-        // $response = Http::withBasicAuth(
-        //     config('services.facturama.user'),
-        //     config('services.facturama.key')
-        // )->post(
-        //     config('services.facturama.url') . '/api-lite/cfdis',
-        //     $data
-        // );
+        $response = Http::withBasicAuth(
+            env('FACTURAMA_USER'),
+            env('FACTURAMA_PASSWORD')
+        )->post(
+            env('FACTURAMA_URL') . '/api-lite/2/cfdis',
+            $data
+        );
+        // dd([
+        //     'status' => $response->status(),
+        //     'body' => $response->body(),
+        // ]);
 
-        // if (! $response->successful()) {
-        //     return response()->json([
-        //         'error' => 'Error al timbrar',
-        //         'facturama' => $response->body()
-        //     ], 500);
-        // }
+        if (! $response->successful()) {
+            return response()->json([
+                'error' => 'Error al timbrar',
+                'facturama' => $response->body()
+            ], 500);
+        }
 
         $result = $response->json(); // ✅
-
-
+        // dd($result);
         $documento->update([
             'uuid' => $result['Complement']['TaxStamp']['Uuid'],
             'xml' => $result['Xml'],

@@ -16,7 +16,7 @@ class EmpresaController extends Controller
     public function index()
     {
         $empresas = Empresa::all();
-        // dd($empresas);
+        // dd(vars: $empresas);
         return view('empresas.index', ['empresas' => $empresas]);
     }
 
@@ -61,7 +61,7 @@ class EmpresaController extends Controller
      */
     public function show(Empresa $empresa)
     {
-                $regimenes = Regimen::all();
+            $regimenes = Regimen::all();
         return view('empresas.show',['empresa'=>$empresa,'regimenes'=>$regimenes]);
     }
 
@@ -71,8 +71,7 @@ class EmpresaController extends Controller
     public function edit(Empresa $empresa)
     {
         $regimenes = Regimen::all();
-        return view('empresas.create', ['empresa'=>$empresa,'regimenes' => $regimenes]);
-
+        return view('empresas.edit', ['empresa'=>$empresa,'regimenes' => $regimenes]);
     }
 
     /**
@@ -80,7 +79,16 @@ class EmpresaController extends Controller
      */
     public function update(Request $request, Empresa $empresa)
     {
-        //
+        $request->validate([
+            'codigo' => 'required|string|max:50',
+            'nombre' => 'required|string|max:250',
+            'rfc' => 'required|string|max:13',
+            'regimen_fiscal' => 'required|string|max:250',
+            'email' => 'required|email',
+        ]);
+        $empresa->update($request->all());
+        return redirect()->route('empresas.show', $empresa)
+            ->with('success', 'Empresa ha sido actualizado' );
     }
 
     /**

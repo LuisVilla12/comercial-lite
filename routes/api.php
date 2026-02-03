@@ -26,19 +26,35 @@ Route::get('proveedores/buscar', function (Request $r) {
         ->get();
 });
 //  Busqueda de clientes para compras
+// Route::get('clientes/buscar', function (Request $r) {
+//     $q = $r->input('q', '');
+//     return Cliente::where('tipo', 1) // proveedor
+//         ->where('activo', 1)
+//         ->where(function ($query) use ($q) {
+//             $query->where('nombre', 'like', "%{$q}%")
+//                 ->orWhere('codigo', 'like', "%{$q}%");
+//         })
+//         ->with('domicilios:id,cliente_id,calle,numero_interior,numero_exterior,cp,ciudad,colonia')
+//         ->select('id', 'nombre', 'rfc', 'codigo')
+//         ->limit(10)
+//         ->get();
+// });
 Route::get('clientes/buscar', function (Request $r) {
     $q = $r->input('q', '');
     return Cliente::where('tipo', 1) // proveedor
         ->where('activo', 1)
         ->where(function ($query) use ($q) {
             $query->where('nombre', 'like', "%{$q}%")
-                ->orWhere('codigo', 'like', "%{$q}%");
+                  ->orWhere('codigo', 'like', "%{$q}%");
         })
-        ->with('domicilios:id,cliente_id,calle,numero_interior,numero_exterior,cp,ciudad,colonia')
+        ->with([
+            'domicilios:id,domiciliable_id,domiciliable_type,calle,numero_interior,numero_exterior,cp,ciudad,colonia'
+        ])
         ->select('id', 'nombre', 'rfc', 'codigo')
         ->limit(10)
         ->get();
 });
+
 //Busqueda de productos para compras
 Route::get('productos/buscar', function () {
     $q = request('q', '');

@@ -32,7 +32,10 @@ class Sucursal extends Model
     /* =========================
      | RELACIONES
      ========================= */
-
+    public function domicilios()
+    {
+        return $this->morphMany(Domicilio::class, 'domiciliable');
+    }
     public function almacen()
     {
         return $this->belongsTo(Almacen::class);
@@ -42,10 +45,7 @@ class Sucursal extends Model
     {
         return $this->hasMany(Documento::class);
     }
-public function domicilios()
-{
-    return $this->morphMany(Domicilio::class, 'domiciliable');
-}
+
 
     /* =========================
      | FOLIOS (SEGUROS)
