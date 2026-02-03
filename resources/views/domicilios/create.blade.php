@@ -13,7 +13,7 @@
         <p>{{ session('success') }}</p>
     </div>
 @endif
-<form method="POST" action="{{ route('domicilios.store',$cliente->id) }}"  class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<form method="POST" action="{{ route('domicilios.store', ['modeloTipo' => $modeloTipo, 'id' => $model->id]) }}"  class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @csrf
         <div class="md:col-span-2">
             <label for="cp" class="block text-md font-medium text-gray-700 mb-1">
@@ -127,6 +127,7 @@
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
                 Guardar
             </button>
+            <input type="hidden" name="pais" id="pais" value="MEXICO">
         </div>
     </form>
 </div>

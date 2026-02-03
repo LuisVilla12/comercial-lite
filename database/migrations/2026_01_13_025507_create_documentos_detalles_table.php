@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer(column: 'cantidad');
             $table->decimal(column: 'costo_unitario');
             $table->decimal(column: 'importe');
+
         });
     }
 

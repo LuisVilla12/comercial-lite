@@ -22,8 +22,13 @@ class Cliente extends Model
         'saldo'
     ];
 
+    // public function domicilios()
+    // {
+    //     return $this->hasMany(Domicilio::class, 'cliente_id');
+    // }
     public function domicilios()
-    {
-        return $this->hasMany(Domicilio::class, 'cliente_id');
-    }
+{
+    return $this->morphMany(Domicilio::class, 'domiciliable');
+}
+
 }

@@ -24,10 +24,10 @@ return new class extends Migration
             $table->string(column: 'numero_exterior')->nullable();
             $table->string(column: 'cp')->nullable();
             $table->integer(column: 'tipo')->default(1);//1.-Cliente/proveedores, 2->Sucursales, 3->empresa
-            $table->foreignId(column: 'cliente_id')->constrained('clientes')->onDelete('cascade');
-
+            // $table->foreignId(column: 'cliente_id')->constrained('clientes')->onDelete('cascade');
+            $table->morphs('domiciliable');
         });
-    }
+    }   
 
     /**
      * Reverse the migrations.

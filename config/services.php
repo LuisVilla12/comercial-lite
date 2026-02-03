@@ -34,5 +34,11 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    //SERVICIO DE TIMBRADO
+    'facturama' => [
+    'user' => env('FACTURAMA_USER'),
+    'key' => env('FACTURAMA_KEY'),
+    'url' => env('FACTURAMA_URL'),
+],
 
 ];

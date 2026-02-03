@@ -24,7 +24,7 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Nombre de la empresa: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="nombre" placeholder="Nombre de la sucursal" value="{{ old('nombre') }}"
+                <input type="text" name="nombre" placeholder="Nombre de la empresa" value="{{ old('nombre') }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('nombre')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>

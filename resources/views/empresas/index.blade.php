@@ -20,7 +20,7 @@
     </p>
     @endif
 
-    <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200  w-2/5 mx-auto">
+    <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200  w-4/5 mx-auto">
         <table class="min-w-full divide-y divide-gray-200 text-sm">
             <thead class="bg-gray-100">
                 <tr>
@@ -49,7 +49,7 @@
                     <td class="px-6 py-4 text-sm text-gray-700">
                         <div class="flex flex-wrap items-center gap-4">
                             {{-- Ver --}}
-                            <a href=""
+                            <a href="{{ route('empresas.show',$empresa) }}"
                                 class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                 <x-heroicon-o-eye class="w-4 h-4" />
                                 <span class="hidden sm:inline">Ver</span>
@@ -91,7 +91,7 @@
             </tbody>
 
         </table>
-        @if($empresas->count() > 0)
+        {{-- @if($empresas->count() > 0)
         <div class="my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
             <p class="text-sm text-gray-600 ml-6">
@@ -105,8 +105,8 @@
             </p>
 
             {{ $empresas->links() }}
-        </div>
-        @endif
+        </div> --}}
+        {{-- @endif --}}
 
     </div>
 

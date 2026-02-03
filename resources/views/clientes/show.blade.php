@@ -89,7 +89,7 @@
                 <div class="lg:flex lg:justify-between items-center ">
                     <h4 class="block text-lg font-semibold text-gray-700 mt-2 p-4">Domicilio</h4>
                     @if ($cliente->domicilios->count() == 0)
-                        <a href="{{ route('domicilios.create', $cliente->id) }}"
+                        <a href="{{ route('domicilios.create', parameters: ['modeloTipo' => 'clientes', 'id' => $cliente->id]) }}"
                             class="block bg-blue-600 text-white px-3 py-2 rounded text-center">Agregar domicilio
                         </a>
                     @endif

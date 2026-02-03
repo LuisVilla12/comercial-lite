@@ -42,6 +42,10 @@ class Sucursal extends Model
     {
         return $this->hasMany(Documento::class);
     }
+public function domicilios()
+{
+    return $this->morphMany(Domicilio::class, 'domiciliable');
+}
 
     /* =========================
      | FOLIOS (SEGUROS)

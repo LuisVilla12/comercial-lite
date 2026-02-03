@@ -78,6 +78,7 @@
                 </form>
             @endif
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
+            <div></div>
                 <form method="POST"
                     action="{{ route('documentos.timbrar', ['sucursal' => $sucursal, 'documento' => $documento]) }}">
                     @csrf
@@ -94,11 +95,23 @@
             class="flex items-center px-4 py-2 ml-6 bg-green-500 text-white rounded" title="Enviar por correo">
             <x-heroicon-o-currency-dollar class="w-5 h-5 mr-2" /> Cambio
         </button>
-
-        <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
+        <div>
+            <form method="POST"
+                action="{{ route('timbrarSAT', ['documento' => $documento]) }}">
+                @csrf
+                <button type="submit" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase w-full">
+                    Timbrar
+                </button>
+            </form>
+        </div>
+        <a href="{{ route('documentos.pdfTicket', ['documento' => $documento, 'mm' => 58]) }}" target="_blank"
+            class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
+            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir ticket
+        </a>
+        {{-- <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
             class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
             <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
-        </a>
+        </a> --}}
         <button type="button" onclick="openEmailModal()"
             class="flex items-center px-4 py-2 ml-6 bg-yellow-500 text-white rounded" title="Enviar por correo">
             <x-heroicon-o-envelope class="w-5 h-5 mr-2" /> Enviar

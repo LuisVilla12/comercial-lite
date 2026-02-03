@@ -8,7 +8,7 @@
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
-<form method="GET" action="{{ route('reportes.index',$sucursal) }}"
+<form method="GET" action="{{ route('remisiones.index',$sucursal) }}"
       class="w-full flex flex-col md:flex-row md:items-center gap-3">
 
     {{-- Buscador --}}
@@ -35,8 +35,6 @@
             Hoy
         </option>
     </select>
-
-
 </form>
 
         {{-- Botón --}}

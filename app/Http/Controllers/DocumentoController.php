@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Documento;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Almacen;
@@ -19,6 +20,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\InventarioService;
 use App\Mail\DocumentoMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
+
 
 class DocumentoController extends Controller
 {
@@ -163,7 +166,8 @@ class DocumentoController extends Controller
                 'metodo_pago' => $request->metodo_pago,
                 'forma_pago' => $request->forma_pago,
                 'uso_cfdi' => $request->uso_cfdi,
-                'observaciones' => $request->observaciones
+                'observaciones' => $request->observaciones,
+                'estado' => 'PENDIENTE',
             ]);
 
             DB::commit();
@@ -276,6 +280,7 @@ class DocumentoController extends Controller
                 'forma_pago' => $request->forma_pago,
                 'uso_cfdi' => $request->uso_cfdi,
                 'observaciones' => $request->observaciones,
+                'estado' => 'PENDIENTE',
             ]);
 
             /* ================= DETALLES ================= */
@@ -336,8 +341,23 @@ class DocumentoController extends Controller
         $pdf = Pdf::loadView('documentos.pdf', compact('documento'))
             ->setPaper('letter');
 
-        return $pdf->stream("Cotizacion_{$documento->serie}-{$documento->folio}.pdf");
+        return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");
     }
+    public function pdfTicket(Documento $documento, $mm = 80)
+    {
+        $documento->load(['cliente', 'detalles.producto']);
+        // dd($documento);
+        $width = $mm == 58 ? 164 : 227;
+
+        $customPaper = [0, 0, $width, 256];
+
+        $pdf = Pdf::loadView('documentos.pdf_ticket', compact('documento'))
+            ->setPaper($customPaper);
+
+        return $pdf->stream("Ticket{$mm}_{$documento->serie}-{$documento->folio}.pdf");
+    }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -595,7 +615,7 @@ class DocumentoController extends Controller
             'usos' => $usos_cfdi,
         ]);
     }
-    // TIMBRAR FACTURA
+    // AFECTA INVENTARIO al hacer una factura
     public function timbrar(Sucursal $sucursal, Documento $documento)
     {
         if ($documento->estatus != 1) {
@@ -645,6 +665,116 @@ class DocumentoController extends Controller
             ->route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento])
             ->with('success', 'Factura timbrada correctamente');
     }
+
+    public function timbrarSAT(Documento $documento)
+    {
+
+        if ($documento->uuid) {
+            return response()->json([
+                'message' => 'Este documento ya está timbrado'
+            ], 422);
+        }
+        $empresa = Empresa::where('id', 1)->first();
+
+        $data = $this->buildFacturamaJson($documento,$empresa);
+        dd($data);
+        // $response = Http::withBasicAuth(
+        //     config('services.facturama.user'),
+        //     config('services.facturama.key')
+        // )->post(
+        //     config('services.facturama.url') . '/api-lite/cfdis',
+        //     $data
+        // );
+
+        // if (! $response->successful()) {
+        //     return response()->json([
+        //         'error' => 'Error al timbrar',
+        //         'facturama' => $response->body()
+        //     ], 500);
+        // }
+
+        $result = $response->json(); // ✅
+
+
+        $documento->update([
+            'uuid' => $result['Complement']['TaxStamp']['Uuid'],
+            'xml' => $result['Xml'],
+            'estado' => 'timbrado'
+        ]);
+
+        return response()->json([
+            'message' => 'Documento timbrado correctamente',
+            'uuid' => $documento->uuid
+        ]);
+    }
+    private function buildFacturamaJson(Documento $documento, Empresa $empresa): array
+    {
+        // dd($empresa);
+        $documento->load([
+            'cliente',
+            'detalles.producto'
+        ]);
+        return [
+            'Serie' => $documento->serie,
+            'Folio' => (string) $documento->folio,
+            'Currency' => 'MXN',
+            //CP del EMISOR
+            'ExpeditionPlace' => $documento->cliente->domicilios->first()->cp,
+            'PaymentConditions' => 'CONTADO',
+            'PaymentForm' => $documento->forma_pago,
+            'PaymentMethod' => $documento->metodo_pago,
+            'CfdiType' => 'I',
+            'Exportation' => '01',
+
+            // EMISOR
+            'Issuer' => [
+                'Rfc' => $empresa->rfc,
+                'Name' => $empresa->nombre,
+                'FiscalRegime' => $empresa->regimen_fiscal,
+            ],
+            //RECEPTOR
+            'Receiver' => [
+                'Rfc' => $documento->cliente->rfc,
+                'Name' => $documento->cliente->nombre ?? 'PUBLICO EN GENERAL',
+                'FiscalRegime' => $documento->cliente->regimen_fiscal,
+                'CfdiUse' => $documento->uso_cfdi,
+                'TaxZipCode' => $documento->cliente->domicilios->first()->cp,
+            ],
+
+            'Items' => $documento->detalles->map(function ($detalle) {
+                $subtotal = round($detalle->cantidad * $detalle->costo_unitario, 2);
+                $iva = round($subtotal * 0.16, 2);
+
+                return [
+                    //Clave sat del produto
+                    'ProductCode' => $detalle->producto->clave_sat,
+                    'IdentificationNumber' => $detalle->producto->codigo_producto,
+                    'Description' => $detalle->producto->nombre,
+                    //Unidad de medida
+                    'Unit' => 'Pieza',
+                    //Clave unidad de medida del sat
+                    'UnitCode' => 'H87',
+                    'Quantity' => $detalle->cantidad,
+                    'UnitPrice' => $detalle->costo_unitario,
+                    'Subtotal' => $subtotal,
+                    'Taxes' => [
+                        [
+                            'Total' => $iva,
+                            'Name' => 'IVA',
+                            'Base' => $subtotal,
+                            'Rate' => 0.16,
+                            'IsRetention' => false,
+                        ]
+                    ],
+                    'Total' => $subtotal + $iva,
+                ];
+            })->values()->toArray(),
+
+            'SubTotal' => $documento->subtotal,
+            'Total' => $documento->total
+        ];
+    }
+
     public function enviarCorreo(Request $request, Documento $documento)
     {
         // dd('ENTRÓ', $request->all(), $documento->id);

@@ -15,7 +15,7 @@ class EmpresaController extends Controller
      */
     public function index()
     {
-        $empresas = Empresa::paginate(10)->withQueryString();
+        $empresas = Empresa::all();
         // dd($empresas);
         return view('empresas.index', ['empresas' => $empresas]);
     }
@@ -41,11 +41,9 @@ class EmpresaController extends Controller
             'nombre' => 'required|string|max:250',
             'rfc' => 'required|string|max:13',
             'regimen_fiscal' => 'required|string|max:250',
-            'curp' => 'required|string|max:18',
             'email' => 'required|email',
-            'telefono' => 'required|string|max:250',
         ]);
-        $empresa = Empresa::create([
+        Empresa::create([
             'codigo' => $request->codigo,
             'nombre' => $request->nombre,
             'rfc' => $request->rfc,
@@ -63,7 +61,8 @@ class EmpresaController extends Controller
      */
     public function show(Empresa $empresa)
     {
-        //
+                $regimenes = Regimen::all();
+        return view('empresas.show',['empresa'=>$empresa,'regimenes'=>$regimenes]);
     }
 
     /**
@@ -71,7 +70,9 @@ class EmpresaController extends Controller
      */
     public function edit(Empresa $empresa)
     {
-        //
+        $regimenes = Regimen::all();
+        return view('empresas.create', ['empresa'=>$empresa,'regimenes' => $regimenes]);
+
     }
 
     /**

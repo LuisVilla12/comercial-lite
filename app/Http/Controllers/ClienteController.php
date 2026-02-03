@@ -84,7 +84,6 @@ public function indexProveedores(Request $request)
         return redirect()
             ->route('clientes.show', [$cliente->id, $cliente->tipo])
             ->with('success',  $cliente->tipo == 1 ? 'El cliente ha sido registrado.' : 'El proveedor ha sido registrado.');
-
     }
 
     /**

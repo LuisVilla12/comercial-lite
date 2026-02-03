@@ -21,8 +21,12 @@ class Domicilio extends Model
             'cliente_id'
         ];
 
-    public function cliente()
-    {
-        return $this->belongsTo(Cliente::class, 'cliente_id');
-    }
+    // public function cliente()
+    // {
+    //     return $this->belongsTo(Cliente::class, 'cliente_id');
+    // }
+    public function domiciliable()
+{
+    return $this->morphTo();
+}
 }

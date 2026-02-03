@@ -12,7 +12,7 @@
                     Codigo: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="codigo" placeholder="Codigo" value="{{ $sucursal->codigo }}" readonly
-                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    class="py-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 @error('codigo')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -134,14 +134,93 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            {{-- Botones --}}
-            <div class="md:col-span-full flex justify-end gap-3 mt-4">
-                <a href="{{ route('sucursales.index') }}"
-                    class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
-                    Regresar
-                </a>
-            </div>
+
         </div>
+        @if ($sucursal->domicilios->count())
+            @foreach ($sucursal->domicilios as $dom)
+                <div class="grid grid-cols-3 m-4">
+                    <div class="">
+                        <label class="block text-md font-medium text-gray-700 mb-1">
+                            Pais: <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="pais" placeholder="Pais" value="{{ $dom->pais }}"
+                            readonly
+                            class="py-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="">
+                        <label class="block text-md font-medium text-gray-700 mb-1">
+                            Estado: <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="estado" placeholder="Estado" value="{{ $dom->estado }}"
+                            readonly
+                            class="py-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="">
+                        <label class="block text-md font-medium text-gray-700 mb-1">
+                            Municipio: <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="municipio" placeholder="Municipio"
+                            value="{{ $dom->municipio }}" readonly
+                            class="py-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="">
+                        <label class="block text-md font-medium text-gray-700 mb-1">
+                            Ciudad: <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="estado" placeholder="Estado" value="{{ $dom->ciudad }}"
+                            readonly
+                            class="py-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="">
+                        <label class="block text-md font-medium text-gray-700 mb-1">
+                            Colonia: <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="estado" placeholder="Estado" value="{{ $dom->colonia }}"
+                            readonly
+                            class="py-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="">
+                        <label class="block text-md font-medium text-gray-700 mb-1">
+                            Calle: <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="calle" placeholder="Calle" value="{{ $dom->calle }}"
+                            readonly
+                            class="py-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="">
+                        <label class="block text-md font-medium text-gray-700 mb-1">
+                            Número exterior: <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="numero_exterior" placeholder="Número exterior"
+                            value="{{ $dom->numero_exterior }}" readonly
+                            class="py-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="">
+                        <label class="block text-md font-medium text-gray-700 mb-1">
+                            Número interior: <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="numero_interior" placeholder="Número interior"
+                            value="{{ $dom->numero_interior }}" readonly
+                            class="py-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+            @endforeach
+    </div>
+@else
+    <p class="text-gray-500 text-sm mt-4 mb-6 md:mb-0">Sin domicilio registrado</p>
+    @endif
+
+    {{-- Botones --}}
+    <div class="md:col-span-full flex justify-end gap-3 mt-4">
+        <a href="{{ route('sucursales.index') }}"
+            class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
+            Regresar
+        </a>
+        @if ($sucursal->domicilios->count() == 0)
+            <a href="{{ route('domicilios.create', parameters: ['modeloTipo' => 'sucursales', 'id' => $sucursal->id]) }}"
+                class="block bg-blue-600 text-white px-3 py-2 rounded text-center">Agregar domicilio
+            </a>
+        @endif
+    </div>
     </div>
 
 

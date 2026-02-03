@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Middleware\AdminMiddleware;
 
 use App\Models\Sucursal;
 use Illuminate\Http\Request;
 use App\Models\User;
 class UserController extends Controller
 {
-    //
     public function index(Request $request)
     {
     $search = $request->get('search');

@@ -16,5 +16,10 @@ class Empresa extends Model
         'telefono',
         'activo',
     ];
+
+    public function domicilios()
+    {
+        return $this->hasMany(Domicilio::class, 'cliente_id');
+}
 }
 
