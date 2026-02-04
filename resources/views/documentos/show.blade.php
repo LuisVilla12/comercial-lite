@@ -224,6 +224,7 @@
                 </p>
             </div>
         </div>
+
         <div x-show="tab === 'info'" x-cloak class="space-y-4">
             <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
                 <label
@@ -236,34 +237,34 @@
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Codigo Postal: </label>
-                    <input type="text" value="{{ optional($documento->cliente->domicilios->first())->cp }}"
+                    <input type="text" value="{{ optional($documento->domicilios->first())->cp }}"
                         disabled class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Ciudad: </label>
-                    <input type="text" value="{{ optional($documento->cliente->domicilios->first())->ciudad }}"
+                    <input type="text" value="{{ optional($documento->domicilios->first())->ciudad }}"
                         disabled class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Calle: </label>
-                    <input type="text" value="{{ optional($documento->cliente->domicilios->first())->calle }}"
+                    <input type="text" value="{{ optional($documento->domicilios->first())->calle }}"
                         disabled class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 {{-- <div class="">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Numero interior: </label>
                     <input type="text"
-                        value="{{ optional($documento->cliente->domicilios->first())->numero_interior }}" disabled
+                        value="{{ optional($documento->domicilios->first())->numero_interior }}" disabled
                         class="w-full border rounded p-2 bg-gray-100">
                 </div> --}}
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Numero exterior: </label>
                     <input type="text"
-                        value="{{ optional($documento->cliente->domicilios->first())->numero_exterior }}" disabled
+                        value="{{ optional($documento->domicilios->first())->numero_exterior }}" disabled
                         class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Colonia: </label>
-                    <input type="text" value="{{ optional($documento->cliente->domicilios->first())->colonia }}"
+                    <input type="text" value="{{ optional($documento->domicilios->first())->colonia }}"
                         disabled class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <label

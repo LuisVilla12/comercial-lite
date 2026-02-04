@@ -36,7 +36,8 @@ class DomiciliosSeeder extends Seeder
             }
 
             $batch[] = [
-                'cliente_id' => $clienteId,
+                'domiciliable_type' => 'App\Models\Cliente',
+                'domiciliable_id' => $clienteId,
                 'calle' => trim($row[1]) ?: '',
                 'numero_exterior' => $row[2] !== '' ? intval($row[2]) : null,
                 'numero_interior' => trim($row[3]) ?: null,

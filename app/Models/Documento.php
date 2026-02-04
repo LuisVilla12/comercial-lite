@@ -35,5 +35,10 @@ class Documento extends Model
     public function usuario() {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+        public function domicilios()
+{
+    return $this->morphMany(Domicilio::class, 'domiciliable');
+}
     }
 

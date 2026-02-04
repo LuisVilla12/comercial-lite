@@ -111,7 +111,6 @@ class DocumentoController extends Controller
 
     public function store(Sucursal $sucursal, Request $request)
     {
-        // dd($sucursal);
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -133,6 +132,11 @@ class DocumentoController extends Controller
             'metodo_pago' => 'required',
             'forma_pago' => 'required',
             'uso_cfdi' => 'required|exists:uso_cfdis,clave',
+            //DATOS DE DOMICLIO
+            'colonia' => 'required|string|max:100',
+            'calle' => 'required|string|max:255',
+            'numero_exterior' => 'nullable|string|max:50',
+            'codigo_postal' => 'required|string|max:10',
         ]);
         DB::beginTransaction();
         // EFECTUAR LA COMPRA
@@ -169,6 +173,20 @@ class DocumentoController extends Controller
                 'observaciones' => $request->observaciones,
                 'estado' => 'PENDIENTE',
             ]);
+            // ASIGNAR DOMICILIO AL DOCUMENTO de FACTURA
+            if($documento->documento_modelo_id == 2){
+ $documento->domicilios()->create([
+            'pais' => 'MEXICO',
+            'estado' => $request->estado,
+            'municipio' => $request->municipio.'',
+            'ciudad' => $request->ciudad ?? '',
+            'colonia' => $request->colonia,
+            'calle' => $request->calle,
+            'numero_exterior' => $request->numero_exterior,
+            'cp' => $request->codigo_postal
+            ]);
+            }
+
 
             DB::commit();
             // CREAR DETALLES DOCUMENTOS
@@ -205,8 +223,10 @@ class DocumentoController extends Controller
         $usos_cfdi = UsoCfdi::all();
         $documento->load([
             'cliente',
-            'detalles.producto'
+            'detalles.producto',
+            'domicilios'
         ]);
+        // dd($documento);
         return view('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi,]);
     }
 
@@ -227,6 +247,7 @@ class DocumentoController extends Controller
         $documento->load([
             'cliente.domicilios',
             'detalles.producto',
+            'domicilios'
         ]);
 
         // Calcula el stock
@@ -616,7 +637,7 @@ class DocumentoController extends Controller
         ]);
     }
     // AFECTA INVENTARIO al hacer una factura
-    public function timbrar(Sucursal $sucursal, Documento $documento)
+    public function surtirFactura(Sucursal $sucursal, Documento $documento)
     {
         if ($documento->estatus != 1) {
             return back()->with('error', 'Factura ya fue surtida');

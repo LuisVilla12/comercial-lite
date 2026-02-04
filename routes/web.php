@@ -37,10 +37,10 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/test-email', function () {
-    Mail::to('luisjivl.01@gmail.com')->send(new TestMail());
-    return 'Correo enviado correctamente';
-})->middleware('auth');;
+// Route::get('/test-email', function () {
+//     Mail::to('luisjivl.01@gmail.com')->send(new TestMail());
+//     return 'Correo enviado correctamente';
+// })->middleware('auth');;
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -70,7 +70,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('empresas.create');
     Route::post('/empresas', [EmpresaController::class, 'store'])->name('empresas.store');
     Route::get('/empresas/{empresa}/edit', [EmpresaController::class, 'edit'])->name('empresas.edit');
-    Route::put('/empresas/{empresa}', [EmpresaController::class, 'update'])->name('empresas.update');
+    Route::put('/empresas/{empresa}/edit', [EmpresaController::class, 'update'])->name('empresas.update');
     Route::get('/empresas/{empresa}', action: [EmpresaController::class, 'show'])->name('empresas.show');
 
 });
@@ -91,9 +91,9 @@ Route::middleware('auth')->group(function () {
     // Route::post('/clientes/{cliente}/domicilios', [DomicilioController::class, 'store'])->name('domicilios.store');
     Route::delete('/clientes/{cliente}/domicilios/{domicilio}', [DomicilioController::class, 'destroy'])->name('domicilios.destroy');
 
-    Route::get('/{modeloTipo}/{id}/domicilios/create/', [DomicilioController::class, 'create'])->where('modeloTipo', 'clientes|sucursales|empresas')->name('domicilios.create');
-    Route::post('/{modeloTipo}/{id}/domicilios', [DomicilioController::class, 'store'])->where('modeloTipo', 'clientes|sucursales|empresas')->name('domicilios.store');
-    Route::get('/{modeloTipo}/domicilios/{domicilio}/edit', [DomicilioController::class, 'edit'])->where('modeloTipo', 'cliente|sucursal|empresa')->name('domicilios.edit');
+    Route::get('/{modeloTipo}/{id}/domicilios/create/', [DomicilioController::class, 'create'])->where('modeloTipo', 'clientes|sucursales|empresas|documentos')->name('domicilios.create');
+    Route::post('/{modeloTipo}/{id}/domicilios', [DomicilioController::class, 'store'])->where('modeloTipo', 'clientes|sucursales|empresas|documentos')->name('domicilios.store');
+    Route::get('/{modeloTipo}/domicilios/{domicilio}/edit', [DomicilioController::class, 'edit'])->where('modeloTipo', 'cliente|sucursal|empresa|documento')->name('domicilios.edit');
     Route::put('/{modeloTipo} /domicilios/{domicilio}', [DomicilioController::class, 'update'])->name('domicilios.update');
 
 

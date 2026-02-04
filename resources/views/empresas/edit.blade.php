@@ -7,6 +7,7 @@
 
     <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
         <form method="POST" action="{{ route('empresas.edit', $empresa) }}" class="grid grid-cols-1 md:grid-cols-3 md:gap-4">
+            @method('PUT')
             @csrf
             <div class="">
                 <label class="block text-md font-medium text-gray-700 mb-1">

@@ -53,7 +53,8 @@ class EmpresaController extends Controller
             'telefono' => $request->telefono,
             'activo' => 1,
         ]);
-        return view('empresas.index')->with('success',   'La empresa ha sido registrada.');
+        $empresas = Empresa::all();
+        return view('empresas.index',['empresas'=>$empresas])->with('success',   'La empresa ha sido registrada.');
     }
 
     /**

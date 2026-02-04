@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             ClientesSeeder::class,
             AlmacenSeeder::class,
             ExistenciasSeeder::class,
-            // DomiciliosSeeder::class,
+            DomiciliosSeeder::class,
         ]);
     }
 }

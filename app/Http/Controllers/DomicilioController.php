@@ -118,17 +118,22 @@ class DomicilioController extends Controller
         $model = $domicilio->domiciliable;
         if ($modeloTipo === 'cliente') {
             return redirect()
-                ->route('clientes.show', [$model, $model->tipo])
+                ->route('clientes.show', parameters: [$model, $model->tipo])
                 ->with('success', 'Domicilio agregado correctamente.');
         }
         if ($modeloTipo === 'sucursal') {
             return redirect()
-                ->route('sucursales.show', [$model, $model->tipo])
+                ->route('sucursales.show', [$model])
                 ->with('success', 'Domicilio agregado correctamente.');
         }
-        return redirect()
-            ->route("{$modeloTipo}.show", $model)
-            ->with('success', 'Domicilio agregado correctamente.');
+         if ($modeloTipo === 'empresa') {
+            return redirect()
+                ->route('empresas.show', [$model])
+                ->with('success', 'Domicilio agregado correctamente.');
+        }
+        // return redirect()
+        //     ->route("{$modeloTipo}.show", $model)
+        //     ->with('success', 'Domicilio agregado correctamente.');
             }
 
     /**
