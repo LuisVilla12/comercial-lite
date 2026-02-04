@@ -74,7 +74,7 @@
 
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">
-                                    <div class="flex flex-wrap items-center gap-4">
+                                    <div class="flex justify-center items-center gap-4">
                                         {{-- Ver --}}
                                         <a href="{{ route('almacenes.show', ['almacen' => $almacen]) }}"
                                             class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
@@ -178,7 +178,7 @@
             </div>
         @else
             <div class="bg-white py-4 mt-3">
-                <p class="text-sm text-gray-600 ml-6 text-center"> No hay cotizaciones</p>
+                <p class="text-sm text-gray-600 ml-6 text-center"> No hay almacenes registrados</p>
             </div>
         @endif
         @if ($almacenes->count() > 0)

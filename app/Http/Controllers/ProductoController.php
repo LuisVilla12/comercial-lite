@@ -46,8 +46,6 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        // dd($request);
  $request->validate([
             'codigo_producto' => 'required|unique:productos,codigo_producto|string|max:50',
             'nombre_producto' => 'required|string|max:255',

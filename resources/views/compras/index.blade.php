@@ -93,7 +93,7 @@
                                     {{ number_format($compra->total, 2) }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">
-                                    <div class="flex flex-wrap items-center gap-4">
+                                    <div class="flex justify-center items-center gap-4">
                                         {{-- Ver --}}
                                         <a href="{{ route('compras.show', [ 'compra' => $compra]) }}"
                                             class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">

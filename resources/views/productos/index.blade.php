@@ -139,7 +139,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="flex flex-wrap items-center justify-end mt-4 gap-4">
+                        <div class="flex 0 items-center justify-center mt-4 gap-4">
                             {{-- Ver --}}
                             <a href="{{ route('productos.show', ['producto' => $producto]) }}"
                                 class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
@@ -174,7 +174,7 @@
             </div>
         @else
             <div class="bg-white py-4 mt-3">
-                <p class="text-sm text-gray-600 ml-6 text-center"> No hay cotizaciones</p>
+                <p class="text-sm text-gray-600 ml-6 text-center"> No hay productos registrados</p>
             </div>
         @endif
         @if ($productos->count() > 0)

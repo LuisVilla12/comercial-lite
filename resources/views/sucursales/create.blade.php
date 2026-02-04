@@ -8,10 +8,10 @@
     </x-slot>
 
     <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
-        <form method="POST" action="{{ route('sucursales.store') }}" class="grid grid-cols-1 md:grid-cols-4 md:gap-4">
+        <form method="POST" action="{{ route('sucursales.store') }}" class=" md:grid md:grid-cols-4 md:gap-4">
             @csrf
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Codigo: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="codigo" placeholder="Codigo" value="{{ old('codigo') }}"
@@ -22,8 +22,8 @@
 
             </div>
             {{-- Nombre --}}
-            <div class="col-span-2">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 col-span-2">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Nombre de la sucursal: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="nombre" placeholder="Nombre de la sucursal" value="{{ old('nombre') }}"
@@ -32,8 +32,8 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1 ">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700  ">
                     Seleccionar almacen: <span class="text-red-500">*</span>
                 </label>
                 <select name="almacen_id" id="almacen_id"
@@ -48,8 +48,8 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Serie cotización: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="serie_cotizacion" placeholder="Serie de cotización"
@@ -59,8 +59,8 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Serie remisión: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="serie_remision" placeholder="Serie de remisión"
@@ -70,8 +70,8 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Serie facturación: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="serie_factura" placeholder="Serie de facturación"
@@ -81,8 +81,8 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Serie devolución: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="serie_devolucion" placeholder="Serie de devolución"
@@ -92,8 +92,8 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Folio cotización: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="folio_cotizacion" placeholder="Folio de cotización"
@@ -103,8 +103,8 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Folio remisión: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="folio_remision" placeholder="Folio de remisión"
@@ -114,8 +114,8 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Folio facturación: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="folio_factura" placeholder="Folio de facturación"
@@ -125,8 +125,8 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
-                <label class="block text-md font-medium text-gray-700 mb-1">
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
                     Folio devolución: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="folio_devolucion" placeholder="Folio de devolución"
@@ -137,7 +137,7 @@
                 @enderror
             </div>
             {{-- Botones --}}
-            <div class="md:col-span-full flex justify-end gap-3 mt-4">
+            <div class="mb-2 md:col-span-full flex justify-end gap-3 mt-4">
                 <a href="{{ route('sucursales.index') }}"
                     class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
                     Cancelar

@@ -22,7 +22,7 @@
         <div class="grid md:grid-cols-2 gap-2 md:gap-4 ">
 
             <div class="mt-2 bg-white shadow rounded p-4">
-                <h4 class="block text-lg font-semibold text-gray-700 my-2">Información del
+                <h4 class="block text-lg font-semibold text-gray-700 my-2 text-center">Información del
                     {{ $tipo == 1 ? 'cliente' : 'proveedor' }}</h4>
                 <div class="md:col-span-2">
                     <label class="block  text-md font-medium text-gray-700 my-2">
@@ -86,8 +86,8 @@
             </div>
 
             <div class="mt-2 bg-white shadow rounded px-4">
-                <div class="lg:flex lg:justify-between items-center ">
-                    <h4 class="block text-lg font-semibold text-gray-700 mt-2 p-4">Domicilio</h4>
+                <div class="lg:flex lg:justify-between items-center mt-2">
+                    <h4 class="block text-lg font-semibold text-gray-700 my-2 text-center">Domicilio</h4>
                     @if ($cliente->domicilios->count() == 0)
                         <a href="{{ route('domicilios.create', parameters: ['modeloTipo' => 'clientes', 'id' => $cliente->id]) }}"
                             class="block bg-blue-600 text-white px-3 py-2 rounded text-center">Agregar domicilio
@@ -108,6 +108,8 @@
                             Ciudad: <span>{{ $dom->ciudad }}</span></label>
                         <label class="block  text-md font-medium text-gray-700 my-2">
                             Colonia: <span>{{ $dom->colonia }}</span></label>
+                        <label class="block  text-md font-medium text-gray-700 my-2">
+                            Codigo postal: <span>{{ $dom->cp }}</span></label>
                         <label class="block  text-md font-medium text-gray-700 my-2">
                             Calle: <span>{{ $dom->calle }}</span></label>
                         <label class="block  text-md font-medium text-gray-700 my-2">

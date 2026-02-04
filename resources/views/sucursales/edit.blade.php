@@ -10,7 +10,7 @@
             class="grid md:grid-cols-4 md:gap-4">
             @csrf
             @method('PUT')
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Codigo: <span class="text-red-500">*</span>
                 </label>
@@ -22,7 +22,7 @@
 
             </div>
             {{-- Nombre --}}
-            <div class="md:col-span-2">
+            <div class="mb-2 md:col-span-2">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Nombre de la sucursal: <span class="text-red-500">*</span>
                 </label>
@@ -32,7 +32,7 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1 ">
                     Seleccionar almacen: <span class="text-red-500">*</span>
                 </label>
@@ -48,7 +48,7 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Serie cotización: <span class="text-red-500">*</span>
                 </label>
@@ -59,7 +59,7 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Serie remisión: <span class="text-red-500">*</span>
                 </label>
@@ -70,7 +70,7 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Serie facturación: <span class="text-red-500">*</span>
                 </label>
@@ -81,7 +81,7 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Serie devolución: <span class="text-red-500">*</span>
                 </label>
@@ -92,7 +92,7 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Folio cotización: <span class="text-red-500">*</span>
                 </label>
@@ -103,7 +103,7 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Folio remisión: <span class="text-red-500">*</span>
                 </label>
@@ -114,7 +114,7 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Folio facturación: <span class="text-red-500">*</span>
                 </label>
@@ -125,7 +125,7 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="">
+            <div class="mb-2 ">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Folio devolución: <span class="text-red-500">*</span>
                 </label>
@@ -137,7 +137,7 @@
                 @enderror
             </div>
             {{-- Botones --}}
-            <div class="col-span-full flex justify-end gap-3 mt-4">
+            <div class="mb-2 col-span-full flex justify-end gap-3 mt-4">
                 <a href="{{ route('sucursales.index') }}"
                     class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
                     Cancelar

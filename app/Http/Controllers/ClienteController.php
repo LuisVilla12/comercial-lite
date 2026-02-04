@@ -62,7 +62,7 @@ public function indexProveedores(Request $request)
     public function store(Request $request)
     {
         $request->validate([
-            'codigo' => 'required|string|max:50',
+            'codigo' => 'required|string|max:50|unique:clientes,codigo,except,id',
             'nombre' => 'required|string|max:255',
             'rfc' => 'required|string|max:13',
             'email1' => 'required|email',

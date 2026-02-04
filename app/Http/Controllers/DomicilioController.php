@@ -44,7 +44,7 @@ class DomicilioController extends Controller
     }
     public function store(Request $request, string $modeloTipo, int $id)
     {
-        $data = $request->validate([
+        $request->validate([
             'estado' => 'required|string|max:100',
             'municipio' => 'required|string|max:100',
             'colonia' => 'required|string|max:100',
@@ -59,7 +59,16 @@ class DomicilioController extends Controller
             'empresas' => Empresa::findOrFail($id),
         };
 
-        $model->domicilios()->create($data);
+        $model->domicilios()->create(
+            ['pais' => 'MEXICO',
+            'estado' => $request->estado,
+            'municipio' => $request->municipio,
+            'ciudad' => $request->ciudad ?? '',
+            'colonia' => $request->colonia,
+            'calle' => $request->calle,
+            'numero_exterior' => $request->numero_exterior,
+            'cp' => $request->cp]
+        );
         if ($modeloTipo === 'clientes') {
             return redirect()
                 ->route('clientes.show', [$model, $model->tipo])

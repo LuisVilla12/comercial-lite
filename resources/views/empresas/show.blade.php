@@ -64,7 +64,7 @@
                 {{-- Email 1 --}}
                 <div class="my-2">
                     <label class="block text-md font-medium text-gray-700 mb-1">
-                        Correo electrónico principal <span class="text-red-500">*</span>
+                        Correo electrónico  <span class="text-red-500">*</span>
                     </label>
                     <input type="email" name="email" placeholder="correo@ejemplo.com" value="{{ $empresa->email }}"
                         readonly

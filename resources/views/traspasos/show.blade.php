@@ -20,17 +20,20 @@
                     </button>
                 </form>
             @else
-                <p class="px-6 py-2 bg-indigo-600 text-white rounded"> TRASPASO REALIZADO</p>
+            <div class="flex justify-end">
+                <a class="block md:inline-block px-6 py-2 bg-indigo-600 text-white rounded"> TRASPASO REALIZADO</a>
+
+            </div>
             @endif
         </div>
 
     </x-slot>
     @if (session('open_pdf'))
-        <script>
+        {{-- <script>
             if (confirm('¿Deseas imprimir el traspaso?')) {
                 // window.open("{{ route('documentos.pdf', $documento) }}", "_blank");
             }
-        </script>
+        </script> --}}
     @endif
     @if (session('success'))
         <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
@@ -108,15 +111,13 @@
         <div class="md:col-span-2 flex justify-between gap-3 mt-4">
             <a href=" {{ route('traspasos.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
                 Volver
+            </a>
                 @if ($traspaso->estatus == 1)
                     <a href="{{ route('traspasos.edit', $traspaso) }}"
                         class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                         Actualizar
                     </a>
                 @endif
-                <a href="" target="_blank" class="px-4 py-2 bg-red-600 text-white rounded">
-                    Imprimir
-                </a>
         </div>
     </div>
 </x-app-layout>
