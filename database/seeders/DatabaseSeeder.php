@@ -26,11 +26,11 @@ class DatabaseSeeder extends Seeder
             CodigosPostalesSeeder::class,
             DocumentosModeloSeeder::class,
             UserSeeder::class,
-            // ClasificacionSeeder::class,
-            // ProductosSeeder::class,
-            // ClientesSeeder::class,
-            // ExistenciasSeeder::class,
-            // DomiciliosSeeder::class,
+            ClasificacionSeeder::class,
+            ProductosSeeder::class,
+            ClientesSeeder::class,
+            ExistenciasSeeder::class,
+            DomiciliosSeeder::class,
         ]);
     }
 }

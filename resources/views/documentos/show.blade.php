@@ -78,7 +78,7 @@
                 </form>
             @endif
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
-            <div></div>
+                <div></div>
                 <form method="POST"
                     action="{{ route('documentos.timbrar', ['sucursal' => $sucursal, 'documento' => $documento]) }}">
                     @csrf
@@ -91,26 +91,30 @@
         </div>
     </x-slot>
     <div class="flex justify-end mt-4 items-center gap-2 ">
-        <button type="button" onclick="openCambioModal()"
-            class="flex items-center px-4 py-2 ml-6 bg-green-500 text-white rounded" title="Enviar por correo">
-            <x-heroicon-o-currency-dollar class="w-5 h-5 mr-2" /> Cambio
-        </button>
+        @if ($documento->estatus == 1 and $documento->documento_modelo_id >1)
+            <button type="button" onclick="openCambioModal()"
+                class="flex items-center px-4 py-2 ml-6 bg-green-500 text-white rounded" title="Enviar por correo">
+                <x-heroicon-o-currency-dollar class="w-5 h-5 mr-2" /> Cambio
+            </button>
+        @endif
         <div>
-                        @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
-<form method="POST"
-                action="{{ route('timbrarSAT', ['documento' => $documento]) }}">
-                @csrf
-                <button type="submit" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase w-full">
-                    Timbrar
-                </button>
-            </form>
-                        @endif
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
+                <form method="POST" action="{{ route('timbrarSAT', ['documento' => $documento]) }}">
+                    @csrf
+                    <button type="submit"
+                        class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase w-full">
+                        Timbrar
+                    </button>
+                </form>
+            @endif
 
         </div>
+        @if ($documento->estatus == 1 and $documento->documento_modelo_id >1)
         <a href="{{ route('documentos.pdfTicket', ['documento' => $documento, 'mm' => 58]) }}" target="_blank"
             class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
             <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir ticket
         </a>
+        @endif
         {{-- <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
             class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
             <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
@@ -240,18 +244,18 @@
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Codigo Postal: </label>
-                    <input type="text" value="{{ optional($documento->domicilios->first())->cp }}"
-                        disabled class="w-full border rounded p-2 bg-gray-100">
+                    <input type="text" value="{{ optional($documento->domicilios->first())->cp }}" disabled
+                        class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Ciudad: </label>
-                    <input type="text" value="{{ optional($documento->domicilios->first())->ciudad }}"
-                        disabled class="w-full border rounded p-2 bg-gray-100">
+                    <input type="text" value="{{ optional($documento->domicilios->first())->ciudad }}" disabled
+                        class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Calle: </label>
-                    <input type="text" value="{{ optional($documento->domicilios->first())->calle }}"
-                        disabled class="w-full border rounded p-2 bg-gray-100">
+                    <input type="text" value="{{ optional($documento->domicilios->first())->calle }}" disabled
+                        class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 {{-- <div class="">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Numero interior: </label>
@@ -261,14 +265,13 @@
                 </div> --}}
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Numero exterior: </label>
-                    <input type="text"
-                        value="{{ optional($documento->domicilios->first())->numero_exterior }}" disabled
-                        class="w-full border rounded p-2 bg-gray-100">
+                    <input type="text" value="{{ optional($documento->domicilios->first())->numero_exterior }}"
+                        disabled class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <div class="mb-2">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Colonia: </label>
-                    <input type="text" value="{{ optional($documento->domicilios->first())->colonia }}"
-                        disabled class="w-full border rounded p-2 bg-gray-100">
+                    <input type="text" value="{{ optional($documento->domicilios->first())->colonia }}" disabled
+                        class="w-full border rounded p-2 bg-gray-100">
                 </div>
                 <label
                     class="col-span-full block text-xl text-center md:text-left font-medium text-gray-700 dark:text-white mt-4">

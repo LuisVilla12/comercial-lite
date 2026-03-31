@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             // $table->integer('id_producto')->nullable();
-            $table->string('codigo_producto')->unique();
+            // $table->string('codigo_producto')->unique();
+            $table->string('codigo_producto');
             $table->string('nombre_producto');
             $table->string('tipo_producto')->nullable();
             $table->decimal('peso_producto', 15, 4)->nullable()->default(0);
@@ -32,9 +33,11 @@ return new class extends Migration
             $table->decimal('precio4', 15, 4)->nullable()->default(0);
             $table->decimal('precio5', 15, 4)->nullable()->default(0);
             $table->decimal('precio_calculado', 15, 4)->nullable()->default(0);
+            $table->decimal('volumen', 15, 4)->nullable()->default(0);
             $table->integer('exento_impuesto')->nullable()->default(0);
             $table->string('codigo_alterno')->nullable();
             $table->string('clave_sat')->nullable();
+            $table->string('marca')->nullable();
         });
     }
 

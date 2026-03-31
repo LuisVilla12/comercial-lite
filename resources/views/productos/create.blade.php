@@ -63,6 +63,17 @@
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+                <div class="mb-1">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Marca: <span class="text-red-500"></span>
+                    </label>
+                    <input type="text" name="marca" placeholder="Marca del producto"
+                        value="{{ old(key: 'marca') }}"
+                        class="p-2 w-full  rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    @error('marca')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
                 {{-- Peso producto --}}
                 <div class="mb-1">
@@ -73,7 +84,14 @@
                         placeholder="Peso del producto KG" step="0.01"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 </div>
-
+                <div class="mb-1">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Volumen (CM3):
+                    </label>
+                    <input type="number" name="volumen" value="{{ old(key: 'volumen') }}"
+                        placeholder="Volumen del producto" step="0.01"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                </div>
                 {{-- Unidad --}}
                 <div class="mb-1">
                     <label class="block text-md font-medium text-gray-700 mb-1">
@@ -84,7 +102,10 @@
                         <option value="" disabled selected>Seleccione unidad</option>
                         <option value="1" @selected(old('unidad_medida') == '1')>PIEZA (PZ)</option>
                         <option value="2" @selected(old('unidad_medida') == '2')>METRO (MT)</option>
+                        <option value="3" @selected(old('unidad_medida') == '3')>SET (ST)</option>
                         <option value="4" @selected(old('unidad_medida') == '4')>KILO (KG)</option>
+                        <option value="5" @selected(old('unidad_medida') == '5')>PAR (PR)</option>
+                        <option value="6" @selected(old('unidad_medida') == '6')>JUEGO (J)</option>
                     </select>
                     @error('unidad_medida')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>

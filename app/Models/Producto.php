@@ -24,6 +24,8 @@ class Producto extends Model
         'precio3',
         'precio4',
         'precio5',
+        'marca',
+        'volumen',
         'precio_calculado',
         'exento_impuesto',
         'codigo_alterno',
