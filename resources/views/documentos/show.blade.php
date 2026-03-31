@@ -96,13 +96,16 @@
             <x-heroicon-o-currency-dollar class="w-5 h-5 mr-2" /> Cambio
         </button>
         <div>
-            <form method="POST"
+                        @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
+<form method="POST"
                 action="{{ route('timbrarSAT', ['documento' => $documento]) }}">
                 @csrf
                 <button type="submit" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase w-full">
                     Timbrar
                 </button>
             </form>
+                        @endif
+
         </div>
         <a href="{{ route('documentos.pdfTicket', ['documento' => $documento, 'mm' => 58]) }}" target="_blank"
             class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
