@@ -144,7 +144,7 @@
             </div>
         @else
             <div class="bg-white py-4 mt-3">
-                <p class="text-sm text-gray-600 ml-6 text-center"> No hay remisiones</p>
+                <p class="text-sm text-gray-600 ml-6 text-center"> No hay devoluciones</p>
             </div>
         @endif
         @if ($devoluciones->count() > 0)

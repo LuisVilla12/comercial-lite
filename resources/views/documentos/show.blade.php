@@ -33,7 +33,7 @@
         </a> --}}
         <div class="md:flex md:justify-between md:gap-3 mt-4 md:mt-2">
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
-                <form method="POST"
+                {{-- <form method="POST"
                     action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}"
                     class="w-f">
                     @csrf
@@ -47,7 +47,7 @@
                     <button class="block px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
                         CONVERTIR REMISIÓN
                     </button>
-                </form>
+                </form> --}}
             @elseif($documento->estatus == 2 and $documento->documento_modelo_id == 1)
                 <p class="px-6 py-2 bg-indigo-600 text-white rounded">TRANSFORMADA</p>
             @endif
@@ -77,21 +77,21 @@
                     </button>
                 </form>
             @endif
-            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
+            {{-- @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
                 <div></div>
                 <form method="POST"
                     action="{{ route('documentos.timbrar', ['sucursal' => $sucursal, 'documento' => $documento]) }}">
                     @csrf
                     <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase w-full">
-                        Timbrar
+                        Timbrar arriba
                     </button>
                 </form>
-            @endif
+            @endif --}}
 
         </div>
     </x-slot>
     <div class="flex justify-end mt-4 items-center gap-2 ">
-        @if ($documento->estatus == 1 and $documento->documento_modelo_id >1)
+        @if ($documento->estatus == 1 and $documento->documento_modelo_id > 1)
             <button type="button" onclick="openCambioModal()"
                 class="flex items-center px-4 py-2 ml-6 bg-green-500 text-white rounded" title="Enviar por correo">
                 <x-heroicon-o-currency-dollar class="w-5 h-5 mr-2" /> Cambio
@@ -109,16 +109,34 @@
             @endif
 
         </div>
-        @if ($documento->estatus == 1 and $documento->documento_modelo_id >1)
-        <a href="{{ route('documentos.pdfTicket', ['documento' => $documento, 'mm' => 58]) }}" target="_blank"
-            class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
-            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir ticket
-        </a>
+        @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
+
+            <button onclick="seleccionarConversion()"
+                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded flex items-center ml-6">
+                <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Convertir
+
+            </button>
+            <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
+                    class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
+                    <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir carta
+                </a>
+            <form id="formFactura" method="POST"
+                action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
+                @csrf
+            </form>
+
+            <form id="formRemision" method="POST"
+                action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 3]) }}">
+                @csrf
+            </form>
         @endif
-        {{-- <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
-            class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
+        @if ($documento->documento_modelo_id > 1)
+        <button onclick="seleccionarImpresora()"
+            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded flex items-center ml-6">
             <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
-        </a> --}}
+        </button>
+        @endif
+
         <button type="button" onclick="openEmailModal()"
             class="flex items-center px-4 py-2 ml-6 bg-yellow-500 text-white rounded" title="Enviar por correo">
             <x-heroicon-o-envelope class="w-5 h-5 mr-2" /> Enviar
@@ -427,17 +445,47 @@
                     class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100">
                     Cancelar
                 </button>
-
-                {{-- <button type="button" onclick="calcularCambio()"
-                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                    Calcular
-                </button> --}}
             </div>
         </div>
 
     </div>
 </x-app-layout>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    function seleccionarImpresora() {
+        Swal.fire({
+            title: 'Selecciona una opción',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Ticket',
+            denyButtonText: 'Carta',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.open("{{ route('documentos.pdfTicket', ['documento' => $documento, 'mm' => 58]) }}", '_blank');
+            } else if (result.isDenied) {
+                window.open("{{ route('documentos.pdf', $documento) }}", '_blank');
+            }
+        });
+    }
+
+    function seleccionarConversion() {
+        Swal.fire({
+            title: 'Selecciona una opción',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Factura',
+            denyButtonText: 'Remisión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('formFactura').submit();
+            } else if (result.isDenied) {
+                document.getElementById('formRemision').submit();
+            }
+        });
+    }
+
     function openEmailModal() {
         document.getElementById('emailModal').classList.remove('hidden');
         document.getElementById('emailModal').classList.add('flex');
