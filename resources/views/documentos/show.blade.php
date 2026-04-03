@@ -116,7 +116,7 @@
                 <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Convertir
 
             </button>
-            <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
+            <a href="{{ route('documentos.pdf', [$sucursal, $documento]) }}" target="_blank"
                     class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
                     <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir carta
                 </a>
@@ -464,7 +464,7 @@
             if (result.isConfirmed) {
                 window.open("{{ route('documentos.pdfTicket', ['sucursal' => $sucursal, 'documento' => $documento, 'mm' => 58]) }}", '_blank');
             } else if (result.isDenied) {
-                window.open("{{ route('documentos.pdf', $documento) }}", '_blank');
+                window.open("{{ route('documentos.pdf', ['sucursal' => $sucursal, 'documento' => $documento]) }}", '_blank');
             }
         });
     }

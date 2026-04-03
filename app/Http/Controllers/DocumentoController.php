@@ -367,14 +367,14 @@ class DocumentoController extends Controller
             } . ' ha sido actualizada'
         );
     }
-    public function pdf(Documento $documento)
+    public function pdf(Sucursal $sucursal, Documento $documento)
     {
         $documento->load([
             'cliente',
             'detalles.producto'
         ]);
 
-        $pdf = Pdf::loadView('documentos.pdf', compact('documento'))
+        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal'))
             ->setPaper('letter');
 
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");

@@ -156,14 +156,15 @@ Route::middleware('auth')->group(function () {
         // Devoluciones
         Route::get('/devoluciones', action: [DevolucionController::class, 'index'])->name('devoluciones.index');
         Route::get('/devoluciones/{documento}/show', action: [DevolucionController::class, 'show'])->name('devoluciones.show');
+        // PDFs
         Route::get('/documentos/{documento}/ticket/{mm}', [DocumentoController::class, 'pdfTicket'])->name('documentos.pdfTicket');
+        Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
+
     });
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 
-    //PDF
-    Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
-    // Route::get('/documentos/{documento}/ticket/{mm}', [DocumentoController::class, 'pdfTicket'])->name('documentos.pdfTicket');
+
     //Envio por correo
     Route::post('/documentos/{documento}/enviar-correo', [DocumentoController::class, 'enviarCorreo'])->name('documentos.enviarCorreo');
     // Route::get('/documentos/{documento}/enviar-correo', [DocumentoController::class, 'enviarCorreo'])->name('documentos.enviarCorreo');
