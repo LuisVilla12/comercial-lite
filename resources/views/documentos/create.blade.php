@@ -472,7 +472,7 @@
                         },
                         ['sucursal' => $sucursal],
                     ) }}"
-                        class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
+                        class="px-4 py-2 rounded-md border dark:bg-red border-red-300 bg-red-500 text-white hover:bg-red-500">
                         Cancelar
                     </a>
                     <button type="submit"

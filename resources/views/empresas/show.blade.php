@@ -41,9 +41,9 @@
                     </label>
                     <select name="regimen_fiscal" id="regimen_fiscal"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-not-allowed">
-                        <option value="" disabled selected>Seleccione una opcion</option>
+                        <option value=""  selected>Seleccione una opcion</option>
                         @foreach ($regimenes as $regimen)
-                            <option value="{{ $regimen->codigo }}">{{ $regimen->codigo . ' ' . $regimen->nombre }}
+                            <option  @selected ($empresa->regimen_fiscal == $regimen->codigo) value="{{ $regimen->codigo }}">{{ $regimen->codigo . ' ' . $regimen->nombre }}
                             </option>
                         @endforeach
                     </select>
@@ -92,7 +92,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Calle: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="calle" placeholder="Calle de la sucursal"
                             value="{{ $dom->calle }}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -100,7 +100,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Numero exterior: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="numero_exterior" placeholder="Numero exterior de la sucursal"
                             value="{{ $dom->numero_exterior}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -108,7 +108,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Numero interior: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="numero_interior" placeholder="Numero interior de la sucursal"
                             value="{{ $dom->numero_interior ?? 'N/A'}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -116,7 +116,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Colonia: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="colonia" placeholder="Colonia de la sucursal"
                             value="{{ $dom->colonia}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -124,7 +124,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Ciudad: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="ciudad" placeholder="Ciudad de la sucursal"
                             value="{{ $dom->ciudad}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -132,7 +132,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Municipio: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="municipio" placeholder="Municipio de la sucursal"
                             value="{{ $dom->municipio}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -140,7 +140,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Estado: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="estado" placeholder="Estado de la sucursal"
                             value="{{$dom->estado}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -148,7 +148,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Codigo Postal: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="cp" placeholder="Codigo Postal de la sucursal"
                             value="{{$dom->cp}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>

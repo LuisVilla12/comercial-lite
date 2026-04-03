@@ -282,7 +282,7 @@
 
         <div class="md:col-span-2 flex justify-between gap-3 mt-4">
             <a href="{{ route('traspasos.index') }}"
-                class="px-4 py-2 rounded-md border dark:bg-white border-gray-300 text-gray-700 hover:bg-gray-400">
+                class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-red-600 hover:bg-red-600">
                 Cancelar
             </a>
 

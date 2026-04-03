@@ -141,20 +141,32 @@ class DocumentoController extends Controller
         DB::beginTransaction();
         // EFECTUAR LA COMPRA
         try {
-            if ($request->tipo == 1) {
-                $serie = $sucursal->serie_cotizacion;
-            } elseif ($request->tipo == 2) {
-                $serie = $sucursal->serie_factura;
-            } elseif ($request->tipo == 3) {
-                $serie = $sucursal->serie_remision;
-            } else {
-                $serie = 'XX';
-            }
-            $ultimoFolio = Documento::where('serie', $serie)
-                ->lockForUpdate()
-                ->max('folio');
-            $siguienteFolio = $ultimoFolio ? $ultimoFolio + 1 : 1;
+            $sucursal = Sucursal::lockForUpdate()->find($sucursal->id);
 
+            switch ($request->tipo) {
+                case 1:
+                    $serie = $sucursal->serie_cotizacion;
+                    $siguienteFolio = $sucursal->folio_cotizacion + 1;
+                    $sucursal->folio_cotizacion = $siguienteFolio;
+                    break;
+
+                case 2:
+                    $serie = $sucursal->serie_factura;
+                    $siguienteFolio = $sucursal->folio_factura + 1;
+                    $sucursal->folio_factura = $siguienteFolio;
+                    break;
+
+                case 3:
+                    $serie = $sucursal->serie_remision;
+                    $siguienteFolio = $sucursal->folio_remision + 1;
+                    $sucursal->folio_remision = $siguienteFolio;
+                    break;
+
+                default:
+                    $serie = 'XX';
+                    $siguienteFolio = 1;
+                    break;
+            }
             $documento = Documento::create([
                 'documento_modelo_id' => $request->tipo,
                 'serie' => $serie,
@@ -173,19 +185,22 @@ class DocumentoController extends Controller
                 'observaciones' => $request->observaciones,
                 'estado' => 'PENDIENTE',
             ]);
-            // ASIGNAR DOMICILIO AL DOCUMENTO de FACTURA
-            if($documento->documento_modelo_id == 2){
- $documento->domicilios()->create([
-            'pais' => 'MEXICO',
-            'estado' => $request->estado,
-            'municipio' => $request->municipio.'',
-            'ciudad' => $request->ciudad ?? '',
-            'colonia' => $request->colonia,
-            'calle' => $request->calle,
-            'numero_exterior' => $request->numero_exterior,
-            'cp' => $request->codigo_postal
+            //  Guardas el nuevo folio en sucursal
+            $sucursal->save();
+
+            // ASIGNAR DOMICILIO AL DOCUMENTO
+            // if($documento->documento_modelo_id == 2){
+            $documento->domicilios()->create([
+                'pais' => 'MEXICO',
+                'estado' => $request->estado,
+                'municipio' => $request->municipio . '',
+                'ciudad' => $request->ciudad ?? '',
+                'colonia' => $request->colonia,
+                'calle' => $request->calle,
+                'numero_exterior' => $request->numero_exterior,
+                'cp' => $request->codigo_postal
             ]);
-            }
+            // }
 
 
             DB::commit();
@@ -364,7 +379,8 @@ class DocumentoController extends Controller
 
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");
     }
-    public function pdfTicket(Documento $documento, $mm = 80)
+
+    public function pdfTicket(Sucursal $sucursal,Documento $documento, $mm = 80)
     {
         $documento->load(['cliente', 'detalles.producto']);
         // dd($documento);
@@ -372,7 +388,7 @@ class DocumentoController extends Controller
 
         $customPaper = [0, 0, $width, 256];
 
-        $pdf = Pdf::loadView('documentos.pdf_ticket', compact('documento'))
+        $pdf = Pdf::loadView('documentos.pdf_ticket', compact('documento', 'sucursal'))
             ->setPaper($customPaper);
 
         return $pdf->stream("Ticket{$mm}_{$documento->serie}-{$documento->folio}.pdf");
@@ -442,7 +458,17 @@ class DocumentoController extends Controller
                 'uso_cfdi'            => $documento->uso_cfdi,
                 'observaciones'       => $documento->observaciones,
             ]);
-
+            // ASIGNAR DOMICILIO AL DOCUMENTO
+            $documento_convertido->domicilios()->create([
+                'pais' => 'MEXICO',
+                'estado' => $documento->domicilios->first()->estado ?? '',
+                'municipio' => $documento->domicilios->first()->municipio ?? '',
+                'ciudad' => $documento->domicilios->first()->ciudad ?? '',
+                'colonia' => $documento->domicilios->first()->colonia ?? '',
+                'calle' => $documento->domicilios->first()->calle ?? '',
+                'numero_exterior' => $documento->domicilios->first()->numero_exterior ?? '',
+                'cp' => $documento->domicilios->first()->cp ?? '',
+            ]);
             // Copiar detalles
             foreach ($documento->detalles as $detalle) {
                 $documento_convertido->detalles()->create([

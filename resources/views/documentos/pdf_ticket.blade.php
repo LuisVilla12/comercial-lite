@@ -12,7 +12,12 @@
     .center {
         text-align: center;
     }
-
+    .left {
+        text-align: left;
+    }
+    .right {
+        text-align: right;
+    }
     table {
         width: 100%;
         border-collapse: collapse;
@@ -22,24 +27,49 @@
         padding: 2px 0;
     }
 </style>
+<div style="margin-top: 10px">
+    <div class="center">
+<img src="{{ public_path('images/logo.jpeg') }}" style="width: 120px; height: 40px;" alt="Logo">        <br>
+        <strong>{{ $sucursal->empresa->nombre }}</strong><br>
+         <strong>{{ $sucursal->empresa->rfc }}</strong><br>
+        {{ $sucursal->empresa->domicilios->first()->calle ?? 'Dirección no disponible' }} #{{ $sucursal->empresa->domicilios->first()->numero_exterior ?? 'S/N' }},Col. {{ $sucursal->empresa->domicilios->first()->colonia ?? 'Colonia no disponible' }},CP:{{ $sucursal->empresa->domicilios->first()->cp ?? 'CP no disponible' }}<br>
+        <strong>{{ $sucursal->empresa->regimen_fiscal }}</strong><br>
+            ------------------------------ <br>
 
+</div>
 <div class="center">
-    <strong>MI EMPRESA</strong><br>
-    RFC: XXX<br>
-    -------------------------
+    <strong>Sucursal: </strong> {{ $sucursal->domicilios->first()->calle ?? 'Dirección no disponible' }} #{{ $sucursal->domicilios->first()->numero_exterior ?? 'S/N' }},Col. {{ $sucursal->domicilios->first()->colonia ?? 'Colonia no disponible' }},CP:{{ $sucursal->domicilios->first()->cp ?? 'CP no disponible' }}<br>
+    ------------------------------ <br>
+</div>
+<div class="" style="margin-left: 10px;">
+    <strong>N° de ticket: </strong> {{ $documento->folio }}<br>
+    <strong>Cliente: </strong> {{ $documento->cliente->nombre ?? 'Nombre no disponible' }} <br>
+    <strong>Fecha: </strong> {{ $documento->fecha }}<br>
+    <strong>Metodo de pago: </strong> {{ $documento->metodo_pago ?? 'Método no disponible' }}<br>
+
+    ------------------------------ <br>
 </div>
 
+    <table>
+        <tr>
+            <td><strong>Producto</strong></td>
+            <td align="right"><strong>Cant.</strong></td>
+            <td align="right"><strong>Importe</strong></td>
+        </tr>
+    </table>
 <table>
 @foreach($documento->detalles as $item)
     <tr>
-        <td>{{ $item->producto->nombre_producto }}</td>
+        <td>{{ $item->producto->codigo_producto }} {{ $item->producto->nombre_producto }}</td>
         <td align="right">{{ $item->cantidad }}</td>
         <td align="right">${{ number_format($item->importe, 2) }}</td>
     </tr>
 @endforeach
 </table>
+    ------------------------------<br>
 
-<div class="center">
-    -------------------------<br>
-    TOTAL: ${{ number_format($documento->total, 2) }}
+<div class="right" style="margin-left: 10px; margin-top: 10px">
+    <strong>SUBTOTAL: </strong>${{ number_format($documento->subtotal, 2) }}<br>
+    <strong>IVA: </strong>${{ number_format($documento->impuestos, 2) }}<br>
+    <strong>TOTAL: </strong>${{ number_format($documento->total, 2) }}<br>
 </div>

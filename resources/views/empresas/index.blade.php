@@ -6,7 +6,7 @@
             Catálogo de empresas
         </h2>
     </x-slot>
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4  ">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-end gap-4 my-4  ">
         {{-- Botón --}}
         <a href="{{ route('empresas.create') }}"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
@@ -19,7 +19,11 @@
             class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">{{ session('success') }}
         </p>
     @endif
-
+    @if($empresas->count() === 0)
+        <p class="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-4">
+            No se han encontrado empresas. Por favor, registre una nueva empresa para comenzar a gestionar sus documentos.
+        </p>
+    @else
     <div class="bg-white shadow-md overflow-x-auto rounded-lg border border-gray-200  w-4/5 mx-auto">
         <div class="hidden md:block">
             <table class="w-full border bg-white shadow rounded">
@@ -106,5 +110,6 @@
             @endforeach
         </div>
     </div>
+    @endif
 
 </x-app-layout>

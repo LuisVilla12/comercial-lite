@@ -27,6 +27,7 @@ class Sucursal extends Model
 
         // RELACIONES
         'almacen_id',
+        'empresa_id',
     ];
 
     /* =========================
@@ -40,7 +41,10 @@ class Sucursal extends Model
     {
         return $this->belongsTo(Almacen::class);
     }
-
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class);
+    }
     public function documentos()
     {
         return $this->hasMany(Documento::class);

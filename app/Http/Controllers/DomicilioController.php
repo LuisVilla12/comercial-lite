@@ -67,6 +67,7 @@ class DomicilioController extends Controller
             'colonia' => $request->colonia,
             'calle' => $request->calle,
             'numero_exterior' => $request->numero_exterior,
+            'numero_interior' => $request->numero_interior ?? '',
             'cp' => $request->cp]
         );
         if ($modeloTipo === 'clientes') {
@@ -111,6 +112,7 @@ class DomicilioController extends Controller
             'colonia' => 'required|string|max:100',
             'calle' => 'required|string|max:255',
             'numero_exterior' => 'nullable|string|max:50',
+            'numero_interior' => 'nullable|string|max:50',
             'cp' => 'required|string|max:10',
         ]);
         $domicilio->update([
@@ -121,6 +123,7 @@ class DomicilioController extends Controller
             'colonia' => $request->colonia,
             'calle' => $request->calle,
             'numero_exterior' => $request->numero_exterior,
+            'numero_interior' => $request->numero_interior ?? '',
             'cp' => $request->cp
         ]);
 

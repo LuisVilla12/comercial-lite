@@ -68,7 +68,7 @@
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             <option value="">Seleccione colonia</option>
                 @if (old('colonia'))
-                    <option value="{{ old('colonia') }}" selected>{{ old('colonia') }}</option>
+                    <option value="{{ old('colonia') }}" @selected ($domicilio->colonia == $colonia->id)>{{ old('colonia') }}</option>
                 @endif
 
             </select>
@@ -91,7 +91,7 @@
 
         <div class="">
             <label for="numero_interior" class="block text-md font-medium text-gray-700 mb-1">
-                Numero interior <span class="text-red-500">*</span>
+                Numero interior
             </label>
             <input type="number" id="numero_interior" name="numero_interior"
                    placeholder="Numero interior"
@@ -104,7 +104,7 @@
 
          <div class="">
             <label for="numero_exterior" class="block text-md font-medium text-gray-700 mb-1">
-                Numero exterior
+                Numero exterior <span class="text-red-500">*</span>
             </label>
             <input type="number" id="numero_exterior" name="numero_exterior"
                    placeholder="Numero exterior "

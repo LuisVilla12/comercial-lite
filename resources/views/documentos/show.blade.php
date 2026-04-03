@@ -22,7 +22,7 @@
                     2 => 'Factura',
                     3 => 'Remisión',
                 } }}
-                {{ $documento->serie . ' #' . $documento->id }} </h2>
+                {{ $documento->serie . ' #' . $documento->folio }} </h2>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
                 Fecha: {{ $documento->fecha }}
             </h2>
@@ -442,7 +442,7 @@
             <!-- Botones -->
             <div class="flex justify-end gap-2 mt-6">
                 <button type="button" onclick="closeCambioModal()"
-                    class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100">
+                    class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-red-600 hover:bg-red-600">
                     Cancelar
                 </button>
             </div>
@@ -462,7 +462,7 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.open("{{ route('documentos.pdfTicket', ['documento' => $documento, 'mm' => 58]) }}", '_blank');
+                window.open("{{ route('documentos.pdfTicket', ['sucursal' => $sucursal, 'documento' => $documento, 'mm' => 58]) }}", '_blank');
             } else if (result.isDenied) {
                 window.open("{{ route('documentos.pdf', $documento) }}", '_blank');
             }

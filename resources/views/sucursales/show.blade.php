@@ -105,10 +105,10 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Folio remisión: <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="folio_cotizacion" placeholder="Folio de cotización" readonly
-                    value="{{ $sucursal->folio_cotizacion }}"
+                <input type="text" name="folio_remision" placeholder="Folio de remisión" readonly
+                    value="{{ $sucursal->folio_remision }}"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                @error('folio_cotizacion')
+                @error('folio_remision')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -153,15 +153,15 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Numero exterior: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="nombre" placeholder="Numero exterior de la sucursal"
                             value="{{ $dom->numero_exterior}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="">
                         <label class="block text-md font-medium text-gray-700 mb-1">
-                            Numero interior: <span class="text-red-500">*</span>
+                            Numero interior:
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="nombre" placeholder="Numero interior de la sucursal"
                             value="{{ $dom->numero_interior ?? 'N/A'}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -169,7 +169,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Colonia: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="nombre" placeholder="Colonia de la sucursal"
                             value="{{ $dom->colonia}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -177,7 +177,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Ciudad: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="nombre" placeholder="Ciudad de la sucursal"
                             value="{{ $dom->ciudad}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -185,7 +185,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Municipio: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="nombre" placeholder="Municipio de la sucursal"
                             value="{{ $dom->municipio}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -193,7 +193,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Estado: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="nombre" placeholder="Estado de la sucursal"
                             value="{{$dom->estado}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
@@ -201,7 +201,7 @@
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Codigo Postal: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
+                        <input type="text" name="nombre" placeholder="Codigo Postal de la sucursal"
                             value="{{$dom->cp}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>

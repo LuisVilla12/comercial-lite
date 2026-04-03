@@ -30,7 +30,7 @@ return new class extends Migration
 
             // Relación con almacén (opcional pero recomendado)
             $table->foreignId('almacen_id');
-
+            $table->foreignId('empresa_id');
 
             $table->timestamps();
         });

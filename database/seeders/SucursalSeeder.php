@@ -13,12 +13,13 @@ class SucursalSeeder extends Seeder
         Sucursal::insert([
     [
         'codigo' => ' 001',
-        'nombre' => ' SUCURSAL PRUEBA',
+        'nombre' => ' PRUEBA',
         'serie_cotizacion' => 'ORI-C',
         'serie_remision'   => 'ORI-R',
         'serie_factura'    => 'ORI-F',
         'serie_devolucion'    => 'ORI-DEV',
         'almacen_id'    => 1,
+        'empresa_id'    => 1,
     ],
     // [
     //     'codigo' => ' 002',

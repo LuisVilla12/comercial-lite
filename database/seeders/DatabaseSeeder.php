@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
     {
         // Definir los Seeder a ejecutar
         $this->call([
+            EmpresaSeeder::class,
             AlmacenSeeder::class,
             SucursalSeeder::class,
             RegimenesSeeder::class,
