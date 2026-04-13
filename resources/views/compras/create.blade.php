@@ -116,9 +116,7 @@
                 @error('productos')
                     <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
                 @enderror
-                <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-                    ➕ Agregar producto
-                </button>
+
             </div> --}}
             <div class="w-full">
 
@@ -190,9 +188,12 @@
                                 </tr>
                             </template>
                         </tbody>
+
                     </table>
                 </div>
-
+<button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+                    ➕ Agregar producto
+                </button>
                 <!-- ===== CARDS (MÓVIL) ===== -->
                 <div class="md:hidden space-y-4">
                     <template x-for="(item, index) in items" :key="index">

@@ -309,7 +309,7 @@
                         <input type="hidden" name="total" :value="(total * 1.16)">
                         <input type="hidden" name="estatus" :value="1">
                         <input type="hidden" name="tipo" value="{{ $tipo }}">
-                        {{-- <input type="hidden" name="sucursal" value="{{ $sucursal->id }}"> --}}
+                        <input type="hidden" name="sucursal_id" value="{{ $sucursal->id }}">
                     </div>
                 </div>
                 <div x-show="tab === 'info'" x-cloak class="space-y-4">

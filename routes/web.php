@@ -193,7 +193,8 @@ Route::middleware('auth')->group(function () {
 
     //Reportes
     Route::get('/reportes', [ReportesController::class, 'index'])->name('reportes.index');
-    Route::get('reportes/export', [ReportesController::class, 'export'])->name('reportes.export');
+    Route::get('/reportes/conceptos/export', [ReportesController::class, 'exportConceptos'])->name('reportes.conceptos.export');
+    Route::get('/reportes/productos/export', [ReportesController::class, 'exportProductos'])->name('reportes.productos.export');
 
     //Puntos
     Route::get('/puntos', action: [PuntosController::class, 'index'])->name('puntos.index');

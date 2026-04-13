@@ -121,6 +121,7 @@ class DocumentoController extends Controller
         $request->validate([
             'proveedor_id' => 'required|exists:clientes,id',
             'almacen_id' => 'required|exists:clientes,id',
+            'sucursal_id' => 'required|exists:sucursales,id',
             'user_id' => 'required|exists:users,id',
             'fecha' => 'required|date',
             'subtotal' => 'required|numeric',
@@ -168,6 +169,7 @@ class DocumentoController extends Controller
                     break;
             }
             $documento = Documento::create([
+                'sucursal_id' => $request->sucursal_id,
                 'documento_modelo_id' => $request->tipo,
                 'serie' => $serie,
                 'folio' => $siguienteFolio,
@@ -442,6 +444,7 @@ class DocumentoController extends Controller
 
             // Crear documento
             $documento_convertido = Documento::create([
+                'sucursal_id'         => $documento->sucursal_id,
                 'documento_modelo_id' => $tipo,
                 'serie'               => $serie,
                 'folio'               => $siguienteFolio,

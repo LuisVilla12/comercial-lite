@@ -14,6 +14,7 @@ class Documento extends Model
         'fecha',
         'cliente_id',
         'almacen_id',
+        'sucursal_id',
         'user_id',
         'subtotal',
         'impuestos',
