@@ -54,6 +54,7 @@ class SucursalController extends Controller
         ]);
         $sucursal = Sucursal::create([
                 'almacen_id' => $request->almacen_id,
+                'empresa_id' => 1,
                 'codigo' => $request->codigo,
                 'nombre'   => $request->nombre,
                 'serie_cotizacion'      => $request->serie_cotizacion,

@@ -8,7 +8,7 @@
     </x-slot>
 
     <div class="max-w-4xl mx-auto mt-6 bg-white p-6 rounded-lg shadow">
-        <h2 class="mb-4 font-semibold text-lg text-gray-800 dark:text-gray-200">
+        <h2 class="mb-4 font-semibold text-lg text-gray-800 ">
             Reporte de conceptos
         </h2>
         <form method="GET" action="{{ route('reportes.conceptos.export') }}">
@@ -85,7 +85,7 @@
         <div class="max-w-4xl mx-auto mt-6 bg-white p-6 rounded-lg shadow">
 
         <form method="GET" action="{{ route('reportes.productos.export') }}">
-            <h2 class="mb-4 font-semibold text-lg text-gray-800 dark:text-gray-200">
+            <h2 class="mb-4 font-semibold text-lg text-gray-800 ">
             Reporte de articulos vendidos
         </h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

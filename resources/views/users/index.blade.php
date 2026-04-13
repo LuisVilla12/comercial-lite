@@ -71,8 +71,14 @@
                                     @if ($usuario->tipo == 1)
                                         Administrador
                                     @elseif($usuario->tipo == 2)
-                                        Operador
-                                    @else
+                                        Vendedor
+                                    @elseif ($usuario->tipo==3)
+                                        Compras
+                                        @elseif ($usuario->tipo==4)
+                                        Almacen
+                                        @elseif ($usuario->tipo==5)
+                                        Supervisor
+                                        @else
                                         No asignado
                                     @endif
 

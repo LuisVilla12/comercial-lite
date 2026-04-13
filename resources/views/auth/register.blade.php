@@ -45,7 +45,10 @@
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="" disabled selected>Seleccione una opcion</option>
                         <option value="1">Administrador</option>
-                        <option value="2">Operador</option>
+                        <option value="2">Vendedor</option>
+                        <option value="3">Compras</option>
+                        <option value="4">Almacén</option>
+                        <option value="5">Supervisor</option>
                     </select>
                     @error('tipo')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>

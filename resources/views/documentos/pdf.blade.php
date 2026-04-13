@@ -55,24 +55,19 @@
     {{-- ================= ENCABEZADO ================= --}}
     <table class="no-border">
         <tr>
-            <td class="bold">CARDENAS E HIJOS</td>
+<img src="{{ public_path('images/logo.jpeg') }}" style="width: 200px; height: 60px;" alt="Logo">
             <td class="text-right bold">
-                {{ match ($documento->documento_modelo_id) {
+                {{-- {{ match ($documento->documento_modelo_id) {
                     1 => 'Cotización ',
                     2 => 'Factura ',
                     3 => 'Remisión ',
-                } }}<strong>{{ $documento->serie }} {{ $documento->folio }}</strong>
+                } }} --}}
+                <strong>Folio: {{ $documento->folio }}</strong> <br>
+                <strong>Estatus: Vigente</strong>
             </td>
         </tr>
         <tr>
-            <td>CHI961130ME0</td>
-            {{-- <td class="text-right">
-                {{ match ($documento->documento_modelo_id) {
-                    1 => 'Cotización',
-                    2 => 'Factura',
-                    3 => 'Remisión',
-                } }} Número: <strong>{{ $documento->serie }} {{ $documento->folio }}</strong>
-            </td> --}}
+            <td><strong>{{ $sucursal->empresa->rfc }}</strong></td>
         </tr>
     </table>
 
@@ -82,15 +77,17 @@
     <table class="no-border">
         <tr>
             <td width="60%">
-                AV. ORIZABA No. 623<br>
-                Col. Obrero Campesina<br>
-                C.P. 91020<br>
-                Xalapa-Enríquez, Veracruz
+                {{ $sucursal->empresa->domicilios->first()->calle ?? 'Dirección no disponible' }} #{{ $sucursal->empresa->domicilios->first()->numero_exterior ?? 'S/N' }},<br>
+                {{ $sucursal->empresa->domicilios->first()->colonia ?? 'Colonia no disponible' }}
+                {{$sucursal->empresa->domicilios->first()->ciudad??'Ciudad no disponible'}},
+        {{$sucursal->empresa->domicilios->first()->estado??'Estado no disponible'}} <br>
+                {{ $sucursal->empresa->domicilios->first()->cp ?? 'CP no disponible' }},<br>
+                Mexico <br>                
             </td>
             <td width="40%">
-                Fecha: {{ \Carbon\Carbon::parse($documento->fecha)->format('d/M/Y') }}<br>
-                Expedida en: {{ $documento->almacen_id}}<br>
-                Vendedor:
+                Fecha: {{$documento->fecha}}<br>
+                Vigencia: <br>
+                Vendedor: {{ $documento->usuario->name ?? 'Nombre no disponible' }}
             </td>
         </tr>
     </table>
@@ -196,9 +193,9 @@
         <tr>
             <td>
                 <strong>DEPOSITOS Y TRANSFERENCIAS</strong><br>
-                BANAMEX Sucursal: 101<br>
-                Cuenta: 36137-7<br>
-                CLABE: 002840010103613775
+                Banco: <br>
+                Cuenta: <br>
+                CLABE: 
             </td>
         </tr>
     </table>
@@ -209,16 +206,19 @@
     <table class="no-border small">
         <tr>
             <td>
-                WhatsApp: 22.82.43.88.56<br>
-                e-Mail: cardenasorizaba@hotmail.com<br>
+                <strong>DATOS DE CONTACTO:</strong><br>
+                WhatsApp: <br>
+                Correo: <br>
             </td>
         </tr>
     </table>
 
     <br>
 
-    <p class="small">
-        PRECIOS SUJETOS A CAMBIO SIN PREVIO AVISO. MATERIAL SUJETO A DISPONIBILIDAD.
+    <p class="small" style="text-align: center;">
+        <strong>
+            PRECIOS SUJETOS A CAMBIO SIN PREVIO AVISO. MATERIAL SUJETO A DISPONIBILIDAD. NO ES UN COMPROBANTE FISCAL
+        </strong>
     </p>
 
 </body>

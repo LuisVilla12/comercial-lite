@@ -64,6 +64,7 @@
                         <th class="p-2">Folio</th>
                         <th class="p-2">Razón social</th>
                         <th class="p-2">Total</th>
+                        <th class="p-2">Estato</th>
                         <th class="p-2">Acciones</th>
                     </tr>
                 </thead>
@@ -84,6 +85,25 @@
                             </td>
                             <td class="p-2 text-right">
                                 {{ number_format($documento->total, 2) }}
+                            </td>
+                            <td class="p-2 text-center">
+                                @if ($documento->estatus == 1)
+                                    <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
+                                        Activo
+                                    </span>
+                                @elseif ($documento->estatus == 4)
+                                    <span class="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">
+                                        Surtida
+                                    </span>
+                                @elseif($documento->estatus == 2)
+                                    <span class="px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                                        Convertida
+                                    </span>
+                                @else
+                                    <span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">
+                                        Cancelada
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-700">
                                 <div class="flex justify-center items-center gap-4">

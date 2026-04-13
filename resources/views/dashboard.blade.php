@@ -42,6 +42,7 @@
                 🔄 Operaciones
             </h2>
         </div>
+        @if (auth()->user()->tipo == 1 and auth()->user()->tipo==3)
         <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Almacenes" desc="Control de almacenes" iconBg="bg-emerald-500">
             <x-slot:icon>
@@ -62,18 +63,7 @@
                 <x-heroicon-o-arrows-right-left class="w-6 h-6" />
             </x-slot:icon>
         </x-dashboard-card>
-
-        @if (auth()->user()->tipo == 2)
-            @foreach ($sucursales as $sucursal)
-                <x-dashboard-card href="{{ route('devoluciones.index', $sucursal) }}" bg="bg-red-50 dark:bg-red-900/20"
-                    title="Devoluciones {{ $sucursal->nombre }}" desc="Devoluciones de productos" iconBg="bg-red-500">
-                    <x-slot:icon>
-                        <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
-                    </x-slot:icon>
-                </x-dashboard-card>
-            @endforeach
         @endif
-
         <x-dashboard-card href="{{ route('existencias.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Existencias" desc="Existencias de productos" iconBg="bg-emerald-500">
             <x-slot:icon>
@@ -163,7 +153,14 @@
                     </x-slot:icon>
                 </x-dashboard-card>
             @endforeach
-
+            @foreach ($sucursales as $sucursal)
+                <x-dashboard-card href="{{ route('devoluciones.index', $sucursal) }}" bg="bg-red-50 dark:bg-red-900/20"
+                    title="Devoluciones {{ $sucursal->nombre }}" desc="Devoluciones de productos" iconBg="bg-red-500">
+                    <x-slot:icon>
+                        <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
+                    </x-slot:icon>
+                </x-dashboard-card>
+            @endforeach
         @endif
         @if (auth()->user()->tipo == 1)
             {{-- ================= Administracion ================= --}}
