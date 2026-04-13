@@ -14,6 +14,7 @@ class DocumentosDetalle extends Model
         'costo_unitario',
         'importe'
     ];
+
     public function documento()
     {
         return $this->belongsTo(Document::class);
