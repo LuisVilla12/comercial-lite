@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DocumentosDetallesExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\DocumentosExport;
@@ -69,37 +70,10 @@ class ReportesController extends Controller
             ]);
 
         $sucursal = Sucursal::findOrFail($request->sucursal_id);
-
-        $series = [];
-        $tipos  = [];
-
-        switch ((int) $request->documento_modelo_id) {
-
-            case 2: // Factura
-                $series[] = $sucursal->serie_factura;
-                $tipos[]  = 2;
-                break;
-
-            case 3: // Remisión
-                $series[] = $sucursal->serie_remision;
-                $tipos[]  = 3;
-                break;
-
-            case 4: // Ambos
-                $series = [
-                    $sucursal->serie_factura,
-                    $sucursal->serie_remision,
-                ];
-                $tipos = [2, 3];
-                break;
-        }
         return Excel::download(
-            new DocumentosExport(
-                $series,
-                $tipos,
+            new DocumentosDetallesExport(
                 $request->fecha_inicio,
                 $request->fecha_fin,
-                $request->user_id,
             ),
             'reporte.xlsx'
         );
