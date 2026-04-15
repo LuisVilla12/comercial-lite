@@ -27,10 +27,6 @@
                 Fecha: {{ $documento->fecha }}
             </h2>
         </div>
-        {{-- <a href="{{ route('documentos.enviarCorreo', $documento->id) }}" class="text-blue-600 hover:underline"
-            onclick="return confirm('¿Enviar documento por correo?')">
-            📧 Enviar por correo
-        </a> --}}
         <div class="md:flex md:justify-between md:gap-3 mt-4 md:mt-2">
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
                 {{-- <form method="POST"
@@ -54,15 +50,8 @@
             @if ($documento->estatus == 5)
                 <p class="px-6 py-2 bg-indigo-600 text-white text-center rounded">DEVOLUCIÓN APLICADA</p>
             @endif
-            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-                <form method="POST"
-                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
-                    @csrf
-                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mb-4 md:mb-0">
-                        CONVERTIR FACTURA
-                    </button>
-                </form>
-            @elseif($documento->estatus == 4 and $documento->documento_modelo_id == 3)
+
+            @if($documento->estatus == 4 and $documento->documento_modelo_id == 3)
                 <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed text-center"> REMISIÓN SURTIDA
                 </p>
                 <a
@@ -93,7 +82,7 @@
     <div class="flex justify-end mt-4 items-center gap-2 ">
         @if ($documento->estatus == 1 and $documento->documento_modelo_id > 1)
             <button type="button" onclick="openCambioModal()"
-                class="flex items-center px-4 py-2 ml-6 bg-green-500 text-white rounded" title="Enviar por correo">
+                class="flex items-center px-4 py-2 ml-6 bg-green-500 text-white rounded" title="Cambio">
                 <x-heroicon-o-currency-dollar class="w-5 h-5 mr-2" /> Cambio
             </button>
         @endif
@@ -109,12 +98,11 @@
             @endif
 
         </div>
-        @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
 
+        @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
             <button onclick="seleccionarConversion()"
                 class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded flex items-center ml-6">
                 <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Convertir
-
             </button>
             <a href="{{ route('documentos.pdf', [$sucursal, $documento]) }}" target="_blank"
                     class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
@@ -130,6 +118,16 @@
                 @csrf
             </form>
         @endif
+
+        @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
+                <form method="POST"
+                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
+                    @csrf
+                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mb-4 md:mb-0">
+                        Convertir
+                    </button>
+                </form>
+            @endif
         @if ($documento->documento_modelo_id > 1)
         <button onclick="seleccionarImpresora()"
             class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded flex items-center ml-6">
@@ -141,7 +139,11 @@
             class="flex items-center px-4 py-2 ml-6 bg-yellow-500 text-white rounded" title="Enviar por correo">
             <x-heroicon-o-envelope class="w-5 h-5 mr-2" /> Enviar
         </button>
-
+        <a href="https://wa.me/521{{ $documento->cliente->whatsapp }}?text={{ urlencode('Hola  tu compra fue de $'.$documento->total.'. Gracias por tu preferencia.') }}" target="_blank">
+            <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded flex items-center ml-6">
+                <x-heroicon-o-device-phone-mobile class="w-5 h-5 mr-2" /> WhatsApp
+            </button>
+        </a>
     </div>
     <div x-data="{ tab: 'detalle' }">
         <div class="flex gap-4 border-b mt-4">

@@ -8,7 +8,8 @@
             1 => 'Cotización',
             2 => 'Factura',
             3 => 'Remisión',
-        } }} {{ $documento->serie }} {{ $documento->folio }}</title>
+        } }}
+        {{ $documento->serie }} {{ $documento->folio }}</title>
 
     <style>
         body {
@@ -55,7 +56,7 @@
     {{-- ================= ENCABEZADO ================= --}}
     <table class="no-border">
         <tr>
-<img src="{{ public_path('images/logo.jpeg') }}" style="width: 200px; height: 60px;" alt="Logo">
+            <img src="{{ public_path('images/logo.jpeg') }}" style="width: 200px; height: 60px;" alt="Logo">
             <td class="text-right bold">
                 {{-- {{ match ($documento->documento_modelo_id) {
                     1 => 'Cotización ',
@@ -77,15 +78,16 @@
     <table class="no-border">
         <tr>
             <td width="60%">
-                {{ $sucursal->empresa->domicilios->first()->calle ?? 'Dirección no disponible' }} #{{ $sucursal->empresa->domicilios->first()->numero_exterior ?? 'S/N' }},<br>
+                {{ $sucursal->empresa->domicilios->first()->calle ?? 'Dirección no disponible' }}
+                #{{ $sucursal->empresa->domicilios->first()->numero_exterior ?? 'S/N' }},<br>
                 {{ $sucursal->empresa->domicilios->first()->colonia ?? 'Colonia no disponible' }}
-                {{$sucursal->empresa->domicilios->first()->ciudad??'Ciudad no disponible'}},
-        {{$sucursal->empresa->domicilios->first()->estado??'Estado no disponible'}} <br>
+                {{ $sucursal->empresa->domicilios->first()->ciudad ?? 'Ciudad no disponible' }},
+                {{ $sucursal->empresa->domicilios->first()->estado ?? 'Estado no disponible' }} <br>
                 {{ $sucursal->empresa->domicilios->first()->cp ?? 'CP no disponible' }},<br>
-                Mexico <br>                
+                Mexico <br>
             </td>
             <td width="40%">
-                Fecha: {{$documento->fecha}}<br>
+                Fecha: {{ $documento->fecha }}<br>
                 Vigencia: <br>
                 Vendedor: {{ $documento->usuario->name ?? 'Nombre no disponible' }}
             </td>
@@ -106,8 +108,9 @@
             <td colspan="6">
                 @foreach ($documento->cliente->domicilios as $dom)
                     <label class="block  text-md font-medium text-gray-700 my-2">
-                <strong>Dirección:</strong> <span>{{ $dom->calle . " #". $dom->numero_interior . ", Col. " . $dom->colonia . " CP: " .$dom->cp . ", ". $dom->ciudad . ", ". $dom->estado  }}</span>
-                </label>
+                        <strong>Dirección:</strong>
+                        <span>{{ $dom->calle . ' #' . $dom->numero_interior . ', Col. ' . $dom->colonia . ' CP: ' . $dom->cp . ', ' . $dom->ciudad . ', ' . $dom->estado }}</span>
+                    </label>
                 @endforeach
             </td>
         </tr>
@@ -187,7 +190,15 @@
     </table>
 
     <br>
-
+    <table>
+        <tr>
+            <td colspan="6">
+                <label class="block  text-md font-medium text-gray-700 my-2">
+                    <strong>Observaciones:</strong> <span>{{ $documento->observaciones }} </span>
+                </label>
+            </td>
+        </tr>
+    </table>
     {{-- ================= BANCOS ================= --}}
     <table class="no-border small">
         <tr>
@@ -195,7 +206,7 @@
                 <strong>DEPOSITOS Y TRANSFERENCIAS</strong><br>
                 Banco: <br>
                 Cuenta: <br>
-                CLABE: 
+                CLABE:
             </td>
         </tr>
     </table>
