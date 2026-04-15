@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
-class Producto extends Model
+class Producto extends Model implements Auditable
 {
     //
+    use AuditableTrait;
     protected $fillable = [
         'codigo_producto',
         'nombre_producto',
@@ -40,4 +43,6 @@ public function existencias()
     {
         return $this->hasMany(ExistenciaProducto::class);
     }
+
+
 }
