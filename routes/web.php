@@ -169,10 +169,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/documentos/{documento}/enviar-correo', [DocumentoController::class, 'enviarCorreo'])->name('documentos.enviarCorreo');
     // Route::get('/documentos/{documento}/enviar-correo', [DocumentoController::class, 'enviarCorreo'])->name('documentos.enviarCorreo');
 
-    Route::post('/debug-email', function () {
-        dd('ENTRÓ A LA RUTA');
-    });
-
     Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrarSAT'])->name('timbrarSAT');
 
 

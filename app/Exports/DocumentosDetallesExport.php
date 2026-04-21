@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use Carbon\Carbon;
 
 class DocumentosDetallesExport implements FromCollection,    WithHeadings,
     WithEvents,
@@ -25,7 +26,9 @@ class DocumentosDetallesExport implements FromCollection,    WithHeadings,
         return DocumentosDetalle::join('productos', 'documentos_detalles.producto_id', '=', 'productos.id')
         ->join('documentos', 'documentos_detalles.documento_id', '=', 'documentos.id')
         ->where('documentos.estatus', 4)
-        ->whereBetween('documentos.fecha', [$this->fechaInicio, $this->fechaFin])
+        ->whereBetween('documentos.fecha', [
+                Carbon::parse($this->fechaInicio)->startOfDay(), Carbon::parse($this->fechaFin)->endOfDay()]
+            )
         ->select(
             'productos.nombre_producto as nombre',
             'productos.codigo_producto as codigo',
