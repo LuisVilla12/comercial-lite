@@ -195,3 +195,7 @@ Route::middleware('auth')->group(function () {
     //Puntos
     Route::get('/puntos', action: [PuntosController::class, 'index'])->name('puntos.index');
 });
+
+//Auditorias
+    Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
+    Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');
