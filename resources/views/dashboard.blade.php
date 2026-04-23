@@ -179,7 +179,7 @@
             <x-dashboard-card href="{{ route('sucursales.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
                 title="Sucursales" desc="Administrar sucursales" iconBg="bg-teal-500">
                 <x-slot:icon>
-                    <x-heroicon-o-building-office class="w-6 h-6" />
+                    <x-heroicon-o-building-storefront class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
             <x-dashboard-card href="{{ route('empresas.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
@@ -188,8 +188,12 @@
                     <x-heroicon-o-building-office-2 class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
+            <x-dashboard-card href="{{ route('auditoria.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
+                title="Auditoria" desc="Auditoria del sistema" iconBg="bg-teal-500">
+                <x-slot:icon>
+                    <x-heroicon-o-document-text class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
         @endif
-        </>
-
-
+    </div>
 </x-app-layout>

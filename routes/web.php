@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DomicilioController;
-use App\Http\Controllers\CodigoPostalController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\UserController;
@@ -19,14 +18,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\PuntosController;
 use App\Http\Controllers\SucursalController;
-use App\Models\Cliente;
-use App\Models\ExistenciaProducto;
-use App\Models\Producto;
-use App\Models\Sucursal;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\TestMail;
+use App\Http\Controllers\AuditoriaController;
 
 require __DIR__ . '/auth.php';
 
@@ -76,6 +68,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+//Auditorias
+    Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
+    Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');
+
+
     // RUTAS DE CLIENTES
     Route::get('/clientes', [ClienteController::class, 'indexClientes'])->name('clientes.index');
     Route::get('/proveedores', action: [ClienteController::class, 'indexProveedores'])->name('proveedores.index');
@@ -196,6 +193,3 @@ Route::middleware('auth')->group(function () {
     Route::get('/puntos', action: [PuntosController::class, 'index'])->name('puntos.index');
 });
 
-//Auditorias
-    Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
-    Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');
