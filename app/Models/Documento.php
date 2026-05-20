@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
+use  App\Models\DocumentosDetalle;
+use  App\Models\Cliente;
+use  App\Models\User;
+use  App\Models\Domicilio;
 
 class Documento extends Model implements Auditable{
 

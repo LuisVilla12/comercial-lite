@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use  App\Models\Compra;
+use  App\Models\Producto;
+
 
 class Compras_detalle extends Model
 {

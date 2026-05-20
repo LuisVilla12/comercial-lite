@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use  App\Models\Devolucion;
+use  App\Models\Producto;
 
 class DevolucionesDetalles extends Model
 {

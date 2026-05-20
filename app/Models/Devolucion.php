@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use  App\Models\DevolucionesDetalles;
+use  App\Models\Cliente;
+use  App\Models\User;
 
 class Devolucion extends Model
 {protected $fillable = [

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Dom\Document;
 use Illuminate\Database\Eloquent\Model;
+use  App\Models\Producto;
 
 class DocumentosDetalle extends Model
 {

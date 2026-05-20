@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\PuntosMovimiento;
+use  App\Models\Cliente;
 
 
 class Punto extends Model
