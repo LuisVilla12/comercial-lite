@@ -39,3 +39,5 @@ class UsoCfdiSeeder extends Seeder
         ]);
     }
 }
+
+

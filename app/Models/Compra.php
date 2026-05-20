@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
+use  App\Models\Cliente;
+use  App\Models\Almacen;
+use  App\Models\Compras_detalle;
 
 class Compra extends Model implements Auditable
 {
@@ -23,7 +26,7 @@ class Compra extends Model implements Auditable
         'observaciones'
     ];
     public function detalles() {
-        return $this->hasMany(Compras_Detalle::class);
+        return $this->hasMany(Compras_detalle::class);
     }
 
     public function proveedor() {

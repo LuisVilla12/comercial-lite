@@ -1,0 +1,52 @@
+LOAD DATA INFILE 'C:/temp/productos_goemsa.csv'
+INTO TABLE productos
+CHARACTER SET latin1
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+
+(
+  id,
+  codigo_producto,
+  @nombre_producto,
+  @peso_producto,
+  @unidad_texto,
+  @precio1,
+  @precio2,
+  @precio3,
+  @precio4,
+  @precio5,
+  marca,
+  clave_sat,
+  codigo_alterno
+)
+SET
+  nombre_producto = TRIM(REPLACE(REPLACE(@nombre_producto, CHAR(160), ' '), '\xA0',' ')),
+
+  peso_producto = IF(@peso_producto REGEXP '^[0-9.]+$', @peso_producto, NULL),
+
+
+  precio1 = IF(@precio1 REGEXP '^[0-9.]+$', @precio1, 0),
+  precio2 = IF(@precio2 REGEXP '^[0-9.]+$', @precio2, 0),
+  precio3 = IF(@precio3 REGEXP '^[0-9.]+$', @precio3, 0),
+  precio4 = IF(@precio4 REGEXP '^[0-9.]+$', @precio4, 0),
+  precio5 = IF(@precio5 REGEXP '^[0-9.]+$', @precio5, 0),
+
+  unidad_medida = CASE LOWER(TRIM(@unidad_texto))
+    WHEN 'pieza' THEN 1
+    WHEN 'juego' THEN 6
+    WHEN 'set'   THEN 3
+    WHEN 'par'   THEN 5
+    WHEN 'kg'    THEN 4
+    ELSE NULL
+  END,
+
+  tipo_producto = NULL,
+  estatus_producto = 1,
+  impuesto1 = NULL,
+  retencion1 = NULL,
+  valor_clasificacion1 = NULL,
+  valor_clasificacion2 = NULL,
+  importe_extra = NULL,
+  precio_calculado = NULL,
+  exento_impuesto = 0;
