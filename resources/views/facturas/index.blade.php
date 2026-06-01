@@ -61,7 +61,7 @@
                             <th class="p-2">Folio</th>
                             <th class="p-2">Razón social</th>
                             <th class="p-2">Total</th>
-                            <th class="p-2">Estato</th>
+                            <th class="p-2">Estado</th>
                             <th class="p-2">Acciones</th>
                         </tr>
                     </thead>

@@ -19,8 +19,9 @@ class ProductoController extends Controller
     $productos = Producto::where('estatus_producto', 1)
         ->when($search, function ($query, $search) {
             $query->where(function ($q) use ($search) {
-                $q->where('nombre_producto', 'like', "%{$search}%")
-                ->orWhere('codigo_producto', 'like', "%{$search}%");
+                $q->where('clave_producto', 'like', "%{$search}%")
+                ->orWhere('codigo_producto', 'like', "%{$search}%")
+                ->orWhere('nombre_producto', 'like', "%{$search}%");
             });
         })
         ->orderBy('id', 'desc')
@@ -55,6 +56,7 @@ class ProductoController extends Controller
         ]);
         $cliente = Producto::create([
             'codigo_producto' => $request->codigo_producto,
+            'clave_producto' => $request->clave_producto,
             'nombre_producto' => $request->nombre_producto,
             'codigo_alterno' => $request->codigo_alterno,
             'clave_sat' => $request->clave_sat,

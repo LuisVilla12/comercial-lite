@@ -24,7 +24,7 @@
                 } }}
                 {{ $documento->serie . ' #' . $documento->folio }} </h2>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                Fecha: {{ $documento->fecha }}
+                Fecha: {{ \Carbon\Carbon::parse($documento->fecha)->format('d/m/Y') }}
             </h2>
         </div>
         <div class="md:flex md:justify-between md:gap-3 mt-4 md:mt-2">
@@ -359,6 +359,12 @@
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+                <div class="mb-2">
+                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                Vigencia del documento:<span class="text-red-500">*</span>
+                            </label>
+                            <input type="date" name="vigencia" value="{{ $documento->vigencia}}" class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        </div>
                 <div class="col-span-2">
                     <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                         Observaciones <span class="text-red-500">*</span>

@@ -31,6 +31,7 @@ class Documento extends Model implements Auditable{
         'uso_cfdi',
         'observaciones',
         'estatus',
+        'vigencia',
     ];
     public function detalles() {
         return $this->hasMany(DocumentosDetalle::class);

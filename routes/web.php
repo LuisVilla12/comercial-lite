@@ -19,13 +19,14 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\PuntosController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\AuditoriaController;
+use App\Http\Controllers\DatosBancarioController;
 
 require __DIR__ . '/auth.php';
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -121,6 +122,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/almacenes/{almacen}', [AlmacenController::class, 'update'])->name('almacenes.update');
     Route::delete('/almacenes/{almacen}', [AlmacenController::class, 'destroy'])->name('almacenes.destroy');
 
+    // DATOS BANCARIOS
+    Route::get('/bancos', [DatosBancarioController::class, 'index'])->name('bancos.index');
+    Route::get('/bancos/create', [DatosBancarioController::class, 'create'])->name('bancos.create');
+    Route::post('/bancos', [DatosBancarioController::class, 'store'])->name('bancos.store');
+    Route::get('/bancos/{banco}', [DatosBancarioController::class, 'show'])->name('bancos.show');
+    Route::get('/bancos/{banco}/edit', [DatosBancarioController::class, 'edit'])->name('bancos.edit');
+    Route::put('/bancos/{banco}', [DatosBancarioController::class, 'update'])->name('bancos.update');
+    Route::delete('/bancos/{banco}', [DatosBancarioController::class, 'destroy'])->name('bancos.destroy');
+    Route::put('/bancos/{banco}/predeterminado', [DatosBancarioController::class, 'predeterminado'])->name('bancos.predeterminado');
     //Compras
     Route::get('/compras', action: [CompraController::class, 'index'])->name('compras.index');
     Route::get('/compras/create', [CompraController::class, 'create'])->name('compras.create');

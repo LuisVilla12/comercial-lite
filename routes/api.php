@@ -63,7 +63,7 @@ Route::get('productos/buscar', function () {
 
     return Producto::where('estatus_producto', 1)
         ->where(function ($query) use ($q) {
-            $query->where('nombre_producto', 'like', "%{$q}%")
+            $query->where('clave_producto', 'like', "%{$q}%")
                 ->orWhere('codigo_producto', 'like', "%{$q}%");
         })
         ->select(
@@ -84,8 +84,9 @@ Route::get('productos-existencias/buscar', function () {
     }
     return Producto::where('estatus_producto', 1)
         ->where(function ($query) use ($q) {
-            $query->where('nombre_producto', 'like', "%{$q}%")
+            $query->where('clave_producto', 'like', "%{$q}%")
                 ->orWhere('codigo_producto', 'like', "%{$q}%");
+                // ->orWhere('nombre_producto', 'like', "%{$q}%");
         })
         ->leftJoin('existencia_productos', function ($join) use ($almacenId) {
             $join->on('productos.id', '=', 'existencia_productos.producto_id')

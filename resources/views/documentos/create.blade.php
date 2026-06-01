@@ -57,81 +57,7 @@
                         </div>
                         {{-- ================= PRODUCTOS ================= --}}
                         <div class="mt-2">
-                            {{-- <table class="w-full border bg-white shadow rounded p-4">
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th class="p-2">Código</th>
-                                        <th class="p-2">Producto</th>
-                                        <th class="p-2">Cantidad</th>
-                                        <th class="p-2">Precio</th>
-                                        <th class="p-2">Existencia</th>
-                                        <th class="p-2">Importe</th>
-                                        <th class="p-2"></th>
-                                    </tr>
-                                </thead>
 
-                                <tbody>
-                                    <template x-for="(item, index) in items" :key="index">
-                                        <tr class="border-t">
-                                            <td class="p-2 text-center" x-text="item.codigo"></td>
-                                            <td class="p-2 relative">
-                                                <input type="text" x-model="item.query"
-                                                    @input.debounce.300ms="buscarProducto(index)"
-                                                    class="border rounded p-1 w-full" placeholder="Buscar producto">
-                                                <ul x-show="item.resultados.length"
-                                                    class="absolute z-10 bg-white border rounded shadow w-full">
-                                                    <template x-for="p in item.resultados" :key="p.id">
-                                                        <li @click="seleccionarProducto(index, p)"
-                                                            class="p-2 hover:bg-gray-100 cursor-pointer">
-                                                            <span x-text="p.nombre"></span>
-                                                            <span class="text-sm text-gray-500">
-                                                                ($<span x-text="p.codigo"></span>)
-                                                            </span>
-                                                        </li>
-                                                    </template>
-                                                </ul>
-                                                <input type="hidden" :name="`productos[${index}][producto_id]`"
-                                                    x-model="item.producto_id">
-                                            </td>
-                                            <td class="p-2">
-                                                <div class="flex justify-center">
-                                                    <input type="number" min="1"
-                                                        :name="`productos[${index}][cantidad]`"
-                                                        x-model.number="item.cantidad" @input="calcular"
-                                                        class="border rounded p-1 w-20 text-center">
-                                                </div>
-                                            </td>
-                                            <td class="p-2">
-                                                <div class="flex justify-center">
-                                                    <input readonly type="number" step="0.01"
-                                                        :name="`productos[${index}][costo]`" x-model.number="item.costo"
-                                                        @input="calcular" class="border rounded p-1 w-24 text-center">
-                                                </div>
-                                            </td>
-                                            <td class="p-2">
-                                                <div class="flex justify-center">
-                                                    <input type="number" disabled step="1"
-                                                        x-model.number="item.stock"
-                                                        class="border rounded p-1 w-24 text-center bg-gray-100 text-gray-700 cursor-not-allowed">
-                                                </div>
-                                            </td>
-                                            <td class="p-2">
-                                                $<span x-text="(item.cantidad * item.costo).toFixed(2)"
-                                                    class="text-center"></span>
-                                                <input type="hidden" :name="`productos[${index}][importe]`"
-                                                    :value="(item.cantidad * item.costo).toFixed(2)" class="">
-                                            </td>
-
-                                            <td class="p-2 text-center">
-                                                <button type="button" @click="eliminarFila(index)"
-                                                    class="text-red-600 hover:text-red-800">
-                                                    ❌
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </template>
-                                </tbody>
-                            </table> --}}
                             <div class="hidden lg:block">
                                 <table class="w-full border bg-white shadow rounded">
                                     <thead class="bg-gray-100">
@@ -163,7 +89,7 @@
                                                                 class="p-2 hover:bg-gray-100 cursor-pointer">
                                                                 <span x-text="p.nombre"></span>
                                                                 <span class="text-sm text-gray-500">
-                                                                    ($<span x-text="p.codigo"></span>)
+                                                                    (<span x-text="p.codigo"></span>)
                                                                 </span>
                                                             </li>
                                                         </template>
@@ -315,7 +241,8 @@
                 <div x-show="tab === 'info'" x-cloak class="space-y-4">
                     <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
                         <div class="col-span-full">
-                            <label class="block text-xl mt-4 text-center md:text-left font-medium text-gray-700 dark:text-white">
+                            <label
+                                class="block text-xl mt-4 text-center md:text-left font-medium text-gray-700 dark:text-white">
                                 Datos del cliente: </span>
                             </label>
                         </div>
@@ -397,7 +324,8 @@
                             @enderror
                         </div>
                         <div class="col-span-full">
-                            <label for="metodo_pago" class="block mt-4 text-center md:text-left text-xl font-medium text-gray-700 dark:text-white mb-1">
+                            <label for="metodo_pago"
+                                class="block mt-4 text-center md:text-left text-xl font-medium text-gray-700 dark:text-white mb-1">
                                 Datos del pago: </span>
                             </label>
                         </div>
@@ -451,6 +379,19 @@
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+                        @if ($tipo == '1')
+                            <div class="mb-2">
+                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                    Vigencia del documento:<span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" name="vigencia"
+                                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                @error('vigencia')
+                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        @endif
+
                         <div class="col-span-2">
                             <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                                 Observaciones <span class="text-red-500">*</span>

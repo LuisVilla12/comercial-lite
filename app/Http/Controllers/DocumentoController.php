@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\InventarioService;
 use App\Mail\DocumentoMail;
+use App\Models\DatosBancario;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 
@@ -184,6 +185,7 @@ class DocumentoController extends Controller
                 'metodo_pago' => $request->metodo_pago,
                 'forma_pago' => $request->forma_pago,
                 'uso_cfdi' => $request->uso_cfdi,
+                'vigencia' => $request->vigencia,
                 'observaciones' => $request->observaciones,
                 'estado' => 'PENDIENTE',
             ]);
@@ -371,12 +373,15 @@ class DocumentoController extends Controller
     }
     public function pdf(Sucursal $sucursal, Documento $documento)
     {
+        // Seleccionar los datos bancarios
+        $banco=DatosBancario::where('predeterminado', true)->first();
+
         $documento->load([
             'cliente',
             'detalles.producto'
         ]);
 
-        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal'))
+        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco'))
             ->setPaper('letter');
 
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");

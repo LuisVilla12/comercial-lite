@@ -14,6 +14,7 @@ class Producto extends Model implements Auditable
     use AuditableTrait;
     protected $fillable = [
         'codigo_producto',
+        'clave_producto',
         'nombre_producto',
         'tipo_producto',
         'peso_producto',

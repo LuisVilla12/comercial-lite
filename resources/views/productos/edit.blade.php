@@ -15,7 +15,19 @@
                 Datos generales
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-3  lg:grid-cols-4 gap-4">
-                {{-- Codigo --}}
+
+                <div class="">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Clave: <span class="text-red-500">*</span>
+                    </label>
+                    <input name="clave_producto" placeholder="Clave"
+                        value="{{ $producto->clave_producto ?? old('clave_producto') }}"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    @error('clave_producto')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                 {{-- Codigo --}}
                 <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Codigo: <span class="text-red-500">*</span>
@@ -26,7 +38,6 @@
                     @error('codigo_producto')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
-
                 </div>
                 {{-- Nombre --}}
                 <div class="md:col-span-2">

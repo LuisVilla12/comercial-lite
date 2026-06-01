@@ -87,8 +87,10 @@
                 Mexico <br>
             </td>
             <td width="40%">
-                Fecha: {{ $documento->fecha }}<br>
-                Vigencia: <br>
+                Fecha: {{ \Carbon\Carbon::parse($documento->fecha)->format('d/m/Y') }}<br>
+                @if($documento->vigencia!= null)
+                    Vigencia: {{ \Carbon\Carbon::parse($documento->vigencia)->format('d/m/Y') }}<br>
+                @endif
                 Vendedor: {{ $documento->usuario->name ?? 'Nombre no disponible' }}
             </td>
         </tr>
@@ -109,7 +111,7 @@
                 @foreach ($documento->cliente->domicilios as $dom)
                     <label class="block  text-md font-medium text-gray-700 my-2">
                         <strong>Dirección:</strong>
-                        <span>{{ $dom->calle . ' #' . $dom->numero_interior . ', Col. ' . $dom->colonia . ' CP: ' . $dom->cp . ', ' . $dom->ciudad . ', ' . $dom->estado }}</span>
+                        <span>{{ $dom->calle . ' #' . $dom->numero_exterior . ', Col. ' . $dom->colonia . ' CP: ' . $dom->cp . ', ' . $dom->ciudad . ', ' . $dom->estado }}</span>
                     </label>
                 @endforeach
             </td>
@@ -204,9 +206,9 @@
         <tr>
             <td>
                 <strong>DEPOSITOS Y TRANSFERENCIAS</strong><br>
-                Banco: <br>
-                Cuenta: <br>
-                CLABE:
+                Banco: <strong> {{ $banco->nombre_banco }}</strong> <br>
+                Cuenta: <strong>{{ $banco->cuenta_bancaria }} </strong><br>
+                CLABE: <strong>{{ $banco->clabe }}</strong>
             </td>
         </tr>
     </table>
@@ -218,8 +220,8 @@
         <tr>
             <td>
                 <strong>DATOS DE CONTACTO:</strong><br>
-                WhatsApp: <br>
-                Correo: <br>
+                WhatsApp:<strong> {{ $banco->whatsapp }} </strong><br>
+                Correo: <strong>{{ $banco->correo_electronico }} </strong>
             </td>
         </tr>
     </table>

@@ -194,6 +194,12 @@
                     <x-heroicon-o-document-text class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
+            <x-dashboard-card href="{{ route('bancos.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Datos Bancarios"
+                desc="Administrar datos bancarios" iconBg="bg-teal-500">
+                <x-slot:icon>
+                    <x-heroicon-o-banknotes class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
         @endif
     </div>
 </x-app-layout>

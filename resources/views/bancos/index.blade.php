@@ -1,17 +1,17 @@
-@section('title', content: 'Productos')
+@section('title', content: 'Datos bancarios')
 
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Catalogo de Productos
+            Catálogo de datos bancarios
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
         {{-- Buscador --}}
-        <form method="GET" action="{{ route('productos.index') }}" class="w-full md:w-1/3">
+        <form method="GET" action="{{ route('bancos.index') }}" class="w-full md:w-1/3">
             <div class="relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar producto..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar banco..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
                 <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -22,7 +22,7 @@
             </div>
 
             @if (request('search'))
-                <a href="{{ route('productos.index') }}"
+                <a href="{{ route('bancos.index') }}"
                     class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                     Limpiar búsqueda
                 </a>
@@ -30,9 +30,9 @@
         </form>
 
         {{-- Botón --}}
-        <a href="{{ route('productos.create') }}"
+        <a href="{{ route('bancos.create') }}"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-            Registrar producto
+            Registrar Datos Bancarios
         </a>
 
     </div>
@@ -41,57 +41,70 @@
             class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">{{ session('success') }}
         </p>
     @endif
-    <div class="shadow-md overflow-x-auto rounded-lg">
-        @if ($productos->count() > 0)
+
+    <div class="shadow-md overflow-x-auto rounded-lg ">
+        @if ($bancos->count() > 0)
             <div class="hidden md:block">
                 <table class="w-full border bg-white shadow rounded">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="p-2">Clave</th>
-                            <th class="p-2">Codigo</th>
-                            <th class="p-2">Nombre</th>
-                            <th class="p-2">Precio</th>
-                            <th class="p-2">Clasificación</th>
+                            <th class="p-2">Nombre del banco</th>
+                            <th class="p-2">Cuenta bancaria</th>
+                            <th class="p-2">CLABE</th>
                             <th class="p-2">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($productos as $producto)
+                        @foreach ($bancos as $banco)
                             <tr class="border-t">
                                 <td class="p-2 text-center">
-                                    {{ $producto->clave_producto }}
+                                    {{ $banco->nombre_banco }}
+                                </td>
+                                <td class="p-2">
+                                    {{ $banco->cuenta_bancaria }}
                                 </td>
                                 <td class="p-2 text-center">
-                                    {{ $producto->codigo_producto }}
-                                </td>
-                                <td class="p-2 ">
-                                    {{ $producto->nombre_producto }}
-                                </td>
-                                <td class="p-2 text-center">
-                                    {{ number_format($producto->precio1, 2) }}
-                                </td>
-                                <td class="p-2 text-center">
-                                    {{ $producto->clasificacion1->nombre ?? 'N/A' }}
+                                    {{ $banco->clabe }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">
                                     <div class="flex justify-center items-center gap-4">
+                                        {{-- Seleecionar --}}
+                                        @if($banco->predeterminado)
+                                            <span class="inline-flex items-center gap-1 text-green-500">
+                                                <x-heroicon-o-star class="w-4 h-4" />
+                                                <span class="hidden sm:inline">Predeterminado</span>
+                                            </span>
+                                        @else
+                                        <form action="{{ route('bancos.predeterminado', ['banco' => $banco]) }}"
+                                            method="POST" class="inline">
+                                            @csrf
+                                            @method('PUT')
+
+                                            <button type="submit"
+                                                class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                                onclick="return confirm('¿Estás seguro de que deseas seleccionar este banco como predeterminado?')">
+                                                <x-heroicon-o-star class="w-4 h-4" />
+                                                <span class="hidden sm:inline">Seleccionar como predeterminado</span>
+                                            </button>
+                                        </form>
+                                        @endif
                                         {{-- Ver --}}
-                                        <a href="{{ route('productos.show', ['producto' => $producto]) }}"
+                                        <a href="{{ route('bancos.show', ['banco' => $banco]) }}"
                                             class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                             <x-heroicon-o-eye class="w-4 h-4" />
                                             <span class="hidden sm:inline">Ver</span>
                                         </a>
                                         <span class="hidden sm:inline text-gray-300">•</span>
                                         {{-- Editar --}}
-                                        <a href="{{ route('productos.edit', ['producto' => $producto]) }}"
+                                        <a href="{{ route('bancos.edit', ['banco' => $banco]) }}"
                                             class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                             <x-heroicon-o-pencil-square class="w-4 h-4" />
                                             <span class="hidden sm:inline">Editar</span>
                                         </a>
                                         <span class="hidden sm:inline text-gray-300">•</span>
-
+                                        @if(!$banco->predeterminado)
                                         {{-- Eliminar --}}
-                                        <form action="{{ route('productos.destroy', ['producto' => $producto]) }}"
+                                        <form action="{{ route('bancos.destroy', ['banco' => $banco]) }}"
                                             method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
@@ -103,6 +116,8 @@
                                                 <span class="hidden sm:inline">Eliminar</span>
                                             </button>
                                         </form>
+                                        @endif
+
                                     </div>
                                 </td>
                             </tr>
@@ -112,47 +127,34 @@
             </div>
             <!-- CARDS: visible en tablet y móvil -->
             <div class="md:hidden space-y-4">
-                @foreach ($productos as $producto)
+                @foreach ($bancos as $banco)
                     <div class="border rounded-lg shadow bg-white p-4">
                         <div class="mt-2">
                             <div class="mb-2 text-sm text-gray-500">
-                                <span>Codigo:</span>
+                                <span>Nombre del banco:</span>
                                 <span class="font-medium text-gray-800">
-                                    {{ $producto->codigo_producto }}
+                                    {{ $banco->nombre_banco }}
                                 </span>
                             </div>
                             <div class="">
                                 <p class="mb-2 text-sm">Nombre:
                                     <span class="font-semibold">
-                                        {{ $producto->nombre_producto }}
+                                        {{ $banco->cuenta_bancaria }}
                                     </span>
                                 </p>
                             </div>
-                            <div>
-                                <p class="mb-2 text-sm">Precio:
-                                    <span class="font-semibold">
-                                        {{ number_format($producto->precio1, 2) }}
-                                    </span>
-                                </p>
-                            </div>
-                            <div>
-                                <p class="mb-2 text-sm">Clasificación:
-                                    <span class="font-semibold">
-                                        {{ $producto->clasificacion1->nombre ?? 'N/A' }}
-                                    </span>
-                                </p>
-                            </div>
+
                         </div>
-                        <div class="flex 0 items-center justify-center mt-4 gap-4">
+                        <div class="flex flex-wrap items-center justify-end mt-4 gap-4">
                             {{-- Ver --}}
-                            <a href="{{ route('productos.show', ['producto' => $producto]) }}"
+                            <a href="{{ route('bancos.show', ['banco' => $banco]) }}"
                                 class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                 <x-heroicon-o-eye class="w-4 h-4" />
                                 <span class="hidden sm:inline">Ver</span>
                             </a>
                             <span class="hidden sm:inline text-gray-300">•</span>
                             {{-- Editar --}}
-                            <a href="{{ route('productos.edit', ['producto' => $producto]) }}"
+                            <a href="{{ route('bancos.edit', ['banco' => $banco]) }}"
                                 class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                 <x-heroicon-o-pencil-square class="w-4 h-4" />
                                 <span class="hidden sm:inline">Editar</span>
@@ -160,7 +162,7 @@
                             <span class="hidden sm:inline text-gray-300">•</span>
 
                             {{-- Eliminar --}}
-                            <form action="{{ route('productos.destroy', ['producto' => $producto]) }}" method="POST"
+                            <form action="{{ route('bancos.destroy', ['banco' => $banco]) }}" method="POST"
                                 class="inline">
                                 @csrf
                                 @method('DELETE')
@@ -178,23 +180,23 @@
             </div>
         @else
             <div class="bg-white py-4 mt-3">
-                <p class="text-sm text-gray-600 ml-6 text-center"> No hay productos registrados</p>
+                <p class="text-sm text-gray-600 ml-6 text-center"> No hay bancos registrados</p>
             </div>
         @endif
-        @if ($productos->count() > 0)
+        @if ($bancos->count() > 0)
             <div class="bg-white py-4 my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
                 <p class="text-sm text-gray-600 ml-6">
                     Mostrando
-                    <span class="font-medium">{{ $productos->firstItem() }}</span>
+                    <span class="font-medium">{{ $bancos->firstItem() }}</span>
                     a
-                    <span class="font-medium">{{ $productos->lastItem() }}</span>
+                    <span class="font-medium">{{ $bancos->lastItem() }}</span>
                     de
-                    <span class="font-medium">{{ $productos->total() }}</span>
+                    <span class="font-medium">{{ $bancos->total() }}</span>
                     registros
                 </p>
 
-                {{ $productos->links() }}
+                {{ $bancos->links() }}
             </div>
         @endif
 
