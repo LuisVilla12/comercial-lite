@@ -436,12 +436,13 @@
                                     class="p-3 border-b hover:bg-gray-100 cursor-pointer">
 
                                     <div class="flex justify-between  items-center gap-4 mb-1">
-                                        <div class="flex items-center gap-3">
-                                            <p class="font-semibold" x-text="p.nombre">
-                                            </p>
-                                            <p>Código: <span x-text="p.codigo" class=" font-bold"> </span></p>
-                                            <p>Clave: <span x-text="p.clave" class=" font-bold"> </span></p>
-                                            <p>Existencia: <span x-text="p.stock" class=" font-bold"> </span></p>
+                                        <div class="">
+                                            <p class="font-semibold" x-text="p.nombre"></p>
+                                            <div class="flex items-center gap-3">
+                                                <p>Código: <span x-text="p.codigo" class=" font-bold"> </span></p>
+                                                <p>Clave: <span x-text="p.clave" class=" font-bold"> </span></p>
+                                                <p>Existencia: <span x-text="p.stock" class=" font-bold"> </span></p>
+                                            </div>
                                         </div>
                                         <div class="">
                                             <div class="mt-2">
