@@ -85,8 +85,8 @@ Route::get('productos-existencias/buscar', function () {
     return Producto::where('estatus_producto', 1)
         ->where(function ($query) use ($q) {
             $query->where('clave_producto', 'like', "%{$q}%")
-                ->orWhere('codigo_producto', 'like', "%{$q}%");
-                // ->orWhere('nombre_producto', 'like', "%{$q}%");
+                ->orWhere('codigo_producto', 'like', "%{$q}%")
+                ->orWhere('nombre_producto', 'like', "%{$q}%");
         })
         ->leftJoin('existencia_productos', function ($join) use ($almacenId) {
             $join->on('productos.id', '=', 'existencia_productos.producto_id')
@@ -96,7 +96,11 @@ Route::get('productos-existencias/buscar', function () {
             'productos.id',
             'productos.nombre_producto as nombre',
             'productos.codigo_producto as codigo',
+            'productos.clave_producto as clave',
             'productos.precio1 as costo',
+            'productos.precio2 as costo2',
+            'productos.precio3 as costo3',
+            'productos.precio4 as costo4',
             DB::raw('COALESCE(existencia_productos.cantidad, 0) as stock')
         )
         ->limit(10)

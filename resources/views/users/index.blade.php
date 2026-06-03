@@ -99,7 +99,7 @@
                                             <span class="hidden sm:inline">Editar</span>
                                         </a>
                                         <span class="hidden sm:inline text-gray-300">•</span>
-
+                                        @if ($usuario->tipo =! 1)
                                         {{-- Eliminar --}}
                                         <form action="{{ route('usuarios.destroy', ['usuario' => $usuario]) }}"
                                             method="POST" class="inline">
@@ -112,6 +112,7 @@
                                                 <x-heroicon-o-trash class="w-4 h-4" />
                                                 <span class="hidden sm:inline">Eliminar</span>
                                             </button>
+                                        @endif
                                         </form>
                                     </div>
                                 </td>

@@ -207,7 +207,7 @@
                             @error('productos')
                                 <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
                             @enderror
-                            <button type="button" @click="modalProducto = true"
+                            <button type="button" @click="agregarFila"
                                 class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
                                 ➕ Agregar producto
                             </button>
@@ -408,78 +408,11 @@
                         Guardar
                     </button>
                 </div>
-
-                {{-- MODAL --}}
-                <div x-show="modalProducto" x-cloak
-                    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-
-                    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
-
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                Buscar producto
-                            </h2>
-
-                            <button type="button" @click="modalProducto = false" class="text-red-600 text-xl">
-                                ✕
-                            </button>
-                        </div>
-
-                        <input type="text" x-model="busquedaProducto" @input.debounce.300ms="buscarProductoModal"
-                            placeholder="Buscar producto..." class="w-full border rounded p-2">
-
-                        <div class="mt-4 border rounded max-h-96 overflow-y-auto">
-
-                            <template x-for="p in resultadosModal" :key="p.id">
-
-                                <div @click="agregarProductoDesdeModal(p)"
-                                    class="p-3 border-b hover:bg-gray-100 cursor-pointer">
-
-                                    <div class="flex justify-between  items-center gap-4 mb-1">
-                                        <div class="flex items-center gap-3">
-                                            <p class="font-semibold" x-text="p.nombre">
-                                            </p>
-                                            <p>Código: <span x-text="p.codigo" class=" font-bold"> </span></p>
-                                            <p>Clave: <span x-text="p.clave" class=" font-bold"> </span></p>
-                                            <p>Existencia: <span x-text="p.stock" class=" font-bold"> </span></p>
-                                        </div>
-                                        <div class="">
-                                            <div class="mt-2">
-                                                <label class=" font-bold text-gray-700 mb-1">
-                                                    Precios:
-                                                </label>
-
-                                                <select x-model="p.precioSeleccionado" @click.stop
-                                                    class="border rounded p-1 text-sm">
-
-                                                    <option :value="p.costo" class=" font-bold">
-                                                        1 - $<span x-text="p.costo"></span>
-                                                    </option>
-
-                                                    <option :value="p.costo2" class=" font-bold">
-                                                        2 - $<span x-text="p.costo2"></span>
-                                                    </option>
-
-                                                    <option :value="p.costo3" class=" font-bold">
-                                                        3 - $<span x-text="p.costo3"></span>
-                                                    </option>
-                                                    <option :value="p.costo4" class=" font-bold">
-                                                        4 - $<span x-text="p.costo4"></span>
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        </div>
-                        </template>
-                    </div>
-                </div>
-            </div>
         </form>
+
         </div>
+
         {{-- ================= ALPINE ================= --}}
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             const ALMACEN_ID = {{ $sucursal->almacen_id }};
 
@@ -498,12 +431,10 @@
 
                     items: [],
                     total: 0,
-                    modalProducto: false,
-                    busquedaProducto: '',
-                    resultadosModal: [],
 
                     init() {
                         this.items = []
+                        this.agregarFila()
                     },
 
                     agregarFila() {
@@ -519,7 +450,7 @@
                     },
 
                     eliminarFila(index) {
-                        if (this.items.length === 0) return
+                        if (this.items.length === 1) return
                         this.items.splice(index, 1)
                         this.calcular()
                     },
@@ -531,25 +462,17 @@
                     },
 
                     seleccionarProveedor(p) {
-                        if (!p.domicilios[0]) {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Domicilio no encontrado',
-                                text: 'El cliente seleccionado no tiene un domicilio registrado.'
-                            });
-                        } else {
-                            this.proveedor = p
-                            this.proveedorQuery = p.nombre
-                            this.proveedorRfc = p.rfc
-                            this.proveedorCalle = p.domicilios[0].calle ?? ''
-                            this.proveedorCP = p.domicilios[0].cp ?? ''
-                            this.proveedorNumeroInterior = p.domicilios[0].numero_interior ?? ''
-                            this.proveedorNumeroExterior = p.domicilios[0].numero_exterior ?? ''
-                            this.proveedorCiudad = p.domicilios[0].ciudad ?? ''
-                            this.proveedorColonia = p.domicilios[0].colonia ?? ''
-                            this.proveedores = []
-                        }
-
+                        // console.log(p)
+                        this.proveedor = p
+                        this.proveedorQuery = p.nombre
+                        this.proveedorRfc = p.rfc
+                        this.proveedorCalle = p.domicilios[0].calle ?? ''
+                        this.proveedorCP = p.domicilios[0].cp ?? ''
+                        this.proveedorNumeroInterior = p.domicilios[0].numero_interior ?? ''
+                        this.proveedorNumeroExterior = p.domicilios[0].numero_exterior ?? ''
+                        this.proveedorCiudad = p.domicilios[0].ciudad ?? ''
+                        this.proveedorColonia = p.domicilios[0].colonia ?? ''
+                        this.proveedores = []
                     },
 
                     async buscarProducto(index) {
@@ -568,49 +491,10 @@
                         item.codigo = p.codigo
                         item.query = p.nombre
                         item.costo = parseFloat(p.costo)
-                        item.costo2 = parseFloat(p.costo2)
-                        item.costo3 = parseFloat(p.costo3)
-                        item.costo4 = parseFloat(p.costo4)
                         item.stock = p.stock
                         item.resultados = []
 
                         this.calcular()
-                    },
-                    async buscarProductoModal() {
-                        if (this.busquedaProducto.length < 2) {
-                            this.resultadosModal = [];
-                            return;
-                        }
-
-                        const res = await fetch(
-                            `/api/productos-existencias/buscar?q=${this.busquedaProducto}&almacen=${ALMACEN_ID}`
-                        );
-
-                        this.resultadosModal = await res.json();
-                    },
-
-                    agregarProductoDesdeModal(p) {
-
-                        if (this.items.some(i => i.producto_id === p.id)) {
-                            alert('El producto ya fue agregado');
-                            return;
-                        }
-
-                        this.items.push({
-                            producto_id: p.id,
-                            codigo: p.codigo,
-                            query: p.nombre,
-                            cantidad: 1,
-                            costo: parseFloat(p.precioSeleccionado || p.costo),
-                            stock: p.stock,
-                            resultados: []
-                        });
-
-                        this.modalProducto = false;
-                        this.busquedaProducto = '';
-                        this.resultadosModal = [];
-
-                        this.calcular();
                     },
 
                     calcular() {
