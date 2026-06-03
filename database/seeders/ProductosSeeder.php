@@ -54,6 +54,7 @@ class ProductosSeeder extends Seeder
             $batch[] = [
                 'id' => intval($row[0])?: null,
                 'codigo_producto' => trim($row[1])?: null,
+                'clave_producto' => '',
                 'nombre_producto' => trim($row[2])?: null,
                 'tipo_producto' => null,
                 'peso_producto' => trim($row[4])?: null,

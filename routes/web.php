@@ -20,20 +20,18 @@ use App\Http\Controllers\PuntosController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DatosBancarioController;
-
+use App\Http\Controllers\AgenteController;
+use App\Mail\TestMail;
+use Illuminate\Support\Facades\Mail;
 require __DIR__ . '/auth.php';
 
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-// Route::get('/test-email', function () {
-//     Mail::to('luisjivl.01@gmail.com')->send(new TestMail());
-//     return 'Correo enviado correctamente';
-// })->middleware('auth');;
+Route::get('/test-email', function () {
+    Mail::to('luisjivl.01@gmail.com')->send(new TestMail());
+    return 'Correo enviado correctamente';
+})->middleware('auth');;
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -73,6 +71,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
     Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');
 
+    //AGENTES
+    Route::get('/agentes', [AgenteController::class, 'index'])->name('agentes.index');
+    Route::get('/agentes/create', [AgenteController::class, 'create'])->name('agentes.create');
+    Route::post('/agentes', [AgenteController::class, 'store'])->name('agentes.store');
+    Route::get('/agentes/{agente}', [AgenteController::class, 'show'])->name('agentes.show');
+    Route::get('/agentes/{agente}/edit', [AgenteController::class, 'edit'])->name('agentes.edit');
+    Route::put('/agentes/{agente}', [AgenteController::class, 'update'])->name('agentes.update');
+    Route::delete('/agentes/{agente}', [AgenteController::class, 'destroy'])->name('agentes.destroy');
 
     // RUTAS DE CLIENTES
     Route::get('/clientes', [ClienteController::class, 'indexClientes'])->name('clientes.index');
@@ -145,6 +151,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
 
     Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
+        Route::post('/documentos/{documento}/enviar-email', [DocumentoController::class, 'enviarEmail'])->name('documentos.enviarEmail');
         //Documentos
         Route::get('/cotizacion', action: [DocumentoController::class, 'indexCotizacion'])->name('cotizaciones.index');
         Route::get('/facturas', action: [DocumentoController::class, 'indexFacturas'])->name('facturas.index');
@@ -166,15 +173,10 @@ Route::middleware('auth')->group(function () {
         // PDFs
         Route::get('/documentos/{documento}/ticket/{mm}', [DocumentoController::class, 'pdfTicket'])->name('documentos.pdfTicket');
         Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
-
     });
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 
-
-    //Envio por correo
-    Route::post('/documentos/{documento}/enviar-correo', [DocumentoController::class, 'enviarCorreo'])->name('documentos.enviarCorreo');
-    // Route::get('/documentos/{documento}/enviar-correo', [DocumentoController::class, 'enviarCorreo'])->name('documentos.enviarCorreo');
 
     Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrarSAT'])->name('timbrarSAT');
 

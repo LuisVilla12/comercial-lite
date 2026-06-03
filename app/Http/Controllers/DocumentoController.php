@@ -6,6 +6,7 @@ use App\Models\Documento;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
 use App\Models\Producto;
+use App\Models\Agente;
 use App\Models\Almacen;
 use App\Models\Cliente;
 use App\Models\Devolucion;
@@ -99,6 +100,7 @@ class DocumentoController extends Controller
         $productos = Producto::all();
         $almacenes = Almacen::all();
         $usos_cfdi = UsoCfdi::all();
+        $agentes = Agente::all();
         // dd($sucursal);
         return view('documentos.create', [
             'sucursal' => $sucursal,
@@ -106,7 +108,8 @@ class DocumentoController extends Controller
             'productos' => $productos,
             'almacenes' => $almacenes,
             'tipo' => $tipo,
-            'usos' => $usos_cfdi
+            'usos' => $usos_cfdi,
+            'agentes' => $agentes
         ]);
     }
 
@@ -138,6 +141,7 @@ class DocumentoController extends Controller
             'colonia' => 'required|string|max:100',
             'calle' => 'required|string|max:255',
             'numero_exterior' => 'nullable|string|max:50',
+            'agente_id' => 'exists:agentes,id',
             'codigo_postal' => 'required|string|max:10',
         ]);
         DB::beginTransaction();
@@ -186,6 +190,7 @@ class DocumentoController extends Controller
                 'forma_pago' => $request->forma_pago,
                 'uso_cfdi' => $request->uso_cfdi,
                 'vigencia' => $request->vigencia,
+                'agente_id' => $request->agente_id,
                 'observaciones' => $request->observaciones,
                 'estado' => 'PENDIENTE',
             ]);
@@ -240,13 +245,14 @@ class DocumentoController extends Controller
     public function show(Sucursal $sucursal, Documento $documento)
     {
         $usos_cfdi = UsoCfdi::all();
+        $agentes = Agente::all();
         $documento->load([
             'cliente',
             'detalles.producto',
-            'domicilios'
+            'domicilios',
         ]);
         // dd($documento);
-        return view('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi,]);
+        return view('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi, 'agentes' => $agentes]);
     }
 
     /**
@@ -256,6 +262,7 @@ class DocumentoController extends Controller
     {
         // dd($documento);
         $usos_cfdi = UsoCfdi::all();
+        $agentes = Agente::all();
         if ($documento->estatus != 1) {
             return redirect()
                 ->route('documentos.show', $documento)
@@ -277,7 +284,9 @@ class DocumentoController extends Controller
                 ->value('cantidad') ?? 0;
         });
 
-        return view('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi]);
+        $agentes = Agente::all();
+
+        return view('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi, 'agentes' => $agentes]);
     }
     /**
      * Update the specified resource in storage.
@@ -374,7 +383,7 @@ class DocumentoController extends Controller
     public function pdf(Sucursal $sucursal, Documento $documento)
     {
         // Seleccionar los datos bancarios
-        $banco=DatosBancario::where('predeterminado', true)->first();
+        $banco = DatosBancario::where('predeterminado', true)->first();
 
         $documento->load([
             'cliente',
@@ -387,7 +396,7 @@ class DocumentoController extends Controller
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");
     }
 
-    public function pdfTicket(Sucursal $sucursal,Documento $documento, $mm = 80)
+    public function pdfTicket(Sucursal $sucursal, Documento $documento, $mm = 80)
     {
         $documento->load(['cliente', 'detalles.producto']);
         // dd($documento);
@@ -465,6 +474,7 @@ class DocumentoController extends Controller
                 'forma_pago'          => $documento->forma_pago,
                 'uso_cfdi'            => $documento->uso_cfdi,
                 'observaciones'       => $documento->observaciones,
+                'agente_id' => $documento->agente_id,
             ]);
             // ASIGNAR DOMICILIO AL DOCUMENTO
             $documento_convertido->domicilios()->create([
@@ -833,15 +843,21 @@ class DocumentoController extends Controller
         ];
     }
 
-    public function enviarCorreo(Request $request, Documento $documento)
+    public function enviarEmail(Sucursal $sucursal, Request $request, Documento $documento)
     {
-        // dd('ENTRÓ', $request->all(), $documento->id);
+        $documento->load([
+            'cliente',
+            'detalles.producto'
+        ]);
+        $sucursal->load([
+            'empresa'
+        ]);
         $request->validate([
             'email' => 'required|email',
         ]);
 
         Mail::to($request->email)
-            ->send(new DocumentoMail($documento));
+            ->send(new DocumentoMail($sucursal, $documento));
         return redirect()
             ->back()
             ->with('success', '📧 Cotización enviada correctamente');

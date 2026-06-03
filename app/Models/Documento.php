@@ -32,6 +32,7 @@ class Documento extends Model implements Auditable{
         'observaciones',
         'estatus',
         'vigencia',
+        'agente_id',
     ];
     public function detalles() {
         return $this->hasMany(DocumentosDetalle::class);

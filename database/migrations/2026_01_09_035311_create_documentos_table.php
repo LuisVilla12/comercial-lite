@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('estado')->default('pendiente'); // pendiente | timbrado | cancelado
             $table->text('observaciones')->nullable();
             $table->date('vigencia')->nullable();
+            $table->foreignId(column: 'agente_id')->constrained('agentes')->onDelete('cascade');
             $table->foreignId(column: 'sucursal_id')->constrained('sucursales')->onDelete('cascade');
             $table->integer(column: 'estatus')->default(1); //1 pendiente, 2 convertida, 3 cancelada, 4 efectuada
         });

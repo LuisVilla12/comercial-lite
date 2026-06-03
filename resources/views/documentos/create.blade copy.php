@@ -379,6 +379,7 @@
                             </div>
                         @endif
 
+
                         <div class="col-span-2">
                             <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                                 Observaciones <span class="text-red-500">*</span>

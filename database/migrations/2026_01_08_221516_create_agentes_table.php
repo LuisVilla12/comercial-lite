@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('agentes', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('codigo')->unique();
             $table->string('nombre');
-            $table->string('apellidoP');
-            $table->string('apellidoM');
+            $table->string('apellidoP')->nullable();
+             $table->string('apellidoM')->nullable();
         });
     }
 

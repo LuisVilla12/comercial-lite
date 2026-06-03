@@ -375,6 +375,34 @@
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    @if ($documento->documento_modelo_id == 1)
+
+                <div class="mb-2">
+                    <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                        Vigencia del documento:<span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" name="vigencia" value="{{ $documento->vigencia }}"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                </div>
+                @endif
+                <div class="mb-2">
+                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                    Agente:<span class="text-red-500">*</span>
+                                </label>
+                                <select name="agente_id" id="agente_id"
+                                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="" disabled>Seleccione un agente</option>
+                                    @foreach ($agentes as $agente)
+                                        <option value="{{ $agente->id }}"  @selected(old('agente_id', $documento->agente_id) === $agente->id)>
+                                            {{ $agente->codigo . " - " . $agente->nombre . " " . $agente->apellidoP }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('agente_id')
+                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                     <div class="col-span-2">
                         <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                             Observaciones <span class="text-red-500">*</span>
