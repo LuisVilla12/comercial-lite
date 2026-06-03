@@ -70,7 +70,12 @@ Route::get('productos/buscar', function () {
             'id',
             'nombre_producto as nombre',
             'codigo_producto as codigo',
-            'precio1 as costo'
+            'clave_producto as clave',
+            'precio1 as costo',
+            'precio2 as costo2',
+            'precio3 as costo3',
+            'precio4 as costo4',
+            'precio5 as costo5',
         )
         ->limit(10)
         ->get();

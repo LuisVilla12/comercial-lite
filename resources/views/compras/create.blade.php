@@ -191,9 +191,13 @@
 
                     </table>
                 </div>
-<button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+                {{-- <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
                     ➕ Agregar producto
-                </button>
+                </button> --}}
+                <button type="button" @click="modalProducto = true"
+                                class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+                                ➕ Agregar producto
+                            </button>
                 <!-- ===== CARDS (MÓVIL) ===== -->
                 <div class="md:hidden space-y-4">
                     <template x-for="(item, index) in items" :key="index">
@@ -294,6 +298,79 @@
                 </button>
             </div>
         </div>
+        {{-- MODAL --}}
+        <div x-show="modalProducto" x-cloak class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+            <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">
+                        Buscar producto
+                    </h2>
+
+                    <button type="button" @click="modalProducto = false" class="text-red-600 text-xl">
+                        ✕
+                    </button>
+                </div>
+
+                <input type="text" x-model="busquedaProducto" @input.debounce.300ms="buscarProductoModal"
+                    placeholder="Buscar producto..." class="w-full border rounded p-2">
+
+                <div class="mt-4 border rounded max-h-96 overflow-y-auto">
+
+                    <template x-for="p in resultadosModal" :key="p.id">
+
+                        <div @click="agregarProductoDesdeModal(p)"
+                            class="p-3 border-b hover:bg-gray-100 cursor-pointer">
+
+                            <div class="flex justify-between  items-center gap-4 mb-1">
+                                <div class="">
+                                    <p class="font-semibold" x-text="p.nombre"></p>
+                                    <div class="flex items-center gap-3">
+                                        <p>Código: <span x-text="p.codigo" class=" font-bold"> </span></p>
+                                        <p>Clave: <span x-text="p.clave" class=" font-bold"> </span></p>
+                                        <p>Existencia: <span x-text="p.stock" class=" font-bold"> </span></p>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="mt-2">
+                                        <label class=" font-bold text-gray-700 mb-1">
+                                            Precios:
+                                        </label>
+
+                                        <select x-model="p.precioSeleccionado" @click.stop
+                                            class="border rounded p-1 text-sm">
+
+                                            <option :value="p.costo" class=" font-bold">
+                                                1 - $<span x-text="p.costo"></span>
+                                            </option>
+
+                                            <option :value="p.costo2" class=" font-bold">
+                                                2 - $<span x-text="p.costo5"></span>
+                                            </option>
+                                            {{-- VISUALIZAR PRECIOS 2 - 5  SOLO SI EL USUARIO ES ADMINISTRADOR --}}
+                                            @if (auth()->user()->tipo == 1)
+                                                <option :value="p.costo3" class=" font-bold">
+                                                    3 - $<span x-text="p.costo2"></span>
+                                                </option>
+                                                <option :value="p.costo3" class=" font-bold">
+                                                    4 - $<span x-text="p.costo3"></span>
+                                                </option>
+                                                <option :value="p.costo4" class=" font-bold">
+                                                    5 - $<span x-text="p.costo4"></span>
+                                                </option>
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                </template>
+            </div>
+        </div>
+        </div>
+
     </form>
 
     {{-- ================= ALPINE ================= --}}
@@ -306,6 +383,9 @@
 
                 items: [],
                 total: 0,
+                modalProducto: false,
+                busquedaProducto: '',
+                resultadosModal: [],
 
                 init() {
                     this.items = []
@@ -324,7 +404,7 @@
                 },
 
                 eliminarFila(index) {
-                    if (this.items.length === 1) return
+                    if (this.items.length === 0) return
                     this.items.splice(index, 1)
                     this.calcular()
                 },
@@ -361,12 +441,43 @@
                     item.resultados = []
 
                     this.calcular()
-
-                    // if (index === this.items.length - 1) {
-                    //     this.agregarFila()
-                    // }
                 },
+                async buscarProductoModal() {
+                        if (this.busquedaProducto.length < 2) {
+                            this.resultadosModal = [];
+                            return;
+                        }
 
+                        const res = await fetch(
+                            `/api/productos/buscar?q=${this.busquedaProducto}`
+                        );
+                        console.log(res);
+                        this.resultadosModal = await res.json();
+                    },
+
+                    agregarProductoDesdeModal(p) {
+
+                        if (this.items.some(i => i.producto_id === p.id)) {
+                            alert('El producto ya fue agregado');
+                            return;
+                        }
+
+                        this.items.push({
+                            producto_id: p.id,
+                            codigo: p.codigo,
+                            query: p.nombre,
+                            cantidad: 1,
+                            costo: parseFloat(p.precioSeleccionado || p.costo),
+                            stock: p.stock,
+                            resultados: []
+                        });
+
+                        this.modalProducto = false;
+                        this.busquedaProducto = '';
+                        this.resultadosModal = [];
+
+                        this.calcular();
+                    },
                 calcular() {
                     this.total = this.items.reduce(
                         (t, i) => t + (i.cantidad * i.costo),
