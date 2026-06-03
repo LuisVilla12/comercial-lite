@@ -18,11 +18,16 @@
             Compra #{{ $compra->id }}
         </h1>
         @if ($compra->estatus == 1)
-            <form method="POST" action="{{ route('compras.surtir', $compra) }}">
+        <div>
+<button
+                        onclick="surtirCompra()"
+                        class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full mb-4 md:mb-0 ">
+                        <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
+                        Surtir
+                    </button>
+        </div>
+            <form method="POST" action="{{ route('compras.surtir', $compra) }}" class="hidden" id="formSurtirCompra">
                 @csrf
-                <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-                    Surtir compra
-                </button>
             </form>
         @else
             <a class="px-6 py-2 bg-indigo-600  text-white rounded">
@@ -180,3 +185,21 @@
 
     </div>
 </x-app-layout>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function surtirCompra() {
+        Swal.fire({
+            title: '¿Deseas surtir la compra?',
+            text: "Al surtir la compra, se marcará como surtida y no podrá ser editada ni convertida nuevamente. Esta acción es irreversible.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, surtir compra',
+            cancelButtonText: 'No, cancelar',
+            reverseButtons: true
+        }).then((confirmResult) => {
+            if (confirmResult.isConfirmed) {
+                document.getElementById('formSurtirCompra').submit();
+            }
+        });
+    }
+</script>

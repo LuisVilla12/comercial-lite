@@ -58,15 +58,16 @@
         </div>
         <div class="flex">
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-                <form method="POST"
-                    action="{{ route('documentos.surtir', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
-                    class="mr-6">
-                    @csrf
-                    <button
-                        class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full mb-4 md:mb-0">
+            <button
+                        onclick="surtirRemision()"
+                        class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full mb-4 md:mb-0 mr-6">
                         <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
                         Surtir
                     </button>
+                <form method="POST" id="formSurtirRemision"
+                    action="{{ route('documentos.surtir', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                    class="mr-6 hidden">
+                    @csrf
                 </form>
             @endif
             @if ($documento->estatus == 1 and $documento->documento_modelo_id > 1)
@@ -536,6 +537,21 @@
         }).then((confirmResult) => {
             if (confirmResult.isConfirmed) {
                 document.getElementById('formConversionFactura').submit();
+            }
+        });
+    }
+    function surtirRemision() {
+        Swal.fire({
+            title: '¿Deseas surtir la remisión?',
+            text: "Al surtir la remisión, se marcará como surtida y no podrá ser editada ni convertida nuevamente. Esta acción es irreversible.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, surtir remisión',
+            cancelButtonText: 'No, cancelar',
+            reverseButtons: true
+        }).then((confirmResult) => {
+            if (confirmResult.isConfirmed) {
+                document.getElementById('formSurtirRemision').submit();
             }
         });
     }
