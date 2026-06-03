@@ -101,6 +101,7 @@ Route::get('productos-existencias/buscar', function () {
             'productos.precio2 as costo2',
             'productos.precio3 as costo3',
             'productos.precio4 as costo4',
+            'productos.precio5 as costo5',
             DB::raw('COALESCE(existencia_productos.cantidad, 0) as stock')
         )
         ->limit(10)

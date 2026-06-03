@@ -457,15 +457,20 @@
                                                     </option>
 
                                                     <option :value="p.costo2" class=" font-bold">
-                                                        2 - $<span x-text="p.costo2"></span>
+                                                        2 - $<span x-text="p.costo5"></span>
                                                     </option>
-
+                                                    {{-- VISUALIZAR PRECIOS 2 - 5  SOLO SI EL USUARIO ES ADMINISTRADOR --}}
+                                                    @if (auth()->user()->tipo == 1)
                                                     <option :value="p.costo3" class=" font-bold">
-                                                        3 - $<span x-text="p.costo3"></span>
+                                                        3 - $<span x-text="p.costo2"></span>
+                                                    </option>
+                                                    <option :value="p.costo3" class=" font-bold">
+                                                        4 - $<span x-text="p.costo3"></span>
                                                     </option>
                                                     <option :value="p.costo4" class=" font-bold">
-                                                        4 - $<span x-text="p.costo4"></span>
+                                                        5 - $<span x-text="p.costo4"></span>
                                                     </option>
+                                                    @endif
                                                 </select>
                                             </div>
                                         </div>
