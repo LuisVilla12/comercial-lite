@@ -28,23 +28,6 @@
             </h2>
         </div>
         <div class="md:flex md:justify-between md:gap-3 mt-4 md:mt-2">
-            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
-                {{-- <form method="POST"
-                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}"
-                    class="w-f">
-                    @csrf
-                    <button class="block px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
-                        CONVERTIR FACTURA
-                    </button>
-                </form>
-                <form method="POST"
-                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 3]) }}">
-                    @csrf
-                    <button class="block px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mt-2">
-                        CONVERTIR REMISIÓN
-                    </button>
-                </form> --}}
-            @endif
             @if ($documento->estatus == 5)
                 <p class="px-6 py-2 bg-indigo-600 text-white text-center rounded">DEVOLUCIÓN APLICADA</p>
             @endif
@@ -55,23 +38,11 @@
                 <a
                     href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded mt-4  md:mt-0 text-center">DEVOLUCIÓN</a>
             @endif
-
-            {{-- @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
-                <div></div>
-                <form method="POST"
-                    action="{{ route('documentos.timbrar', ['sucursal' => $sucursal, 'documento' => $documento]) }}">
-                    @csrf
-                    <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded uppercase w-full">
-                        Timbrar arriba
-                    </button>
-                </form>
-            @endif --}}
-
         </div>
     </x-slot>
     <div class="flex justify-between mt-4 items-center gap-2 ">
         <div>
-            <p class="dark:text-white" >Estado:            @php
+            <p class="dark:text-white">Estado: @php
                 $estatusText = match ($documento->estatus) {
                     1 => 'ACTIVA',
                     2 => 'TRANSFORMADA',
@@ -81,16 +52,18 @@
                     default => 'DESCONOCIDO',
                 };
             @endphp
-            <span class="font-bold text-green-600">{{ $estatusText }}</span>
+                <span class="font-bold text-green-600">{{ $estatusText }}</span>
             </p>
 
         </div>
         <div class="flex">
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
                 <form method="POST"
-                    action="{{ route('documentos.surtir', ['sucursal' => $sucursal, 'documento' => $documento]) }}" class="mr-6">
+                    action="{{ route('documentos.surtir', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                    class="mr-6">
                     @csrf
-                    <button class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full mb-4 md:mb-0">
+                    <button
+                        class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full mb-4 md:mb-0">
                         <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
                         Surtir
                     </button>
@@ -108,7 +81,7 @@
                         @csrf
                         <button type="submit"
                             class="flex items-center px-4 py-2 mr-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
-                                <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2" />
+                            <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2" />
                             Timbrar
                         </button>
                     </form>
@@ -119,12 +92,13 @@
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
                 <button onclick="seleccionarConversion()"
                     class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded ml-6">
-                     Convertir
+                    Convertir
                 </button>
                 <a href="{{ route('documentos.pdf', [$sucursal, $documento]) }}" target="_blank"
                     class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
                     <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir carta
                 </a>
+                {{-- OPCINES DE CONVERTIR OCULTAS PARA EVITAR ERRORES DE USUARIOS --}}
                 <form id="formFactura" method="POST"
                     action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
                     @csrf
@@ -136,12 +110,18 @@
                 </form>
             @endif
 
+            {{-- CONVERTIR A REMISIÓN SOLO PARA COTIZACIONES --}}
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-                <form method="POST"
+                <button onclick="convertirAFactura()"
+                    class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded ">
+                    Convertir
+                </button>
+                <form method="POST" class="hidden" id="formConversionFactura"
                     action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
                     @csrf
-                    <button class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mb-4 md:mb-0">
-                        <x-heroicon-o-archive-box class="w-5 h-5 mr-2" /> Convertir
+                    <button
+                        class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mb-4 md:mb-0">
+                        <x-heroicon-o-archive-box class="w-5 h-5 mr-2" /> Convertir a factura
                     </button>
                 </form>
             @endif
@@ -360,11 +340,12 @@
                     @enderror
                 </div>
                 <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                                Vigencia del documento:<span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="vigencia" value="{{ $documento->vigencia}}" class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        </div>
+                    <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                        Vigencia del documento:<span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" name="vigencia" value="{{ $documento->vigencia }}"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                </div>
                 <div class="col-span-2">
                     <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                         Observaciones <span class="text-red-500">*</span>
@@ -512,9 +493,49 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('formFactura').submit();
+                Swal.fire({
+                    title: '¿Deseas convertir a factura?',
+                    text: "Al convertir a factura, el documento original se marcará como convertida y no podrá ser editada ni convertida nuevamente. Esta acción es irreversible.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, convertir a factura',
+                    cancelButtonText: 'No, cancelar',
+                    reverseButtons: true
+                }).then((confirmResult) => {
+                    if (confirmResult.isConfirmed) {
+                        document.getElementById('formFactura').submit();
+                    }
+                });
             } else if (result.isDenied) {
-                document.getElementById('formRemision').submit();
+                Swal.fire({
+                    title: '¿Deseas convertir a remisión?',
+                    text: "Al convertir a remisión, el documento original se marcará como convertida y no podrá ser editada ni convertida nuevamente. Esta acción es irreversible.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, convertir a remisión',
+                    cancelButtonText: 'No, cancelar',
+                    reverseButtons: true
+                }).then((confirmResult) => {
+                    if (confirmResult.isConfirmed) {
+                        document.getElementById('formRemision').submit();
+                    }
+                });
+            }
+        });
+    }
+
+    function convertirAFactura() {
+        Swal.fire({
+            title: '¿Deseas convertir a factura?',
+            text: "Al convertir a factura, el documento original se marcará como convertida y no podrá ser editada ni convertida nuevamente. Esta acción es irreversible.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, convertir a factura',
+            cancelButtonText: 'No, cancelar',
+            reverseButtons: true
+        }).then((confirmResult) => {
+            if (confirmResult.isConfirmed) {
+                document.getElementById('formConversionFactura').submit();
             }
         });
     }
