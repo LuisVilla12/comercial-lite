@@ -44,80 +44,6 @@
                 </div>
             </div>
 
-            {{-- ================= PRODUCTOS ================= --}}
-            {{-- <div class="mt-4">
-                <table class="w-full border bg-white shadow rounded p-4">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="p-2">Código</th>
-                            <th class="p-2">Producto</th>
-                            <th class="p-2">Cantidad</th>
-                            <th class="p-2">Precio</th>
-                            <th class="p-2">Importe</th>
-                            <th class="p-2"></th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <template x-for="(item, index) in items" :key="index">
-                            <tr class="border-t">
-                                <td class="p-2 text-center" x-text="item.codigo"></td>
-                                <td class="p-2 relative">
-                                    <input type="text" x-model="item.query"
-                                        @input.debounce.300ms="buscarProducto(index)" class="border rounded p-1 w-full"
-                                        placeholder="Buscar producto">
-                                    <ul x-show="item.resultados.length"
-                                        class="absolute z-10 bg-white border rounded shadow w-full">
-                                        <template x-for="p in item.resultados" :key="p.id">
-                                            <li @click="seleccionarProducto(index, p)"
-                                                class="p-2 hover:bg-gray-100 cursor-pointer">
-                                                <span x-text="p.nombre"></span>
-                                                <span class="text-sm text-gray-500">
-                                                    (<span x-text="p.codigo"></span>)
-                                                </span>
-                                            </li>
-                                        </template>
-                                    </ul>
-                                    <input type="hidden" :name="`productos[${index}][producto_id]`"
-                                        x-model="item.producto_id">
-                                </td>
-                                <td class="p-2">
-                                    <div class="flex justify-center">
-                                        <input type="number" min="1" :name="`productos[${index}][cantidad]`"
-                                            x-model.number="item.cantidad" @input="calcular"
-                                            class="border rounded p-1 w-20">
-                                    </div>
-                                </td>
-                                <td class="p-2">
-                                    <div class="flex justify-center">
-                                        <input type="number" step="0.01"
-                                            :name="`productos[${index}][costo]`"
-                                            x-model.number="item.costo"
-                                            @input="calcular"
-                                            class="border rounded p-1 w-24">
-                                    </div>
-                                </td>
-                                <td class="p-2">
-                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
-                                    <input type="hidden":name="`productos[${index}][importe]`"
-                                        :value="(item.cantidad * item.costo).toFixed(2)">
-                                </td>
-
-                                <td class="p-2 text-center">
-                                    <button type="button" @click="eliminarFila(index)"
-                                        class="text-red-600 hover:text-red-800">
-                                        ❌
-                                    </button>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-                @error('productos')
-                    <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
-                @enderror
-
-            </div> --}}
             <div class="w-full">
 
                 <!-- ===== TABLA (DESKTOP) ===== -->
@@ -191,13 +117,51 @@
 
                     </table>
                 </div>
-                {{-- <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-                    ➕ Agregar producto
-                </button> --}}
                 <button type="button" @click="modalProducto = true"
                                 class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
                                 ➕ Agregar producto
                             </button>
+                {{-- MODAL --}}
+                <div x-show="modalProducto" x-cloak
+                    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">
+                                Buscar producto
+                            </h2>
+
+                            <button type="button" @click="modalProducto = false" class="text-red-600 text-xl">
+                                ✕
+                            </button>
+                        </div>
+
+                        <input type="text" x-model="busquedaProducto" @input.debounce.300ms="buscarProductoModal"
+                            placeholder="Buscar producto..." class="w-full border rounded p-2">
+
+                        <div class="mt-4 border rounded max-h-96 overflow-y-auto">
+
+                            <template x-for="p in resultadosModal" :key="p.id">
+
+                                <div @click="agregarProductoDesdeModal(p)"
+                                    class="p-3 border-b hover:bg-gray-100 cursor-pointer">
+
+                                    <div class="flex justify-between  items-center gap-4 mb-1">
+                                        <div class="">
+                                            <p class="font-semibold" x-text="p.nombre"></p>
+                                            <div class="flex items-center gap-3">
+                                                <p>Código: <span x-text="p.codigo" class=" font-bold"> </span></p>
+                                                <p>Clave: <span x-text="p.clave" class=" font-bold"> </span></p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                        </div>
+                        </template>
+                    </div>
+                </div>
                 <!-- ===== CARDS (MÓVIL) ===== -->
                 <div class="md:hidden space-y-4">
                     <template x-for="(item, index) in items" :key="index">
@@ -299,76 +263,7 @@
             </div>
         </div>
         {{-- MODAL --}}
-        <div x-show="modalProducto" x-cloak class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
-            <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
-
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">
-                        Buscar producto
-                    </h2>
-
-                    <button type="button" @click="modalProducto = false" class="text-red-600 text-xl">
-                        ✕
-                    </button>
-                </div>
-
-                <input type="text" x-model="busquedaProducto" @input.debounce.300ms="buscarProductoModal"
-                    placeholder="Buscar producto..." class="w-full border rounded p-2">
-
-                <div class="mt-4 border rounded max-h-96 overflow-y-auto">
-
-                    <template x-for="p in resultadosModal" :key="p.id">
-
-                        <div @click="agregarProductoDesdeModal(p)"
-                            class="p-3 border-b hover:bg-gray-100 cursor-pointer">
-
-                            <div class="flex justify-between  items-center gap-4 mb-1">
-                                <div class="">
-                                    <p class="font-semibold" x-text="p.nombre"></p>
-                                    <div class="flex items-center gap-3">
-                                        <p>Código: <span x-text="p.codigo" class=" font-bold"> </span></p>
-                                        <p>Clave: <span x-text="p.clave" class=" font-bold"> </span></p>
-                                        <p>Existencia: <span x-text="p.stock" class=" font-bold"> </span></p>
-                                    </div>
-                                </div>
-                                <div class="">
-                                    <div class="mt-2">
-                                        <label class=" font-bold text-gray-700 mb-1">
-                                            Precios:
-                                        </label>
-
-                                        <select x-model="p.precioSeleccionado" @click.stop
-                                            class="border rounded p-1 text-sm">
-
-                                            <option :value="p.costo" class=" font-bold">
-                                                1 - $<span x-text="p.costo"></span>
-                                            </option>
-
-                                            <option :value="p.costo2" class=" font-bold">
-                                                2 - $<span x-text="p.costo5"></span>
-                                            </option>
-                                            {{-- VISUALIZAR PRECIOS 2 - 5  SOLO SI EL USUARIO ES ADMINISTRADOR --}}
-                                            @if (auth()->user()->tipo == 1)
-                                                <option :value="p.costo3" class=" font-bold">
-                                                    3 - $<span x-text="p.costo2"></span>
-                                                </option>
-                                                <option :value="p.costo3" class=" font-bold">
-                                                    4 - $<span x-text="p.costo3"></span>
-                                                </option>
-                                                <option :value="p.costo4" class=" font-bold">
-                                                    5 - $<span x-text="p.costo4"></span>
-                                                </option>
-                                            @endif
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-                </template>
-            </div>
-        </div>
         </div>
 
     </form>
@@ -389,7 +284,6 @@
 
                 init() {
                     this.items = []
-                    this.agregarFila()
                 },
 
                 agregarFila() {
@@ -424,14 +318,12 @@
                 async buscarProducto(index) {
                     const q = this.items[index].query
                     if (q.length < 2) return
-
                     const res = await fetch(`/api/productos/buscar?q=${q}`)
                     this.items[index].resultados = await res.json()
                 },
 
                 seleccionarProducto(index, p) {
                     if (this.items.some(i => i.producto_id === p.id)) return
-
                     const item = this.items[index]
                     item.producto_id = p.id
                     item.codigo = p.codigo
@@ -451,7 +343,6 @@
                         const res = await fetch(
                             `/api/productos/buscar?q=${this.busquedaProducto}`
                         );
-                        console.log(res);
                         this.resultadosModal = await res.json();
                     },
 
@@ -467,7 +358,8 @@
                             codigo: p.codigo,
                             query: p.nombre,
                             cantidad: 1,
-                            costo: parseFloat(p.precioSeleccionado || p.costo),
+                            // costo: parseFloat(p.precioSeleccionado || p.costo),
+                            costo: 0,
                             stock: p.stock,
                             resultados: []
                         });

@@ -201,10 +201,53 @@
             @error('productos')
                 <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
             @enderror
-            <button type="button" @click="agregarFila" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-                ➕ Agregar producto
+            <button type="button" @click="modalProducto = true"
+                                class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+                                ➕ Agregar producto
             </button>
+            {{-- MODAL --}}
+                <div x-show="modalProducto" x-cloak
+                    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
+                    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">
+                                Buscar producto
+                            </h2>
+
+                            <button type="button" @click="modalProducto = false" class="text-red-600 text-xl">
+                                ✕
+                            </button>
+                        </div>
+
+                        <input type="text" x-model="busquedaProducto" @input.debounce.300ms="buscarProductoModal"
+                            placeholder="Buscar producto..." class="w-full border rounded p-2">
+
+                        <div class="mt-4 border rounded max-h-96 overflow-y-auto">
+
+                            <template x-for="p in resultadosModal" :key="p.id">
+
+                                <div @click="agregarProductoDesdeModal(p)"
+                                    class="p-3 border-b hover:bg-gray-100 cursor-pointer">
+
+                                    <div class="flex justify-between  items-center gap-4 mb-1">
+                                        <div class="">
+                                            <p class="font-semibold" x-text="p.nombre"></p>
+                                            <div class="flex items-center gap-3">
+                                                <p>Código: <span x-text="p.codigo" class=" font-bold"> </span></p>
+                                                <p>Clave: <span x-text="p.clave" class=" font-bold"> </span></p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                        </div>
+                        </template>
+                    </div>
+                </div>
+        </div>
+            {{-- MODAL --}}
             {{-- ================= TOTAL ================= --}}
             {{-- <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
                 Subtotal: $<span x-text="total.toFixed(2)"></span>
@@ -249,15 +292,15 @@
 
                 items: [],
                 total: 0,
-
+                modalProducto: false,
+                busquedaProducto: '',
+                resultadosModal: [],
                 init() {
-                    this.agregarFila()
-                },
-
-                resetProductos() {
-                    // limpia productos cuando cambia el almacén
                     this.items = []
-                    this.agregarFila()
+                },
+                resetProductos() {
+                    this.items = []
+                    // this.agregarFila()
                 },
 
                 agregarFila() {
@@ -303,11 +346,47 @@
                     item.resultados = []
 
                     this.calcular()
-
-                    // if (index === this.items.length - 1) {
-                    //     this.agregarFila()
-                    // }
                 },
+
+                async buscarProductoModal() {
+                        if (this.busquedaProducto.length < 2) {
+                            this.resultadosModal = [];
+                            return;
+                        }
+
+                        const res = await fetch(
+                            // `/api/productos/buscar?q=${this.busquedaProducto}`
+                            `/api/productos-existencias/buscar?q=${this.busquedaProducto}&almacen=${this.almacen_origen_id}`
+
+                        );
+                        this.resultadosModal = await res.json();
+                        console.log(this.resultadosModal);
+                    },
+
+                    agregarProductoDesdeModal(p) {
+
+                        if (this.items.some(i => i.producto_id === p.id)) {
+                            alert('El producto ya fue agregado');
+                            return;
+                        }
+
+                        this.items.push({
+                            producto_id: p.id,
+                            codigo: p.codigo,
+                            query: p.nombre,
+                            cantidad: 1,
+                            // costo: parseFloat(p.precioSeleccionado || p.costo),
+                            costo: 0,
+                            stock: p.stock,
+                            resultados: []
+                        });
+
+                        this.modalProducto = false;
+                        this.busquedaProducto = '';
+                        this.resultadosModal = [];
+
+                        this.calcular();
+                    },
 
                 calcular() {
                     this.total = this.items.reduce(

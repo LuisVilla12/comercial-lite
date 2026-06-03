@@ -1,11 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <title>
-       Traspaso {{ $documento->serie }} {{ $documento->folio }}</title>
+
+        {{ $traspaso->serie }} {{ $traspaso->folio }}</title>
+
 
     <style>
         body {
@@ -52,24 +53,12 @@
     {{-- ================= ENCABEZADO ================= --}}
     <table class="no-border">
         <tr>
-            <td class="bold">CARDENAS E HIJOS</td>
+            <img src="{{ public_path('images/logo.jpeg') }}" style="width: 200px; height: 60px;" alt="Logo">
             <td class="text-right bold">
-                {{ match ($documento->documento_modelo_id) {
-                    1 => 'Cotización ',
-                    2 => 'Factura ',
-                    3 => 'Remisión ',
-                } }}<strong>{{ $documento->serie }} {{ $documento->folio }}</strong>
+                <strong>Folio: {{ $traspaso->folio }}</strong> <br>
             </td>
         </tr>
         <tr>
-            <td>CHI961130ME0</td>
-            {{-- <td class="text-right">
-                {{ match ($documento->documento_modelo_id) {
-                    1 => 'Cotización',
-                    2 => 'Factura',
-                    3 => 'Remisión',
-                } }} Número: <strong>{{ $documento->serie }} {{ $documento->folio }}</strong>
-            </td> --}}
         </tr>
     </table>
 
@@ -79,37 +68,31 @@
     <table class="no-border">
         <tr>
             <td width="60%">
-                AV. ORIZABA No. 623<br>
-                Col. Obrero Campesina<br>
-                C.P. 91020<br>
-                Xalapa-Enríquez, Veracruz
+                {{ $empresa->domicilios->first()->calle ?? 'Dirección no disponible' }}
+                #{{ $empresa->domicilios->first()->numero_exterior ?? 'S/N' }},<br>
+                {{ $empresa->domicilios->first()->colonia ?? 'Colonia no disponible' }}
+                {{ $empresa->domicilios->first()->ciudad ?? 'Ciudad no disponible' }},
+                {{ $empresa->domicilios->first()->estado ?? 'Estado no disponible' }} <br>
+                {{ $empresa->domicilios->first()->cp ?? 'CP no disponible' }},<br>
+                Mexico <br>
             </td>
             <td width="40%">
-                Fecha: {{ \Carbon\Carbon::parse($documento->fecha)->format('d/M/Y') }}<br>
-                Expedida en: {{ $documento->almacen_id}}<br>
-                Vendedor:
+                Fecha: {{ \Carbon\Carbon::parse($traspaso->fecha)->format('d/m/Y') }}<br>
+                @if($traspaso->vigencia!= null)
+                    Vigencia: {{ \Carbon\Carbon::parse($traspaso->vigencia)->format('d/m/Y') }}<br>
+                @endif
+                Realizado por: {{ $traspaso->usuario->name ?? 'Nombre no disponible' }}
             </td>
         </tr>
     </table>
 
     <br>
 
-    {{-- ================= CLIENTE ================= --}}
+    {{-- ================= Datos del transpaso ================= --}}
     <table>
         <tr>
-            <td class="bold">CLIENTE:</td>
-            <td colspan="5">
-                {{ $documento->cliente->rfc }} - {{ $documento->cliente->nombre }}
-            </td>
-        </tr>
-        <tr>
-            <td colspan="6">
-                @foreach ($documento->cliente->domicilios as $dom)
-                    <label class="block  text-md font-medium text-gray-700 my-2">
-                <strong>Dirección:</strong> <span>{{ $dom->calle . " #". $dom->numero_interior . ", Col. " . $dom->colonia . " CP: " .$dom->cp . ", ". $dom->ciudad . ", ". $dom->estado  }}</span>
-                </label>
-                @endforeach
-            </td>
+            <td class="bold">Almacén origen: {{ $traspaso->almacenOrigen->nombre ?? 'Nombre no disponible' }}</td>
+            <td class="bold">Almacén destino: {{ $traspaso->almacenDestino->nombre ?? 'Nombre no disponible' }}</td>
         </tr>
     </table>
 
@@ -129,7 +112,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($documento->detalles as $d)
+            @foreach ($traspaso->detalles as $d)
                 <tr>
                     <td class="text-right">{{ number_format($d->cantidad, 2) }}</td>
                     <td class="text-center">PZ</td>
@@ -153,7 +136,8 @@
                 <table>
                     <tr>
                         <td>Subtotal:</td>
-                        <td class="text-right">${{ number_format($documento->subtotal, 2) }}</td>
+                        {{-- ${{ number_format($traspaso->subtotal, 2) }} --}}
+                        <td class="text-right"></td>
                     </tr>
                     <tr>
                         <td>Descuentos:</td>
@@ -161,11 +145,13 @@
                     </tr>
                     <tr>
                         <td>I.V.A (16%):</td>
-                        <td class="text-right">${{ number_format($documento->impuestos, 2) }}</td>
+                        {{-- ${{ number_format($traspaso->impuestos, 2) }}--}}
+                        <td class="text-right"></td>
                     </tr>
                     <tr class="bold">
                         <td>Total:</td>
-                        <td class="text-right">${{ number_format($documento->total, 2) }}</td>
+                        {{-- ${{ number_format($traspaso->total, 2) }} --}}
+                        <td class="text-right"></td>
                     </tr>
                 </table>
             </td>
@@ -181,21 +167,19 @@
         </tr>
         <tr>
             <td>
-                {{ \App\Helpers\NumeroALetras::convertir($documento->total) }}
+                {{-- {{ \App\Helpers\NumeroALetras::convertir($traspaso->total) }} --}}
             </td>
         </tr>
     </table>
-
     <br>
-
     {{-- ================= BANCOS ================= --}}
     <table class="no-border small">
         <tr>
             <td>
                 <strong>DEPOSITOS Y TRANSFERENCIAS</strong><br>
-                BANAMEX Sucursal: 101<br>
-                Cuenta: 36137-7<br>
-                CLABE: 002840010103613775
+                Banco: <strong> {{ $banco->nombre_banco }}</strong> <br>
+                Cuenta: <strong>{{ $banco->cuenta_bancaria }} </strong><br>
+                CLABE: <strong>{{ $banco->clabe }}</strong>
             </td>
         </tr>
     </table>
@@ -206,16 +190,19 @@
     <table class="no-border small">
         <tr>
             <td>
-                WhatsApp: 22.82.43.88.56<br>
-                e-Mail: cardenasorizaba@hotmail.com<br>
+                <strong>DATOS DE CONTACTO:</strong><br>
+                WhatsApp:<strong> {{ $banco->whatsapp }} </strong><br>
+                Correo: <strong>{{ $banco->correo_electronico }} </strong>
             </td>
         </tr>
     </table>
 
     <br>
 
-    <p class="small">
-        PRECIOS SUJETOS A CAMBIO SIN PREVIO AVISO. MATERIAL SUJETO A DISPONIBILIDAD.
+    <p class="small" style="text-align: center;">
+        <strong>
+            PRECIOS SUJETOS A CAMBIO SIN PREVIO AVISO. MATERIAL SUJETO A DISPONIBILIDAD. NO ES UN COMPROBANTE FISCAL
+        </strong>
     </p>
 
 </body>

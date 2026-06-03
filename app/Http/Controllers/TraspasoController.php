@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Traspaso;
+use App\Models\DatosBancario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Almacen;
+use App\Models\Empresa;
 use App\Models\TraspasoDetalle;
 use App\Services\InventarioService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -248,16 +250,18 @@ public function update(Request $request, Traspaso $traspaso)
 
     public function pdf(Traspaso $traspaso)
     {
-      $traspaso->load([
+    $banco=DatosBancario::where('predeterminado', true)->first();
+    $empresa=Empresa::first();
+    $traspaso->load([
             'almacenOrigen',
             'almacenDestino',
             'detalles.producto'
         ]);
 
-        $pdf = Pdf::loadView('traspasos.pdf', compact('traspaso'))
+        $pdf = Pdf::loadView('traspasos.pdf', compact('traspaso','banco','empresa'))
             ->setPaper('letter');
 
-        return $pdf->stream("Cotizacion_{$traspaso->serie}-{$traspaso->folio}.pdf");
+        return $pdf->stream("Transpaso_{$traspaso->serie}-{$traspaso->folio}.pdf");
     }
 
 }

@@ -64,18 +64,15 @@ Route::get('productos/buscar', function () {
     return Producto::where('estatus_producto', 1)
         ->where(function ($query) use ($q) {
             $query->where('clave_producto', 'like', "%{$q}%")
-                ->orWhere('codigo_producto', 'like', "%{$q}%");
+                ->orWhere('codigo_producto', 'like', "%{$q}%")
+                ->orWhere('nombre_producto', 'like', "%{$q}%");
         })
         ->select(
             'id',
             'nombre_producto as nombre',
             'codigo_producto as codigo',
             'clave_producto as clave',
-            'precio1 as costo',
-            'precio2 as costo2',
-            'precio3 as costo3',
-            'precio4 as costo4',
-            'precio5 as costo5',
+            'precio1 as costo'
         )
         ->limit(10)
         ->get();

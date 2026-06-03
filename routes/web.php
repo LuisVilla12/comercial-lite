@@ -192,7 +192,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/traspasos/{traspaso}', action: [TraspasoController::class, 'update'])->name('traspasos.update');
     Route::post('/traspasos/{traspaso}/surtir', [TraspasoController::class, 'surtir'])->name('traspasos.surtir');
     Route::delete('/traspasos/{traspaso}', action: [TraspasoController::class, 'destroy'])->name('traspasos.destroy');
-    Route::post('/traspasos/{traspaso}', [TraspasoController::class, 'pdf'])->name('traspasos.pdf');
+    Route::get('/traspasos/{traspaso}/pdf', [TraspasoController::class, 'pdf'])->name('traspasos.pdf');
+
 
     //Reportes
     Route::get('/reportes', [ReportesController::class, 'index'])->name('reportes.index');
