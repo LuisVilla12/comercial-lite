@@ -458,7 +458,7 @@
                 },
 
                 eliminarFila(index) {
-                    if (this.items.length === 1) return
+                    if (this.items.length === 0) return
                     this.items.splice(index, 1)
                     this.calcular()
                 },
@@ -502,10 +502,6 @@
                     item.resultados = []
 
                     this.calcular()
-
-                    // if (index === this.items.length - 1) {
-                    //     this.agregarFila()
-                    // }
                 },
 
                 calcular() {

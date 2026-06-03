@@ -189,7 +189,7 @@
                 </x-slot:icon>
             </x-dashboard-card>
             <x-dashboard-card href="{{ route('auditoria.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
-                title="Auditoria" desc="Auditoria del sistema" iconBg="bg-teal-500">
+                title="Bitacora" desc="Bitacora del sistema" iconBg="bg-teal-500">
                 <x-slot:icon>
                     <x-heroicon-o-document-text class="w-6 h-6" />
                 </x-slot:icon>
