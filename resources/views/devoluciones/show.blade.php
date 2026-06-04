@@ -215,7 +215,7 @@
                 <a href="{{ route('devoluciones.index',$sucursal) }}"
                     class="px-4 py-2 bg-gray-500 text-white rounded">
                     Volver</a>
-                <a href="{{ route('documentos.pdf', $documento) }}" target="_blank"
+                <a href="{{ route('documentos.pdf',  ['sucursal' => $sucursal->id, 'documento' => $documento->id]) }}" target="_blank"
                     class="px-4 py-2 bg-red-600 text-white rounded">
                     Imprimir
                 </a>

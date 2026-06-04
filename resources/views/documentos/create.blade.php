@@ -378,21 +378,22 @@
                                 @enderror
                             </div>
                         @endif
-                            <div class="mb-2">
-                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                                    Agente:<span class="text-red-500">*</span>
-                                </label>
-                                <select name="agente_id" id="agente_id"
-                                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                    <option value="" disabled>Seleccione un agente</option>
-                                    @foreach ($agentes as $agente)
-                                        <option value="{{ $agente->id }}">{{ $agente->codigo . " - " . $agente->nombre . " " . $agente->apellidoP }}</option>
-                                    @endforeach
-                                </select>
-                                @error('agente_id')
-                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        <div class="mb-2">
+                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                Agente:<span class="text-red-500">*</span>
+                            </label>
+                            <select name="agente_id" id="agente_id"
+                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                <option value="" disabled>Seleccione un agente</option>
+                                @foreach ($agentes as $agente)
+                                    <option value="{{ $agente->id }}">
+                                        {{ $agente->codigo . ' - ' . $agente->nombre . ' ' . $agente->apellidoP }}</option>
+                                @endforeach
+                            </select>
+                            @error('agente_id')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
                         <div class="col-span-2">
                             <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                                 Observaciones <span class="text-red-500">*</span>
@@ -463,28 +464,27 @@
                                                 <label class=" font-bold text-gray-700 mb-1">
                                                     Precios:
                                                 </label>
-
-                                                <select x-model="p.precioSeleccionado" @click.stop
+                                                <select x-model="p.precioSeleccionado" @click.stop  x-init="p.precioSeleccionado = p.costo"
                                                     class="border rounded p-1 text-sm">
-
-                                                    <option :value="p.costo" class=" font-bold">
+                                                    <option :value="String(p.costo)">
                                                         1 - $<span x-text="p.costo"></span>
                                                     </option>
+                                                    <option :value="String(p.costo2)" x-show="p.costo2 > 0">
+                                                        2 - $<span x-text="p.costo2"></span>
+                                                    </option>
 
-                                                    <option :value="p.costo2" class=" font-bold">
-                                                        2 - $<span x-text="p.costo5"></span>
-                                                    </option>
-                                                    {{-- VISUALIZAR PRECIOS 2 - 5  SOLO SI EL USUARIO ES ADMINISTRADOR --}}
                                                     @if (auth()->user()->tipo == 1)
-                                                    <option :value="p.costo3" class=" font-bold">
-                                                        3 - $<span x-text="p.costo2"></span>
-                                                    </option>
-                                                    <option :value="p.costo3" class=" font-bold">
-                                                        4 - $<span x-text="p.costo3"></span>
-                                                    </option>
-                                                    <option :value="p.costo4" class=" font-bold">
-                                                        5 - $<span x-text="p.costo4"></span>
-                                                    </option>
+                                                        <option :value="String(p.costo3)" x-show="p.costo3 > 0">
+                                                            3 - $<span x-text="p.costo3"></span>
+                                                        </option>
+
+                                                        <option :value="String(p.costo4)" x-show="p.costo4 > 0">
+                                                            4 - $<span x-text="p.costo4"></span>
+                                                        </option>
+
+                                                        <option :value="String(p.costo5)" x-show="p.costo5 > 0">
+                                                            5 - $<span x-text="p.costo5"></span>
+                                                        </option>
                                                     @endif
                                                 </select>
                                             </div>
@@ -621,7 +621,7 @@
                             codigo: p.codigo,
                             query: p.nombre,
                             cantidad: 1,
-                            costo: parseFloat(p.precioSeleccionado || p.costo),
+                            costo: parseFloat(p.precioSeleccionado),
                             stock: p.stock,
                             resultados: []
                         });
