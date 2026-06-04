@@ -446,10 +446,8 @@
                         <div class="mt-4 border rounded max-h-96 overflow-y-auto">
 
                             <template x-for="p in resultadosModal" :key="p.id">
-
                                 <div @click="agregarProductoDesdeModal(p)"
                                     class="p-3 border-b hover:bg-gray-100 cursor-pointer">
-
                                     <div class="flex justify-between  items-center gap-4 mb-1">
                                         <div class="">
                                             <p class="font-semibold" x-text="p.nombre"></p>
