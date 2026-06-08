@@ -604,7 +604,7 @@ class DocumentoController extends Controller
             'devoluciones' => 'required|json',
             'total' => 'required|numeric',
         ]);
-        // dd($devoluciones);
+        // dd($request->all());
         $devolucion = null;
 
         try {
@@ -638,9 +638,9 @@ class DocumentoController extends Controller
 
                 /* ================= DETALLES ================= */
                 // Arreglo de productos que devolvio
-                $devoluciones = json_decode($request->devoluciones, true);
+                // $devoluciones = json_decode($request->devoluciones, true);
+                $devoluciones = $request->productos;
                 foreach ($devoluciones as $item) {
-
                     if (empty($item['producto_id'])) {
                         continue;
                     }
@@ -649,7 +649,8 @@ class DocumentoController extends Controller
                         'devolucion_id'  => $devolucion->id,
                         'producto_id'    => $item['producto_id'],
                         'cantidad'       => $item['cantidad'],
-                        'costo_unitario' => $item['costo_unitario'],
+                        // 'costo_unitario' => $item['costo_unitario'],
+                        'costo_unitario' => $item['costo'],
                         'importe'        => $item['importe'],
                     ]);
 

@@ -54,6 +54,7 @@ class DevolucionController extends Controller
     /**
      * Display the specified resource.
      */
+
      public function show(Sucursal $sucursal, Devolucion $documento)
     {
         $usos_cfdi = UsoCfdi::all();

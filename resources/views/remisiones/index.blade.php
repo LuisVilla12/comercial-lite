@@ -100,6 +100,10 @@
                                     <span class="px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
                                         Convertida
                                     </span>
+                                @elseif($documento->estatus == 5)
+                                    <span class="px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                                        Devolución
+                                    </span>
                                 @else
                                     <span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">
                                         Cancelada
