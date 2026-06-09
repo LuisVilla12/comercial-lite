@@ -70,6 +70,20 @@
                 <x-heroicon-o-archive-box class="w-6 h-6" />
             </x-slot:icon>
         </x-dashboard-card>
+        {{-- TIPO 1--ENTRADA --}}
+        <x-dashboard-card href="{{ route('ajustes-almacen.index', $tipo=1) }}" bg="bg-blue-50 dark:bg-blue-900/20" title="Entrada a almacén"
+                desc="Entradas" iconBg="bg-blue-500">
+                <x-slot:icon>
+                    <x-heroicon-o-arrow-up-tray class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+        {{-- TIPO 2 SALIDA --}}
+            <x-dashboard-card href="{{ route('ajustes-almacen.index', $tipo=2) }}" bg="bg-blue-50 dark:bg-blue-900/20" title="Salida a almacén"
+                desc="Salidas" iconBg="bg-blue-500">
+                <x-slot:icon>
+                    <x-heroicon-o-arrow-down-tray class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
 
         <x-dashboard-card href="{{ route('puntos.index') }}" bg="bg-yellow-50 dark:bg-yellow-900/20" title="Monedero"
             desc="Monedero digital" iconBg="bg-yellow-500">

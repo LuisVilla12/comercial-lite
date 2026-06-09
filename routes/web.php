@@ -21,6 +21,9 @@ use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DatosBancarioController;
 use App\Http\Controllers\AgenteController;
+use App\Http\Controllers\AjustesAlmacenController;
+use App\Http\Controllers\EntradasAlmacenController;
+use App\Http\Controllers\SalidasAlmacenController;
 use App\Mail\TestMail;
 use Illuminate\Support\Facades\Mail;
 require __DIR__ . '/auth.php';
@@ -184,6 +187,14 @@ Route::middleware('auth')->group(function () {
     //Devoluciones
     Route::get('/devoluciones/{documento}', [DevolucionController::class, 'create'])->name('devoluciones.create');
     Route::post('/devoluciones/{documento}', [DevolucionController::class, 'store'])->name('devoluciones.store');
+
+
+    //AJUSTES DE ALMACEN
+    Route::get('/ajustes-almacen/{tipo}', action: [AjustesAlmacenController::class, 'index'])->name('ajustes-almacen.index');
+    Route::get('/ajustes-almacen/{tipo}/create', action: [AjustesAlmacenController::class, 'create'])->name('ajustes-almacen.create');
+    Route::post('/ajustes-almacen', action: [AjustesAlmacenController::class, 'store'])->name('ajustes-almacen.store');
+    Route::get('/ajustes-almacen/{ajuste}', action: [AjustesAlmacenController::class, 'show'])->name('ajustes-almacen.show');
+
 
     //Traspasos
     Route::get('/traspasos', action: [TraspasoController::class, 'index'])->name('traspasos.index');

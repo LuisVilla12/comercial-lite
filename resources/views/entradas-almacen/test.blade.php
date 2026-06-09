@@ -1,21 +1,16 @@
-@section('title',
-    match ($tipo) {
-    '1' => 'Cotización',
-    '2' => 'Facturación',
-    '3' => 'Remisión',
-    })
+@section('Entradas a Almacén')
+
     <x-app-layout>
         <x-slot name="header">
             <div class="md:flex md:justify-between">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                    Registrar
-                    {{ match ($tipo) {'1' => 'Cotización','2' => 'Factura','3' => 'Remisión'} .' ' .$sucursal->nombre }}
+                    Registrar Entrada a Almacén
                 </h2>
                 <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
                 </label>
             </div>
         </x-slot>
-        <form method="POST" action="{{ route('documentos.store', $sucursal) }}" x-data="compraApp()"
+        <form method="POST" action="" x-data="compraApp()"
             x-init="init();
             $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
@@ -301,110 +296,24 @@
 
                         {{-- -ENVIO DE DATOS --}}
                         <input type="hidden" name="proveedor_id" :value="proveedor?.id">
-                        <input type="hidden" name="almacen_id" value="{{ $sucursal->almacen_id }}">
+                        {{-- <input type="hidden" name="almacen_id" value="{{ $sucursal->almacen_id }}"> --}}
                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                         <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
                         <input type="hidden" name="subtotal" x-model="total">
                         <input type="hidden" name="impuestos" :value="(total * 1.16) - total">
                         <input type="hidden" name="total" :value="(total * 1.16)">
                         <input type="hidden" name="estatus" :value="1">
-                        <input type="hidden" name="tipo" value="{{ $tipo }}">
-                        <input type="hidden" name="sucursal_id" value="{{ $sucursal->id }}">
+                        {{-- <input type="hidden" name="sucursal_id" value="{{ $sucursal->id }}"> --}}
                     </div>
                 </div>
                 <div x-show="tab === 'info'" x-cloak class="space-y-4">
                     <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
-                        <div class="col-span-full">
-                            <label
-                                class="block text-xl mt-4 text-center md:text-left font-medium text-gray-700 dark:text-white">
-                                Datos del cliente: </span>
-                            </label>
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                RFC: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="rfc" placeholder="RFC" x-model="proveedorRfc"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('rfc')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
 
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Codigo postal: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('codigo_postal')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Ciudad: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="ciudad" placeholder="Ciudad" x-model="proveedorCiudad"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('ciudad')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        {{--  --}}
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Calle: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="calle" placeholder="calle" x-model="proveedorCalle"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('calle')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <div class="mb-2">
-                                <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                    Número exterior: <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="numero_exterior" placeholder="Número exterior"
-                                    x-model="proveedorNumeroExterior"
-                                    class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                @error('numero_exterior')
-                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Colonia: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('colonia')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
                         <div class="col-span-full">
                             <label for="metodo_pago"
                                 class="block mt-4 text-center md:text-left text-xl font-medium text-gray-700 dark:text-white mb-1">
                                 Datos del pago: </span>
                             </label>
-                        </div>
-                        {{-- Metodo de pago --}}
-                        <div class="mb-2">
-                            <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
-                                Metodo de pago: <span class="text-red-500">*</span>
-                            </label>
-                            <select name="metodo_pago" id="metodo_pago"
-                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                <option value="" disabled>Seleccione una opcion</option>
-                                <option value="PUE"selected>PUE Pago en una sola exhibición</option>
-                                <option value="PPD">PPD Pago en Parcialidades o Diferido</option>
-                            </select>
-                            @error('metodo_pago')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
                         </div>
                         {{-- Forma de pago --}}
                         <div class="mb-2">
@@ -424,35 +333,7 @@
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        {{-- Uso de cfdi --}}
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                                Uso de CFDI <span class="text-red-500">*</span>
-                            </label>
-                            <select name="uso_cfdi" id="uso_cfdi"
-                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                <option value="" disabled>Seleccione una opcion</option>
-                                @foreach ($usos as $uso)
-                                    <option selected value="{{ $uso->clave }}">
-                                        {{ $uso->clave . ' ' . $uso->descripcion }}</option>
-                                @endforeach
-                            </select>
-                            @error('uso_cfdi')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        @if ($tipo == '1')
-                            <div class="mb-2">
-                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                                    Vigencia del documento:<span class="text-red-500">*</span>
-                                </label>
-                                <input type="date" name="vigencia"
-                                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                @error('vigencia')
-                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        @endif
+
                         <div class="mb-2">
                             <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                                 Agente:<span class="text-red-500">*</span>
@@ -482,14 +363,7 @@
                 </div>
                 <div class="md:col-span-2 flex justify-between gap-3 mt-4">
 
-                    <a href="{{ route(
-                        match ($tipo) {
-                            '1' => 'cotizaciones.index',
-                            '2' => 'facturas.index',
-                            '3' => 'remisiones.index',
-                        },
-                        ['sucursal' => $sucursal],
-                    ) }}"
+                    <a href="{{ route('entradas.index') }}"
                         class="px-4 py-2 rounded-md border dark:bg-red border-red-300 bg-red-500 text-white hover:bg-red-500">
                         Cancelar
                     </a>
@@ -629,7 +503,7 @@
         {{-- ================= ALPINE ================= --}}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-            const ALMACEN_ID = {{ $sucursal->almacen_id }};
+            const ALMACEN_ID = 1;
 
             function compraApp() {
                 return {

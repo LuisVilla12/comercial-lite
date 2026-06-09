@@ -1,23 +1,17 @@
-@section('title',
-    match ($tipo) {
-    '1' => 'Cotización',
-    '2' => 'Facturación',
-    '3' => 'Remisión',
-    })
+@section('Entradas a Almacén')
+
     <x-app-layout>
         <x-slot name="header">
             <div class="md:flex md:justify-between">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                    Registrar
-                    {{ match ($tipo) {'1' => 'Cotización','2' => 'Factura','3' => 'Remisión'} .' ' .$sucursal->nombre }}
+                    Registrar Entrada a Almacén
                 </h2>
                 <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
                 </label>
             </div>
         </x-slot>
-        <form method="POST" action="{{ route('documentos.store', $sucursal) }}" x-data="compraApp()"
-            x-init="init();
-            $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
+        <form method="POST" action="{{ route('ajustes-almacen.store') }}" x-data="compraApp()" x-init="init();
+        $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
             @csrf
             <div x-data="{ tab: 'detalle' }">
@@ -36,62 +30,16 @@
                 </div>
                 <div x-show="tab === 'detalle'">
                     <div class=" mx-auto py-6">
-                        <div class="mb-6">
-                            <div class="md:flex justify-between">
-                                <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
-                            </div>
-
-
-                            <input type="text" x-model="proveedorQuery" autofocus
-                                @input.debounce.300ms="
-        buscarProveedor();
-        proveedorSeleccionado = -1;
-    "
-                                @keydown.arrow-down.prevent="
-        if (proveedores.length) {
-            proveedorSeleccionado =
-                proveedorSeleccionado < proveedores.length - 1
-                    ? proveedorSeleccionado + 1
-                    : 0;
-        }
-    "
-                                @keydown.arrow-up.prevent="
-        if (proveedores.length) {
-            proveedorSeleccionado =
-                proveedorSeleccionado > 0
-                    ? proveedorSeleccionado - 1
-                    : proveedores.length - 1;
-        }
-    "
-                                @keydown.enter.prevent="
-        if (proveedorSeleccionado >= 0) {
-            seleccionarProveedor(proveedores[proveedorSeleccionado]);
-        }
-    "
-                                @keydown.escape="
-        proveedores = [];
-        proveedorSeleccionado = -1;
-    "
-                                class="w-full border rounded p-2" placeholder="Buscar cliente">
-
-                            @error('proveedor_id')
-                                <p class="text-red-600 text-xs mt-1">
-                                    Debes seleccionar uno.
-                                </p>
-                            @enderror
-
-                            <ul x-show="proveedores.length"
-                                class="border bg-white rounded shadow mt-1 max-h-48 overflow-y-auto">
-                                <template x-for="(p, index) in proveedores" :key="p.id">
-                                    <li @click="seleccionarProveedor(p)" class="p-2 cursor-pointer"
-                                        :class="proveedorSeleccionado === index ?
-                                            'bg-blue-100' :
-                                            'hover:bg-gray-100'"
-                                        x-text="p.nombre + ' (' + p.codigo + ')'">
-                                    </li>
-                                </template>
-                            </ul>
-
+                        {{-- Almacen --}}
+                        <div>
+                            <label class="block text-lg font-medium mb-2 dark:text-white">Seleccionar almacen: *</label>
+                            <select name="almacen_id" id="almacen_id"
+                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 mb-2">
+                                <option value="" disabled selected>Seleccione</option>
+                                @foreach ($almacenes as $almacen)
+                                    <option value="{{ $almacen->id }}">{{ $almacen->nombre }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         {{-- ================= PRODUCTOS ================= --}}
                         <div class="mt-2">
@@ -102,9 +50,7 @@
                                             <th class="p-2">Código</th>
                                             <th class="p-2">Producto</th>
                                             <th class="p-2">Cantidad</th>
-                                            <th class="p-2">Precio</th>
                                             <th class="p-2">Existencia</th>
-                                            <th class="p-2">Importe</th>
                                             <th class="p-2"></th>
                                         </tr>
                                     </thead>
@@ -180,21 +126,11 @@
                                                 </td>
 
                                                 <td class="p-2 text-center">
-                                                    <input readonly type="number" :name="`productos[${index}][costo]`"
-                                                        x-model.number="item.costo"
-                                                        class="border rounded p-1 w-24 text-center bg-gray-100">
-                                                </td>
-
-                                                <td class="p-2 text-center">
                                                     <input disabled type="number" x-model.number="item.stock"
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
 
-                                                <td class="p-2 text-center font-semibold">
-                                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
-                                                    <input type="hidden" :name="`productos[${index}][importe]`"
-                                                        :value="(item.cantidad * item.costo).toFixed(2)">
-                                                </td>
+
 
                                                 <td class="p-2 text-center">
                                                     <button type="button" @click="eliminarFila(index)"
@@ -247,11 +183,6 @@
                                                     @input="calcular" class="border rounded p-2 w-full text-center">
                                             </div>
 
-                                            <div>
-                                                <label class="text-xs text-gray-500">Precio</label>
-                                                <input readonly type="number" x-model.number="item.costo"
-                                                    class="border rounded p-2 w-full text-center bg-gray-100">
-                                            </div>
 
                                             <div>
                                                 <label class="text-xs text-gray-500">Existencia</label>
@@ -259,12 +190,7 @@
                                                     class="border rounded p-2 w-full text-center bg-gray-100">
                                             </div>
 
-                                            <div>
-                                                <label class="text-xs text-gray-500">Importe</label>
-                                                <div class="border rounded p-2 text-center font-semibold bg-gray-50">
-                                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
-                                                </div>
-                                            </div>
+
                                         </div>
 
                                         <div class="flex justify-end">
@@ -288,173 +214,20 @@
                             </button>
                         </div>
 
-                        {{-- ================= TOTAL ================= --}}
-                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            Subtotal: $<span x-text="total.toFixed(2)"></span>
-                        </div>
-                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            IVA: $<span x-text="(total*1.16-total).toFixed(2)"></span>
-                        </div>
-                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            Total: $<span x-text="(total * 1.16).toFixed(2)"></span>
-                        </div>
 
                         {{-- -ENVIO DE DATOS --}}
-                        <input type="hidden" name="proveedor_id" :value="proveedor?.id">
-                        <input type="hidden" name="almacen_id" value="{{ $sucursal->almacen_id }}">
                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                         <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
                         <input type="hidden" name="subtotal" x-model="total">
                         <input type="hidden" name="impuestos" :value="(total * 1.16) - total">
                         <input type="hidden" name="total" :value="(total * 1.16)">
                         <input type="hidden" name="estatus" :value="1">
-                        <input type="hidden" name="tipo" value="{{ $tipo }}">
-                        <input type="hidden" name="sucursal_id" value="{{ $sucursal->id }}">
                     </div>
                 </div>
                 <div x-show="tab === 'info'" x-cloak class="space-y-4">
                     <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
-                        <div class="col-span-full">
-                            <label
-                                class="block text-xl mt-4 text-center md:text-left font-medium text-gray-700 dark:text-white">
-                                Datos del cliente: </span>
-                            </label>
-                        </div>
                         <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                RFC: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="rfc" placeholder="RFC" x-model="proveedorRfc"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('rfc')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Codigo postal: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('codigo_postal')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Ciudad: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="ciudad" placeholder="Ciudad" x-model="proveedorCiudad"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('ciudad')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        {{--  --}}
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Calle: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="calle" placeholder="calle" x-model="proveedorCalle"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('calle')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <div class="mb-2">
-                                <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                    Número exterior: <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="numero_exterior" placeholder="Número exterior"
-                                    x-model="proveedorNumeroExterior"
-                                    class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                @error('numero_exterior')
-                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
-                                Colonia: <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('colonia')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="col-span-full">
-                            <label for="metodo_pago"
-                                class="block mt-4 text-center md:text-left text-xl font-medium text-gray-700 dark:text-white mb-1">
-                                Datos del pago: </span>
-                            </label>
-                        </div>
-                        {{-- Metodo de pago --}}
-                        <div class="mb-2">
-                            <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
-                                Metodo de pago: <span class="text-red-500">*</span>
-                            </label>
-                            <select name="metodo_pago" id="metodo_pago"
-                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                <option value="" disabled>Seleccione una opcion</option>
-                                <option value="PUE"selected>PUE Pago en una sola exhibición</option>
-                                <option value="PPD">PPD Pago en Parcialidades o Diferido</option>
-                            </select>
-                            @error('metodo_pago')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        {{-- Forma de pago --}}
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                                Forma de pago:<span class="text-red-500">*</span>
-                            </label>
-                            <select name="forma_pago" id="forma_pago"
-                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                <option value="01" selected>01 Efectivo</option>
-                                <option value="03">03 Transferencia</option>
-                                <option value="04">04 Tarjeta de crédito</option>
-                                <option value="28">28 Tarjeta de débito</option>
-                                <option value="05">05 Monedero electrónico</option>
-                                <option value="02">02 Cheque nominativo</option>
-                            </select>
-                            @error('forma_pago')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        {{-- Uso de cfdi --}}
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                                Uso de CFDI <span class="text-red-500">*</span>
-                            </label>
-                            <select name="uso_cfdi" id="uso_cfdi"
-                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                <option value="" disabled>Seleccione una opcion</option>
-                                @foreach ($usos as $uso)
-                                    <option selected value="{{ $uso->clave }}">
-                                        {{ $uso->clave . ' ' . $uso->descripcion }}</option>
-                                @endforeach
-                            </select>
-                            @error('uso_cfdi')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        @if ($tipo == '1')
-                            <div class="mb-2">
-                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                                    Vigencia del documento:<span class="text-red-500">*</span>
-                                </label>
-                                <input type="date" name="vigencia"
-                                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                @error('vigencia')
-                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        @endif
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                            <label class="block text-md font-medium text-gray-700 mb-1 mt-4  dark:text-white">
                                 Agente:<span class="text-red-500">*</span>
                             </label>
                             <select name="agente_id" id="agente_id"
@@ -482,14 +255,7 @@
                 </div>
                 <div class="md:col-span-2 flex justify-between gap-3 mt-4">
 
-                    <a href="{{ route(
-                        match ($tipo) {
-                            '1' => 'cotizaciones.index',
-                            '2' => 'facturas.index',
-                            '3' => 'remisiones.index',
-                        },
-                        ['sucursal' => $sucursal],
-                    ) }}"
+                    <a href="{{ route('ajustes-almacen.index') }}"
                         class="px-4 py-2 rounded-md border dark:bg-red border-red-300 bg-red-500 text-white hover:bg-red-500">
                         Cancelar
                     </a>
@@ -544,22 +310,6 @@
                             placeholder="Buscar producto..." class="w-full border rounded p-2" autocomplete="off">
 
                         <div class="mt-4 border rounded max-h-96 overflow-y-auto">
-                            {{-- <template x-for="(p, i) in resultadosModal" :key="p.id">
-                                <div @mouseenter="modalProductoSeleccionado = i" @click="agregarProductoDesdeModal(p)"
-                                    class="p-3 border-b cursor-pointer"
-                                    :class="modalProductoSeleccionado === i ? 'bg-blue-100' : 'hover:bg-gray-100'">
-                                    <div class="flex justify-between items-center gap-4 mb-1">
-                                        <div>
-                                            <p class="font-semibold" x-text="p.nombre"></p>
-                                            <div class="flex items-center gap-3">
-                                                <p>Código: <span x-text="p.codigo" class="font-bold"></span></p>
-                                                <p>Clave: <span x-text="p.clave" class="font-bold"></span></p>
-                                                <p>Existencia: <span x-text="p.stock" class="font-bold"></span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template> --}}
                             <template x-for="(p, i) in resultadosModal" :key="p.id">
                                 <div @mouseenter="modalProductoSeleccionado = i" @click="agregarProductoDesdeModal(p)"
                                     class="p-3 border-b cursor-pointer"
@@ -585,38 +335,6 @@
                                                 </p>
                                             </div>
                                         </div>
-
-                                        <!-- Lista de precios -->
-                                        <div @click.stop>
-                                            <label class="font-bold text-gray-700 text-sm block mb-1">
-                                                Precios:
-                                            </label>
-
-                                            <select x-model="p.precioSeleccionado" x-init="if (!p.precioSeleccionado) p.precioSeleccionado = String(p.costo)"
-                                                class="border rounded p-1 text-sm">
-                                                <option :value="String(p.costo)">
-                                                    Precio 1 - $<span x-text="p.costo"></span>
-                                                </option>
-
-                                                <option x-show="Number(p.costo2) > 0" :value="String(p.costo2)">
-                                                    Precio 2 - $<span x-text="p.costo2"></span>
-                                                </option>
-
-                                                @if (auth()->user()->tipo == 1)
-                                                    <option x-show="Number(p.costo3) > 0" :value="String(p.costo3)">
-                                                        Precio 3 - $<span x-text="p.costo3"></span>
-                                                    </option>
-
-                                                    <option x-show="Number(p.costo4) > 0" :value="String(p.costo4)">
-                                                        Precio 4 - $<span x-text="p.costo4"></span>
-                                                    </option>
-
-                                                    <option x-show="Number(p.costo5) > 0" :value="String(p.costo5)">
-                                                        Precio 5 - $<span x-text="p.costo5"></span>
-                                                    </option>
-                                                @endif
-                                            </select>
-                                        </div>
                                     </div>
                                 </div>
                             </template>
@@ -629,21 +347,10 @@
         {{-- ================= ALPINE ================= --}}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-            const ALMACEN_ID = {{ $sucursal->almacen_id }};
+            const ALMACEN_ID = 1;
 
             function compraApp() {
                 return {
-                    proveedor: null,
-                    proveedorQuery: '',
-                    proveedorRfc: '',
-                    proveedorCP: '',
-                    proveedorCalle: '',
-                    proveedorNumeroInterior: '',
-                    proveedorNumeroExterior: '',
-                    proveedorCiudad: '',
-                    proveedorColonia: '',
-                    proveedores: [],
-                    proveedorSeleccionado: -1,
 
                     items: [],
                     total: 0,
@@ -698,43 +405,6 @@
                         this.calcular()
                     },
 
-                    async buscarProveedor() {
-                        if (this.proveedorQuery.length < 2) {
-                            this.proveedores = []
-                            this.proveedorSeleccionado = -1
-                            return
-                        }
-
-                        this.proveedores = []
-                        this.proveedorSeleccionado = -1
-
-                        const res = await fetch(`/api/clientes/buscar?q=${encodeURIComponent(this.proveedorQuery)}`)
-                        this.proveedores = await res.json()
-                    },
-
-                    seleccionarProveedor(p) {
-                        if (!p.domicilios || !p.domicilios[0]) {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Domicilio no encontrado',
-                                text: 'El cliente seleccionado no tiene un domicilio registrado.'
-                            })
-                            return
-                        }
-
-                        this.proveedor = p
-                        this.proveedorQuery = p.nombre
-                        this.proveedorRfc = p.rfc
-                        this.proveedorCalle = p.domicilios[0].calle ?? ''
-                        this.proveedorCP = p.domicilios[0].cp ?? ''
-                        this.proveedorNumeroInterior = p.domicilios[0].numero_interior ?? ''
-                        this.proveedorNumeroExterior = p.domicilios[0].numero_exterior ?? ''
-                        this.proveedorCiudad = p.domicilios[0].ciudad ?? ''
-                        this.proveedorColonia = p.domicilios[0].colonia ?? ''
-                        this.proveedores = []
-                        this.proveedorSeleccionado = -1
-                    },
-
                     async buscarProducto(index) {
                         const q = this.items[index].query?.trim() || '';
                         if (q.length < 2) {
@@ -782,32 +452,6 @@
                         this.resultadosModal = await res.json();
                         this.modalProductoSeleccionado = this.resultadosModal.length ? 0 : -1;
                     },
-
-                    // agregarProductoDesdeModal(p) {
-                    //     if (this.items.some(i => i.producto_id === p.id)) {
-                    //         alert('El producto ya fue agregado')
-                    //         return
-                    //     }
-
-                    //     this.items.push({
-                    //         producto_id: p.id,
-                    //         codigo: p.codigo,
-                    //         query: p.nombre,
-                    //         cantidad: 1,
-                    //         costo: parseFloat(p.precioSeleccionado || p.costo) || 0,
-                    //         costo2: parseFloat(p.costo2) || 0,
-                    //         costo3: parseFloat(p.costo3) || 0,
-                    //         costo4: parseFloat(p.costo4) || 0,
-                    //         stock: p.stock,
-                    //         resultados: [],
-                    //         resultadoSeleccionado: -1
-                    //     })
-
-                    //     this.modalProducto = false
-                    //     this.busquedaProducto = ''
-                    //     this.resultadosModal = []
-                    //     this.calcular()
-                    // },
 
                     agregarProductoDesdeModal(p) {
                         if (this.items.some(i => i.producto_id === p.id)) {
