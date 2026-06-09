@@ -39,7 +39,7 @@
                                 <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
                             </div>
 
-                            <input type="text" x-model="proveedorQuery" @input.debounce.300ms="buscarProveedor"
+                            <input type="text" x-model="proveedorQuery" autofocus @input.debounce.300ms="buscarProveedor"
                                 class="w-full border rounded p-2" placeholder="Buscar cliente">
                             @error('proveedor_id')
                                 <p class="text-red-600 text-xs mt-1">Debes selecciona uno.</p>
@@ -79,7 +79,8 @@
                                                 <td class="p-2 relative">
                                                     <input type="text" x-model="item.query"
                                                         @input.debounce.300ms="buscarProducto(index)"
-                                                        class="border rounded p-1 w-full" placeholder="Buscar producto">
+                                                        class="border rounded p-1 w-full" autofocus
+                                                        placeholder="Buscar producto">
 
                                                     <ul x-show="item.resultados.length" @click.away="item.resultados = []"
                                                         class="absolute z-20 bg-white border rounded shadow w-full">
@@ -209,7 +210,7 @@
                             @enderror
                             <button type="button" @click="modalProducto = true"
                                 class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-                                ➕ Agregar producto
+                                ➕ Agregar producto [F9]
                             </button>
                         </div>
 
@@ -425,7 +426,8 @@
                 </div>
 
                 {{-- MODAL --}}
-                <div x-show="modalProducto" x-cloak
+                <div x-show="modalProducto" @keydown.window.escape="modalProducto = false"
+                    @keydown.window.prevent.f9="modalProducto = true" x-cloak
                     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
                     <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
@@ -440,9 +442,9 @@
                             </button>
                         </div>
 
-                        <input type="text" x-model="busquedaProducto" @input.debounce.300ms="buscarProductoModal"
-                            placeholder="Buscar producto..." class="w-full border rounded p-2">
-
+                        <input type="text" x-ref="buscarProducto" x-model="busquedaProducto"
+                            @input.debounce.300ms="buscarProductoModal" placeholder="Buscar producto..."
+                            class="w-full border rounded p-2">
                         <div class="mt-4 border rounded max-h-96 overflow-y-auto">
 
                             <template x-for="p in resultadosModal" :key="p.id">
@@ -462,7 +464,7 @@
                                                 <label class=" font-bold text-gray-700 mb-1">
                                                     Precios:
                                                 </label>
-                                                <select x-model="p.precioSeleccionado" @click.stop  x-init="p.precioSeleccionado = p.costo"
+                                                <select x-model="p.precioSeleccionado" @click.stop x-init="p.precioSeleccionado = p.costo"
                                                     class="border rounded p-1 text-sm">
                                                     <option :value="String(p.costo)">
                                                         1 - $<span x-text="p.costo"></span>
