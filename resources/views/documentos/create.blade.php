@@ -39,7 +39,7 @@
                                 <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
                             </div>
 
-                            <input type="text" x-model="proveedorQuery" autofocus @input.debounce.300ms="buscarProveedor"
+                            {{-- <input type="text" x-model="proveedorQuery" autofocus @input.debounce.300ms="buscarProveedor"
                                 class="w-full border rounded p-2" placeholder="Buscar cliente">
                             @error('proveedor_id')
                                 <p class="text-red-600 text-xs mt-1">Debes selecciona uno.</p>
@@ -52,7 +52,66 @@
                                         x-text="p.nombre">
                                     </li>
                                 </template>
-                            </ul>
+                            </ul> --}}
+
+                            <input
+    type="text"
+    x-model="proveedorQuery"
+    autofocus
+    @input.debounce.300ms="
+        buscarProveedor();
+        proveedorSeleccionado = -1;
+    "
+    @keydown.arrow-down.prevent="
+        if (proveedores.length) {
+            proveedorSeleccionado =
+                proveedorSeleccionado < proveedores.length - 1
+                    ? proveedorSeleccionado + 1
+                    : 0;
+        }
+    "
+    @keydown.arrow-up.prevent="
+        if (proveedores.length) {
+            proveedorSeleccionado =
+                proveedorSeleccionado > 0
+                    ? proveedorSeleccionado - 1
+                    : proveedores.length - 1;
+        }
+    "
+    @keydown.enter.prevent="
+        if (proveedorSeleccionado >= 0) {
+            seleccionarProveedor(proveedores[proveedorSeleccionado]);
+        }
+    "
+    @keydown.escape="
+        proveedores = [];
+        proveedorSeleccionado = -1;
+    "
+    class="w-full border rounded p-2"
+    placeholder="Buscar cliente"
+>
+
+@error('proveedor_id')
+    <p class="text-red-600 text-xs mt-1">
+        Debes seleccionar uno.
+    </p>
+@enderror
+
+<ul
+    x-show="proveedores.length"
+    class="border bg-white rounded shadow mt-1 max-h-48 overflow-y-auto"
+>
+    <template x-for="(p, index) in proveedores" :key="p.id">
+        <li
+            @click="seleccionarProveedor(p)"
+            class="p-2 cursor-pointer"
+            :class="proveedorSeleccionado === index
+                ? 'bg-blue-100'
+                : 'hover:bg-gray-100'"
+            x-text="p.nombre + ' (' + p.codigo + ')'">
+        </li>
+    </template>
+</ul>
 
                         </div>
                         {{-- ================= PRODUCTOS ================= --}}
@@ -515,6 +574,7 @@
                     proveedorCiudad: '',
                     proveedorColonia: '',
                     proveedores: [],
+                    proveedorSeleccionado: -1,
 
                     items: [],
                     total: 0,
@@ -546,11 +606,15 @@
 
                     async buscarProveedor() {
                         if (this.proveedorQuery.length < 2) return
+                        this.proveedores = []
+                        this.proveedorSeleccionado = -1;
                         const res = await fetch(`/api/clientes/buscar?q=${this.proveedorQuery}`)
                         this.proveedores = await res.json()
+
                     },
 
                     seleccionarProveedor(p) {
+                        console.log(p.domicilios);
                         if (!p.domicilios[0]) {
                             Swal.fire({
                                 icon: 'warning',
@@ -568,6 +632,7 @@
                             this.proveedorCiudad = p.domicilios[0].ciudad ?? ''
                             this.proveedorColonia = p.domicilios[0].colonia ?? ''
                             this.proveedores = []
+                            this.proveedorSeleccionado = -1;
                         }
 
                     },
