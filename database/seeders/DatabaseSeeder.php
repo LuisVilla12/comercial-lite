@@ -29,10 +29,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ClasificacionSeeder::class,
             ProductosSeeder::class,
-            DomiciliosSeeder::class,
             ClientesSeeder::class,
             ExistenciasSeeder::class,
             AgenteSeeder::class,
+            DomiciliosSeeder::class,
         ]);
     }
 }
