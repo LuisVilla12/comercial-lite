@@ -3,12 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>
-        {{ match ($ajuste->tipo) {
-            1 => 'Cotización',
-            2 => 'Factura',
-        } }}
-        {{ $ajuste->id }}</title>
+    <title>EXISTENCIAS</title>
 
     <style>
         body {
@@ -57,27 +52,14 @@
     <table class="no-border">
         <tr>
             <td width="40%">
-                Fecha: {{ \Carbon\Carbon::parse($ajuste->fecha)->format('d/m/Y') }}<br>
-                Usuario: {{ $ajuste->usuario->name ?? 'Nombre no disponible' }}
-            </td>
+                Fecha: {{ now()->format('d/m/Y') }}
+<br>
+             </td>
         </tr>
     </table>
 
     <br>
 
-    {{-- ================= CLIENTE ================= --}}
-    <table>
-        <tr>
-            <td class="bold"> Ajuste de @if ($ajuste->tipo == 1)
-                Entradas
-            @else
-                Salidas
-            @endif #{{ $ajuste->id }}</td>
-            <td class="bold">ALMACEN: {{ $ajuste->almacen->nombre }}</td>
-        </tr>
-    </table>
-
-    <br>
 
     {{-- ================= PRODUCTOS ================= --}}
     <table>
@@ -87,15 +69,17 @@
                 <th>Unidad</th>
                 <th>Clave Prod.</th>
                 <th>Descripción</th>
+                <th colspan="2">Almacen</th>
                 </tr>
         </thead>
         <tbody>
-            @foreach ($ajuste->detalles as $d)
+            @foreach ($existencias as $d)
                 <tr>
-                    <td class="text-right">{{ number_format($d->cantidad, 2) }}</td>
+                    <td class="text-right">{{ $d->cantidad }}</td>
                     <td class="text-center">PZ</td>
-                    <td>{{ $d->producto->codigo_producto }}</td>
+                    <td> {{ $d->producto->codigo_producto }}</td>
                     <td>{{ $d->producto->nombre_producto }}</td>
+                    <td colspan="2">{{ $d->almacen->nombre }}</td>
                 </tr>
             @endforeach
         </tbody>
