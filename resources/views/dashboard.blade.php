@@ -1,6 +1,6 @@
 @section('title', 'Panel de control')
 <x-app-layout>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6" >
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
         {{-- ================= CATÁLOGOS ================= --}}
         <div class="col-span-full">
             <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
@@ -36,13 +36,6 @@
             </x-slot:icon>
         </x-dashboard-card>
 
-        {{-- ================= OPERACIONES ================= --}}
-        <div class="col-span-full mt-6">
-            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
-                🔄 Operaciones
-            </h2>
-        </div>
-        @if (auth()->user()->tipo == 1 or auth()->user()->tipo==3)
         <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Almacenes" desc="Control de almacenes" iconBg="bg-emerald-500">
             <x-slot:icon>
@@ -50,19 +43,41 @@
             </x-slot:icon>
         </x-dashboard-card>
 
-        <x-dashboard-card href="{{ route('compras.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20" title="Compras"
-            desc="Control de compras" iconBg="bg-emerald-500">
-            <x-slot:icon>
-                <x-heroicon-o-shopping-cart class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
 
-        <x-dashboard-card href="{{ route('traspasos.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
-            title="Traspasos" desc="Movimientos entre almacenes" iconBg="bg-emerald-500">
-            <x-slot:icon>
-                <x-heroicon-o-arrows-right-left class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
+        {{-- ================= OPERACIONES ================= --}}
+        <div class="col-span-full mt-6">
+            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                🔄 Operaciones
+            </h2>
+        </div>
+        @if (auth()->user()->tipo == 1 or auth()->user()->tipo == 3)
+            <x-dashboard-card href="{{ route('compras.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+                title="Compras" desc="Control de compras" iconBg="bg-emerald-500">
+                <x-slot:icon>
+                    <x-heroicon-o-shopping-cart class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+
+            <x-dashboard-card href="{{ route('traspasos.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+                title="Traspasos" desc="Movimientos entre almacenes" iconBg="bg-emerald-500">
+                <x-slot:icon>
+                    <x-heroicon-o-arrows-right-left class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+            {{-- TIPO 1--ENTRADA --}}
+            <x-dashboard-card href="{{ route('ajustes-almacen.index', $tipo = 1) }}" bg="bg-blue-50 dark:bg-blue-900/20"
+                title="Entrada a almacén" desc="Entradas" iconBg="bg-blue-500">
+                <x-slot:icon>
+                    <x-heroicon-o-arrow-up-tray class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+            {{-- TIPO 2 SALIDA --}}
+            <x-dashboard-card href="{{ route('ajustes-almacen.index', $tipo = 2) }}" bg="bg-blue-50 dark:bg-blue-900/20"
+                title="Salida a almacén" desc="Salidas" iconBg="bg-blue-500">
+                <x-slot:icon>
+                    <x-heroicon-o-arrow-down-tray class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
         @endif
         <x-dashboard-card href="{{ route('existencias.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Existencias" desc="Existencias de productos" iconBg="bg-emerald-500">
@@ -70,20 +85,6 @@
                 <x-heroicon-o-archive-box class="w-6 h-6" />
             </x-slot:icon>
         </x-dashboard-card>
-        {{-- TIPO 1--ENTRADA --}}
-        <x-dashboard-card href="{{ route('ajustes-almacen.index', $tipo=1) }}" bg="bg-blue-50 dark:bg-blue-900/20" title="Entrada a almacén"
-                desc="Entradas" iconBg="bg-blue-500">
-                <x-slot:icon>
-                    <x-heroicon-o-arrow-up-tray class="w-6 h-6" />
-                </x-slot:icon>
-            </x-dashboard-card>
-        {{-- TIPO 2 SALIDA --}}
-            <x-dashboard-card href="{{ route('ajustes-almacen.index', $tipo=2) }}" bg="bg-blue-50 dark:bg-blue-900/20" title="Salida a almacén"
-                desc="Salidas" iconBg="bg-blue-500">
-                <x-slot:icon>
-                    <x-heroicon-o-arrow-down-tray class="w-6 h-6" />
-                </x-slot:icon>
-            </x-dashboard-card>
 
         <x-dashboard-card href="{{ route('puntos.index') }}" bg="bg-yellow-50 dark:bg-yellow-900/20" title="Monedero"
             desc="Monedero digital" iconBg="bg-yellow-500">
@@ -92,11 +93,11 @@
             </x-slot:icon>
         </x-dashboard-card>
         <x-dashboard-card href="{{ route('reportes.index') }}" bg="bg-red-50 dark:bg-red-900/20" title="Reportes"
-                desc="Generar reportes" iconBg="bg-red-500">
-                <x-slot:icon>
-                    <x-heroicon-o-chart-bar class="w-6 h-6" />
-                </x-slot:icon>
-            </x-dashboard-card>
+            desc="Generar reportes" iconBg="bg-red-500">
+            <x-slot:icon>
+                <x-heroicon-o-chart-bar class="w-6 h-6" />
+            </x-slot:icon>
+        </x-dashboard-card>
 
         {{-- ================= VENTAS ================= --}}
         <div class="col-span-full mt-6">
@@ -124,7 +125,7 @@
                     </x-slot:icon>
                 </x-dashboard-card>
             @endforeach
-             @foreach ($sucursales as $sucursal)
+            @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('facturas.index', $sucursal) }}" bg="bg-blue-50 dark:bg-blue-900/20"
                     title="Facturas {{ $sucursal->nombre }}" desc="Generar facturas" iconBg="bg-blue-500">
                     <x-slot:icon>
@@ -134,7 +135,8 @@
             @endforeach
             @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('devoluciones.index', $sucursal) }}" bg="bg-red-50 dark:bg-red-900/20"
-                    title="Devoluciones {{ $sucursal->nombre }}" desc="Devoluciones de productos" iconBg="bg-red-500">
+                    title="Devoluciones {{ $sucursal->nombre }}" desc="Devoluciones de productos"
+                    iconBg="bg-red-500">
                     <x-slot:icon>
                         <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
                     </x-slot:icon>
@@ -168,8 +170,9 @@
                 </x-dashboard-card>
             @endforeach
             @foreach ($sucursales as $sucursal)
-                <x-dashboard-card href="{{ route('devoluciones.index', $sucursal) }}" bg="bg-red-50 dark:bg-red-900/20"
-                    title="Devoluciones {{ $sucursal->nombre }}" desc="Devoluciones de productos" iconBg="bg-red-500">
+                <x-dashboard-card href="{{ route('devoluciones.index', $sucursal) }}"
+                    bg="bg-red-50 dark:bg-red-900/20" title="Devoluciones {{ $sucursal->nombre }}"
+                    desc="Devoluciones de productos" iconBg="bg-red-500">
                     <x-slot:icon>
                         <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
                     </x-slot:icon>
@@ -184,8 +187,8 @@
                 </h2>
             </div>
 
-            <x-dashboard-card href="{{ route('usuarios.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Usuarios"
-                desc="Administrar usuarios" iconBg="bg-teal-500">
+            <x-dashboard-card href="{{ route('usuarios.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
+                title="Usuarios" desc="Administrar usuarios" iconBg="bg-teal-500">
                 <x-slot:icon>
                     <x-heroicon-o-users class="w-6 h-6" />
                 </x-slot:icon>
@@ -208,14 +211,14 @@
                     <x-heroicon-o-document-text class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            <x-dashboard-card href="{{ route('bancos.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Datos Bancarios"
-                desc="Administrar datos bancarios" iconBg="bg-teal-500">
+            <x-dashboard-card href="{{ route('bancos.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
+                title="Datos Bancarios" desc="Administrar datos bancarios" iconBg="bg-teal-500">
                 <x-slot:icon>
                     <x-heroicon-o-banknotes class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            <x-dashboard-card href="{{ route('agentes.index') }}" bg="bg-teal-50 dark:bg-teal-900/20" title="Agentes"
-                desc="Administrar agentes" iconBg="bg-teal-500">
+            <x-dashboard-card href="{{ route('agentes.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
+                title="Agentes" desc="Administrar agentes" iconBg="bg-teal-500">
                 <x-slot:icon>
                     <x-heroicon-o-user class="w-6 h-6" />
                 </x-slot:icon>
