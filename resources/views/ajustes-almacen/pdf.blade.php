@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>
-
-        {{ $traspaso->serie }} {{ $traspaso->folio }}</title>
-
+        {{ match ($ajuste->tipo) {
+            1 => 'Cotización',
+            2 => 'Factura',
+        } }}
+        {{ $ajuste->id }}</title>
 
     <style>
         body {
@@ -49,28 +51,29 @@
 </head>
 
 <body>
+    <br>
 
-    {{-- ================= ENCABEZADO ================= --}}
+    {{-- ================= DATOS EMPRESA ================= --}}
     <table class="no-border">
         <tr>
-            <img src="{{ public_path('images/logo.jpeg') }}" style="width: 200px; height: 60px;" alt="Logo">
-            <td class="text-right bold">
-                <strong>Folio: {{ $traspaso->folio }}</strong> <br>
+            <td width="40%">
+                Fecha: {{ \Carbon\Carbon::parse($ajuste->fecha)->format('d/m/Y') }}<br>
+                Usuario: {{ $ajuste->usuario->name ?? 'Nombre no disponible' }}
             </td>
-        </tr>
-        <tr>
         </tr>
     </table>
 
     <br>
 
-    <br>
-
-    {{-- ================= Datos del transpaso ================= --}}
+    {{-- ================= CLIENTE ================= --}}
     <table>
         <tr>
-            <td class="bold">Almacén origen: {{ $traspaso->almacenOrigen->nombre ?? 'Nombre no disponible' }}</td>
-            <td class="bold">Almacén destino: {{ $traspaso->almacenDestino->nombre ?? 'Nombre no disponible' }}</td>
+            <td class="bold"> Ajuste de @if ($ajuste->tipo == 1)
+                Entradas
+            @else
+                Salidas
+            @endif #{{ $ajuste->id }}</td>
+            <td class="bold">ALMACEN: {{ $ajuste->almacen->nombre }}</td>
         </tr>
     </table>
 
@@ -84,10 +87,10 @@
                 <th>Unidad</th>
                 <th>Clave Prod.</th>
                 <th>Descripción</th>
-            </tr>
+                </tr>
         </thead>
         <tbody>
-            @foreach ($traspaso->detalles as $d)
+            @foreach ($ajuste->detalles as $d)
                 <tr>
                     <td class="text-right">{{ number_format($d->cantidad, 2) }}</td>
                     <td class="text-center">PZ</td>
@@ -97,6 +100,7 @@
             @endforeach
         </tbody>
     </table>
+
 
     <br>
 

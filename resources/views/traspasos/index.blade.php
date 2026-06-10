@@ -30,10 +30,14 @@
         </form>
 
         {{-- Botón --}}
-        <a href="{{ route('traspasos.create') }}"
-            class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-            Registrar Traspaso
-        </a>
+        <div x-data @keydown.window.prevent.f9="$refs.btnTraspaso.click()">
+            <a
+            x-ref="btnTraspaso"
+            href="{{ route('traspasos.create') }}"
+                class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
+                Registrar Traspaso [F9]
+            </a>
+        </div>
 
     </div>
     @if (session('success'))
@@ -58,6 +62,7 @@
                             <th class="p-2">Folio</th>
                             <th class="p-2">Almacen salida</th>
                             <th class="p-2">Almacen entrada</th>
+                            <th class="p-2">Estado</th>
                             <th class="p-2">Acciones</th>
                         </tr>
                     </thead>
@@ -78,6 +83,20 @@
                                 </td>
                                 <td class="p-2 text-center">
                                     {{ $traspaso->almacenDestino->nombre }}
+                                </td>
+
+                                <td class="p-2 text-center">
+                                    @if ($traspaso->estatus == 1)
+                                        <span
+                                            class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
+                                            Activo
+                                        </span>
+                                    @elseif ($traspaso->estatus == 2)
+                                        <span
+                                            class="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">
+                                            Surtida
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">
                                     <div class="flex justify-center items-center gap-4">

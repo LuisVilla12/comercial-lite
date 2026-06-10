@@ -1,353 +1,563 @@
-@section('title', content: 'Registar compra')
-
-<x-app-layout>
-    <form method="POST" action="{{ route('compras.store') }}">
-        @csrf
-        <div x-data="compraApp()" x-init="init()" class="max-w-7xl mx-auto py-6">
-            <div class="flex justify-end">
-                <label class="block text-lg font-medium mb-2 dark:text-white">Fecha:
-                    {{ now()->format('d/m/Y') }} </label>
+@section('title','COMPRAS')
+    <x-app-layout>
+        <x-slot name="header">
+            <div class="md:flex md:justify-between">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
+                    Registrar una compra                </h2>
+                <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
+                </label>
             </div>
-            <div class="grid md:grid-cols-2 md:gap-4">
+        </x-slot>
+        <form method="POST" action="{{ route('compras.store') }}" x-data="compraApp()"
+            x-init="init();
+            $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
-                {{-- ================= PROVEEDOR ================= --}}
-                <div class="mb-2 md:mb-4 lg:mb-6">
-                    <div class="md:flex justify-between">
-                        <label class="block text-lg font-medium mb-2 dark:text-white">Proveedor: *</label>
-                    </div>
+            @csrf
+            <div x-data="{ tab: 'detalle' }">
+                <div class="flex gap-4 border-b mt-4">
+                    <button type="button" @click="tab='detalle'"
+                        :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
+                        class="block text-lg font-medium mb-2 dark:text-white">
+                        [1] Movimientos
+                    </button>
 
-                    <input type="text" x-model="proveedorQuery" @input.debounce.300ms="buscarProveedor"
-                        class="w-full border rounded p-2" placeholder="Buscar proveedor">
-                    @error('proveedor_id')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
 
-                    <ul x-show="proveedores.length"
-                        class="border bg-white rounded shadow mt-1 max-h-48 overflow-y-auto">
-                        <template x-for="p in proveedores" :key="p.id">
-                            <li @click="seleccionarProveedor(p)" class="p-2 hover:bg-gray-100 cursor-pointer"
-                                x-text="p.nombre">
-                            </li>
-                        </template>
-                    </ul>
                 </div>
-                {{-- Almacen --}}
-                <div>
-                    <label class="block text-lg font-medium mb-2 dark:text-white">Seleccionar almacen: *</label>
-                    <select name="almacen_id" id="almacen_id"
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 mb-2">
-                        <option value="" disabled selected>Seleccione</option>
-                        @foreach ($almacenes as $almacen)
-                            <option value="{{ $almacen->id }}">{{ $almacen->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="w-full">
-
-                <!-- ===== TABLA (DESKTOP) ===== -->
-                <div class="hidden md:block">
-                    <table class="w-full border bg-white shadow rounded">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="p-2">Código</th>
-                                <th class="p-2">Producto</th>
-                                <th class="p-2">Cantidad</th>
-                                <th class="p-2">Precio</th>
-                                <th class="p-2">Importe</th>
-                                <th class="p-2"></th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <template x-for="(item, index) in items" :key="index">
-                                <tr class="border-t">
-                                    <td class="p-2 text-center" x-text="item.codigo"></td>
-
-                                    <td class="p-2 relative">
-                                        <input type="text" x-model="item.query"
-                                            @input.debounce.300ms="buscarProducto(index)"
-                                            class="border rounded p-1 w-full" placeholder="Buscar producto">
-
-                                        <ul x-show="item.resultados.length"
-                                            class="absolute z-10 bg-white border rounded shadow w-full">
-                                            <template x-for="p in item.resultados" :key="p.id">
-                                                <li @click="seleccionarProducto(index, p)"
-                                                    class="p-2 hover:bg-gray-100 cursor-pointer">
-                                                    <span x-text="p.nombre"></span>
-                                                    <span class="text-sm text-gray-500">
-                                                        (<span x-text="p.codigo"></span>)
-                                                    </span>
-                                                </li>
-                                            </template>
-                                        </ul>
-
-                                        <input type="hidden" :name="`productos[${index}][producto_id]`"
-                                            x-model="item.producto_id">
-                                    </td>
-
-                                    <td class="p-2 text-center">
-                                        <input type="number" min="1" :name="`productos[${index}][cantidad]`"
-                                            x-model.number="item.cantidad" @input="calcular"
-                                            class="border rounded p-1 w-20">
-                                    </td>
-
-                                    <td class="p-2 text-center">
-                                        <input type="number" step="0.01" :name="`productos[${index}][costo]`"
-                                            x-model.number="item.costo" @input="calcular"
-                                            class="border rounded p-1 w-24">
-                                    </td>
-
-                                    <td class="p-2 text-center">
-                                        $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
-                                        <input type="hidden" :name="`productos[${index}][importe]`"
-                                            :value="(item.cantidad * item.costo).toFixed(2)">
-                                    </td>
-
-                                    <td class="p-2 text-center">
-                                        <button type="button" @click="eliminarFila(index)"
-                                            class="text-red-600 hover:text-red-800">
-                                            ❌
-                                        </button>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-
-                    </table>
-                </div>
-                <button type="button" @click="modalProducto = true"
-                                class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-                                ➕ Agregar producto
-                            </button>
-                {{-- MODAL --}}
-                <div x-show="modalProducto" x-cloak
-                    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-
-                    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
-
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                Buscar producto
-                            </h2>
-
-                            <button type="button" @click="modalProducto = false" class="text-red-600 text-xl">
-                                ✕
-                            </button>
-                        </div>
-
-                        <input type="text" x-model="busquedaProducto" @input.debounce.300ms="buscarProductoModal"
-                            placeholder="Buscar producto..." class="w-full border rounded p-2">
-
-                        <div class="mt-4 border rounded max-h-96 overflow-y-auto">
-
-                            <template x-for="p in resultadosModal" :key="p.id">
-
-                                <div @click="agregarProductoDesdeModal(p)"
-                                    class="p-3 border-b hover:bg-gray-100 cursor-pointer">
-
-                                    <div class="flex justify-between  items-center gap-4 mb-1">
-                                        <div class="">
-                                            <p class="font-semibold" x-text="p.nombre"></p>
-                                            <div class="flex items-center gap-3">
-                                                <p>Código: <span x-text="p.codigo" class=" font-bold"> </span></p>
-                                                <p>Clave: <span x-text="p.clave" class=" font-bold"> </span></p>
-                                            </div>
-                                        </div>
-
-                                    </div>
+                <div x-show="tab === 'detalle'">
+                    <div class=" mx-auto py-6">
+                        <div class="flex gap-5 justify-between">
+                            <div class="w-full">
+                                <div class="md:flex justify-between">
+                                    <label class="block text-lg font-medium mb-2 dark:text-white">Proveedor: *</label>
                                 </div>
-                        </div>
-                        </template>
-                    </div>
-                </div>
-                <!-- ===== CARDS (MÓVIL) ===== -->
-                <div class="md:hidden space-y-4">
-                    <template x-for="(item, index) in items" :key="index">
-                        <div class="border rounded-lg shadow bg-white p-4 space-y-3">
 
-                            <div class="text-sm text-gray-500">
-                                Código:
-                                <span class="font-medium text-gray-800" x-text="item.codigo"></span>
-                            </div>
 
-                            <div class="relative">
-                                <label class="text-sm text-gray-600">Producto</label>
-                                <input type="text" x-model="item.query" @input.debounce.300ms="buscarProducto(index)"
-                                    class="border rounded p-2 w-full" placeholder="Buscar producto">
+                                <input type="text" x-model="proveedorQuery" autofocus
+                                    @input.debounce.300ms="
+            buscarProveedor();
+            proveedorSeleccionado = -1;
+        "
+                                    @keydown.arrow-down.prevent="
+            if (proveedores.length) {
+                proveedorSeleccionado =
+                    proveedorSeleccionado < proveedores.length - 1
+                        ? proveedorSeleccionado + 1
+                        : 0;
+            }
+        "
+                                    @keydown.arrow-up.prevent="
+            if (proveedores.length) {
+                proveedorSeleccionado =
+                    proveedorSeleccionado > 0
+                        ? proveedorSeleccionado - 1
+                        : proveedores.length - 1;
+            }
+        "
+                                    @keydown.enter.prevent="
+            if (proveedorSeleccionado >= 0) {
+                seleccionarProveedor(proveedores[proveedorSeleccionado]);
+            }
+        "
+                                    @keydown.escape="
+            proveedores = [];
+            proveedorSeleccionado = -1;
+        "
+                                    class="w-full border rounded p-2" placeholder="Buscar proveedor">
 
-                                <ul x-show="item.resultados.length"
-                                    class="absolute z-10 bg-white border rounded shadow w-full">
-                                    <template x-for="p in item.resultados" :key="p.id">
-                                        <li @click="seleccionarProducto(index, p)"
-                                            class="p-2 hover:bg-gray-100 cursor-pointer">
-                                            <span x-text="p.nombre"></span>
-                                            <span class="text-sm text-gray-500">
-                                                (<span x-text="p.codigo"></span>)
-                                            </span>
+                                @error('proveedor_id')
+                                    <p class="text-red-600 text-xs mt-1">
+                                        Debes seleccionar uno.
+                                    </p>
+                                @enderror
+
+                                <ul x-show="proveedores.length"
+                                    class="border bg-white rounded shadow mt-1 max-h-48 overflow-y-auto">
+                                    <template x-for="(p, index) in proveedores" :key="p.id">
+                                        <li @click="seleccionarProveedor(p)" class="p-2 cursor-pointer"
+                                            :class="proveedorSeleccionado === index ?
+                                                'bg-blue-100' :
+                                                'hover:bg-gray-100'"
+                                            x-text="p.nombre + ' (' + p.codigo + ')'">
                                         </li>
                                     </template>
                                 </ul>
 
-                                <input type="hidden" :name="`productos[${index}][producto_id]`"
-                                    x-model="item.producto_id">
                             </div>
-
-                            <div class="flex gap-3">
-                                <div class="flex-1">
-                                    <label class="text-sm text-gray-600">Cantidad</label>
-                                    <input type="number" min="1" :name="`productos[${index}][cantidad]`"
-                                        x-model.number="item.cantidad" @input="calcular"
-                                        class="border rounded p-2 w-full">
-                                </div>
-
-                                <div class="flex-1">
-                                    <label class="text-sm text-gray-600">Precio</label>
-                                    <input type="number" step="0.01" :name="`productos[${index}][costo]`"
-                                        x-model.number="item.costo" @input="calcular"
-                                        class="border rounded p-2 w-full">
-                                </div>
+                            <div class="w-full">
+<label class="block text-lg font-medium mb-2 dark:text-white">Seleccionar almacen: *</label>
+                            <select name="almacen_id" id="almacen_id"
+                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 mb-2">
+                                <option value="" disabled selected>Seleccione</option>
+                                @foreach ($almacenes as $almacen)
+                                    <option value="{{ $almacen->id }}">{{ $almacen->nombre }}</option>
+                                @endforeach
+                            </select>
                             </div>
-
-                            <div class="flex justify-between items-center">
-                                <div class="text-lg font-semibold">
-                                    Importe:
-                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
-                                </div>
-
-                                <button type="button" @click="eliminarFila(index)" class="text-red-600 text-lg">
-                                    ❌
-                                </button>
-                            </div>
-
-                            <input type="hidden" :name="`productos[${index}][importe]`"
-                                :value="(item.cantidad * item.costo).toFixed(2)">
                         </div>
-                    </template>
+
+                        {{-- ================= PRODUCTOS ================= --}}
+                        <div class="mt-6">
+                            <div class="hidden lg:block">
+                                <table class="w-full border bg-white shadow rounded">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="p-2">Código</th>
+                                            <th class="p-2">Producto</th>
+                                            <th class="p-2">Cantidad</th>
+                                            <th class="p-2">Precio</th>
+                                            <th class="p-2">Importe</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="(item, index) in items" :key="index">
+                                            <tr class="border-t">
+                                                <td class="p-2 text-center" x-text="item.codigo"></td>
+
+                                                <td class="p-2 relative">
+                                                    <input type="text" x-model="item.query"
+                                                        x-ref="`productoInput-${index}`"
+                                                        @input.debounce.300ms="
+                        buscarProducto(index);
+                        item.resultadoSeleccionado = -1;
+                    "
+                                                        @keydown="
+                        if ($event.key === 'ArrowDown' && item.resultados.length) {
+                            $event.preventDefault();
+                            item.resultadoSeleccionado =
+                                item.resultadoSeleccionado < item.resultados.length - 1
+                                    ? item.resultadoSeleccionado + 1
+                                    : 0;
+                        }
+
+                        if ($event.key === 'ArrowUp' && item.resultados.length) {
+                            $event.preventDefault();
+                            item.resultadoSeleccionado =
+                                item.resultadoSeleccionado > 0
+                                    ? item.resultadoSeleccionado - 1
+                                    : item.resultados.length - 1;
+                        }
+
+                        if ($event.key === 'Enter' && item.resultadoSeleccionado >= 0) {
+                            $event.preventDefault();
+                            seleccionarProducto(index, item.resultados[item.resultadoSeleccionado]);
+                        }
+
+                        if ($event.key === 'Escape') {
+                            item.resultados = [];
+                            item.resultadoSeleccionado = -1;
+                        }
+                    "
+                                                        class="border rounded p-1 w-full" placeholder="Buscar producto">
+
+                                                    <ul x-show="item.resultados.length"
+                                                        @click.away="
+                        item.resultados = [];
+                        item.resultadoSeleccionado = -1;
+                    "
+                                                        class="absolute z-20 bg-white border rounded shadow w-full">
+                                                        <template x-for="(p, i) in item.resultados" :key="p.id">
+                                                            <li @click="seleccionarProducto(index, p)"
+                                                                class="p-2 cursor-pointer"
+                                                                :class="item.resultadoSeleccionado === i ? 'bg-blue-100' :
+                                                                    'hover:bg-gray-100'">
+                                                                <span x-text="p.nombre"></span>
+                                                                <span class="text-sm text-gray-500">
+                                                                    (<span x-text="p.codigo"></span>)
+                                                                </span>
+                                                            </li>
+                                                        </template>
+                                                    </ul>
+
+                                                    <input type="hidden" :name="`productos[${index}][producto_id]`"
+                                                        x-model="item.producto_id">
+                                                </td>
+
+                                                <td class="p-2 text-center">
+                                                    <input type="number" min="1"
+                                                        :name="`productos[${index}][cantidad]`"
+                                                        x-model.number="item.cantidad" @input="calcular"
+                                                        class="border rounded p-1 w-20 text-center">
+                                                </td>
+
+                                                <td class="p-2 text-center">
+                                                    <input  type="number" :name="`productos[${index}][costo]`"
+                                                    @input="calcular"
+                                                        x-model.number="item.costo"
+                                                        class="border rounded p-1 w-24 text-center bg-gray-100">
+                                                </td>
+
+                                                {{-- <td class="p-2 text-center">
+                                                    <input disabled type="number" x-model.number="item.stock"
+                                                        class="border rounded p-1 w-24 text-center bg-gray-100">
+                                                </td> --}}
+
+                                                <td class="p-2 text-center font-semibold">
+                                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
+                                                    <input type="hidden" :name="`productos[${index}][importe]`"
+                                                        :value="(item.cantidad * item.costo).toFixed(2)">
+                                                </td>
+
+                                                <td class="p-2 text-center">
+                                                    <button type="button" @click="eliminarFila(index)"
+                                                        class="text-red-600 hover:text-red-800">
+                                                        ❌
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="lg:hidden space-y-4">
+                                <template x-for="(item, index) in items" :key="index">
+                                    <div class="bg-white border shadow rounded p-4 space-y-3">
+
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-500">Código</span>
+                                            <span class="font-mono" x-text="item.codigo"></span>
+                                        </div>
+
+                                        <div class="relative">
+                                            <label class="text-xs text-gray-500">Producto</label>
+                                            <input type="text" x-model="item.query"
+                                                @input.debounce.300ms="buscarProducto(index)"
+                                                class="border rounded p-2 w-full" placeholder="Buscar producto">
+
+                                            <ul x-show="item.resultados.length" @click.away="item.resultados = []"
+                                                class="absolute z-20 bg-white border rounded shadow w-full">
+                                                <template x-for="p in item.resultados" :key="p.id">
+                                                    <li @click="seleccionarProducto(index, p)"
+                                                        class="p-2 hover:bg-gray-100 cursor-pointer">
+                                                        <span x-text="p.nombre"></span>
+                                                        <span class="text-xs text-gray-500">
+                                                            ($<span x-text="p.codigo"></span>)
+                                                        </span>
+                                                    </li>
+                                                </template>
+                                            </ul>
+
+                                            <input type="hidden" :name="`productos[${index}][producto_id]`"
+                                                x-model="item.producto_id">
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div>
+                                                <label class="text-xs text-gray-500">Cantidad</label>
+                                                <input type="number" min="1"
+                                                    :name="`productos[${index}][cantidad]`" x-model.number="item.cantidad"
+                                                    @input="calcular" class="border rounded p-2 w-full text-center">
+                                            </div>
+
+                                            <div>
+                                                <label class="text-xs text-gray-500">Precio</label>
+                                                <input  type="number" x-model.number="item.costo"
+                                                    class="border rounded p-2 w-full text-center bg-gray-100">
+                                            </div>
+
+                                            <div>
+                                                <label class="text-xs text-gray-500">Importe</label>
+                                                <div class="border rounded p-2 text-center font-semibold bg-gray-50">
+                                                    $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex justify-end">
+                                            <button type="button" @click="eliminarFila(index)"
+                                                class="text-red-600 text-sm">
+                                                ❌ Eliminar
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </template>
+                            </div>
+
+                            @error('productos')
+                                <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
+                            @enderror
+                            <button type="button" @click="abrirModalProducto()"
+                                @keydown.window.prevent.f9="abrirModalProducto()"
+                                class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+                                ➕ Agregar producto [F9]
+                            </button>
+                        </div>
+
+                        {{-- ================= TOTAL ================= --}}
+                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
+                            Subtotal: $<span x-text="total.toFixed(2)"></span>
+                        </div>
+                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
+                            IVA: $<span x-text="(total*1.16-total).toFixed(2)"></span>
+                        </div>
+                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
+                            Total: $<span x-text="(total * 1.16).toFixed(2)"></span>
+                        </div>
+
+                        {{-- -ENVIO DE DATOS --}}
+                        <input type="hidden" name="proveedor_id" :value="proveedor?.id">
+                        <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                        <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
+                        <input type="hidden" name="subtotal" x-model="total">
+                        <input type="hidden" name="impuestos" :value="(total * 1.16) - total">
+                        <input type="hidden" name="total" :value="(total * 1.16)">
+                        <input type="hidden" name="estatus" :value="1">
+                    </div>
+                </div>
+                <div class="md:col-span-2 flex justify-between gap-3 mt-4">
+
+                    <a href="{{  route('compras.create')}}"
+                        class="px-4 py-2 rounded-md border dark:bg-red border-red-300 bg-red-500 text-white hover:bg-red-500">
+                        Cancelar
+                    </a>
+                    <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
+                        <button
+                         x-ref="btnGuardar"
+                        type="submit"
+                            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                            GUARDAR [F10]
+                        </button>
+                    </div>
+
                 </div>
 
-            </div>
+                {{-- MODAL --}}
+                <div x-show="modalProducto" @keydown.window.escape="cerrarModalProducto()" x-cloak
+                    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
-            {{-- ================= TOTAL ================= --}}
-            <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                Subtotal: $<span x-text="total.toFixed(2)"></span>
-            </div>
-            <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                IVA: $<span x-text="(total*1.16-total).toFixed(2)"></span>
-            </div>
-            <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                Total: $<span x-text="(total * 1.16).toFixed(2)"></span>
-            </div>
+                    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">Buscar producto</h2>
 
-            {{-- -ENVIO DE DATOS --}}
-            <input type="hidden" name="proveedor_id" :value="proveedor?.id">
-            {{-- <input type="hidden" name="almacen_id" value="1"> --}}
-            <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-            <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
-            <input type="hidden" name="subtotal" x-model="total">
-            <input type="hidden" name="impuestos" :value="(total * 1.16) - total">
-            <input type="hidden" name="total" :value="(total * 1.16)">
-            <input type="hidden" name="estatus" :value="1">
+                            <button type="button" @click="cerrarModalProducto()" class="text-red-600 text-xl">
+                                ✕
+                            </button>
+                        </div>
 
-            <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-                <a href="{{ route('compras.index') }}"
-                    class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-red-600 hover:bg-red-600">
-                    Cancelar
-                </a>
+                        <input type="text" x-ref="buscarProductoModal" x-model="busquedaProducto"
+                            @input.debounce.300ms="buscarProductoModal(); modalProductoSeleccionado = -1"
+                            @keydown="
+            if ($event.key === 'ArrowDown' && resultadosModal.length) {
+                $event.preventDefault();
+                modalProductoSeleccionado =
+                    modalProductoSeleccionado < resultadosModal.length - 1
+                        ? modalProductoSeleccionado + 1
+                        : 0;
+            }
 
-                <button type="submit"
-                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Guardar compra
-                </button>
+            if ($event.key === 'ArrowUp' && resultadosModal.length) {
+                $event.preventDefault();
+                modalProductoSeleccionado =
+                    modalProductoSeleccionado > 0
+                        ? modalProductoSeleccionado - 1
+                        : resultadosModal.length - 1;
+            }
+
+            if ($event.key === 'Enter' && modalProductoSeleccionado >= 0 && resultadosModal[modalProductoSeleccionado]) {
+                $event.preventDefault();
+                agregarProductoDesdeModal(resultadosModal[modalProductoSeleccionado]);
+            }
+
+            if ($event.key === 'Escape') {
+                resultadosModal = [];
+                modalProductoSeleccionado = -1;
+            }
+        "
+                            placeholder="Buscar producto..." class="w-full border rounded p-2" autocomplete="off">
+
+                        <div class="mt-4 border rounded max-h-96 overflow-y-auto">
+                            {{-- <template x-for="(p, i) in resultadosModal" :key="p.id">
+                                <div @mouseenter="modalProductoSeleccionado = i" @click="agregarProductoDesdeModal(p)"
+                                    class="p-3 border-b cursor-pointer"
+                                    :class="modalProductoSeleccionado === i ? 'bg-blue-100' : 'hover:bg-gray-100'">
+                                    <div class="flex justify-between items-center gap-4 mb-1">
+                                        <div>
+                                            <p class="font-semibold" x-text="p.nombre"></p>
+                                            <div class="flex items-center gap-3">
+                                                <p>Código: <span x-text="p.codigo" class="font-bold"></span></p>
+                                                <p>Clave: <span x-text="p.clave" class="font-bold"></span></p>
+                                                <p>Existencia: <span x-text="p.stock" class="font-bold"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template> --}}
+                            <template x-for="(p, i) in resultadosModal" :key="p.id">
+                                <div @mouseenter="modalProductoSeleccionado = i" @click="agregarProductoDesdeModal(p)"
+                                    class="p-3 border-b cursor-pointer"
+                                    :class="modalProductoSeleccionado === i ? 'bg-blue-100' : 'hover:bg-gray-100'">
+                                    <div class="flex justify-between items-center gap-4 mb-1">
+                                        <div>
+                                            <p class="font-semibold" x-text="p.nombre"></p>
+
+                                            <div class="flex flex-wrap items-center gap-3 text-sm">
+                                                <p>
+                                                    Código:
+                                                    <span x-text="p.codigo" class="font-bold"></span>
+                                                </p>
+
+                                                <p>
+                                                    Clave:
+                                                    <span x-text="p.clave" class="font-bold"></span>
+                                                </p>
+
+                                                {{-- <p>
+                                                    Existencia:
+                                                    <span x-text="p.stock" class="font-bold"></span>
+                                                </p> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </form>
         </div>
-        {{-- MODAL --}}
+        {{-- ================= ALPINE ================= --}}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
 
-        </div>
+            function compraApp() {
+                return {
+                    proveedor: null,
+                    proveedorQuery: '',
+                    proveedorRfc: '',
+                    proveedorCP: '',
+                    proveedorCalle: '',
+                    proveedorNumeroInterior: '',
+                    proveedorNumeroExterior: '',
+                    proveedorCiudad: '',
+                    proveedorColonia: '',
+                    proveedores: [],
+                    proveedorSeleccionado: -1,
 
-    </form>
+                    items: [],
+                    total: 0,
+                    modalProducto: false,
+                    busquedaProducto: '',
+                    resultadosModal: [],
+                    modalProductoSeleccionado: -1,
 
-    {{-- ================= ALPINE ================= --}}
-    <script>
-        function compraApp() {
-            return {
-                proveedor: null,
-                proveedorQuery: '',
-                proveedores: [],
+                    abrirModalProducto() {
+                        this.modalProducto = true;
+                        this.busquedaProducto = '';
+                        this.resultadosModal = [];
+                        this.modalProductoSeleccionado = -1;
 
-                items: [],
-                total: 0,
-                modalProducto: false,
-                busquedaProducto: '',
-                resultadosModal: [],
+                        this.$nextTick(() => {
+                            setTimeout(() => {
+                                this.$refs.buscarProductoModal?.focus();
+                            }, 100);
+                        });
+                    },
 
-                init() {
-                    this.items = []
-                },
+                    cerrarModalProducto() {
+                        this.modalProducto = false;
+                        this.resultadosModal = [];
+                        this.modalProductoSeleccionado = -1;
+                    },
 
-                agregarFila() {
-                    this.items.push({
-                        producto_id: null,
-                        codigo: '',
-                        query: '',
-                        cantidad: 1,
-                        costo: 0,
-                        resultados: []
-                    })
-                },
 
-                eliminarFila(index) {
-                    if (this.items.length === 0) return
-                    this.items.splice(index, 1)
-                    this.calcular()
-                },
+                    init() {
+                        this.items = []
+                    },
 
-                async buscarProveedor() {
-                    if (this.proveedorQuery.length < 2) return
-                    const res = await fetch(`/api/proveedores/buscar?q=${this.proveedorQuery}`)
-                    this.proveedores = await res.json()
-                },
+                    agregarFila() {
+                        this.items.push({
+                            producto_id: null,
+                            codigo: '',
+                            query: '',
+                            cantidad: 1,
+                            costo: 0,
+                            costo2: 0,
+                            costo3: 0,
+                            costo4: 0,
+                            stock: 0,
+                            resultados: [],
+                            resultadoSeleccionado: -1
+                        })
+                    },
 
-                seleccionarProveedor(p) {
-                    this.proveedor = p
-                    this.proveedorQuery = p.nombre
-                    this.proveedores = []
-                },
+                    eliminarFila(index) {
+                        if (this.items.length === 0) return
+                        this.items.splice(index, 1)
+                        this.calcular()
+                    },
 
-                async buscarProducto(index) {
-                    const q = this.items[index].query
-                    if (q.length < 2) return
-                    const res = await fetch(`/api/productos/buscar?q=${q}`)
-                    this.items[index].resultados = await res.json()
-                },
+                    async buscarProveedor() {
+                        if (this.proveedorQuery.length < 2) {
+                            this.proveedores = []
+                            this.proveedorSeleccionado = -1
+                            return
+                        }
 
-                seleccionarProducto(index, p) {
-                    if (this.items.some(i => i.producto_id === p.id)) return
-                    const item = this.items[index]
-                    item.producto_id = p.id
-                    item.codigo = p.codigo
-                    item.query = p.nombre
-                    // item.costo = parseFloat(p.costo)
-                    item.costo = 0
-                    item.resultados = []
+                        this.proveedores = []
+                        this.proveedorSeleccionado = -1
 
-                    this.calcular()
-                },
-                async buscarProductoModal() {
-                        if (this.busquedaProducto.length < 2) {
-                            this.resultadosModal = [];
+                        const res = await fetch(`/api/proveedores/buscar?q=${encodeURIComponent(this.proveedorQuery)}`)
+                        this.proveedores = await res.json()
+                    },
+
+                    seleccionarProveedor(p) {
+                        this.proveedor = p
+                        this.proveedorQuery = p.nombre
+                        this.proveedorRfc = p.rfc
+                        this.proveedores = []
+                        this.proveedorSeleccionado = -1
+                    },
+
+                    async buscarProducto(index) {
+                        const q = this.items[index].query?.trim() || '';
+                        if (q.length < 2) {
+                            this.items[index].resultados = [];
+                            this.items[index].resultadoSeleccionado = -1;
                             return;
                         }
 
                         const res = await fetch(
-                            `/api/productos/buscar?q=${this.busquedaProducto}`
-                        );
+                            `/api/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
+                        this.items[index].resultados = await res.json();
+                        this.items[index].resultadoSeleccionado = 0;
+                    },
+
+                    seleccionarProducto(index, p) {
+                        if (this.items.some(i => i.producto_id === p.id)) return
+
+                        const item = this.items[index]
+
+                        item.producto_id = p.id
+                        item.codigo = p.codigo
+                        item.query = p.nombre
+                        item.costo = parseFloat(p.costo) || 0
+                        item.costo2 = parseFloat(p.costo2) || 0
+                        item.costo3 = parseFloat(p.costo3) || 0
+                        item.costo4 = parseFloat(p.costo4) || 0
+                        item.stock = p.stock
+                        item.resultados = []
+                        item.resultadoSeleccionado = -1
+
+                        this.calcular()
+                    },
+
+                    async buscarProductoModal() {
+                        const q = this.busquedaProducto?.trim() || '';
+
+                        if (q.length < 2) {
+                            this.resultadosModal = [];
+                            this.modalProductoSeleccionado = -1;
+                            return;
+                        }
+
+                        const res = await fetch(
+                            `/api/productos/buscar?q=${encodeURIComponent(q)}`);
                         this.resultadosModal = await res.json();
+                        this.modalProductoSeleccionado = this.resultadosModal.length ? 0 : -1;
                     },
 
                     agregarProductoDesdeModal(p) {
-
                         if (this.items.some(i => i.producto_id === p.id)) {
                             alert('El producto ya fue agregado');
                             return;
@@ -358,25 +568,36 @@
                             codigo: p.codigo,
                             query: p.nombre,
                             cantidad: 1,
-                            // costo: parseFloat(p.precioSeleccionado || p.costo),
-                            costo: 0,
+
+                            // Precio seleccionado en el combo
+                            costo:  0,
+
+                            costo2: parseFloat(p.costo2) || 0,
+                            costo3: parseFloat(p.costo3) || 0,
+                            costo4: parseFloat(p.costo4) || 0,
+                            costo5: parseFloat(p.costo5) || 0,
+
                             stock: p.stock,
-                            resultados: []
+                            resultados: [],
+                            resultadoSeleccionado: -1
                         });
+
+                        this.calcular();
 
                         this.modalProducto = false;
                         this.busquedaProducto = '';
                         this.resultadosModal = [];
-
-                        this.calcular();
+                        this.modalProductoSeleccionado = -1;
                     },
-                calcular() {
-                    this.total = this.items.reduce(
-                        (t, i) => t + (i.cantidad * i.costo),
-                        0
-                    )
+
+
+                    calcular() {
+                        this.total = this.items.reduce(
+                            (t, i) => t + (Number(i.cantidad) * Number(i.costo)),
+                            0
+                        )
+                    }
                 }
             }
-        }
-    </script>
-</x-app-layout>
+        </script>
+    </x-app-layout>

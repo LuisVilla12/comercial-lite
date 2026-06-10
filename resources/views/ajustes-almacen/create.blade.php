@@ -15,6 +15,7 @@
                 </label>
             </div>
         </x-slot>
+
         <form method="POST" action="{{ route('ajustes-almacen.store') }}" x-data="compraApp()" x-init="init();
         $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 

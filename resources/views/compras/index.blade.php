@@ -43,8 +43,7 @@
         </form>
         <div x-data @keydown.window.prevent.f9="$refs.btnCompra.click()">
             {{-- Botón --}}
-            <a href="{{ route('compras.create') }}"
-                x-ref="btnCompra"
+            <a href="{{ route('compras.create') }}" x-ref="btnCompra"
                 class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
                 Registrar Compra [F9]
             </a>
@@ -69,6 +68,7 @@
                             <th class="p-2">Folio</th>
                             <th class="p-2">Razón social</th>
                             <th class="p-2">Almacen</th>
+                            <th class="p-2">Estado</th>
                             <th class="p-2">Total</th>
                             <th class="p-2">Acciones</th>
                         </tr>
@@ -88,8 +88,21 @@
                                 <td class="p-2 text-center">
                                     {{ $compra->proveedor->nombre }}
                                 </td>
-                                 <td class="p-2 text-center">
+                                <td class="p-2 text-center">
                                     {{ $compra->almacen->nombre }}
+                                </td>
+                                <td class="p-2 text-center">
+                                    @if ($compra->estatus == 1)
+                                        <span
+                                            class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
+                                            Activo
+                                        </span>
+                                    @elseif ($compra->estatus == 2)
+                                        <span
+                                            class="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">
+                                            Surtida
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="p-2 text-right">
                                     {{ number_format($compra->total, 2) }}
@@ -97,7 +110,7 @@
                                 <td class="px-6 py-4 text-sm text-gray-700">
                                     <div class="flex justify-center items-center gap-4">
                                         {{-- Ver --}}
-                                        <a href="{{ route('compras.show', [ 'compra' => $compra]) }}"
+                                        <a href="{{ route('compras.show', ['compra' => $compra]) }}"
                                             class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                             <x-heroicon-o-eye class="w-4 h-4" />
                                             <span class="hidden sm:inline">Ver</span>
@@ -105,7 +118,7 @@
                                         @if ($compra->estatus == 1)
                                             <span class="hidden sm:inline text-gray-300">•</span>
                                             {{-- Editar --}}
-                                            <a href="{{ route('compras.edit', [ 'compra' => $compra]) }}"
+                                            <a href="{{ route('compras.edit', ['compra' => $compra]) }}"
                                                 class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                                 <x-heroicon-o-pencil-square class="w-4 h-4" />
                                                 <span class="hidden sm:inline">Editar</span>
@@ -113,8 +126,7 @@
                                             <span class="hidden sm:inline text-gray-300">•</span>
 
                                             {{-- Eliminar --}}
-                                            <form
-                                                action="{{ route('compras.destroy', ['compra' => $compra]) }}"
+                                            <form action="{{ route('compras.destroy', ['compra' => $compra]) }}"
                                                 method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -202,9 +214,8 @@
                                 <span class="hidden sm:inline text-gray-300">•</span>
 
                                 {{-- Eliminar --}}
-                                <form
-                                    action="{{ route('compras.destroy', ['compra' => $compra]) }}"
-                                    method="POST" class="inline">
+                                <form action="{{ route('compras.destroy', ['compra' => $compra]) }}" method="POST"
+                                    class="inline">
                                     @csrf
                                     @method('DELETE')
 

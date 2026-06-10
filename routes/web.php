@@ -152,6 +152,7 @@ Route::middleware('auth')->group(function () {
 
     //Existencias
     Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
+    Route::get('/inventario/pdf', [ExistenciaProductoController::class, 'pdf'])->name('existencias.pdf');
 
     Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
         Route::post('/documentos/{documento}/enviar-email', [DocumentoController::class, 'enviarEmail'])->name('documentos.enviarEmail');
@@ -196,6 +197,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ajustes-almacen/detalles/{ajuste}', action: [AjustesAlmacenController::class, 'show'])->name('ajustes-almacen.show');
     Route::post('/ajustes-almacen/detalles/{ajuste}', action: [AjustesAlmacenController::class, 'surtir'])->name('ajustes-almacen.surtir');
     Route::delete('/ajustes-almacen/{ajuste}', action: [AjustesAlmacenController::class, 'destroy'])->name('ajustes-almacen.destroy');
+    Route::get('/ajustes-almacen/{ajuste}/pdf', action: [AjustesAlmacenController::class, 'pdf'])->name('ajustes-almacen.pdf');
 
 
 
@@ -215,6 +217,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reportes', [ReportesController::class, 'index'])->name('reportes.index');
     Route::get('/reportes/conceptos/export', [ReportesController::class, 'exportConceptos'])->name('reportes.conceptos.export');
     Route::get('/reportes/productos/export', [ReportesController::class, 'exportProductos'])->name('reportes.productos.export');
+
 
     //Puntos
     Route::get('/puntos', action: [PuntosController::class, 'index'])->name('puntos.index');

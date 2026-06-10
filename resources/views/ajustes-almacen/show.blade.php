@@ -1,6 +1,12 @@
 @section('title', content: 'Detalles de ajuste')
 
 <x-app-layout>
+     <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Detalles sobre ajuste de inventario
+        </h2>
+    </x-slot>
+
     @if (session('success'))
         <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
             class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4 mt-4">
@@ -21,6 +27,11 @@
                 Salidas
             @endif #{{ $ajuste->id }}
         </h1>
+        <div class="flex gap-5">
+<a href="{{ route('ajustes-almacen.pdf', $ajuste) }}" target="_blank"
+                    class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
+                    <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
+                </a>
         @if ($ajuste->estatus == 1)
             <div>
                 <button onclick="surtirAjuste()"
@@ -35,9 +46,11 @@
             </form>
         @else
             <a class="px-6 py-2 bg-indigo-600  text-white rounded">
-                AJUSTE SURTIDO
+                DOCUMENTO SURTIDO
             </a>
         @endif
+
+        </div>
 
     </div>
 

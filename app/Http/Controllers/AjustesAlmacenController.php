@@ -9,6 +9,7 @@ use App\Models\Almacen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\InventarioService;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AjustesAlmacenController extends Controller
 {
@@ -92,12 +93,25 @@ class AjustesAlmacenController extends Controller
      */
     public function show(AjustesAlmacen $ajuste)
     {
-        // dd($ajuste);
         $ajuste->load([
             'almacen',
             'detalles.producto',
         ]);
         return view('ajustes-almacen.show', ['ajuste' => $ajuste]);
+    }
+
+    public function pdf(AjustesAlmacen $ajuste)
+    {
+$ajuste->load([
+            'almacen',
+            'detalles.producto',
+        ]);
+
+        $pdf = Pdf::loadView('ajustes-almacen.pdf', compact('ajuste'))
+            ->setPaper('letter');
+
+        return $pdf->stream("ajuste_{$ajuste->id}-.pdf");
+
     }
 
     /**
