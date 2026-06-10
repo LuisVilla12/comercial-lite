@@ -17,6 +17,10 @@ class AjustesAlmacen extends Model
         'estatus',
     ];
 
+    public function detalles() {
+        return $this->hasMany(AjustesAlmacenDetalles::class);
+    }
+
     public function agente()
     {
         return $this->belongsTo(Agente::class, 'agente_id');

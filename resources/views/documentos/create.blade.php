@@ -493,10 +493,15 @@
                         class="px-4 py-2 rounded-md border dark:bg-red border-red-300 bg-red-500 text-white hover:bg-red-500">
                         Cancelar
                     </a>
-                    <button type="submit"
-                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                        Guardar
-                    </button>
+                    <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
+                        <button
+                         x-ref="btnGuardar"
+                        type="submit"
+                            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                            GUARDAR [F10]
+                        </button>
+                    </div>
+
                 </div>
 
                 {{-- MODAL --}}

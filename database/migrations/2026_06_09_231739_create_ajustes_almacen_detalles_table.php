@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('ajustes_almacen_detalles', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+             $table->foreignId(column: 'ajustes_almacen_id')->constrained('ajustes_almacens')->cascadeOnDelete();
+            $table->foreignId(column: 'producto_id')->constrained(table: 'productos')->cascadeOnDelete();
+            $table->integer(column: 'cantidad');
         });
     }
 

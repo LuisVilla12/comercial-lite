@@ -4,7 +4,12 @@
         <x-slot name="header">
             <div class="md:flex md:justify-between">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                    Registrar Entrada a Almacén
+                    Registrar @if ($tipo==1)
+                            Entradas
+                        @else
+                            Salidas
+                        @endif
+                        a Almacén
                 </h2>
                 <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
                 </label>
@@ -218,10 +223,8 @@
                         {{-- -ENVIO DE DATOS --}}
                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                         <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
-                        <input type="hidden" name="subtotal" x-model="total">
-                        <input type="hidden" name="impuestos" :value="(total * 1.16) - total">
-                        <input type="hidden" name="total" :value="(total * 1.16)">
                         <input type="hidden" name="estatus" :value="1">
+                        <input type="hidden" name="tipo" value={{ $tipo }}>
                     </div>
                 </div>
                 <div x-show="tab === 'info'" x-cloak class="space-y-4">
@@ -255,14 +258,18 @@
                 </div>
                 <div class="md:col-span-2 flex justify-between gap-3 mt-4">
 
-                    <a href="{{ route('ajustes-almacen.index') }}"
+                    <a href="{{ route('ajustes-almacen.index', $tipo) }}"
                         class="px-4 py-2 rounded-md border dark:bg-red border-red-300 bg-red-500 text-white hover:bg-red-500">
                         Cancelar
                     </a>
-                    <button type="submit"
-                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                        Guardar
-                    </button>
+                    <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
+                        <button
+                         x-ref="btnGuardar"
+                        type="submit"
+                            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                            GUARDAR [F10]
+                        </button>
+                    </div>
                 </div>
 
                 {{-- MODAL --}}

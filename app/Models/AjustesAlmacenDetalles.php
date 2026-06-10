@@ -2,24 +2,21 @@
 
 namespace App\Models;
 use App\Models\Producto;
-use App\Models\EntradasAlmacen;
-use App\Models\SalidasAlmacen;
-
+use App\Models\AjustesAlmacen;
 use Illuminate\Database\Eloquent\Model;
 
 class AjustesAlmacenDetalles extends Model
 {
         protected $fillable = [
-        'documento_id',
+        'ajustes_almacen_id',
         'producto_id',
         'cantidad',
-        'costo_unitario',
-        'importe'
     ];
 
-    public function entrada()
+
+    public function ajuste()
     {
-        return $this->belongsTo(Document::class);
+        return $this->belongsTo(AjustesAlmacen::class);
     }
       public function producto()
     {

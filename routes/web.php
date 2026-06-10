@@ -193,7 +193,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/ajustes-almacen/{tipo}', action: [AjustesAlmacenController::class, 'index'])->name('ajustes-almacen.index');
     Route::get('/ajustes-almacen/{tipo}/create', action: [AjustesAlmacenController::class, 'create'])->name('ajustes-almacen.create');
     Route::post('/ajustes-almacen', action: [AjustesAlmacenController::class, 'store'])->name('ajustes-almacen.store');
-    Route::get('/ajustes-almacen/{ajuste}', action: [AjustesAlmacenController::class, 'show'])->name('ajustes-almacen.show');
+    Route::get('/ajustes-almacen/detalles/{ajuste}', action: [AjustesAlmacenController::class, 'show'])->name('ajustes-almacen.show');
+    Route::post('/ajustes-almacen/detalles/{ajuste}', action: [AjustesAlmacenController::class, 'surtir'])->name('ajustes-almacen.surtir');
+    Route::delete('/ajustes-almacen/{ajuste}', action: [AjustesAlmacenController::class, 'destroy'])->name('ajustes-almacen.destroy');
+
 
 
     //Traspasos

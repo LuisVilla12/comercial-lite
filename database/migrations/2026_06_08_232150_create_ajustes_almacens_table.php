@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('ajustes_almacens', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-                       $table->date(column: 'fecha');
+            $table->date(column: 'fecha');
             $table->text(column: 'observaciones')->nullable();
             $table->foreignId(column: 'agente_id')->constrained('agentes')->onDelete('cascade');
             $table->foreignId(column: 'almacen_id')->constrained('almacens')->onDelete('cascade');
-            $table->integer(column: 'estatus')->default(0);
+            $table->integer(column: 'estatus')->default(1);
             $table->integer(column: 'tipo');
         });
     }

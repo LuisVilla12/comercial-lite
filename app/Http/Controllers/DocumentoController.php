@@ -430,11 +430,11 @@ class DocumentoController extends Controller
 
             return redirect()
                 ->route('cotizacion.index')
-                ->with('success', 'cotización eliminada correctamente');
+                ->with('success', 'Documento eliminado correctamente');
         } catch (\Throwable $e) {
             DB::rollBack();
 
-            return back()->withErrors('Error al eliminar la cotización');
+            return back()->withErrors('Error al eliminar el documento');
         }
     }
     //
