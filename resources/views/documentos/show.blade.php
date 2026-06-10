@@ -389,11 +389,14 @@
                     class="px-4 py-2 bg-gray-500 text-white rounded">
                     Volver</a>
                 @if ($documento->estatus == 1)
-                    <a href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                <div x-data @keydown.window.prevent.f10="$refs.btnActualizar.click()">
+                    <a
+                    x-ref="btnActualizar"
+                    href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
                         class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                        Actualizar
-
+                        ACTUALIZAR [F10]
                     </a>
+                </div>
                 @endif
 
             </div>
