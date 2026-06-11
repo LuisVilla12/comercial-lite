@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empresa;
 use App\Models\Regimen;
+use App\Models\Sucursal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
@@ -34,33 +35,33 @@ class EmpresaController extends Controller
         return view('empresas.create', ['regimenes' => $regimenes]);
     }
 
-public function listado()
+    public function listado()
     {
         $empresas = Empresa::all();
         return view('empresas.select', ['empresas' => $empresas]);
     }
-public function set(Request $request)
-{
-    $empresa = Empresa::findOrFail($request->empresa_id);
+    public function set(Request $request)
+    {
+        $empresa = Empresa::findOrFail($request->empresa_id);
 
-    session([
-        'empresa_id' => $empresa->id
-    ]);
-    Config::set('database.connections.tenant', [
-        'driver' => 'mysql',
-        'host' => $empresa->db_host,
-        'port' => $empresa->db_port,
-        'database' => $empresa->db_database,
-        'username' => $empresa->db_username,
-        'password' => $empresa->db_password,
-        'charset' => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
-    ]);
-    DB::purge('tenant');
-    DB::reconnect('tenant');
-
-    return view('dashboard');
-}
+        session([
+            'empresa_id' => $empresa->id
+        ]);
+        Config::set('database.connections.tenant', [
+            'driver' => 'mysql',
+            'host' => $empresa->db_host,
+            'port' => $empresa->db_port,
+            'database' => $empresa->db_database,
+            'username' => $empresa->db_username,
+            'password' => $empresa->db_password,
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+        ]);
+        DB::purge('tenant');
+        DB::reconnect('tenant');
+        $sucursales = Sucursal::all();
+        return view('dashboard', ['sucursales' => $sucursales]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -75,51 +76,58 @@ public function set(Request $request)
             'regimen_fiscal' => 'required|string|max:250',
             'email' => 'required|email',
         ]);
-            // Nombre único para la BD
-    $databaseName = $request->nombre . '_empresa_' . Str::slug($request->codigo, '_');
+        // Nombre único para la BD
+        $databaseName = $request->nombre . '_empresa_' . Str::slug($request->codigo, '_');
 
         // Crear la base de datos
-    DB::statement("CREATE DATABASE `$databaseName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        DB::statement("CREATE DATABASE `$databaseName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 
-    // Guardar empresa
-    $empresa = Empresa::create([
-        'codigo' => $request->codigo,
-        'nombre' => $request->nombre,
-        'rfc' => $request->rfc,
-        'regimen_fiscal' => $request->regimen_fiscal,
-        'curp' => $request->curp,
-        'email' => $request->email,
-        'telefono' => $request->telefono,
-        'activo' => 1,
+        // Guardar empresa
+        $empresa = Empresa::create([
+            'codigo' => $request->codigo,
+            'nombre' => $request->nombre,
+            'rfc' => $request->rfc,
+            'regimen_fiscal' => $request->regimen_fiscal,
+            'curp' => $request->curp,
+            'email' => $request->email,
+            'telefono' => $request->telefono,
+            'activo' => 1,
 
-        'db_host' => env('DB_HOST'),
-        'db_port' => env('DB_PORT'),
-        'db_database' => $databaseName,
-        'db_username' => env('DB_USERNAME'),
-        'db_password' => env('DB_PASSWORD'),
-    ]);
-     // Configurar conexión temporal
-    Config::set('database.connections.tenant', [
-        'driver' => 'mysql',
-        'host' => env('DB_HOST'),
-        'port' => env('DB_PORT'),
-        'database' => $databaseName,
-        'username' => env('DB_USERNAME'),
-        'password' => env('DB_PASSWORD'),
-        'charset' => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
-        'prefix' => '',
-    ]);
+            'db_host' => env('DB_HOST'),
+            'db_port' => env('DB_PORT'),
+            'db_database' => $databaseName,
+            'db_username' => env('DB_USERNAME'),
+            'db_password' => env('DB_PASSWORD'),
+        ]);
+        // Configurar conexión temporal
+        Config::set('database.connections.tenant', [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST'),
+            'port' => env('DB_PORT'),
+            'database' => $databaseName,
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+        ]);
 
-    DB::purge('tenant');
-Artisan::call('migrate', [
-    '--database' => 'tenant',
-    '--path' => 'database/migrations/tenant',
-    '--force' => true,
-]);
+        DB::purge('tenant');
+        //EJECUTA LAS MIGRACIONES
+        Artisan::call('migrate', [
+            '--database' => 'tenant',
+            '--path' => 'database/migrations/tenant',
+            '--force' => true,
+        ]);
+        // Ejecutar seeders
+        // Artisan::call('db:seed', [
+        //     '--database' => 'tenant',
+        //     '--class' => 'Database\\Seeders\\TenantDatabaseSeeder',
+        //     '--force' => true,
+        // ]);
 
-        // $empresas = Empresa::all();
-        // return view('empresas.index',['empresas'=>$empresas])->with('success',   'La empresa ha sido registrada.');
+        $empresas = Empresa::all();
+        return view('empresas.select', ['empresas' => $empresas])->with('success',   'La empresa ha sido registrada.');
     }
 
 
@@ -128,8 +136,8 @@ Artisan::call('migrate', [
      */
     public function show(Empresa $empresa)
     {
-            $regimenes = Regimen::all();
-        return view('empresas.show',['empresa'=>$empresa,'regimenes'=>$regimenes]);
+        $regimenes = Regimen::all();
+        return view('empresas.show', ['empresa' => $empresa, 'regimenes' => $regimenes]);
     }
 
     /**
@@ -138,7 +146,7 @@ Artisan::call('migrate', [
     public function edit(Empresa $empresa)
     {
         $regimenes = Regimen::all();
-        return view('empresas.edit', ['empresa'=>$empresa,'regimenes' => $regimenes]);
+        return view('empresas.edit', ['empresa' => $empresa, 'regimenes' => $regimenes]);
     }
 
     /**
@@ -155,7 +163,7 @@ Artisan::call('migrate', [
         ]);
         $empresa->update($request->all());
         return redirect()->route('empresas.show', $empresa)
-            ->with('success', 'Empresa ha sido actualizado' );
+            ->with('success', 'Empresa ha sido actualizado');
     }
 
     /**

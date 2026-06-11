@@ -85,11 +85,15 @@
                class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-red-600 hover:bg-red-600">
                 Regresar
             </a>
-            <button type="submit"
-                id="btnGuardar"
-                class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
-                Actualizar
-            </button>
+            <div x-data @keydown.window.prevent.f10="$refs.btnRegistrar.click()">
+                <button
+                    x-ref="btnRegistrar"
+                    type="submit"
+                    id="btnGuardar"
+                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
+                    Actualizar [F10]
+                </button>
+            </div>
 
         </div>
     </div>

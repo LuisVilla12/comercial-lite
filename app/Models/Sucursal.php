@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Sucursal extends Model
+class Sucursal extends TenantModel
 {
     protected $table = 'sucursales';
 

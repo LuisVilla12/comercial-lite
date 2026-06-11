@@ -48,9 +48,8 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
  $request->validate([
-            'codigo_producto' => 'required|unique:productos,codigo_producto|string|max:50',
+            'codigo_producto' => ['required','string','max:50'],
             'nombre_producto' => 'required|string|max:255',
-            // 'clave_sat' => 'required|string|max:13',
             'precio1' => 'required|string|max:255',
             'unidad_medida' => 'required'
         ]);
@@ -87,18 +86,19 @@ class ProductoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Producto $producto)
+    public function show($producto)
     {
-        //
+        $producto=Producto::findOrFail($producto);
         return view('productos.show', compact('producto'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Producto $producto)
+    public function edit($producto)
     {
-        //
+        $producto=Producto::findOrFail($producto);
+
         $clasificaciones = Clasificacion::all();
         return view('productos.edit', compact('producto', 'clasificaciones'));
     }
@@ -106,9 +106,10 @@ class ProductoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Producto $producto)
+    public function update(Request $request, $producto)
     {
-        //
+            $producto=Producto::findOrFail($producto);
+
             $request->validate([
                 'codigo_producto' => 'required|string|max:50,' ,
                 'nombre_producto' => 'required|string|max:255',
@@ -123,9 +124,9 @@ class ProductoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Producto $producto)
+    public function destroy($producto)
     {
-        //
+    $producto=Producto::findOrFail($producto);
         $producto->delete();
         return redirect()->route('productos.index')
             ->with('success', 'Producto eliminado');

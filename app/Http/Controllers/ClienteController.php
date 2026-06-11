@@ -66,7 +66,7 @@ public function indexProveedores(Request $request)
         'required',
         'string',
         'max:50',
-         function ($attribute, $value, $fail) {
+        function ($attribute, $value, $fail) {
             if (Cliente::where('codigo', $value)->exists()) {
                 $fail('El código ya existe.');
             }

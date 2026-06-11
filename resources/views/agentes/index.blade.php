@@ -28,13 +28,15 @@
                 </a>
             @endif
         </form>
-
-        {{-- Botón --}}
-        <a href="{{ route('agentes.create') }}"
-            class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-            Registrar Agente
-        </a>
-
+        <div x-data @keydown.window.prevent.f9="$refs.btnEntrada.click()">
+            {{-- Botón --}}
+            <a
+                x-ref="btnEntrada"
+                href="{{ route('agentes.create') }}"
+                class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
+                Registrar Agente [F9]
+            </a>
+        </div>
     </div>
     @if (session('success'))
         <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"

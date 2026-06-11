@@ -28,31 +28,35 @@ class AgenteController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'codigo' => 'required|unique:agentes',
+            'codigo' => 'required',
             'nombre' => 'required',
         ]);
         Agente::create($request->all());
         return redirect()->route('agentes.index');
     }
-    public function show(Agente $agente)
+    public function show($agente)
     {
+        $agente = Agente::findOrFail($agente);
         return view('agentes.show', compact('agente'));
     }
-    public function edit(Agente $agente)
+    public function edit($agente)
     {
+        $agente = Agente::findOrFail($agente);
         return view('agentes.edit', compact('agente'));
     }
-    public function update(Request $request, Agente $agente)
+    public function update(Request $request, $agente)
     {
+        $agente = Agente::findOrFail($agente);
         $request->validate([
-            'codigo' => 'required|unique:agentes,codigo,' . $agente->id,
+            'codigo' => 'required' ,
             'nombre' => 'required',
         ]);
         $agente->update($request->all());
         return redirect()->route('agentes.index');
     }
-    public function destroy(Agente $agente)
+    public function destroy($agente)
     {
+        $agente = Agente::findOrFail($agente);
         $agente->delete();
         return redirect()->route('agentes.index');
     }

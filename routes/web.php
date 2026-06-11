@@ -22,14 +22,18 @@ use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DatosBancarioController;
 use App\Http\Controllers\AgenteController;
 use App\Http\Controllers\AjustesAlmacenController;
-use App\Http\Controllers\EntradasAlmacenController;
-use App\Http\Controllers\SalidasAlmacenController;
 use App\Mail\TestMail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+// MODELOS PARA CONSULTA
+use App\Models\Cliente;
+use App\Models\Producto;
+use Illuminate\Support\Facades\DB;
+
 require __DIR__ . '/auth.php';
 
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified','tenant'])->name('dashboard');
 // listado de empresas
 Route::get('/empresas/listado', [EmpresaController::class, 'listado'])->middleware('auth')->name('empresas.list');
 Route::post('/empresas/listado', [EmpresaController::class, 'set'])->middleware('auth')->name('empresas.select');
@@ -56,6 +60,17 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/usuarios/{usuario}/edit', [UserController::class, 'edit'])->name('usuarios.edit');
     Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
 
+    //Empresas
+    Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
+    Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('empresas.create');
+    Route::post('/empresas', [EmpresaController::class, 'store'])->name('empresas.store');
+    Route::get('/empresas/{empresa}/edit', [EmpresaController::class, 'edit'])->name('empresas.edit');
+    Route::put('/empresas/{empresa}/edit', [EmpresaController::class, 'update'])->name('empresas.update');
+    Route::get('/empresas/{empresa}', action: [EmpresaController::class, 'show'])->name('empresas.show');
+});
+
+Route::middleware(['auth', 'tenant'])->group(function () {
+
     //Sucursales
     Route::get('/sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
     Route::get('/sucursales/create', [SucursalController::class, 'create'])->name('sucursales.create');
@@ -64,18 +79,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
     Route::get('/sucursales/{sucursal}', action: [SucursalController::class, 'show'])->name('sucursales.show');
 
-    //Empresas
-    Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
-    Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('empresas.create');
-    Route::post('/empresas', [EmpresaController::class, 'store'])->name('empresas.store');
-    Route::get('/empresas/{empresa}/edit', [EmpresaController::class, 'edit'])->name('empresas.edit');
-    Route::put('/empresas/{empresa}/edit', [EmpresaController::class, 'update'])->name('empresas.update');
-    Route::get('/empresas/{empresa}', action: [EmpresaController::class, 'show'])->name('empresas.show');
-
-});
-
-Route::middleware(['auth','tenant'])->group(function () {
-//Auditorias
+    //Auditorias
     Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
     Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');
 
@@ -159,8 +163,9 @@ Route::middleware(['auth','tenant'])->group(function () {
     Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
     Route::get('/inventario/pdf', [ExistenciaProductoController::class, 'pdf'])->name('existencias.pdf');
 
-    Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
-        Route::post('/documentos/{documento}/enviar-email', [DocumentoController::class, 'enviarEmail'])->name('documentos.enviarEmail');
+    // TODO:AGREGAR VALIDACION SE SUCURSAL
+    // Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
+    Route::prefix('sucursales/{sucursal}')->group(function () {
         //Documentos
         Route::get('/cotizacion', action: [DocumentoController::class, 'indexCotizacion'])->name('cotizaciones.index');
         Route::get('/facturas', action: [DocumentoController::class, 'indexFacturas'])->name('facturas.index');
@@ -182,6 +187,9 @@ Route::middleware(['auth','tenant'])->group(function () {
         // PDFs
         Route::get('/documentos/{documento}/ticket/{mm}', [DocumentoController::class, 'pdfTicket'])->name('documentos.pdfTicket');
         Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
+        //ENVIO
+        Route::post('/documentos/{documento}/enviar-email', [DocumentoController::class, 'enviarEmail'])->name('documentos.enviarEmail');
+
     });
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
@@ -226,5 +234,69 @@ Route::middleware(['auth','tenant'])->group(function () {
 
     //Puntos
     Route::get('/puntos', action: [PuntosController::class, 'index'])->name('puntos.index');
-});
 
+    //RUTAS PARA CONSUMIR API
+    Route::get('proveedores/buscar', function (Request $r) {
+        $q = $r->input('q', '');
+        return Cliente::where('tipo', 3) // proveedor
+            ->where('activo', 1)
+            ->where(function ($query) use ($q) {
+                $query->where('nombre', 'like', "%{$q}%")
+                    ->orWhere('codigo', 'like', "%{$q}%");
+            })
+            ->select('id', 'nombre', 'codigo')
+            ->limit(10)
+            ->get();
+    });
+    Route::get('buscar/productos', function () {
+        $q = request('q', '');
+        if (strlen($q) < 2) return [];
+        return Producto::where('estatus_producto', 1)
+            ->where(function ($query) use ($q) {
+                $query->where('clave_producto', 'like', "%{$q}%")
+                    ->orWhere('codigo_producto', 'like', "%{$q}%")
+                    ->orWhere('nombre_producto', 'like', "%{$q}%");
+            })
+            ->select(
+                'id',
+                'nombre_producto as nombre',
+                'codigo_producto as codigo',
+                'clave_producto as clave',
+                'precio1 as costo'
+            )
+            ->limit(10)
+            ->get();
+    });
+
+    Route::get('productos-existencias/buscar', function () {
+        $q = request('q');
+        $almacenId = request('almacen');
+        if (!$almacenId) {
+            return [];
+        }
+        return Producto::where('estatus_producto', 1)
+            ->where(function ($query) use ($q) {
+                $query->where('clave_producto', 'like', "%{$q}%")
+                    ->orWhere('codigo_producto', 'like', "%{$q}%")
+                    ->orWhere('nombre_producto', 'like', "%{$q}%");
+            })
+            ->leftJoin('existencia_productos', function ($join) use ($almacenId) {
+                $join->on('productos.id', '=', 'existencia_productos.producto_id')
+                    ->where('existencia_productos.almacen_id', $almacenId);
+            })
+            ->select(
+                'productos.id',
+                'productos.nombre_producto as nombre',
+                'productos.codigo_producto as codigo',
+                'productos.clave_producto as clave',
+                'productos.precio1 as costo',
+                'productos.precio2 as costo2',
+                'productos.precio3 as costo3',
+                'productos.precio4 as costo4',
+                'productos.precio5 as costo5',
+                DB::raw('COALESCE(existencia_productos.cantidad, 0) as stock')
+            )
+            ->limit(10)
+            ->get();
+    });
+});

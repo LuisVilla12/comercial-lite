@@ -37,7 +37,15 @@ class ClasificacionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'codigo' => 'required|unique:clasificacions,codigo|string|max:50',
+            'codigo' => [
+                'required','string','max:50',
+                function ($attribute, $value, $fail) {
+            if (Clasificacion::where('codigo', $value)->exists()) {
+                $fail('El código ya existe.');
+            }
+        }
+
+                ],
             'nombre' => 'required|string|max:255',
 
         ]);
@@ -54,31 +62,32 @@ class ClasificacionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Clasificacion $clasificacion)
+    public function show($clasificacion)
     {
-        //
+        $clasificacion=Clasificacion::findOrFail($clasificacion);
         return view('clasificaciones.show', compact('clasificacion'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Clasificacion $clasificacion)
+    public function edit($clasificacion)
     {
-        //
+                $clasificacion=Clasificacion::findOrFail($clasificacion);
         return view('clasificaciones.edit', compact('clasificacion'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Clasificacion $clasificacion)
+    public function update(Request $request, $clasificacion)
     {
         $request->validate([
-            'codigo' => 'required|unique:clasificacions,codigo|string|max:50',
+            'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:255',
 
-        ]);
+            ]);
+        $clasificacion=Clasificacion::findOrFail($clasificacion);
         $clasificacion->update([
             'codigo' => $request->codigo,
             'nombre' => $request->nombre,
@@ -91,10 +100,10 @@ class ClasificacionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Clasificacion $clasificacion)
+    public function destroy($clasificacion)
     {
-        //
-$clasificacion->delete();
+        $clasificacion=Clasificacion::findOrFail($clasificacion);
+        $clasificacion->delete();
 
     return redirect()
         ->route('clasificaciones.index')

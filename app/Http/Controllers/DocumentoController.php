@@ -30,8 +30,9 @@ class DocumentoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function indexCotizacion(Request $request, Sucursal $sucursal)
+    public function indexCotizacion(Request $request, $sucursal)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         $documentos = Documento::where('documento_modelo_id', 1)->where('serie', $sucursal->serie_cotizacion)
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($query) use ($search) {
@@ -51,8 +52,9 @@ class DocumentoController extends Controller
         return view('cotizaciones.index', ['documentos' => $documentos, 'sucursal' => $sucursal]);
     }
 
-    public function indexFacturas(Request $request, Sucursal $sucursal)
+    public function indexFacturas(Request $request, $sucursal)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         $documentos = Documento::where('documento_modelo_id', 2)->where('serie', $sucursal->serie_factura)
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($query) use ($search) {
@@ -71,8 +73,9 @@ class DocumentoController extends Controller
 
         return view('facturas.index', ['documentos' => $documentos, 'sucursal' => $sucursal]);
     }
-    public function indexRemisiones(Request $request, Sucursal $sucursal)
+    public function indexRemisiones(Request $request, $sucursal)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         $documentos = Documento::where('documento_modelo_id', 3)->where('serie', $sucursal->serie_remision)
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($query) use ($search) {
@@ -94,13 +97,15 @@ class DocumentoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Sucursal $sucursal, $tipo)
+    public function create($sucursal, $tipo)
     {
         $proveedores = Cliente::all();
         $productos = Producto::all();
         $almacenes = Almacen::all();
         $usos_cfdi = UsoCfdi::all();
         $agentes = Agente::all();
+        $sucursal = Sucursal::findOrFail($sucursal);
+
         // dd($sucursal);
         return view('documentos.create', [
             'sucursal' => $sucursal,
@@ -113,8 +118,9 @@ class DocumentoController extends Controller
         ]);
     }
 
-    public function store(Sucursal $sucursal, Request $request)
+    public function store($sucursal, Request $request)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -123,10 +129,10 @@ class DocumentoController extends Controller
             'productos' => $productos
         ]);
         $request->validate([
-            'proveedor_id' => 'required|exists:clientes,id',
-            'almacen_id' => 'required|exists:clientes,id',
-            'sucursal_id' => 'required|exists:sucursales,id',
-            'user_id' => 'required|exists:users,id',
+            'proveedor_id' => 'required',
+            'almacen_id' => 'required',
+            'sucursal_id' => 'required',
+            'user_id' => 'required',
             'fecha' => 'required|date',
             'subtotal' => 'required|numeric',
             'impuestos' => 'required|numeric',
@@ -242,8 +248,9 @@ class DocumentoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Sucursal $sucursal, Documento $documento)
+    public function show($sucursal, Documento $documento)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         $usos_cfdi = UsoCfdi::all();
         $agentes = Agente::all();
         $documento->load([
@@ -258,9 +265,9 @@ class DocumentoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Sucursal $sucursal, Documento $documento)
+    public function edit( $sucursal, Documento $documento)
     {
-        // dd($documento);
+                $sucursal = Sucursal::findOrFail($sucursal);
         $usos_cfdi = UsoCfdi::all();
         $agentes = Agente::all();
         if ($documento->estatus != 1) {
@@ -291,8 +298,9 @@ class DocumentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Sucursal $sucursal, Request $request, Documento $documento)
+    public function update($sucursal, Request $request, Documento $documento)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -304,9 +312,9 @@ class DocumentoController extends Controller
 
         $request->validate([
             'tipo' => 'required',
-            'proveedor_id' => 'required|exists:clientes,id',
-            'almacen_id' => 'required|exists:clientes,id',
-            'user_id' => 'required|exists:users,id',
+            'proveedor_id' => 'required',
+            'almacen_id' => 'required',
+            'user_id' => 'required',
             'fecha' => 'required|date',
             'subtotal' => 'required|numeric',
             'impuestos' => 'required|numeric',
@@ -380,8 +388,9 @@ class DocumentoController extends Controller
             } . ' ha sido actualizada'
         );
     }
-    public function pdf(Sucursal $sucursal, Documento $documento)
+    public function pdf($sucursal, Documento $documento)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         // Seleccionar los datos bancarios
         $banco = DatosBancario::where('predeterminado', true)->first();
 
@@ -396,8 +405,9 @@ class DocumentoController extends Controller
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");
     }
 
-    public function pdfTicket(Sucursal $sucursal, Documento $documento, $mm = 80)
+    public function pdfTicket($sucursal, Documento $documento, $mm = 80)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         $documento->load(['cliente', 'detalles.producto']);
         // dd($documento);
         $width = $mm == 58 ? 164 : 227;
@@ -415,11 +425,12 @@ class DocumentoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Documento $documento)
+    public function destroy( $documento)
     {
         DB::beginTransaction();
 
         try {
+            $documento = Documento::findOrFail($documento);
             // 1️⃣ Eliminar detalles
             $documento->detalles()->delete();
 
@@ -438,8 +449,10 @@ class DocumentoController extends Controller
         }
     }
     //
-    public function convertir(Sucursal $sucursal, Documento $documento, $tipo)
+    public function convertir( $sucursal, $documento, $tipo)
     {
+        $documento = Documento::findOrFail($documento);
+        $sucursal = Sucursal::findOrFail($sucursal);
         $documento_convertido = DB::transaction(function () use ($documento, $sucursal, $tipo) {
 
             if ($tipo == '2') {
@@ -520,8 +533,10 @@ class DocumentoController extends Controller
     }
 
 
-    public function surtir(Sucursal $sucursal, Documento $documento)
+    public function surtir( $sucursal, $documento)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
+        $documento = Documento::findOrFail($documento);
         if ($documento->estatus != 1) {
             return back()->with('error', 'La remisión ya fue surtida');
         }
@@ -569,8 +584,11 @@ class DocumentoController extends Controller
             ->route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento])
             ->with('success', 'Remisión surtida correctamente');
     }
-    public function devolucionEdit(Sucursal $sucursal, Documento $documento)
+    public function devolucionEdit( $sucursal,  $documento)
     {
+                $sucursal = Sucursal::findOrFail($sucursal);
+        $documento = Documento::findOrFail($documento);
+
         $usos_cfdi = UsoCfdi::all();
         // ✅ CARGAR RELACIONES PRIMERO
         $documento->load([
@@ -588,8 +606,11 @@ class DocumentoController extends Controller
 
         return view('documentos.devolucion', ['sucursal' => $sucursal, 'documento' => $documento, 'usos' => $usos_cfdi]);
     }
-    public function devolucionUpdate(Request $request, Sucursal $sucursal, Documento $documento)
+    public function devolucionUpdate(Request $request,  $sucursal,  $documento)
     {
+                $sucursal = Sucursal::findOrFail($sucursal);
+        $documento = Documento::findOrFail($documento);
+
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -682,8 +703,10 @@ class DocumentoController extends Controller
         ]);
     }
     // AFECTA INVENTARIO al hacer una factura
-    public function surtirFactura(Sucursal $sucursal, Documento $documento)
+    public function surtirFactura( $sucursal,  $documento)
     {
+            $sucursal = Sucursal::findOrFail($sucursal);
+            $documento = Documento::findOrFail($documento);
         if ($documento->estatus != 1) {
             return back()->with('error', 'Factura ya fue surtida');
         }
@@ -732,8 +755,9 @@ class DocumentoController extends Controller
             ->with('success', 'Factura timbrada correctamente');
     }
 
-    public function timbrarSAT(Documento $documento)
+    public function timbrarSAT($documento)
     {
+        $documento = Documento::findOrFail($documento);
 
         if ($documento->uuid) {
             return response()->json([
@@ -776,8 +800,9 @@ class DocumentoController extends Controller
             'uuid' => $documento->uuid
         ]);
     }
-    private function buildFacturamaJson(Documento $documento, Empresa $empresa): array
+    private function buildFacturamaJson( $documento,  $empresa): array
     {
+        $documento = Documento::findOrFail($documento);
         // dd($empresa);
         $documento->load([
             'cliente',
@@ -844,8 +869,11 @@ class DocumentoController extends Controller
         ];
     }
 
-    public function enviarEmail(Sucursal $sucursal, Request $request, Documento $documento)
+    public function enviarEmail( $sucursal, Request $request,  $documento)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
+        $documento = Documento::findOrFail($documento);
+
         $documento->load([
             'cliente',
             'detalles.producto'

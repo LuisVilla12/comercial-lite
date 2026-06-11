@@ -49,8 +49,8 @@ class AjustesAlmacenController extends Controller
     {
         // VALIDAR DATOS DEL AJUSTE
         $data = $request->validate([
-            'agente_id' => 'required|exists:agentes,id',
-            'almacen_id' => 'required|exists:almacens,id',
+            'agente_id' => 'required',
+            'almacen_id' => 'required',
             'tipo' => 'required',
             'fecha' => 'required|date',
             'observaciones' => 'nullable|string',
@@ -91,8 +91,9 @@ class AjustesAlmacenController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AjustesAlmacen $ajuste)
+    public function show($ajuste)
     {
+        $ajuste = AjustesAlmacen::findOrFail($ajuste);
         $ajuste->load([
             'almacen',
             'detalles.producto',
@@ -100,8 +101,9 @@ class AjustesAlmacenController extends Controller
         return view('ajustes-almacen.show', ['ajuste' => $ajuste]);
     }
 
-    public function pdf(AjustesAlmacen $ajuste)
+    public function pdf($ajuste)
     {
+        $ajuste = AjustesAlmacen::findOrFail($ajuste);
 $ajuste->load([
             'almacen',
             'detalles.producto',
@@ -117,27 +119,30 @@ $ajuste->load([
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AjustesAlmacen $ajustesAlmacen)
+    public function edit( $ajuste)
     {
         //
+        $ajuste = AjustesAlmacen::findOrFail($ajuste);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AjustesAlmacen $ajustesAlmacen)
+    public function update(Request $request, AjustesAlmacen $ajuste)
     {
         //
+        $ajuste = AjustesAlmacen::findOrFail($ajuste);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AjustesAlmacen $ajuste)
+    public function destroy($ajuste)
     {
         DB::beginTransaction();
 
         try {
+            $ajuste = AjustesAlmacen::findOrFail($ajuste);
             // 1️⃣ Eliminar detalles
             $ajuste->detalles()->delete();
 
@@ -157,8 +162,9 @@ $ajuste->load([
         }
     }
 
-    public function surtir(AjustesAlmacen $ajuste)
+    public function surtir( $ajuste)
     {
+        $ajuste = AjustesAlmacen::findOrFail($ajuste);
         if ($ajuste->estatus != 1) {
             return back()->with('error', 'El ajuste ya fue surtida');
         }

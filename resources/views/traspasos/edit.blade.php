@@ -350,7 +350,7 @@
                     if (q.length < 2) return
 
                     const res = await fetch(
-                        `/api/productos-existencias/buscar?q=${q}&almacen=${this.almacen_origen_id}`
+                        `/productos-existencias/buscar?q=${q}&almacen=${this.almacen_origen_id}`
                     )
                     this.items[index].resultados = await res.json()
                 },

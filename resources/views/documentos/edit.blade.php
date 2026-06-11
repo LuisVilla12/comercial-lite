@@ -757,7 +757,7 @@
                         }
 
                         const res = await fetch(
-                            `/api/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
+                            `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
                         this.items[index].resultados = await res.json();
                         this.items[index].resultadoSeleccionado = 0;
                     },
@@ -791,7 +791,7 @@
                         }
 
                         const res = await fetch(
-                            `/api/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
+                            `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
                         this.resultadosModal = await res.json();
                         this.modalProductoSeleccionado = this.resultadosModal.length ? 0 : -1;
                     },

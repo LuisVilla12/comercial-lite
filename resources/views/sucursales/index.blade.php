@@ -21,34 +21,35 @@
             </div>
 
             @if (request('search'))
-            <a href="{{ route('sucursales.index') }}"
-                class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
-                Limpiar búsqueda
-            </a>
+                <a href="{{ route('sucursales.index') }}"
+                    class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
+                    Limpiar búsqueda
+                </a>
             @endif
         </form>
-
-        {{-- Botón --}}
-        <a href="{{ route('sucursales.create') }}"
-            class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-            Registrar Sucursal
-        </a>
-
+        <div x-data @keydown.window.prevent.f10="$refs.btnRegistrar.click()">
+            {{-- Botón --}}
+            <a x-ref="btnRegistrar" href="{{ route('sucursales.create') }}"
+                class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
+                Registrar Sucursal [F10]
+            </a>
+        </div>
     </div>
     @if (session('success'))
-    <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
-        class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">{{ session('success') }}
-    </p>
+        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
+            class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">{{ session('success') }}
+        </p>
     @endif
 
     <div class="shadow-md overflow-x-auto rounded-lg">
-@if ($sucursales->count() > 0)
+        @if ($sucursales->count() > 0)
             <div class="hidden md:block">
                 <table class="w-full border bg-white shadow rounded">
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="p-2">Codigo</th>
                             <th class="p-2">Nombre</th>
+                            <th class="p-2">Almacen</th>
                             <th class="p-2">Acciones</th>
                         </tr>
                     </thead>
@@ -61,7 +62,9 @@
                                 <td class="p-2">
                                     {{ $sucursal->nombre }}
                                 </td>
-
+                                <td class="p-2">
+                                    {{ $sucursal->almacen->nombre }}
+                                </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">
                                     <div class="flex justify-center items-center gap-4">
                                         {{-- Ver --}}
@@ -132,21 +135,21 @@
                 <p class="text-sm text-gray-600 ml-6 text-center"> No hay sucursales</p>
             </div>
         @endif
-        @if($sucursales->count() > 0)
-        <div class="bg-white py-4 my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        @if ($sucursales->count() > 0)
+            <div class="bg-white py-4 my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-            <p class="text-sm text-gray-600 ml-6">
-                Mostrando
-                <span class="font-medium">{{ $sucursales->firstItem() }}</span>
-                a
-                <span class="font-medium">{{ $sucursales->lastItem() }}</span>
-                de
-                <span class="font-medium">{{ $sucursales->total() }}</span>
-                registros
-            </p>
+                <p class="text-sm text-gray-600 ml-6">
+                    Mostrando
+                    <span class="font-medium">{{ $sucursales->firstItem() }}</span>
+                    a
+                    <span class="font-medium">{{ $sucursales->lastItem() }}</span>
+                    de
+                    <span class="font-medium">{{ $sucursales->total() }}</span>
+                    registros
+                </p>
 
-            {{ $sucursales->links() }}
-        </div>
+                {{ $sucursales->links() }}
+            </div>
         @endif
 
     </div>

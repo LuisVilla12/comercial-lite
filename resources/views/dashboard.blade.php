@@ -107,7 +107,7 @@
         </div>
 
         @if (auth()->user()->tipo == 1 )
-        {{-- @foreach ($sucursales as $sucursal)
+        @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
                     title="Cotizaciones {{ $sucursal->nombre }}" desc="Generar cotizaciones"
                     bg="bg-orange-50 dark:bg-orange-900/20" iconBg="bg-orange-500">
@@ -141,7 +141,7 @@
                         <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
                     </x-slot:icon>
                 </x-dashboard-card>
-            @endforeach --}}
+            @endforeach
         @else
             {{-- @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
@@ -199,12 +199,12 @@
                     <x-heroicon-o-building-storefront class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            <x-dashboard-card href="{{ route('empresas.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
+            {{-- <x-dashboard-card href="{{ route('empresas.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
                 title="Empresas" desc="Administrar empresas" iconBg="bg-teal-500">
                 <x-slot:icon>
                     <x-heroicon-o-building-office-2 class="w-6 h-6" />
                 </x-slot:icon>
-            </x-dashboard-card>
+            </x-dashboard-card> --}}
             <x-dashboard-card href="{{ route('auditoria.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
                 title="Bitacora" desc="Bitacora del sistema" iconBg="bg-teal-500">
                 <x-slot:icon>

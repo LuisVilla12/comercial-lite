@@ -36,10 +36,12 @@
     </form>
 
     {{-- Botón --}}
-    <a href="{{ route('clientes.create', '1') }}"
-       class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-        Registrar cliente
-    </a>
+    <div x-data @keydown.window.prevent.f9="$refs.btnRegistrar.click()">
+        <a x-ref="btnRegistrar" href="{{ route('clientes.create', '1') }}"
+           class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
+            Registrar cliente [F9]
+        </a>
+    </div>
 
 </div>
 @if (session('success'))

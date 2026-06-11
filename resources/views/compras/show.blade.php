@@ -171,15 +171,17 @@
         </p>
     </div>
     <div class="mt-6  gap-4">
-        <div class="flex justify-end gap-3 mt-4">
+        <div class="flex justify-end items-center gap-3 mt-4">
             <a href="{{ route('compras.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
                 Volver
             </a>
             @if ($compra->estatus == 1)
-                <a href="{{ route('compras.edit', $compra) }}"
+            <div x-data @keydown.window.prevent.f9="$refs.btnRegistrar.click()">
+                <a x-ref="btnRegistrar" href="{{ route('compras.edit', $compra) }}"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Actualizar
+                    Actualizar [F9]
                 </a>
+            </div>
             @endif
         </div>
 

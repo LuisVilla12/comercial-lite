@@ -749,7 +749,7 @@
                         }
 
                         const res = await fetch(
-                            `/api/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
+                            `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
                         this.items[index].resultados = await res.json();
                         this.items[index].resultadoSeleccionado = 0;
                     },
@@ -783,36 +783,10 @@
                         }
 
                         const res = await fetch(
-                            `/api/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
+                            `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
                         this.resultadosModal = await res.json();
                         this.modalProductoSeleccionado = this.resultadosModal.length ? 0 : -1;
                     },
-
-                    // agregarProductoDesdeModal(p) {
-                    //     if (this.items.some(i => i.producto_id === p.id)) {
-                    //         alert('El producto ya fue agregado')
-                    //         return
-                    //     }
-
-                    //     this.items.push({
-                    //         producto_id: p.id,
-                    //         codigo: p.codigo,
-                    //         query: p.nombre,
-                    //         cantidad: 1,
-                    //         costo: parseFloat(p.precioSeleccionado || p.costo) || 0,
-                    //         costo2: parseFloat(p.costo2) || 0,
-                    //         costo3: parseFloat(p.costo3) || 0,
-                    //         costo4: parseFloat(p.costo4) || 0,
-                    //         stock: p.stock,
-                    //         resultados: [],
-                    //         resultadoSeleccionado: -1
-                    //     })
-
-                    //     this.modalProducto = false
-                    //     this.busquedaProducto = ''
-                    //     this.resultadosModal = []
-                    //     this.calcular()
-                    // },
 
                     agregarProductoDesdeModal(p) {
                         if (this.items.some(i => i.producto_id === p.id)) {

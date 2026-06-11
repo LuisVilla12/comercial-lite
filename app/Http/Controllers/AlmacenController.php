@@ -37,7 +37,14 @@ class AlmacenController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-                'codigo' => 'required|unique:almacens,codigo|string|max:50',
+                'codigo' => [
+                    'required','string','max:50',
+function ($attribute, $value, $fail) {
+            if (Almacen::where('codigo', $value)->exists()) {
+                $fail('El código ya existe.');
+            }
+        }
+                    ],
                 'nombre' => 'required|string|max:255',
                 'tipo' => 'required|in:1,2'
             ]);
@@ -55,30 +62,32 @@ class AlmacenController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Almacen $almacen)
+    public function show($almacen)
     {
-        //
+        $almacen = Almacen::findOrFail($almacen);
         return view('almacenes.show', compact('almacen'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Almacen $almacen)
+    public function edit($almacen)
     {
+                $almacen = Almacen::findOrFail($almacen);
             return view('almacenes.edit', compact('almacen'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Almacen $almacen)
+    public function update(Request $request, $almacen)
     {
     $request->validate([
             'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:255',
             'tipo' => 'required|in:1,2,0'
         ]);
+        $almacen = Almacen::findOrFail($almacen);
         $almacen->update([
             'codigo' => $request->codigo,
             'nombre' => $request->nombre,
@@ -92,8 +101,9 @@ class AlmacenController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Almacen $almacen)
+    public function destroy($almacen)
     {
+    $almacen = Almacen::findOrFail($almacen);
     $almacen->delete();
 
     return redirect()

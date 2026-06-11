@@ -10,11 +10,11 @@ class DashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
-
-        $sucursales = $user->isAdmin()
-            ? Sucursal::all()
-            : Sucursal::where('id', $user->sucursal_id)->get();
-
-        return view('dashboard', compact('sucursales'));
+        $sucursales=Sucursal::all();
+    // TODO::VERIFICAR COMO USUARIOS PUEDEN ACCEDER A LA SUCURSAL
+        // $sucursales = $user->isAdmin()
+        //     ? Sucursal::all()
+        //     : Sucursal::where('id', $user->sucursal_id)->get();
+        return view('dashboard',['sucursales'=>$sucursales]);
     }
 }

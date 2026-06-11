@@ -154,10 +154,14 @@
                         Editar domicilio
                     </a>
                 @endif
-                <button type="submit"
-                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
-                    Actualizar Sucursal
-                </button>
+                <div x-data @keydown.window.prevent.f10="$refs.btnRegistrar.click()">
+                    <button
+                        x-ref="btnRegistrar"
+                        type="submit"
+                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
+                        Actualizar Sucursal [F10]
+                    </button>
+                </div>
 
             </div>
         </form>

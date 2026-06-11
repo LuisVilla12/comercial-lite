@@ -28,13 +28,13 @@
                 </a>
             @endif
         </form>
-
-        {{-- Botón --}}
-        <a href="{{ route('bancos.create') }}"
-            class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-            Registrar Datos Bancarios
-        </a>
-
+        <div x-data @keydown.window.prevent.f10="$refs.btnRegistrar.click()">
+            {{-- Botón --}}
+            <a x-ref="btnRegistrar" href="{{ route('bancos.create') }}"
+                class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
+                Registrar Datos Bancarios [F10]
+            </a>
+        </div>
     </div>
     @if (session('success'))
         <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"

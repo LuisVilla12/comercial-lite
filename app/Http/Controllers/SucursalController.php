@@ -40,7 +40,7 @@ class SucursalController extends Controller
     {
         //
         $request->validate([
-            'codigo'=>'required|unique:sucursales,codigo|string|max:50',
+            'codigo'=>'required|string|max:50',
             'nombre'=>'required|string|max:50',
             'serie_cotizacion'=>'required|string|max:50',
             'serie_remision'=>'required|string|max:50',
@@ -50,7 +50,7 @@ class SucursalController extends Controller
             'folio_remision'=>'required',
             'folio_factura'=>'required',
             'folio_devolucion'=>'required',
-            'almacen_id'=>'required|exists:almacens,id|unique:sucursales,almacen_id',
+            'almacen_id'=>'required',
         ]);
         $sucursal = Sucursal::create([
                 'almacen_id' => $request->almacen_id,
@@ -74,8 +74,9 @@ class SucursalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Sucursal $sucursal)
+    public function show($sucursal)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         $almacenes=Almacen::all();
         return view('sucursales.show', ['sucursal'=>$sucursal,'almacenes'=>$almacenes]);
 
@@ -84,9 +85,9 @@ class SucursalController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Sucursal $sucursal)
+    public function edit($sucursal)
     {
-        //
+        $sucursal = Sucursal::findOrFail($sucursal);
         $almacenes=Almacen::all();
         return view('sucursales.edit', ['sucursal'=>$sucursal,'almacenes'=>$almacenes]);
     }
@@ -94,7 +95,7 @@ class SucursalController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Sucursal $sucursal)
+    public function update(Request $request, $sucursal)
     {
         // dd($request);
          $request->validate([
@@ -109,6 +110,7 @@ class SucursalController extends Controller
             'folio_factura'=>'required',
             'folio_devolucion'=>'required',
         ]);
+        $sucursal = Sucursal::findOrFail($sucursal);
         $sucursal->update($request->all());
 
         return redirect()->route('sucursales.index')

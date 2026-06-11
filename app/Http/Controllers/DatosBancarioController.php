@@ -51,27 +51,28 @@ class DatosBancarioController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(DatosBancario $banco)
+    public function show( $banco)
     {
         //
+        $banco = DatosBancario::findOrFail($banco);
         return view('bancos.show', compact('banco'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DatosBancario $banco)
+    public function edit($banco)
     {
-        //
+        $banco = DatosBancario::findOrFail($banco);
         return view('bancos.edit', compact('banco'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DatosBancario $banco)
+    public function update(Request $request,  $banco)
     {
-        //
+                $banco = DatosBancario::findOrFail($banco);
         $request->validate([
             'nombre_banco' => 'required|string|max:255',
             'cuenta_bancaria' => 'required|string|max:255',
@@ -86,14 +87,15 @@ class DatosBancarioController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DatosBancario $banco)
+    public function destroy($banco)
     {
-        //
+        $banco = DatosBancario::findOrFail($banco);
         $banco->delete();
         return redirect()->route('bancos.index')->with('success', 'Datos bancarios eliminados exitosamente.');
     }
-    public function predeterminado(DatosBancario $banco)
+    public function predeterminado($banco)
     {
+        $banco = DatosBancario::findOrFail($banco);
         //Quitar el predeterminado de todos los bancos
         DatosBancario::where('predeterminado', true)->update(['predeterminado' => false]);
         //Colocar el banco seleccionado como predeterminado

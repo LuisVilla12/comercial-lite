@@ -294,11 +294,14 @@
                     class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-red-600 hover:bg-red-600">
                     Cancelar
                 </a>
-
-                <button type="submit"
-                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Actualizar
-                </button>
+                <div x-data @keydown.window.prevent.f9="$refs.btnRegistrar.click()">
+                    <button
+                        x-ref="btnRegistrar"
+                        type="submit"
+                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                        Actualizar [F9]
+                    </button>
+                </div>
             </div>
         </div>
     </form>
@@ -360,7 +363,7 @@
                 async buscarProducto(index) {
                     const q = this.items[index].query
                     if (q.length < 2) return
-                    const res = await fetch(`/api/productos/buscar?q=${q}`)
+                    const res = await fetch(`/buscar/productos?q=${q}`)
                     this.items[index].resultados = await res.json()
                 },
 

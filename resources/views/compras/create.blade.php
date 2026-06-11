@@ -306,7 +306,7 @@
                 </div>
                 <div class="md:col-span-2 flex justify-between gap-3 mt-4">
 
-                    <a href="{{  route('compras.create')}}"
+                    <a href="{{  route('compras.index')}}"
                         class="px-4 py-2 rounded-md border dark:bg-red border-red-300 bg-red-500 text-white hover:bg-red-500">
                         Cancelar
                     </a>
@@ -497,7 +497,7 @@
                         this.proveedores = []
                         this.proveedorSeleccionado = -1
 
-                        const res = await fetch(`/api/proveedores/buscar?q=${encodeURIComponent(this.proveedorQuery)}`)
+                        const res = await fetch(`/proveedores/buscar?q=${encodeURIComponent(this.proveedorQuery)}`)
                         this.proveedores = await res.json()
                     },
 
@@ -518,7 +518,7 @@
                         }
 
                         const res = await fetch(
-                            `/api/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
+                            `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
                         this.items[index].resultados = await res.json();
                         this.items[index].resultadoSeleccionado = 0;
                     },
@@ -552,7 +552,7 @@
                         }
 
                         const res = await fetch(
-                            `/api/productos/buscar?q=${encodeURIComponent(q)}`);
+                            `/buscar/productos?q=${encodeURIComponent(q)}`);
                         this.resultadosModal = await res.json();
                         this.modalProductoSeleccionado = this.resultadosModal.length ? 0 : -1;
                     },
