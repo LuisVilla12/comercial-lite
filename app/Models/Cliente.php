@@ -1,17 +1,13 @@
 <?php
 
 namespace App\Models;
-
+use  App\Models\Domicilio;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
-use  App\Models\Domicilio;
 
-
-
-class Cliente extends TenantModel implements Auditable
-{
-    use AuditableTrait;
+class Cliente extends TenantModel implements Auditable{
+        use AuditableTrait;
 
     protected $fillable = [
         'tipo',

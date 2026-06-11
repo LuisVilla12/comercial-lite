@@ -39,19 +39,6 @@ public function listado()
         $empresas = Empresa::all();
         return view('empresas.select', ['empresas' => $empresas]);
     }
-
-//     public function set(Request $request)
-// {
-//     $request->validate([
-//         'empresa_id' => 'required|exists:empresas,id'
-//     ]);
-
-//     session([
-//         'empresa_id' => $request->empresa_id
-//     ]);
-//     dd($request->empresa_id);
-//     return redirect()->route('dashboard');
-// }
 public function set(Request $request)
 {
     $empresa = Empresa::findOrFail($request->empresa_id);
@@ -59,7 +46,6 @@ public function set(Request $request)
     session([
         'empresa_id' => $empresa->id
     ]);
-    // dd($empresa);
     Config::set('database.connections.tenant', [
         'driver' => 'mysql',
         'host' => $empresa->db_host,
@@ -70,12 +56,10 @@ public function set(Request $request)
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
     ]);
-    // dd(config('database.connections.tenant'));
-
     DB::purge('tenant');
     DB::reconnect('tenant');
 
-    dd(DB::connection('tenant')->getDatabaseName());
+    return view('dashboard');
 }
 
     /**
@@ -133,6 +117,7 @@ Artisan::call('migrate', [
     '--path' => 'database/migrations/tenant',
     '--force' => true,
 ]);
+
         // $empresas = Empresa::all();
         // return view('empresas.index',['empresas'=>$empresas])->with('success',   'La empresa ha sido registrada.');
     }

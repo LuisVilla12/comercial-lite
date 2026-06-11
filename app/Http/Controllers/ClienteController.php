@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use App\Models\Regimen;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ClienteController extends Controller
 {
@@ -61,13 +62,23 @@ public function indexProveedores(Request $request)
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'codigo' => 'required|string|max:50|unique:clientes,codigo,except,id',
-            'nombre' => 'required|string|max:255',
+        $request->validate([ 'codigo' => [
+        'required',
+        'string',
+        'max:50',
+         function ($attribute, $value, $fail) {
+            if (Cliente::where('codigo', $value)->exists()) {
+                $fail('El código ya existe.');
+            }
+        },
+    ],
+        'nombre' => 'required|string|max:255',
             'rfc' => 'required|string|max:13',
             'email1' => 'required|email',
             'regimen_fiscal' => 'required|string|max:255'
         ]);
+        // dd((new Cliente)->getConnectionName());
+
         $cliente = Cliente::create([
             'tipo' => $request->tipo,
             'codigo' => $request->codigo,
@@ -80,7 +91,6 @@ public function indexProveedores(Request $request)
             'telefono' => $request->telefono,
             'regimen_fiscal' => $request->regimen_fiscal
         ]);
-
         return redirect()
             ->route('clientes.show', [$cliente->id, $cliente->tipo])
             ->with('success',  $cliente->tipo == 1 ? 'El cliente ha sido registrado.' : 'El proveedor ha sido registrado.');
@@ -89,9 +99,9 @@ public function indexProveedores(Request $request)
     /**
      * Display the specified resource.
      */
-    public function show(Cliente $cliente, string $tipo)
+    public function show($cliente, string $tipo)
     {
-        //
+        $cliente = Cliente::findOrFail($cliente);
         return view('clientes.show', compact('cliente', 'tipo'));
 
     }
@@ -99,9 +109,10 @@ public function indexProveedores(Request $request)
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Cliente $cliente, string $tipo)
+    public function edit($cliente, string $tipo)
     {
         //
+        $cliente = Cliente::findOrFail($cliente);
         $regimenes=Regimen::all();
         return view('clientes.edit', ['cliente'=>$cliente, 'tipo'=>$tipo,'regimenes'=>$regimenes]);
     }
@@ -109,9 +120,8 @@ public function indexProveedores(Request $request)
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cliente $cliente)
+    public function update(Request $request, $cliente)
     {
-        //
         $request->validate([
             'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:255',
@@ -119,6 +129,7 @@ public function indexProveedores(Request $request)
             'email1' => 'required|email',
             'regimen_fiscal' => 'required|string|max:255'
         ]);
+        $cliente = Cliente::findOrFail($cliente);
         $tipo = $cliente->tipo;
         $cliente->update($request->all());
 
@@ -129,9 +140,9 @@ public function indexProveedores(Request $request)
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cliente $cliente)
-    {
-     $tipo = $cliente->tipo;
+    public function destroy($cliente) {
+    $cliente = Cliente::findOrFail($cliente);
+    $tipo = $cliente->tipo;
     $cliente->delete();
 
     return redirect()

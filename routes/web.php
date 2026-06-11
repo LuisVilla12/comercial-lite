@@ -74,7 +74,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth','tenant'])->group(function () {
 //Auditorias
     Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
     Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');
