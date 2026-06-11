@@ -40,17 +40,42 @@ public function listado()
         return view('empresas.select', ['empresas' => $empresas]);
     }
 
-    public function set(Request $request)
+//     public function set(Request $request)
+// {
+//     $request->validate([
+//         'empresa_id' => 'required|exists:empresas,id'
+//     ]);
+
+//     session([
+//         'empresa_id' => $request->empresa_id
+//     ]);
+//     dd($request->empresa_id);
+//     return redirect()->route('dashboard');
+// }
+public function set(Request $request)
 {
-    $request->validate([
-        'empresa_id' => 'required|exists:empresas,id'
-    ]);
+    $empresa = Empresa::findOrFail($request->empresa_id);
 
     session([
-        'empresa_id' => $request->empresa_id
+        'empresa_id' => $empresa->id
     ]);
+    // dd($empresa);
+    Config::set('database.connections.tenant', [
+        'driver' => 'mysql',
+        'host' => $empresa->db_host,
+        'port' => $empresa->db_port,
+        'database' => $empresa->db_database,
+        'username' => $empresa->db_username,
+        'password' => $empresa->db_password,
+        'charset' => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
+    ]);
+    // dd(config('database.connections.tenant'));
 
-    return redirect()->route('dashboard');
+    DB::purge('tenant');
+    DB::reconnect('tenant');
+
+    dd(DB::connection('tenant')->getDatabaseName());
 }
 
     /**

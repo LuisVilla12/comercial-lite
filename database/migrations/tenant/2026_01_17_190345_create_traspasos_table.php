@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId(column: 'almacen_origen_id')->constrained('almacens');
             $table->foreignId('almacen_destino_id')->constrained('almacens');
             $table->tinyInteger('estatus')->default(1); // 1=pendiente, 2=aplicado, 3=cancelado
-            $table->foreignId(column: 'user_id')->constrained(table: 'users');
+            $table->integer(column: 'user_id');
 
         });
     }

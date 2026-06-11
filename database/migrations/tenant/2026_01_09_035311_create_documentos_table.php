@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date(column: 'fecha')->nullable();
             $table->foreignId(column: 'cliente_id')->constrained('clientes')->onDelete('cascade');
             $table->foreignId(column: 'almacen_id')->constrained('almacens')->onDelete('cascade');
-            $table->foreignId(column: 'user_id')->constrained(table: 'users');
+            $table->integer(column: 'user_id');
             $table->decimal('subtotal', 15, 4)->nullable();
             $table->decimal('impuestos', 15, 4)->nullable();
             $table->decimal('total', 15, 4)->nullable();
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->text('observaciones')->nullable();
             $table->date('vigencia')->nullable();
             $table->foreignId(column: 'agente_id')->constrained('agentes')->onDelete('cascade');
-            $table->foreignId(column: 'sucursal_id')->constrained('sucursales')->onDelete('cascade');
+            $table->integer(column: 'sucursal_id');
             $table->integer(column: 'estatus')->default(1); //1 pendiente, 2 convertida, 3 cancelada, 4 efectuada
         });
     }

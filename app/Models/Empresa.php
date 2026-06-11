@@ -16,6 +16,12 @@ class Empresa extends Model
         'email',
         'telefono',
         'activo',
+
+        'db_host',
+        'db_port',
+        'db_database',
+        'db_username',
+        'db_password',
     ];
 
 public function domicilios()

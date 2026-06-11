@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string(column: 'serie')->nullable;
             $table->foreignId(column: 'proveedor_id')->constrained(table: 'clientes');
             $table->foreignId(column: 'almacen_id')->constrained(table: 'almacens');
-            $table->foreignId(column: 'user_id')->constrained(table: 'users');
+            $table->integer(column: 'user_id');
             $table->date(column: 'fecha');
             $table->decimal(column: 'subtotal');
             $table->decimal(column: 'impuestos')->default(0);

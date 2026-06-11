@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Regimen extends TenantModel
+class Regimen extends Model
 {
     protected $table = 'regimenes';
     protected $fillable = [
