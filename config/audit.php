@@ -4,6 +4,7 @@ return [
 
     'enabled' => env('AUDITING_ENABLED', true),
 
+
     /*
     |--------------------------------------------------------------------------
     | Audit Implementation
@@ -13,7 +14,7 @@ return [
     |
     */
 
-    'implementation' => OwenIt\Auditing\Models\Audit::class,
+    'implementation' => \App\Models\Audit::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -165,7 +166,7 @@ return [
     'drivers' => [
         'database' => [
             'table' => 'audits',
-            'connection' => null,
+            'connection' => 'tenant',
         ],
     ],
 
