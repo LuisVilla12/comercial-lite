@@ -68,4 +68,8 @@ class User extends Authenticatable implements Auditable
     {
         return $this->tipo == 2;
     }
+    public function empresa()
+{
+    return $this->belongsTo(Empresa::class);
+}
 }

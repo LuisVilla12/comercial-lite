@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Empresa;
 use App\Models\Regimen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 
 use function Ramsey\Uuid\v1;
 
@@ -30,6 +34,25 @@ class EmpresaController extends Controller
         return view('empresas.create', ['regimenes' => $regimenes]);
     }
 
+public function listado()
+    {
+        $empresas = Empresa::all();
+        return view('empresas.select', ['empresas' => $empresas]);
+    }
+
+    public function set(Request $request)
+{
+    $request->validate([
+        'empresa_id' => 'required|exists:empresas,id'
+    ]);
+
+    session([
+        'empresa_id' => $request->empresa_id
+    ]);
+
+    return redirect()->route('dashboard');
+}
+
     /**
      * Store a newly created resource in storage.
      */
@@ -43,19 +66,52 @@ class EmpresaController extends Controller
             'regimen_fiscal' => 'required|string|max:250',
             'email' => 'required|email',
         ]);
-        Empresa::create([
-            'codigo' => $request->codigo,
-            'nombre' => $request->nombre,
-            'rfc' => $request->rfc,
-            'regimen_fiscal' => $request->regimen_fiscal,
-            'curp' => $request->curp,
-            'email' => $request->email,
-            'telefono' => $request->telefono,
-            'activo' => 1,
-        ]);
-        $empresas = Empresa::all();
-        return view('empresas.index',['empresas'=>$empresas])->with('success',   'La empresa ha sido registrada.');
+            // Nombre único para la BD
+    $databaseName = $request->nombre . '_empresa_' . Str::slug($request->codigo, '_');
+
+        // Crear la base de datos
+    DB::statement("CREATE DATABASE `$databaseName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+
+    // Guardar empresa
+    $empresa = Empresa::create([
+        'codigo' => $request->codigo,
+        'nombre' => $request->nombre,
+        'rfc' => $request->rfc,
+        'regimen_fiscal' => $request->regimen_fiscal,
+        'curp' => $request->curp,
+        'email' => $request->email,
+        'telefono' => $request->telefono,
+        'activo' => 1,
+
+        'db_host' => env('DB_HOST'),
+        'db_port' => env('DB_PORT'),
+        'db_database' => $databaseName,
+        'db_username' => env('DB_USERNAME'),
+        'db_password' => env('DB_PASSWORD'),
+    ]);
+     // Configurar conexión temporal
+    Config::set('database.connections.tenant', [
+        'driver' => 'mysql',
+        'host' => env('DB_HOST'),
+        'port' => env('DB_PORT'),
+        'database' => $databaseName,
+        'username' => env('DB_USERNAME'),
+        'password' => env('DB_PASSWORD'),
+        'charset' => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
+        'prefix' => '',
+    ]);
+
+    DB::purge('tenant');
+Artisan::call('migrate', [
+    '--database' => 'tenant',
+    '--path' => 'database/migrations/tenant',
+    '--force' => true,
+]);
+        // $empresas = Empresa::all();
+        // return view('empresas.index',['empresas'=>$empresas])->with('success',   'La empresa ha sido registrada.');
     }
+
 
     /**
      * Display the specified resource.
