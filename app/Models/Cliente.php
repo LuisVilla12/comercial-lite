@@ -9,7 +9,7 @@ use  App\Models\Domicilio;
 
 
 
-class Cliente extends Model implements Auditable
+class Cliente extends TenantModel implements Auditable
 {
     use AuditableTrait;
 

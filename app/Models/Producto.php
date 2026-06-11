@@ -8,7 +8,7 @@ use OwenIt\Auditing\Auditable as AuditableTrait;
 use  App\Models\Clasificacion;
 use  App\Models\ExistenciaProducto;
 
-class Producto extends Model implements Auditable
+class Producto extends TenantModel implements Auditable
 {
     //
     use AuditableTrait;

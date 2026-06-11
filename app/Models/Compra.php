@@ -9,7 +9,7 @@ use  App\Models\Cliente;
 use  App\Models\Almacen;
 use  App\Models\Compras_detalle;
 
-class Compra extends Model implements Auditable
+class Compra extends TenantModel implements Auditable
 {
     use AuditableTrait;
     protected $fillable = [

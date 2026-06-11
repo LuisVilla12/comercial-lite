@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use  App\Models\Producto;
 
-class TraspasoDetalle extends Model
+class TraspasoDetalle extends TenantModel
     {
     protected $table = 'traspasos_detalles';
     protected $fillable = [

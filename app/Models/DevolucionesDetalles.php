@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use  App\Models\Devolucion;
 use  App\Models\Producto;
 
-class DevolucionesDetalles extends Model
+class DevolucionesDetalles extends TenantModel
 {
     protected $table = 'devolucions_detalles';
 

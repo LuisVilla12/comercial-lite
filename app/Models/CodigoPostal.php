@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CodigoPostal extends Model
+class CodigoPostal extends TenantModel
 {
     protected $table = 'codigos_postales';
 

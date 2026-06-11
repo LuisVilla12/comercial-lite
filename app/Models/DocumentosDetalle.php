@@ -6,7 +6,7 @@ use Dom\Document;
 use Illuminate\Database\Eloquent\Model;
 use  App\Models\Producto;
 
-class DocumentosDetalle extends Model
+class DocumentosDetalle extends TenantModel
 {
     protected $fillable = [
         'documento_id',

@@ -7,7 +7,7 @@ use  App\Models\DevolucionesDetalles;
 use  App\Models\Cliente;
 use  App\Models\User;
 
-class Devolucion extends Model
+class Devolucion extends TenantModel
 {protected $fillable = [
     'documento_id',
     'cliente_id',

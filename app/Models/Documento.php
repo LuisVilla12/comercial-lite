@@ -10,7 +10,7 @@ use  App\Models\Cliente;
 use  App\Models\User;
 use  App\Models\Domicilio;
 
-class Documento extends Model implements Auditable{
+class Documento extends TenantModel implements Auditable{
 
     use AuditableTrait;
     protected $fillable = [

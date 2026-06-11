@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AjustesAlmacen extends Model
+class AjustesAlmacen extends TenantModel
 {
     //
         protected $fillable = [

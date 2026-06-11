@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 
-class Clasificacion extends Model implements Auditable
+class Clasificacion extends TenantModel implements Auditable
 {
     use AuditableTrait;
     protected $fillable = [

@@ -7,7 +7,7 @@ use  App\Models\Compra;
 use  App\Models\Producto;
 
 
-class Compras_detalle extends Model
+class Compras_detalle extends TenantModel
 {
     protected $table = 'compras_detalles';
     protected $fillable = [

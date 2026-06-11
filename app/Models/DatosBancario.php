@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DatosBancario extends Model
+class DatosBancario extends TenantModel
 {
     //
      protected $fillable = [

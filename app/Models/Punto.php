@@ -7,7 +7,7 @@ use App\Models\PuntosMovimiento;
 use  App\Models\Cliente;
 
 
-class Punto extends Model
+class Punto extends TenantModel
 {
     //
     protected $fillable = [

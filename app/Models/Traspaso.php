@@ -8,7 +8,7 @@ use OwenIt\Auditing\Auditable as AuditableTrait;
 use  App\Models\TraspasoDetalle;
 use  App\Models\Almacen;
 
-class Traspaso extends Model implements Auditable
+class Traspaso extends TenantModel implements Auditable
 {
     use AuditableTrait;
       protected $fillable = [

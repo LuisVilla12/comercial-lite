@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use  App\Models\Producto;
 
-class Promocion extends Model
+class Promocion extends TenantModel
 {
     //
     protected $fillable = [

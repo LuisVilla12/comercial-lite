@@ -5,7 +5,7 @@ use App\Models\Producto;
 use App\Models\AjustesAlmacen;
 use Illuminate\Database\Eloquent\Model;
 
-class AjustesAlmacenDetalles extends Model
+class AjustesAlmacenDetalles extends TenantModel
 {
         protected $fillable = [
         'ajustes_almacen_id',
