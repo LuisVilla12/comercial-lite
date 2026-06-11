@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UsoCfdi extends TenantModel
+class UsoCfdi extends Model
 {
     protected $table = 'uso_cfdis';
 
