@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empresa;
+use App\Models\User;
 use App\Models\Regimen;
 use App\Models\Sucursal;
 use Illuminate\Http\Request;
@@ -35,17 +36,25 @@ class EmpresaController extends Controller
         return view('empresas.create', ['regimenes' => $regimenes]);
     }
 
-    public function listado()
+    public function listado($user)
     {
-        $empresas = Empresa::all();
+        // Busca el usuario
+    $user = User::findOrFail($user);
+    //Busca las empresas del usuario
+    $empresas = Empresa::when(
+        $user->empresa_id,
+        fn ($query) => $query->where('id', $user->empresa_id)
+    )->get();
+
+    // $empresas = Empresa::all();
         return view('empresas.select', ['empresas' => $empresas]);
     }
     public function set(Request $request)
     {
         $empresa = Empresa::findOrFail($request->empresa_id);
-
         session([
-            'empresa_id' => $empresa->id
+            'empresa_id' => $empresa->id,
+            'nombreEmpresa' => $empresa->nombre,
         ]);
         Config::set('database.connections.tenant', [
             'driver' => 'mysql',
@@ -60,7 +69,7 @@ class EmpresaController extends Controller
         DB::purge('tenant');
         DB::reconnect('tenant');
         $sucursales = Sucursal::all();
-        return view('dashboard', ['sucursales' => $sucursales]);
+        return redirect()->route('dashboard', ['sucursales' => $sucursales]);
     }
 
     /**

@@ -10,12 +10,8 @@
 
         {{-- ENCABEZADO --}}
         <div class="mb-6">
-            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
-                Panel de administración
-            </h2>
-
-            <p class="text-gray-600 dark:text-gray-300">
-                Selecciona una empresa para ingresar o utiliza las opciones administrativas.
+            <p class="text-2xl text-gray-600 dark:text-white">
+                Selecciona una empresa para ingresar
             </p>
         </div>
 
@@ -82,7 +78,7 @@
             {{-- ADMINISTRACIÓN --}}
         <div>
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Administración
+                Panel de Administración
             </h3>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">

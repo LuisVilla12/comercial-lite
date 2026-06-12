@@ -8,15 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\View;
+
 
 class TenantMiddleware
 {
- public function handle($request, Closure $next)
+    public function handle($request, Closure $next)
     {
         if (session()->has('empresa_id')) {
-
-
             $empresa = Empresa::find(session('empresa_id'));
+            View::share('empresaActual', $empresa);
 
             if ($empresa) {
 
@@ -36,10 +37,8 @@ class TenantMiddleware
                 DB::purge('tenant');
                 DB::reconnect('tenant');
 
-
             }
         }
-
         return $next($request);
     }
 }

@@ -35,7 +35,7 @@ require __DIR__ . '/auth.php';
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified','tenant'])->name('dashboard');
 // listado de empresas
-Route::get('/empresas/listado', [EmpresaController::class, 'listado'])->middleware('auth')->name('empresas.list');
+Route::get('/empresas/listado/{user}', [EmpresaController::class, 'listado'])->middleware('auth')->name('empresas.list');
 Route::post('/empresas/listado', [EmpresaController::class, 'set'])->middleware('auth')->name('empresas.select');
 
 

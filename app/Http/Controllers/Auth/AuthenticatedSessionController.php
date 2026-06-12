@@ -24,22 +24,24 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+
         $request->authenticate();
 
         $request->session()->regenerate();
         $user = auth()->user();
+        // dd($user);
+    // // Administrador
+    return redirect()->route('empresas.list',['user'=>$user ]);
+    // if ($user->isAdmin()) {
+    // }
 
-    // Administrador
-    if ($user->isAdmin()) {
-        return redirect()->route('empresas.select');
-    }
+    // // Usuario normal
+    // session([
+    //     'empresa_id' => $user->empresa_id
+    // ]);
 
-    // Usuario normal
-    session([
-        'empresa_id' => $user->empresa_id
-    ]);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+    //     return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

@@ -1,5 +1,8 @@
 @section('title', 'Panel de control')
 <x-app-layout>
+     <h3 class="text-xl font-semibold text-gray-900 mt-6 dark:text-white mb-4">
+                Empresa: {{ session('nombreEmpresa') }}
+            </h3>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
         {{-- ================= CATÁLOGOS ================= --}}
         <div class="col-span-full">
