@@ -34,10 +34,10 @@
     <div class="center">
 <img src="{{ public_path('images/logo.jpeg') }}" style="width: 120px; height: 40px;" alt="Logo">        <br>
         {{-- <strong>{{ $sucursal->empresa->nombre }}</strong><br> --}}
-        <strong>{{ $sucursal->empresa->rfc }}</strong><br>
-        {{ $sucursal->empresa->domicilios->first()->calle ?? 'Dirección no disponible' }} #{{ $sucursal->empresa->domicilios->first()->numero_exterior ?? 'S/N' }},Col. {{ $sucursal->empresa->domicilios->first()->colonia ?? 'Colonia no disponible' }},CP:{{ $sucursal->empresa->domicilios->first()->cp ?? 'CP no disponible' }},
-        {{$sucursal->empresa->domicilios->first()->ciudad??'Ciudad no disponible'}},
-        {{$sucursal->empresa->domicilios->first()->estado??'Estado no disponible'}}
+        <strong>{{ $empresa->rfc }}</strong><br>
+        {{ $empresa->calle ?? 'Dirección no disponible' }} #{{ $empresa->numero_exterior ?? 'S/N' }},Col. {{ $empresa->colonia ?? 'Colonia no disponible' }},CP:{{ $empresa->cp ?? 'CP no disponible' }},
+        {{$empresa->ciudad??'Ciudad no disponible'}},
+        {{$empresa->estado??'Estado no disponible'}}
         <br>
         {{-- <strong>{{ $sucursal->empresa->regimen_fiscal }}</strong><br> --}}
             ------------------------------ <br>
@@ -54,7 +54,7 @@
 <div class="" style="margin-left: 10px;">
     <strong>Folio: </strong> {{ $documento->folio }}<br>
     <strong>Cliente: </strong> {{ $documento->cliente->nombre ?? 'Nombre no disponible' }} <br>
-    <strong>Cajero: </strong> {{ $documento->usuario->name ?? 'Nombre no disponible' }} <br>
+    <strong>Cajero: </strong> {{  'Nombre no disponible' }} <br>
     {{-- <strong>Metodo de pago: </strong> {{ $documento->metodo_pago ?? 'Método no disponible' }}<br> --}}
     ------------------------------ <br>
 </div>

@@ -55,7 +55,9 @@ class EmpresaController extends Controller
         $empresa = Empresa::findOrFail($request->empresa_id);
         session([
             'empresa_id' => $empresa->id,
-            'nombreEmpresa' => $empresa->nombre,
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()->name,
+            'sucursal_id' => auth()->user()->sucursal_id,
         ]);
         Config::set('database.connections.tenant', [
             'driver' => 'mysql',

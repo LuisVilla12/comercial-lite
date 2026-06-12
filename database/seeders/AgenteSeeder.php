@@ -11,10 +11,10 @@ class AgenteSeeder extends Seeder
     {
         Agente::insert([
     [
-        'codigo' => ' 001',
+        'codigo' => '001112',
         'nombre' => ' NINGUNO',
-        'apellidoP'=>'',
-        'apellidoM'=>'',
+        'apellidoP'=>'000',
+        'apellidoM'=>'00',
     ],]);
     }
 }

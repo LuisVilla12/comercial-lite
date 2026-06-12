@@ -7,7 +7,6 @@ use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 // Obtener codigo postal
-Route::get('codigos-postales/{cp}', [CodigoPostalController::class, 'buscar']);
 
 // // VER PROVEDORES PARA UNA COMPRA
 // Route::get('proveedores/buscar', function (Request $r) {
@@ -80,21 +79,6 @@ Route::get('codigos-postales/{cp}', [CodigoPostalController::class, 'buscar']);
 
 
 // VENTAS
-Route::get('clientes/buscar', function (Request $r) {
-    $q = $r->input('q', '');
-    return Cliente::where('tipo', 1) // proveedor
-        ->where('activo', 1)
-        ->where(function ($query) use ($q) {
-            $query->where('nombre', 'like', "%{$q}%")
-                  ->orWhere('codigo', 'like', "%{$q}%");
-        })
-        ->with([
-            'domicilios:id,domiciliable_id,domiciliable_type,calle,numero_interior,numero_exterior,cp,ciudad,colonia'
-        ])
-        ->select('id', 'nombre', 'rfc', 'codigo')
-        ->limit(10)
-        ->get();
-});
 
 //Busqueda de productos para ventas
 

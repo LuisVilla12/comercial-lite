@@ -31,6 +31,7 @@ class User extends Authenticatable implements Auditable
         'tipo',
         'estatus',
         'empresa_id',
+        'sucursal_id',
     ];
 
     /**

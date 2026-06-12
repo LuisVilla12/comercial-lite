@@ -146,7 +146,7 @@
                 </x-dashboard-card>
             @endforeach
         @else
-            {{-- @foreach ($sucursales as $sucursal)
+            @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
                     title="Cotizaciones {{ $sucursal->nombre }}" desc="Generar cotizaciones"
                     bg="bg-orange-50 dark:bg-orange-900/20" iconBg="bg-orange-500">
@@ -180,7 +180,7 @@
                         <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
                     </x-slot:icon>
                 </x-dashboard-card>
-            @endforeach --}}
+            @endforeach
         @endif
         @if (auth()->user()->tipo == 1)
             {{-- ================= Administracion ================= --}}

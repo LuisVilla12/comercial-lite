@@ -68,7 +68,7 @@
             </td>
         </tr>
         <tr>
-            <td><strong>{{ $sucursal->empresa->rfc }}</strong></td>
+            <td><strong>{{ $empresa->rfc }}</strong></td>
         </tr>
     </table>
 
@@ -78,12 +78,12 @@
     <table class="no-border">
         <tr>
             <td width="60%">
-                {{ $sucursal->empresa->domicilios->first()->calle ?? 'Dirección no disponible' }}
-                #{{ $sucursal->empresa->domicilios->first()->numero_exterior ?? 'S/N' }},<br>
-                {{ $sucursal->empresa->domicilios->first()->colonia ?? 'Colonia no disponible' }}
-                {{ $sucursal->empresa->domicilios->first()->ciudad ?? 'Ciudad no disponible' }},
-                {{ $sucursal->empresa->domicilios->first()->estado ?? 'Estado no disponible' }} <br>
-                {{ $sucursal->empresa->domicilios->first()->cp ?? 'CP no disponible' }},<br>
+                {{ $empresa->calle ?? 'Dirección no disponible' }}
+                #{{ $empresa->numero_exterior ?? 'S/N' }},<br>
+                {{ $empresa->colonia ?? 'Colonia no disponible' }}
+                {{ $empresa->ciudad ?? 'Ciudad no disponible' }},
+                {{ $empresa->estado ?? 'Estado no disponible' }} <br>
+                {{ $empresa->cp ?? 'CP no disponible' }},<br>
                 Mexico <br>
             </td>
             <td width="40%">
@@ -91,7 +91,7 @@
                 @if($documento->vigencia!= null)
                     Vigencia: {{ \Carbon\Carbon::parse($documento->vigencia)->format('d/m/Y') }}<br>
                 @endif
-                Vendedor: {{ $documento->usuario->name ?? 'Nombre no disponible' }}
+                Vendedor: {{  'Nombre no disponible' }}
             </td>
         </tr>
     </table>

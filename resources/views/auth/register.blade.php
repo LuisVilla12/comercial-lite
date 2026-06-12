@@ -70,6 +70,20 @@
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+                <div class="">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Sucursal:<span class="text-red-500">*</span>
+                    </label>
+                    <select name="sucursal_id" id="sucursal_id"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <option value="" disabled selected>Seleccione una opcion</option>
+
+                    </select>
+
+                    @error('sucursal_id')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <div class="grid md:grid-cols-2 gap-4">
@@ -111,3 +125,31 @@
         </form>
     </div>
 </x-app-layout>
+<scrip>
+    <script>
+document.getElementById('empresa_id').addEventListener('change', async function() {
+
+    const empresaId = this.value;
+    const sucursalSelect = document.getElementById('sucursal_id');
+
+    sucursalSelect.innerHTML =
+        '<option value="">Cargando sucursales...</option>';
+
+    const response = await fetch(`/empresas/${empresaId}/sucursales`);
+    const sucursales = await response.json();
+
+    sucursalSelect.innerHTML =
+        '<option value="">Seleccione una sucursal</option>';
+
+    sucursales.forEach(sucursal => {
+
+        sucursalSelect.innerHTML += `
+            <option value="${sucursal.id}">
+                ${sucursal.nombre}
+            </option>
+        `;
+    });
+
+});
+</script>
+</scrip>

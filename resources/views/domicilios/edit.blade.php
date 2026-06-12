@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (cp.length !== 5) return;
 
-        fetch(`/api/codigos-postales/${cp}`)
+        fetch(`/codigos-postales/${cp}`)
             .then(res => res.json())
             .then(data => {
 

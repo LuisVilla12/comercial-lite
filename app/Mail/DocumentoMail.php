@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\ConfiguracionEmpresa;
 use App\Models\Documento;
 use App\Models\DatosBancario;
 use App\Models\Sucursal;
@@ -19,11 +20,13 @@ class DocumentoMail extends Mailable
 
     public Documento $documento;
     public Sucursal $sucursal;
+    public ConfiguracionEmpresa $empresa;
 
-    public function __construct(Sucursal $sucursal, Documento $documento)
+    public function __construct(Sucursal $sucursal, Documento $documento,ConfiguracionEmpresa $empresa )
     {
         $this->documento = $documento;
         $this->sucursal = $sucursal;
+        $this->empresa = $empresa;
     }
 
     public function envelope(): Envelope
@@ -62,6 +65,7 @@ class DocumentoMail extends Mailable
         'documento' => $this->documento,
         'sucursal' => $this->sucursal,
         'banco' => $banco,
+        'empresa'=>$this->empresa,
     ]);
 
     return [

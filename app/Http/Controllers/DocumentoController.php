@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Documento;
+use App\Models\ConfiguracionEmpresa;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
 use App\Models\Producto;
@@ -121,6 +122,7 @@ class DocumentoController extends Controller
     public function store($sucursal, Request $request)
     {
         $sucursal = Sucursal::findOrFail($sucursal);
+
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -128,6 +130,7 @@ class DocumentoController extends Controller
         $request->merge([
             'productos' => $productos
         ]);
+                        // dd($productos);
         $request->validate([
             'proveedor_id' => 'required',
             'almacen_id' => 'required',
@@ -142,12 +145,12 @@ class DocumentoController extends Controller
             // DATOS DE PAGO
             'metodo_pago' => 'required',
             'forma_pago' => 'required',
-            'uso_cfdi' => 'required|exists:uso_cfdis,clave',
+            'uso_cfdi' => 'required',
             //DATOS DE DOMICLIO
             'colonia' => 'required|string|max:100',
             'calle' => 'required|string|max:255',
             'numero_exterior' => 'nullable|string|max:50',
-            'agente_id' => 'exists:agentes,id',
+            'agente_id' => 'required',
             'codigo_postal' => 'required|string|max:10',
         ]);
         DB::beginTransaction();
@@ -248,9 +251,10 @@ class DocumentoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($sucursal, Documento $documento)
+    public function show($sucursal,  $documento)
     {
         $sucursal = Sucursal::findOrFail($sucursal);
+        $documento = Documento::findOrFail($documento);
         $usos_cfdi = UsoCfdi::all();
         $agentes = Agente::all();
         $documento->load([
@@ -265,9 +269,10 @@ class DocumentoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit( $sucursal, Documento $documento)
+    public function edit( $sucursal,  $documento)
     {
-                $sucursal = Sucursal::findOrFail($sucursal);
+        $documento = Documento::findOrFail($documento);
+        $sucursal = Sucursal::findOrFail($sucursal);
         $usos_cfdi = UsoCfdi::all();
         $agentes = Agente::all();
         if ($documento->estatus != 1) {
@@ -298,8 +303,9 @@ class DocumentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update($sucursal, Request $request, Documento $documento)
+    public function update($sucursal, Request $request, $documento)
     {
+        $documento = Documento::findOrFail($documento);
         $sucursal = Sucursal::findOrFail($sucursal);
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
@@ -388,9 +394,11 @@ class DocumentoController extends Controller
             } . ' ha sido actualizada'
         );
     }
-    public function pdf($sucursal, Documento $documento)
+    public function pdf($sucursal,  $documento)
     {
+        $documento = Documento::findOrFail($documento);
         $sucursal = Sucursal::findOrFail($sucursal);
+        $empresa = ConfiguracionEmpresa::first();
         // Seleccionar los datos bancarios
         $banco = DatosBancario::where('predeterminado', true)->first();
 
@@ -399,22 +407,24 @@ class DocumentoController extends Controller
             'detalles.producto'
         ]);
 
-        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco'))
+        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco','empresa'))
             ->setPaper('letter');
 
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");
     }
 
-    public function pdfTicket($sucursal, Documento $documento, $mm = 80)
+    public function pdfTicket($sucursal,  $documento, $mm = 80)
     {
         $sucursal = Sucursal::findOrFail($sucursal);
+        $documento = Documento::findOrFail($documento);
+        $empresa = ConfiguracionEmpresa::first();
         $documento->load(['cliente', 'detalles.producto']);
         // dd($documento);
         $width = $mm == 58 ? 164 : 227;
 
         $customPaper = [0, 0, $width, 256];
 
-        $pdf = Pdf::loadView('documentos.pdf_ticket', compact('documento', 'sucursal'))
+        $pdf = Pdf::loadView('documentos.pdf_ticket', compact('documento', 'sucursal','empresa'))
             ->setPaper($customPaper);
 
         return $pdf->stream("Ticket{$mm}_{$documento->serie}-{$documento->folio}.pdf");
@@ -840,7 +850,6 @@ class DocumentoController extends Controller
                 $iva = round($subtotal * 0.16, 2);
 
                 return [
-                    //Clave sat del produto
                     'ProductCode' => $detalle->producto->clave_sat,
                     'IdentificationNumber' => $detalle->producto->codigo_producto,
                     'Description' => $detalle->producto->nombre,
@@ -873,20 +882,19 @@ class DocumentoController extends Controller
     {
         $sucursal = Sucursal::findOrFail($sucursal);
         $documento = Documento::findOrFail($documento);
+        $empresa = ConfiguracionEmpresa::first();
 
         $documento->load([
             'cliente',
             'detalles.producto'
         ]);
-        $sucursal->load([
-            'empresa'
-        ]);
+
         $request->validate([
             'email' => 'required|email',
         ]);
 
         Mail::to($request->email)
-            ->send(new DocumentoMail($sucursal, $documento));
+            ->send(new DocumentoMail($sucursal, $documento,$empresa));
         return redirect()
             ->back()
             ->with('success', '📧 Cotización enviada correctamente');

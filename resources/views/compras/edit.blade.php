@@ -350,7 +350,7 @@
 
                 async buscarProveedor() {
                     if (this.proveedorQuery.length < 2) return
-                    const res = await fetch(`/api/proveedores/buscar?q=${this.proveedorQuery}`)
+                    const res = await fetch(`/proveedores/buscar?q=${this.proveedorQuery}`)
                     this.proveedores = await res.json()
                 },
 

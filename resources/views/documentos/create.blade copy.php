@@ -458,7 +458,7 @@
 
                     async buscarProveedor() {
                         if (this.proveedorQuery.length < 2) return
-                        const res = await fetch(`/api/clientes/buscar?q=${this.proveedorQuery}`)
+                        const res = await fetch(`/clientes/buscar?q=${this.proveedorQuery}`)
                         this.proveedores = await res.json()
                     },
 
@@ -480,7 +480,7 @@
                         const q = this.items[index].query
                         if (q.length < 2) return
 
-                        const res = await fetch(`/api/productos-existencias/buscar?q=${q}&almacen=${ALMACEN_ID}}`)
+                        const res = await fetch(`/productos-existencias/buscar?q=${q}&almacen=${ALMACEN_ID}}`)
                         this.items[index].resultados = await res.json()
                     },
 

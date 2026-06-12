@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DomicilioController;
+use App\Http\Controllers\CodigoPostalController;
 use App\Http\Controllers\ConfiguracionEmpresaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AlmacenController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DatosBancarioController;
 use App\Http\Controllers\AgenteController;
 use App\Http\Controllers\AjustesAlmacenController;
+use App\Http\Controllers\RegisteredUserController;
 use App\Mail\TestMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -34,11 +36,10 @@ use Illuminate\Support\Facades\DB;
 require __DIR__ . '/auth.php';
 
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified','tenant'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'tenant'])->name('dashboard');
 // listado de empresas
 Route::get('/empresas/listado/{user}', [EmpresaController::class, 'listado'])->middleware('auth')->name('empresas.list');
 Route::post('/empresas/listado', [EmpresaController::class, 'set'])->middleware('auth')->name('empresas.select');
-
 
 
 Route::get('/test-email', function () {
@@ -196,7 +197,6 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
         //ENVIO
         Route::post('/documentos/{documento}/enviar-email', [DocumentoController::class, 'enviarEmail'])->name('documentos.enviarEmail');
-
     });
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
@@ -243,6 +243,27 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/puntos', action: [PuntosController::class, 'index'])->name('puntos.index');
 
     //RUTAS PARA CONSUMIR API
+    Route::get('codigos-postales/{cp}', [CodigoPostalController::class, 'buscar']);
+
+    // BUSCAR CLIENTES
+    Route::get('clientes/buscar', function (Request $r) {
+        $q = $r->input('q', '');
+        return Cliente::where('tipo', 1) // proveedor
+            ->where('activo', 1)
+            ->where(function ($query) use ($q) {
+                $query->where('nombre', 'like', "%{$q}%")
+                    ->orWhere('codigo', 'like', "%{$q}%");
+            })
+            ->with([
+                'domicilios:id,domiciliable_id,domiciliable_type,calle,numero_interior,numero_exterior,cp,ciudad,colonia'
+            ])
+            ->select('id', 'nombre', 'rfc', 'codigo')
+            ->limit(10)
+            ->get();
+    });
+
+
+    //BUSCAR PROVEEDORES
     Route::get('proveedores/buscar', function (Request $r) {
         $q = $r->input('q', '');
         return Cliente::where('tipo', 3) // proveedor

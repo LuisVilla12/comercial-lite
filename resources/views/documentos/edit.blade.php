@@ -721,7 +721,7 @@
                         this.proveedores = []
                         this.proveedorSeleccionado = -1
 
-                        const res = await fetch(`/api/clientes/buscar?q=${encodeURIComponent(this.proveedorQuery)}`)
+                        const res = await fetch(`/clientes/buscar?q=${encodeURIComponent(this.proveedorQuery)}`)
                         this.proveedores = await res.json()
                     },
 

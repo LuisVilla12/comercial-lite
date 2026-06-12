@@ -13,16 +13,22 @@ class TenantDatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            AlmacenesSeeder::class,
-            SucursalSeeder::class,
+            //PRINCIPALES SEEDER PARA FUNCIONAR
             UsoCfdiSeeder::class,
             CodigosPostalesSeeder::class,
             DocumentosModeloSeeder::class,
+            AgenteSeeder::class,
+            BancoSeeder::class,
+
+            //LLENADO DE INFORMACION
+
+            AlmacenesSeeder::class,
+            SucursalSeeder::class,
             ClasificacionSeeder::class,
             ProductosSeeder::class,
             ClientesSeeder::class,
             ExistenciasSeeder::class,
-            AgenteSeeder::class,
-            DomiciliosSeeder::class]);
+            DomiciliosSeeder::class
+            ]);
     }
 }

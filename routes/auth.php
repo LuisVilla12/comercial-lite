@@ -33,8 +33,11 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
+    Route::get('/empresas/{empresa}/sucursales', [RegisteredUserController::class, 'sucursales'])->name('empresas.sucursales');
+
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
