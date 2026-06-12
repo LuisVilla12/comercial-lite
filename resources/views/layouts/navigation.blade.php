@@ -11,26 +11,20 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                @if (session(['empresa_id'])!==null)
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         Inicio
                     </x-nav-link>
 
-                    {{-- <x-nav-link :href="route('cotizaciones.index')" :active="request()->routeIs('cotizaciones.index')">
-                        Cotización
-                    </x-nav-link>
-                    <x-nav-link :href="route('remisiones.index')" :active="request()->routeIs('remisiones.index')">
-                        Remisión
-                    </x-nav-link>
-                    <x-nav-link :href="route('facturas.index')" :active="request()->routeIs('facturas.index')">
-                        Facturación
-                    </x-nav-link> --}}
                     <x-nav-link :href="route('existencias.index')" :active="request()->routeIs('existencias.index')">
                         Existencias
                     </x-nav-link>
 
                 </div>
-            </div>
+
+                @endif
+                            </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">

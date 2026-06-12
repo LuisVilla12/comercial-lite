@@ -186,23 +186,16 @@
                     ⚙️ Administración
                 </h2>
             </div>
-
-            <x-dashboard-card href="{{ route('usuarios.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
-                title="Usuarios" desc="Administrar usuarios" iconBg="bg-teal-500">
-                <x-slot:icon>
-                    <x-heroicon-o-users class="w-6 h-6" />
-                </x-slot:icon>
-            </x-dashboard-card>
             <x-dashboard-card href="{{ route('sucursales.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
                 title="Sucursales" desc="Administrar sucursales" iconBg="bg-teal-500">
                 <x-slot:icon>
                     <x-heroicon-o-building-storefront class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            {{-- <x-dashboard-card href="{{ route('empresas.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
-                title="Empresas" desc="Administrar empresas" iconBg="bg-teal-500">
+            {{-- <x-dashboard-card href="" bg="bg-teal-50 dark:bg-teal-900/20"
+                title="Usuarios" desc="Administrar usuarios" iconBg="bg-teal-500">
                 <x-slot:icon>
-                    <x-heroicon-o-building-office-2 class="w-6 h-6" />
+                    <x-heroicon-o-users class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card> --}}
             <x-dashboard-card href="{{ route('auditoria.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
