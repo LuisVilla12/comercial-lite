@@ -8,7 +8,7 @@
     <div class="mb-2 max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
         <form method="POST" action="{{ route('empresas.store') }}" class="">
             @csrf
-            <h3 class="mt-6 text-lg font-semibold mb-4">Datos generales de la empresa</h3>
+            <h3 class="mt-4 text-lg font-semibold mb-4">Datos generales de la empresa</h3>
             <div class="md:grid  md:grid-cols-3 md:gap-4">
                 <div class="mb-2 ">
                     <label class="block text-md font-medium text-gray-700 mb-1">
@@ -19,10 +19,9 @@
                     @error('codigo')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
-
                 </div>
                 {{-- Nombre --}}
-                <div class="mb-2 col-span-2">
+                <div class="mb-2">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Nombre de la empresa: <span class="text-red-500">*</span>
                     </label>
@@ -33,144 +32,13 @@
                     @enderror
                 </div>
                 {{-- RFC --}}
-                <div class="mb-2 my-2">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         RFC <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="rfc" placeholder="RFC" value="{{ old(key: 'rfc') }}"
                         class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     @error('rfc')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Régimen Fiscal --}}
-                <div class="mb-2 my-2 col-span-2">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Régimen Fiscal <span class="text-red-500">*</span>
-                    </label>
-                    <select name="regimen_fiscal" id="regimen_fiscal"
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        <option value="" disabled selected>Seleccione una opcion</option>
-                        @foreach ($regimenes as $regimen)
-                            <option value="{{ $regimen->codigo }}">{{ $regimen->codigo . ' ' . $regimen->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('regimen_fiscal')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- CURP --}}
-                <div class="mb-2 my-2">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        CURP
-                    </label>
-                    <input type="text" name="curp" max="18" value="{{ old(key: 'curp') }}"
-                        placeholder="CURP"
-                        class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                {{-- Email 1 --}}
-                <div class="mb-2 my-2">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Correo electrónico principal <span class="text-red-500">*</span>
-                    </label>
-                    <input type="email" name="email" placeholder="correo@ejemplo.com"
-                        value="{{ old(key: 'email') }}"
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                    @error('email')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                {{-- WhatsApp --}}
-                <div class="mb-2 my-2">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        WhatsApp
-                    </label>
-                    <input type="number" name="telefono" value="{{ old(key: 'telefono') }}" placeholder="telefono"
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-            </div>
-            <h3 class="mt-6 text-lg font-semibold mb-4">Domicilio fiscal</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Calle: <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="calle" placeholder="Calle de la empresa" value=""
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                    @error('calle')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Número exterior: <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="numero_exterior" placeholder="Numero exterior de la empresa"
-                        value=""
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                    @error('numero_exterior')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Número interior:
-                    </label>
-                    <input type="text" name="numero_interior" placeholder="Numero interior de la empresa"
-                        value=""
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-                <div class="">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Colonia: <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="colonia" placeholder="Colonia de la empresa" value=""
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                    @error('colonia')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Ciudad: <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="ciudad" placeholder="Ciudad de la empresa" value=""
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                    @error('ciudad')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                    </div>
-                <div class="">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Municipio: <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="municipio" placeholder="Municipio de la empresa" value="" class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                    @error('municipio')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Estado: <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="estado" placeholder="Estado de la empresa" value=""
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                    @error('estado')
-                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-
-                </div>
-                <div class="">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Codigo Postal: <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="cp" placeholder="Codigo Postal de la empresa" value="" class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        @error('cp')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>

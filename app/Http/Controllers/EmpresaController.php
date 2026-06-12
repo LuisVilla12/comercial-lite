@@ -6,6 +6,7 @@ use App\Models\Empresa;
 use App\Models\User;
 use App\Models\Regimen;
 use App\Models\Sucursal;
+use App\Models\ConfiguracionEmpresa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
@@ -83,17 +84,7 @@ class EmpresaController extends Controller
             'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:250',
             'rfc' => 'required|string|max:13',
-            'regimen_fiscal' => 'required|string|max:250',
-            'email' => 'required|email',
-            // DATOS DE DOMILIO
-            'estado' => 'required|string|max:100',
-            'municipio' => 'required|string|max:100',
-            'ciudad' => 'required|string|max:100',
-            'colonia' => 'required|string|max:100',
-            'calle' => 'required|string|max:255',
-            'numero_exterior' => 'nullable|string|max:50',
-            'cp' => 'required|string|max:6',
-        ]);
+            ]);
         // Nombre único para la BD
         $databaseName = $request->nombre . '_empresa_' . Str::slug($request->codigo, '_');
 
@@ -105,21 +96,7 @@ class EmpresaController extends Controller
             'codigo' => $request->codigo,
             'nombre' => $request->nombre,
             'rfc' => $request->rfc,
-            'regimen_fiscal' => $request->regimen_fiscal,
-            'curp' => $request->curp,
-            'email' => $request->email,
-            'telefono' => $request->telefono,
             'activo' => 1,
-
-            'pais' => 'MÉXICO',
-            'estado' => $request->estado,
-            'municipio' => $request->municipio,
-            'ciudad' => $request->ciudad ?? '',
-            'colonia' => $request->colonia,
-            'calle' => $request->calle,
-            'numero_exterior' => $request->numero_exterior,
-            'numero_interior' => $request->numero_interior ?? '',
-            'cp' => $request->cp,
 
             'db_host' => env('DB_HOST'),
             'db_port' => env('DB_PORT'),
@@ -146,6 +123,13 @@ class EmpresaController extends Controller
             '--database' => 'tenant',
             '--path' => 'database/migrations/tenant',
             '--force' => true,
+        ]);
+        ConfiguracionEmpresa::create([
+            'codigo' => $request->codigo,
+            'nombre' => $request->nombre,
+            'rfc' => $request->rfc,
+            'activo' => 1,
+
         ]);
         // Ejecutar seeders
         // Artisan::call('db:seed', [
@@ -186,16 +170,6 @@ class EmpresaController extends Controller
             'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:250',
             'rfc' => 'required|string|max:13',
-            'regimen_fiscal' => 'required|string|max:250',
-            'email' => 'required|email',
-            // DATOS DE DOMILIO
-            'estado' => 'required|string|max:100',
-            'municipio' => 'required|string|max:100',
-            'ciudad' => 'required|string|max:100',
-            'colonia' => 'required|string|max:100',
-            'calle' => 'required|string|max:255',
-            'numero_exterior' => 'nullable|string|max:50',
-            'cp' => 'required|string|max:6',
         ]);
 
         $empresa->update($request->all());

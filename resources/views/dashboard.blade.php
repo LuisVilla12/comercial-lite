@@ -1,7 +1,7 @@
 @section('title', 'Panel de control')
 <x-app-layout>
      <h3 class="text-xl font-semibold text-gray-900 mt-6 dark:text-white mb-4">
-                Empresa: {{ session('nombreEmpresa') }}
+                Empresa: {{ $empresa->nombre}}
             </h3>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
         {{-- ================= CATÁLOGOS ================= --}}
@@ -195,12 +195,6 @@
                     <x-heroicon-o-building-storefront class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            {{-- <x-dashboard-card href="" bg="bg-teal-50 dark:bg-teal-900/20"
-                title="Usuarios" desc="Administrar usuarios" iconBg="bg-teal-500">
-                <x-slot:icon>
-                    <x-heroicon-o-users class="w-6 h-6" />
-                </x-slot:icon>
-            </x-dashboard-card> --}}
             <x-dashboard-card href="{{ route('auditoria.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
                 title="Bitacora" desc="Bitacora del sistema" iconBg="bg-teal-500">
                 <x-slot:icon>
@@ -217,6 +211,12 @@
                 title="Agentes" desc="Administrar agentes" iconBg="bg-teal-500">
                 <x-slot:icon>
                     <x-heroicon-o-user class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+            <x-dashboard-card href="{{ route('configuracion-empresa.show') }}" bg="bg-teal-50 dark:bg-teal-900/20"
+                title="Empresa" desc="Empresa" iconBg="bg-teal-500">
+                <x-slot:icon>
+                    <x-heroicon-o-users class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
         @endif

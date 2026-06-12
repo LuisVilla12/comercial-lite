@@ -11,21 +11,8 @@ class Empresa extends Model
         'codigo',
         'nombre',
         'rfc',
-        'regimen_fiscal',
-        'curp',
-        'email',
-        'telefono',
         'activo',
-        //DOMICILIO DE LA EMPRESA
-        'pais',
-        'estado',
-        'municipio',
-        'ciudad',
-        'colonia',
-        'calle',
-        'numero_interior',
-        'numero_exterior',
-        'cp',
+
         //DATOS DE CONEXIÓN
         'db_host',
         'db_port',

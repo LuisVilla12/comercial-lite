@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DomicilioController;
+use App\Http\Controllers\ConfiguracionEmpresaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\UserController;
@@ -71,6 +72,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'tenant'])->group(function () {
+    //CONFIGURACION DE LA EMPRESA
+    Route::get('/configuracion-empresa', action: [ConfiguracionEmpresaController::class, 'show'])->name('configuracion-empresa.show');
+    Route::get('/configuracion-empresa/edit', action: [ConfiguracionEmpresaController::class, 'edit'])->name('configuracion-empresa.edit');
+    Route::put('/configuracion-empresa/{empresa}/edit', [ConfiguracionEmpresaController::class, 'update'])->name('configuracion-empresa.update');
+
+
     //Sucursales
     Route::get('/sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
     Route::get('/sucursales/create', [SucursalController::class, 'create'])->name('sucursales.create');
