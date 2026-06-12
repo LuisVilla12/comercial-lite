@@ -12,7 +12,7 @@
             @csrf
                     @method('PUT')
             <!-- Name -->
-            <div class="grid md:grid-cols-2 gap-2">
+            <div class="grid md:grid-cols-3 gap-2">
                 <div>
                     <label class="block text-md font-medium text-gray-700 mb-1" for="name">
                         Nombre: <span class="text-red-500">*</span>
@@ -28,14 +28,14 @@
                         :value="$usuario->username"  required autofocus autocomplete="name" />
                 </div>
                 <!-- Email Address -->
-                <div class="mt-4">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1" for="email">
                         Correo electronico: <span class="text-red-500">*</span>
                     </label>
                     <x-text-input id="email" class="block mt-1 w-full " type="email" name="email"
                         :value="$usuario->email" required autocomplete="username" />
                 </div>
-                <div class="mt-4">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Tipo:<span class="text-red-500">*</span>
                     </label>
@@ -51,18 +51,18 @@
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-                 <div class="mt-4">
+                 <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
-                        Sucursal asignada:<span class="text-red-500">*</span>
+                        Empresa asignada:<span class="text-red-500">*</span>
                     </label>
-                    <select name="sucursal_id" id="sucursal_id"
+                    <select name="empresa_id" id="empresa_id"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        @foreach ($sucursales as $sucursal)
+                        @foreach ($empresas as $empresa)
 
-                        <option value="{{ $sucursal->id }}" @selected($usuario->sucursal_id == $sucursal->id)>{{ $sucursal->nombre }}</option>
+                        <option value="{{ $empresa->id }}" @selected($usuario->empresa_id == $empresa->id)>{{ $empresa->nombre }}</option>
                         @endforeach
                     </select>
-                    @error('sucursal_id')
+                    @error('empresa_id')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>

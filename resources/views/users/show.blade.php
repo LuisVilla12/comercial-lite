@@ -11,7 +11,7 @@
         <form method="POST" action="{{ route('register') }}">
             @csrf
             <!-- Name -->
-            <div class="grid md:grid-cols-2 gap-2">
+            <div class="grid md:grid-cols-3 gap-2">
                 <div>
                     <label class="block text-md font-medium text-gray-700 mb-1" for="name">
                         Nombre: <span class="text-red-500">*</span>
@@ -27,25 +27,25 @@
                         :value="$usuario->username"  readonly required autofocus autocomplete="name" />
                 </div>
                 <!-- Email Address -->
-                <div class="mt-4">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1" for="email">
                         Correo electronico: <span class="text-red-500">*</span>
                     </label>
                     <x-text-input id="email" class="block mt-1 w-full cursor-not-allowed" type="email" name="email"
                         :value="$usuario->email" readonly required autocomplete="username" />
                 </div>
-                <div class="mt-4">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Tipo:<span class="text-red-500">*</span>
                     </label>
                     <x-text-input id="tipo" class="block mt-1 w-full cursor-not-allowed" type="text" name="tipo"
                         :value="$usuario->tipo=='1'?'Administrador':'Operador'"  readonly required autofocus autocomplete="tipo" />
                 </div>
-                <div class="mt-4">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
-                        Sucursal asignada:<span class="text-red-500">*</span>
+                        Empresa asignada:<span class="text-red-500">*</span>
                     </label>
-                    <x-text-input id="sucursal_id" class="block mt-1 w-full cursor-not-allowed" type="text" name="sucursal_id" :value="$usuario->sucursal->nombre"  readonly required autofocus autocomplete="name" />
+                    <x-text-input id="empresa_id" class="block mt-1 w-full cursor-not-allowed" type="text" name="empresa_id" :value="$usuario->empresa->nombre"  readonly required autofocus autocomplete="name" />
                 </div>
             </div>
 

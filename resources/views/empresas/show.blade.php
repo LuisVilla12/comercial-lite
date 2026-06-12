@@ -4,6 +4,11 @@
             Ver Empresa
         </h2>
     </x-slot>
+        @if (session('success'))
+        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
+            class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mt-4 rounded-md mb-4">{{ session('success') }}
+        </p>
+    @endif
     <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-4">
         <div class=" ">
             <div class="md:grid  md:grid-cols-3 md:gap-4">
@@ -84,32 +89,31 @@
 
             </div>
         </div>
-         @if ($empresa->domicilios->count())
-            @foreach ($empresa->domicilios as $dom)
-                <h3 class="mt-6 text-lg font-semibold mb-4">Domicilio</h3>
+
+        <h3 class="mt-6 text-lg font-semibold mb-4">Domicilio</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="">
                         <label class="block text-md font-medium text-gray-700 mb-1">
                             Calle: <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="calle" placeholder="Calle de la sucursal"
-                            value="{{ $dom->calle }}" readonly
+                            value="{{ $empresa->calle }}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="">
                         <label class="block text-md font-medium text-gray-700 mb-1">
-                            Numero exterior: <span class="text-red-500">*</span>
+                            Número exterior: <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="numero_exterior" placeholder="Numero exterior de la sucursal"
-                            value="{{ $dom->numero_exterior}}" readonly
+                            value="{{ $empresa->numero_exterior}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="">
                         <label class="block text-md font-medium text-gray-700 mb-1">
-                            Numero interior: <span class="text-red-500">*</span>
+                            Número interior: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="numero_interior" placeholder="Numero interior de la sucursal"
-                            value="{{ $dom->numero_interior ?? 'N/A'}}" readonly
+                        <input type="text" name="numero_interior" placeholder=""
+                            value="{{ $empresa->numero_interior}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="">
@@ -117,7 +121,7 @@
                             Colonia: <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="colonia" placeholder="Colonia de la sucursal"
-                            value="{{ $dom->colonia}}" readonly
+                            value="{{ $empresa->colonia}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="">
@@ -125,7 +129,7 @@
                             Ciudad: <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="ciudad" placeholder="Ciudad de la sucursal"
-                            value="{{ $dom->ciudad}}" readonly
+                            value="{{ $empresa->ciudad}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="">
@@ -133,7 +137,7 @@
                             Municipio: <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="municipio" placeholder="Municipio de la sucursal"
-                            value="{{ $dom->municipio}}" readonly
+                            value="{{ $empresa->municipio}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="">
@@ -141,7 +145,7 @@
                             Estado: <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="estado" placeholder="Estado de la sucursal"
-                            value="{{$dom->estado}}" readonly
+                            value="{{ $empresa->estado}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="">
@@ -149,30 +153,12 @@
                             Codigo Postal: <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="cp" placeholder="Codigo Postal de la sucursal"
-                            value="{{$dom->cp}}" readonly
-                            class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                    </div>
-                     <div class="">
-                        <label class="block text-md font-medium text-gray-700 mb-1">
-                            Pais: <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="nombre" placeholder="Nombre de la sucursal"
-                            value="{{$dom->pais}}" readonly
+                            value="{{ $empresa->cp}}" readonly
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                 </div>
-            @endforeach
-        @else
-            <p class="text-gray-500 text-sm mt-4 mb-6 md:mb-0">Sin domicilio registrado</p>
-        @endif
         {{-- Botones --}}
         <div class="md:col-span-full flex justify-end gap-3 mt-4">
-            @if ($empresa->domicilios->count() == 0)
-                <a href="{{ route('domicilios.create', parameters: ['modeloTipo' => 'empresas', 'id' => $empresa->id]) }}"
-                    class="block bg-blue-600 text-white px-3 py-2 rounded text-center">Agregar domicilio
-                </a>
-            @endif
-
             <a href="{{ route('empresas.index') }}"
                 class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
                 Regresar

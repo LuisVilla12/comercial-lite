@@ -7,11 +7,11 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+    <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
         <form method="POST" action="{{ route('register') }}">
             @csrf
             <!-- Name -->
-            <div class="grid md:grid-cols-2 gap-2">
+            <div class="grid md:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-md font-medium text-gray-700 mb-1" for="name">
                         Nombre: <span class="text-red-500">*</span>
@@ -29,7 +29,7 @@
                     <x-input-error :messages="$errors->get('username')" class="mt-2" />
                 </div>
                 <!-- Email Address -->
-                <div class="mt-4">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1" for="email">
                         Correo electronico: <span class="text-red-500">*</span>
                     </label>
@@ -37,7 +37,7 @@
                         :value="old('email')" required autocomplete="username" />
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
-                <div class="mt-4">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Tipo:<span class="text-red-500">*</span>
                     </label>
@@ -54,19 +54,19 @@
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-                <div class="mt-4">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
-                        Sucursal:<span class="text-red-500">*</span>
+                        Empresa:<span class="text-red-500">*</span>
                     </label>
-                    <select name="sucursal_id" id="sucursal_id"
+                    <select name="empresa_id" id="empresa_id"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="" disabled selected>Seleccione una opcion</option>
-                        @foreach ($sucursales as $sucursal)
-                            <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }} </option>
+                        @foreach ($empresas as $empresa)
+                            <option value="{{ $empresa->id }}">{{ $empresa->nombre }} </option>
                         @endforeach
                     </select>
 
-                    @error('sucursal_id')
+                    @error('empresa_id')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>

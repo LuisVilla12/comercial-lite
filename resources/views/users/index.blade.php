@@ -49,8 +49,8 @@
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="p-2">Nombre completo</th>
-                            <th class="p-2">Nombre de usuario</th>
                             <th class="p-2">Correo</th>
+                            <th class="p-2">Empresa</th>
                             <th class="p-2">Tipo</th>
                             <th class="p-2">Acciones</th>
                         </tr>
@@ -58,14 +58,15 @@
                     <tbody>
                         @foreach ($usuarios as $usuario)
                             <tr class="border-t">
-                                <td class="p-2 text-center">
+                                <td class="px-4 py-2">
                                     {{ $usuario->name }}
                                 </td>
-                                <td class="p-2">
-                                    {{ $usuario->username }}
-                                </td>
+
                                 <td class="p-2">
                                     {{ $usuario->email }}
+                                </td>
+                                <td class="p-2 text-center">
+                                    {{ $usuario->empresa->nombre??'TODAS'}}
                                 </td>
                                 <td class="p-2 text-center">
                                     @if ($usuario->tipo == 1)
@@ -98,9 +99,9 @@
                                             <x-heroicon-o-pencil-square class="w-4 h-4" />
                                             <span class="hidden sm:inline">Editar</span>
                                         </a>
-                                        <span class="hidden sm:inline text-gray-300">•</span>
-                                        @if ($usuario->tipo =! 1)
+                                        @if ($usuario->tipo > 1)
                                         {{-- Eliminar --}}
+                                                                                <span class="hidden sm:inline text-gray-300">•</span>
                                         <form action="{{ route('usuarios.destroy', ['usuario' => $usuario]) }}"
                                             method="POST" class="inline">
                                             @csrf
@@ -214,6 +215,13 @@
                 {{ $usuarios->links() }}
             </div>
         @endif
+    </div>
+    <div class="mt-6  gap-4">
+        <div class="flex  items-center gap-3 mt-4">
+            <a href="{{ route('empresas.select') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
+                Volver
+            </a>
+        </div>
     </div>
 
 </x-app-layout>

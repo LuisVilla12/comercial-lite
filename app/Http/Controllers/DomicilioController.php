@@ -60,7 +60,8 @@ class DomicilioController extends Controller
         };
 
         $model->domicilios()->create(
-            ['pais' => 'MEXICO',
+            [
+            'pais' => 'MEXICO',
             'estado' => $request->estado,
             'municipio' => $request->municipio,
             'ciudad' => $request->ciudad ?? '',

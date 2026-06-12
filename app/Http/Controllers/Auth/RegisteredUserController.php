@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Empresa;
 use App\Models\Sucursal;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -20,8 +21,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $sucursales=Sucursal::all();
-        return view('auth.register',['sucursales'=>$sucursales]);
+        $empresas=Empresa::all();
+        return view('auth.register',['empresas'=>$empresas]);
     }
 
     /**
@@ -35,16 +36,16 @@ class RegisteredUserController extends Controller
             'username' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'tipo' => ['required', 'integer', 'in:1,2,3,4,5'],
-            'sucursal_id' => ['required', 'integer'],
+            'empresa_id' => ['required', 'integer'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
-            'username' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'tipo' => $request->tipo,
-            'sucursal_id' => $request->sucursal_id,
+            'empresa_id' => $request->empresa_id,
             'password' => Hash::make($request->password),
         ]);
         return redirect()->route('usuarios.index')->with('success', 'Registro exitoso');

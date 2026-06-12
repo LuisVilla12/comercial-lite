@@ -57,9 +57,8 @@
                                     <h4 class="text-lg font-semibold text-gray-900 dark:text-white">
                                         {{ $empresa->nombre }}
                                     </h4>
-
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        ID: {{ $empresa->id }}
+                                        RFC: {{ $empresa->rfc }}
                                     </p>
                                 </div>
 
@@ -86,7 +85,7 @@
                 Administración
             </h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {{-- INDEX EMPRESAS --}}
                 <a href="{{ route('empresas.index') }}"
                     class="flex flex-col items-center justify-center
@@ -95,13 +94,9 @@
                            rounded-xl p-8
                            hover:bg-gray-50 dark:hover:bg-gray-700
                            transition duration-200">
-
-                    <span class="text-5xl mb-3">
-                        🏙️
-                    </span>
-
-                    <span class="text-lg font-semibold text-gray-700 dark:text-white">
-                        Administrar empresas
+                    <x-heroicon-o-circle-stack class="w-8 h-8 dark:text-white" />
+                    <span class="mt-3 text-md text-center font-semibold text-gray-700 dark:text-white">
+                        Empresas
                     </span>
 
                     <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 text-center">
@@ -117,11 +112,8 @@
                            hover:bg-gray-50 dark:hover:bg-gray-700
                            transition duration-200">
 
-                    <span class="text-5xl mb-3">
-                        🏢
-                    </span>
-
-                    <span class="text-lg font-semibold text-gray-700 dark:text-white">
+                    <x-heroicon-o-building-storefront class="w-8 h-8 dark:text-white" />
+                    <span class="mt-3 text-md text-center font-semibold text-gray-700 dark:text-white">
                         Crear empresa
                     </span>
 
@@ -138,13 +130,9 @@
                            rounded-xl p-8
                            hover:bg-gray-50 dark:hover:bg-gray-700
                            transition duration-200">
-
-                    <span class="text-5xl mb-3">
-                        👥
-                    </span>
-
-                    <span class="text-lg font-semibold text-gray-700 dark:text-white">
-                        Administrar usuarios
+                    <x-heroicon-o-users class="w-8 h-8 dark:text-white" />
+                    <span class="mt-3 text-md text-center font-semibold text-gray-700 dark:text-white">
+                    Usuarios
                     </span>
 
                     <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 text-center">
@@ -152,26 +140,21 @@
                     </span>
                 </a>
 
-
                 {{-- CREAR USUARIO --}}
-                <a href=""
+                <a href="{{ route('register') }}"
                     class="flex flex-col items-center justify-center
                            bg-white dark:bg-gray-800
                            border-2 border-dashed border-gray-300 dark:border-gray-600
                            rounded-xl p-8
                            hover:bg-gray-50 dark:hover:bg-gray-700
                            transition duration-200">
-
-                    <span class="text-5xl mb-3">
-                        👤➕
-                    </span>
-
-                    <span class="text-lg font-semibold text-gray-700 dark:text-white">
+                    <x-heroicon-o-user-plus class="w-8 h-8 dark:text-white" />
+                    <span class="mt-3 text-md font-semibold text-gray-700 dark:text-white">
                         Crear usuario
                     </span>
 
                     <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 text-center">
-                        Registrar un nuevo usuario y asignarlo a una empresa.
+                        Registrar un nuevo usuario.
                     </span>
                 </a>
 
@@ -179,7 +162,7 @@
         </div>
 
         @endif
-        
+
     </div>
 </div>
 </x-app-layout>

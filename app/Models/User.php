@@ -30,7 +30,7 @@ class User extends Authenticatable implements Auditable
         'password',
         'tipo',
         'estatus',
-        'sucursal_id',
+        'empresa_id',
     ];
 
     /**
@@ -55,10 +55,10 @@ class User extends Authenticatable implements Auditable
             'password' => 'hashed',
         ];
     }
-    public function sucursal()
-    {
-        return $this->belongsTo(Sucursal::class);
-    }
+    // public function sucursal()
+    // {
+    //     return $this->belongsTo(Sucursal::class);
+    // }
     public function isAdmin()
     {
         return $this->tipo == 1;

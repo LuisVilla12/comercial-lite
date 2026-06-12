@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
 // Solo administrador puede entrar
 Route::middleware(['auth', 'admin'])->group(function () {
     //Usuarios
@@ -70,7 +71,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'tenant'])->group(function () {
-
     //Sucursales
     Route::get('/sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
     Route::get('/sucursales/create', [SucursalController::class, 'create'])->name('sucursales.create');

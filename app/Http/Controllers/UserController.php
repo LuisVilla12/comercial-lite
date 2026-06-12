@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Http\Middleware\AdminMiddleware;
-
+use App\Models\Empresa;
 use App\Models\Sucursal;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -28,7 +28,7 @@ class UserController extends Controller
     }
     public function show(User $usuario){
         $usuario->load([
-            'sucursal',
+            'empresa',
         ]);
 
         return view('users.show',['usuario'=> $usuario]);
@@ -37,8 +37,8 @@ class UserController extends Controller
      public function edit(User $usuario)
     {
         // dd($usuario);
-        $sucursales=Sucursal::all();
-        return view('users.edit', ['usuario'=>$usuario,'sucursales'=>$sucursales]);
+        $empresas=Empresa::all();
+        return view('users.edit', ['usuario'=>$usuario,'empresas'=>$empresas]);
     }
 
     public function destroy(User $usuario)
@@ -54,9 +54,10 @@ class UserController extends Controller
     public function update(Request $request, User $usuario){
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255'],
             'tipo' => ['required', 'integer', 'in:1,2,3,4,5'],
-            'sucursal_id' => ['required', 'integer'],
+            'empresa_id' => ['required', 'integer'],
         ]);
 
         $usuario->update($request->all());

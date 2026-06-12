@@ -22,6 +22,16 @@ return new class extends Migration
             $table->string(column: 'email')->nullable();
             $table->string(column: 'telefono')->nullable();
             $table->boolean('activo')->default(true);
+            // DATOS DEL DOMICILIO
+                        $table->string(column: 'pais')->nullable();
+            $table->string(column: 'estado')->nullable();
+            $table->string(column: 'ciudad')->nullable();
+            $table->string(column: 'municipio')->nullable();
+            $table->string(column: 'colonia')->nullable();
+            $table->string(column: 'calle')->nullable();
+            $table->string(column: 'numero_interior')->nullable();
+            $table->string(column: 'numero_exterior')->nullable();
+            $table->string(column: 'cp')->nullable();
         });
     }
 

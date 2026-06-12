@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use  App\Models\Domicilio;
 
 class Empresa extends Model
 {
     protected $fillable = [
+        // DATOS GENERALES
         'codigo',
         'nombre',
         'rfc',
@@ -16,7 +16,17 @@ class Empresa extends Model
         'email',
         'telefono',
         'activo',
-
+        //DOMICILIO DE LA EMPRESA
+        'pais',
+        'estado',
+        'municipio',
+        'ciudad',
+        'colonia',
+        'calle',
+        'numero_interior',
+        'numero_exterior',
+        'cp',
+        //DATOS DE CONEXIÓN
         'db_host',
         'db_port',
         'db_database',
@@ -24,9 +34,5 @@ class Empresa extends Model
         'db_password',
     ];
 
-public function domicilios()
-{
-    return $this->morphMany(Domicilio::class, 'domiciliable');
-}
 }
 

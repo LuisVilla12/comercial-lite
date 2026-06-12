@@ -70,11 +70,20 @@ class EmpresaController extends Controller
     {
         //
         $request->validate([
+            //DATOS GENERALES
             'codigo' => 'required|string|max:50',
             'nombre' => 'required|string|max:250',
             'rfc' => 'required|string|max:13',
             'regimen_fiscal' => 'required|string|max:250',
             'email' => 'required|email',
+            // DATOS DE DOMILIO
+            'estado' => 'required|string|max:100',
+            'municipio' => 'required|string|max:100',
+            'ciudad' => 'required|string|max:100',
+            'colonia' => 'required|string|max:100',
+            'calle' => 'required|string|max:255',
+            'numero_exterior' => 'nullable|string|max:50',
+            'cp' => 'required|string|max:6',
         ]);
         // Nombre único para la BD
         $databaseName = $request->nombre . '_empresa_' . Str::slug($request->codigo, '_');
@@ -92,6 +101,16 @@ class EmpresaController extends Controller
             'email' => $request->email,
             'telefono' => $request->telefono,
             'activo' => 1,
+
+            'pais' => 'MÉXICO',
+            'estado' => $request->estado,
+            'municipio' => $request->municipio,
+            'ciudad' => $request->ciudad ?? '',
+            'colonia' => $request->colonia,
+            'calle' => $request->calle,
+            'numero_exterior' => $request->numero_exterior,
+            'numero_interior' => $request->numero_interior ?? '',
+            'cp' => $request->cp,
 
             'db_host' => env('DB_HOST'),
             'db_port' => env('DB_PORT'),
@@ -160,7 +179,16 @@ class EmpresaController extends Controller
             'rfc' => 'required|string|max:13',
             'regimen_fiscal' => 'required|string|max:250',
             'email' => 'required|email',
+            // DATOS DE DOMILIO
+            'estado' => 'required|string|max:100',
+            'municipio' => 'required|string|max:100',
+            'ciudad' => 'required|string|max:100',
+            'colonia' => 'required|string|max:100',
+            'calle' => 'required|string|max:255',
+            'numero_exterior' => 'nullable|string|max:50',
+            'cp' => 'required|string|max:6',
         ]);
+
         $empresa->update($request->all());
         return redirect()->route('empresas.show', $empresa)
             ->with('success', 'Empresa ha sido actualizado');
