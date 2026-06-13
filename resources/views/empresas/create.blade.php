@@ -8,7 +8,7 @@
     <div class="mb-2 max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
         <form method="POST" action="{{ route('empresas.store') }}" class="">
             @csrf
-            <h3 class="mt-4 text-lg font-semibold mb-4">Datos generales de la empresa</h3>
+            <h3 class="text-lg font-semibold mb-4">Datos generales de la empresa</h3>
             <div class="md:grid  md:grid-cols-3 md:gap-4">
                 <div class="mb-2 ">
                     <label class="block text-md font-medium text-gray-700 mb-1">
@@ -45,7 +45,7 @@
             </div>
 
             {{-- Botones --}}
-            <div class="mb-2 md:col-span-full flex justify-end gap-3 mt-4">
+            <div class="mb-2 md:col-span-full flex justify-between gap-3 mt-4">
                 <a href="{{ route('empresas.index') }}"
                     class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-red-600 hover:bg-red-600">
                     Cancelar

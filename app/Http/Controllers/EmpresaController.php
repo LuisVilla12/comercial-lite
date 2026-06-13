@@ -100,20 +100,22 @@ class EmpresaController extends Controller
             'rfc' => $request->rfc,
             'activo' => 1,
 
-            'db_host' => env('DB_HOST'),
-            'db_port' => env('DB_PORT'),
+            'db_host' => config('database.connections.mysql.host'),
+'db_port' => config('database.connections.mysql.port'),
+'db_username' => config('database.connections.mysql.username'),
+'db_password' => config('database.connections.mysql.password'),
+
             'db_database' => $databaseName,
-            'db_username' => env('DB_USERNAME'),
-            'db_password' => env('DB_PASSWORD'),
         ]);
+        // dd($empresa);
         // Configurar conexión temporal
         Config::set('database.connections.tenant', [
             'driver' => 'mysql',
             'host' => env('DB_HOST'),
             'port' => env('DB_PORT'),
-            'database' => $databaseName,
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
+            'database' => $databaseName,
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',

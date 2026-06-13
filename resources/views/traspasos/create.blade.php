@@ -1,10 +1,10 @@
-@section('title', 'COMPRAS')
+@section('title', 'TRASPASO')
 
 <x-app-layout>
     <x-slot name="header">
         <div class="md:flex md:justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                Registrar una compra </h2>
+                Registrar un traspaso </h2>
             <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
             </label>
         </div>
@@ -33,7 +33,7 @@
                                 class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 mb-2">
                                 <option value="" disabled selected>Seleccione</option>
                                 @foreach ($almacenes as $almacen)
-                                    <option value="{{ $almacen->id }}">{{ $almacen->nombre }}</option>
+                                    <option  :disabled="almacen_destino_id == {{ $almacen->id }}" value="{{ $almacen->id }}">{{ $almacen->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -257,6 +257,7 @@
                     <input type="hidden" name="estatus" :value="1">
                 </div>
             </div>
+
             <div class="md:col-span-2 flex justify-between gap-3 mt-4">
 
                 <a href="{{ route('traspasos.index') }}"

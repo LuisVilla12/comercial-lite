@@ -11,6 +11,8 @@ use App\Models\Empresa;
 use App\Models\TraspasoDetalle;
 use App\Services\InventarioService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\Rule;
+
 
 class TraspasoController extends Controller
 {
@@ -87,7 +89,7 @@ class TraspasoController extends Controller
             DB::rollBack();
             throw $e;
         }
-        return redirect()->route('traspasos.index')->with('success', 'Traspaso creado correctamente.');
+        return redirect()->route('traspasos.show',$trapaso)->with('success', 'Traspaso creado correctamente.');
     }
 
     public function show( $traspaso){
@@ -122,14 +124,12 @@ public function edit( $traspaso){
                 ->where('almacen_id', $traspaso->almacen_origen_id)
                 ->value('cantidad') ?? 0;
         });
-
         return view('traspasos.edit', ['traspaso'  => $traspaso,'almacenes' => $almacenes,]);
     }
 public function update(Request $request, $traspaso)
     {
     // Validar productos
-                    $traspaso = Traspaso::findOrFail($traspaso);
-
+        $traspaso = Traspaso::findOrFail($traspaso);
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -137,11 +137,16 @@ public function update(Request $request, $traspaso)
         $request->merge([
             'productos' => $productos
         ]);
-
+        // dd($request);
         $request->validate([
-            'almacen_origen_id'=>'required|exists:almacens,id',
-            'almacen_destino_id'=>'required|exists:almacens,id|different:almacen_origen_id',
-            'user_id' => 'required|exists:users,id',
+               'almacen_origen_id' => [
+        'required',
+    ],
+
+    'almacen_destino_id' => [
+        'required',
+    ],
+            'user_id' => 'required',
             'productos' => 'required|array|min:1',
             'fecha' => 'required|date',
         ]);
@@ -190,7 +195,7 @@ public function update(Request $request, $traspaso)
             throw $e;
         }
         return redirect()
-            ->route('traspasos.index')
+            ->route('traspasos.show',$traspaso)
             ->with('success', "El traspaso a sido actualizada");
     }
     public function destroy( $traspaso)

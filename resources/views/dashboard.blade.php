@@ -39,21 +39,22 @@
             </x-slot:icon>
         </x-dashboard-card>
 
-        <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+
+
+
+        {{-- ================= INVENTARIOS ================= --}}
+        <div class="col-span-full mt-6">
+            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                🔄 Inventarios
+            </h2>
+        </div>
+        @if (auth()->user()->tipo == 1 or auth()->user()->tipo == 3)
+                <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Almacenes" desc="Control de almacenes" iconBg="bg-emerald-500">
             <x-slot:icon>
                 <x-heroicon-o-building-storefront class="w-6 h-6" />
             </x-slot:icon>
         </x-dashboard-card>
-
-
-        {{-- ================= OPERACIONES ================= --}}
-        <div class="col-span-full mt-6">
-            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
-                🔄 Operaciones
-            </h2>
-        </div>
-        @if (auth()->user()->tipo == 1 or auth()->user()->tipo == 3)
             <x-dashboard-card href="{{ route('compras.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
                 title="Compras" desc="Control de compras" iconBg="bg-emerald-500">
                 <x-slot:icon>
@@ -81,6 +82,13 @@
                     <x-heroicon-o-arrow-down-tray class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
+            {{-- KARDEX --}}
+            <x-dashboard-card href="{{ route('ajustes-almacen.index', $tipo = 2) }}" bg="bg-blue-50 dark:bg-blue-900/20"
+                title="Kardex" desc="Movimientos de cada producto" iconBg="bg-blue-500">
+                <x-slot:icon>
+                    <x-heroicon-o-archive-box class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
         @endif
         <x-dashboard-card href="{{ route('existencias.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Existencias" desc="Existencias de productos" iconBg="bg-emerald-500">
@@ -88,7 +96,12 @@
                 <x-heroicon-o-archive-box class="w-6 h-6" />
             </x-slot:icon>
         </x-dashboard-card>
-
+        {{-- ================= OPERACIONES ================= --}}
+        <div class="col-span-full mt-6">
+            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                🔄 Operaciones
+            </h2>
+        </div>
         <x-dashboard-card href="{{ route('puntos.index') }}" bg="bg-yellow-50 dark:bg-yellow-900/20" title="Monedero"
             desc="Monedero digital" iconBg="bg-yellow-500">
             <x-slot:icon>

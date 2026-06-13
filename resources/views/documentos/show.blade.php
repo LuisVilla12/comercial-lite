@@ -27,18 +27,7 @@
                 Fecha: {{ \Carbon\Carbon::parse($documento->fecha)->format('d/m/Y') }}
             </h2>
         </div>
-        <div class="md:flex md:justify-between md:gap-3 mt-4 md:mt-2">
-            @if ($documento->estatus == 5)
-                <p class="px-6 py-2 bg-indigo-600 text-white text-center rounded">DEVOLUCIÓN APLICADA</p>
-            @endif
-
-            @if ($documento->estatus == 4 and $documento->documento_modelo_id == 3)
-                <p class="px-6 py-2 bg-green-600 text-white rounded cursor-not-allowed text-center"> REMISIÓN SURTIDA
-                </p>
-                <a
-                    href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="block px-6 py-2 bg-indigo-600 text-white rounded mt-4  md:mt-0 text-center">DEVOLUCIÓN</a>
-            @endif
-        </div>
+        
     </x-slot>
     <div class="flex justify-between mt-4 items-center gap-2 ">
         <div>
@@ -143,6 +132,11 @@
                     <x-heroicon-o-device-phone-mobile class="w-5 h-5 mr-2" /> WhatsApp
                 </button>
             </a>
+            @if ($documento->estatus == 4 and $documento->documento_modelo_id == 3)
+                <a
+                    href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="flex  px-6 py-2 ml-4 bg-indigo-600 text-white rounded mt-4  md:mt-0 text-center"> 
+                                        <x-heroicon-o-arrow-uturn-right class="w-5 h-5 mr-2" /> Devolucion</a>
+            @endif
         </div>
 
 
