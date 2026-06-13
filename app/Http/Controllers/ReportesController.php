@@ -22,7 +22,7 @@ class ReportesController extends Controller
     {
         // dd(vars: $request);
         $request->validate([
-            'sucursal_id' => 'required|exists:sucursales,id',
+            'sucursal_id' => 'required',
             'documento_modelo_id' => 'required|in:2,3,4',
             'user_id' => 'required',
         ]);
@@ -66,7 +66,7 @@ class ReportesController extends Controller
     public function exportProductos(Request $request)
     {
         $request->validate([
-            'sucursal_id' => 'required|exists:sucursales,id'
+            'sucursal_id' => 'required'
             ]);
 
         $sucursal = Sucursal::findOrFail($request->sucursal_id);

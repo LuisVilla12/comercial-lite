@@ -53,7 +53,7 @@ class AuditoriaController extends Controller
 
     // Para el select de usuarios
     $users = User::orderBy('name')->get();
-
+    // $users=[];
     return view('auditoria.index', compact('audits', 'users'));
 }
     // 📄 Ver detalle de una auditoría

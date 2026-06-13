@@ -44,9 +44,9 @@ class TraspasoController extends Controller
         ]);
 
         $request->validate([
-            'almacen_origen_id'=>'required|exists:almacens,id',
-            'almacen_destino_id'=>'required|exists:almacens,id|different:almacen_origen_id',
-            'user_id' => 'required|exists:users,id',
+            'almacen_origen_id'=>'required',
+            'almacen_destino_id'=>'required',
+            'user_id' => 'required',
             'productos' => 'required|array|min:1',
             'fecha' => 'required|date',
         ]);
@@ -90,7 +90,8 @@ class TraspasoController extends Controller
         return redirect()->route('traspasos.index')->with('success', 'Traspaso creado correctamente.');
     }
 
-    public function show(Traspaso $traspaso){
+    public function show( $traspaso){
+        $traspaso = Traspaso::findOrFail($traspaso);
         $traspaso->load([
             'almacenOrigen',
             'almacenDestino',
@@ -100,7 +101,8 @@ class TraspasoController extends Controller
 
     }
 
-public function edit(Traspaso $traspaso){
+public function edit( $traspaso){
+        $traspaso = Traspaso::findOrFail($traspaso);
         if ($traspaso->estatus != 1) {
             return redirect()
                 ->route('traspasos.show', $traspaso)
@@ -123,9 +125,11 @@ public function edit(Traspaso $traspaso){
 
         return view('traspasos.edit', ['traspaso'  => $traspaso,'almacenes' => $almacenes,]);
     }
-public function update(Request $request, Traspaso $traspaso)
+public function update(Request $request, $traspaso)
     {
     // Validar productos
+                    $traspaso = Traspaso::findOrFail($traspaso);
+
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -189,10 +193,11 @@ public function update(Request $request, Traspaso $traspaso)
             ->route('traspasos.index')
             ->with('success', "El traspaso a sido actualizada");
     }
-    public function destroy(Traspaso $traspaso)
+    public function destroy( $traspaso)
     {
         DB::beginTransaction();
         try {
+            $traspaso = Traspaso::findOrFail($traspaso);
             $traspaso->detalles()->delete();
             $traspaso->delete();
             DB::commit();
@@ -208,8 +213,9 @@ public function update(Request $request, Traspaso $traspaso)
         }
     }
 
-     public function surtir(Traspaso $traspaso)
+     public function surtir( $traspaso)
 {
+                    $traspaso = Traspaso::findOrFail($traspaso);
     if ($traspaso->estatus != 1) {
         return back()->with('error', 'El traspaso ya fue surtida');
     }
@@ -248,8 +254,9 @@ public function update(Request $request, Traspaso $traspaso)
         ->with('success', 'Traspaso surtido correctamente');
 }
 
-    public function pdf(Traspaso $traspaso)
+    public function pdf( $traspaso)
     {
+                $traspaso = Traspaso::findOrFail($traspaso);
     $banco=DatosBancario::where('predeterminado', true)->first();
     $empresa=Empresa::first();
     $traspaso->load([

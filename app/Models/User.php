@@ -10,10 +10,10 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use  App\Models\Sucursal;
 
-class User extends Authenticatable implements Auditable
-{
+class User extends Authenticatable {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+        protected $connection = 'mysql';
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +21,6 @@ class User extends Authenticatable implements Auditable
      * @var list<string>
      */
 
-        use AuditableTrait;
 
     protected $fillable = [
         'name',

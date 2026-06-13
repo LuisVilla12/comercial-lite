@@ -121,8 +121,7 @@ class CompraController extends Controller
             DB::rollBack();
             throw $e;
         }
-        return redirect()->route('compras.index')
-            ->with('success', 'Compra creado correctamente.');
+        return redirect()->route('compras.show', $compra)->with('success', 'Compra creado correctamente.');
     }
 
     /**
@@ -272,7 +271,7 @@ class CompraController extends Controller
             throw $e;
         }
         return redirect()
-            ->route('compras.index')
+            ->route('compras.show', $compra)
             ->with('success', 'Compra actualizada correctamente');
     }
 

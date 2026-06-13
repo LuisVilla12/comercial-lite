@@ -119,8 +119,8 @@
             Total: ${{ number_format($documento->total, 2) }}
         </p>
     </div> --}}
-    <div class="mt-6 flex gap-4">
-        <div class="md:col-span-2 flex justify-between gap-3 mt-4">
+    <div class="mt-6">
+        <div class="md:flex justify-between gap-3 mt-4">
             <a href=" {{ route('traspasos.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
                 Volver
             </a>

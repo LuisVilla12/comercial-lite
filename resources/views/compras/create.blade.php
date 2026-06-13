@@ -1,4 +1,5 @@
 @section('title','COMPRAS')
+
     <x-app-layout>
         <x-slot name="header">
             <div class="md:flex md:justify-between">
@@ -85,7 +86,7 @@
                             </div>
                             <div class="w-full">
 <label class="block text-lg font-medium mb-2 dark:text-white">Seleccionar almacen: *</label>
-                            <select name="almacen_id" id="almacen_id"
+                            <select name="almacen_id" x-model="almacen_origen_id" id="almacen_id"
                                 class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 mb-2">
                                 <option value="" disabled selected>Seleccione</option>
                                 @foreach ($almacenes as $almacen)
@@ -401,10 +402,10 @@
                                                     <span x-text="p.clave" class="font-bold"></span>
                                                 </p>
 
-                                                {{-- <p>
+                                                <p>
                                                     Existencia:
                                                     <span x-text="p.stock" class="font-bold"></span>
-                                                </p> --}}
+                                                </p> 
                                             </div>
                                         </div>
                                     </div>
@@ -433,7 +434,7 @@
                     proveedorColonia: '',
                     proveedores: [],
                     proveedorSeleccionado: -1,
-
+                    almacen_origen_id: '',
                     items: [],
                     total: 0,
                     modalProducto: false,
@@ -518,7 +519,9 @@
                         }
 
                         const res = await fetch(
-                            `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
+                            // `/productos-existencias/buscar?q=${q}&almacen=${this.almacen_origen_id}`
+                            `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${this.almacen_origen_id}`);
+                         // `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
                         this.items[index].resultados = await res.json();
                         this.items[index].resultadoSeleccionado = 0;
                     },
@@ -552,7 +555,9 @@
                         }
 
                         const res = await fetch(
-                            `/buscar/productos?q=${encodeURIComponent(q)}`);
+                            // `/buscar/productos?q=${encodeURIComponent(q)}`);
+                            `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${this.almacen_origen_id}`);
+                            // `/productos-existencias/buscar?q=${q}&almacen=${this.almacen_origen_id}`
                         this.resultadosModal = await res.json();
                         this.modalProductoSeleccionado = this.resultadosModal.length ? 0 : -1;
                     },
