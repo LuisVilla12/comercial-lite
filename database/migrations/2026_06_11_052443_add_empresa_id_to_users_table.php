@@ -24,6 +24,9 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
+                $table->dropConstrainedForeignId('empresa_id');
+                $table->dropColumn('sucursal_id');
+
         });
     }
 };

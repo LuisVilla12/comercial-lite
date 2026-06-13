@@ -27,7 +27,15 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('empresas', function (Blueprint $table) {
-        
+        Schema::table('empresas', function (Blueprint $table) {
+        $table->dropColumn([
+            'db_host',
+            'db_port',
+            'db_database',
+            'db_username',
+            'db_password',
+        ]);
+    });
         });
     }
 };

@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
     {
         // Definir los Seeder a ejecutar
         $this->call([
-            RegimenesSeeder::class,
             UserSeeder::class,
         ]);
     }
