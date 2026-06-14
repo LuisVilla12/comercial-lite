@@ -13,92 +13,188 @@ class KardexController extends Controller
         return view('kardex.index',['productos' => $productos]);
     }
 
-     public function store(Request $request){
-        $request->validate([
-            'producto_id' => 'required|string',
-            'movimiento_id' => 'required|in:1,2,3,4',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'required|date',
-        ]); 
+public function store(Request $request)
+{
+    $request->validate([
+        'producto_id'   => 'required|integer',
+        'movimiento_id' => 'required|in:1,2,3,4',
+        'fecha_inicio'  => 'required|date',
+        'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
+    ]);
 
-        //BUSCAR PRODUCTO
-        $producto = Producto::findOrFail($request->producto_id);
-        //CARGAR RELACIONES DE SE PRODUCTO
-// $detalles = $producto->comprasDetalles()
-//                       ->with('compra')
-//                       ->get();
-    // ENCUENTRA COMPRAS
-    $detallesCompras = $producto->comprasDetalles()
-    ->whereHas('compra', function ($query) use ($request) {
-        $query->whereBetween('fecha', [
-            $request->fecha_inicio,
-            $request->fecha_fin
-        ])
-        ->where('estatus', 4);
-    })
-    ->with('compra')
-    ->get();
+    $producto = Producto::findOrFail($request->producto_id);
 
+    $detalles = collect();
 
-//      foreach ($detalles as $detalle) {
-//      echo "Compra: ".$detalle->traspaso->id."<br>";
-//      echo "Fecha: ".$detalle->traspaso->fecha."<br>";
-//      echo "Cantidad: ".$detalle->cantidad."<br>";
-//      echo "Costo: ".$detalle->costo_unitario."<br>";
-//  }
-    //ENCUENTRA TRASLADOS
- $detalles = $producto->traspasosDetalles()
-    ->whereHas('traspaso', function ($query) use ($request) {
-        $query->whereBetween('fecha', [
-            $request->fecha_inicio,
-            $request->fecha_fin
-        ])
-        ->where('estatus', 4);
-    })
-    ->with([
-        'traspaso.almacenOrigen',
-        'traspaso.almacenDestino',
-    ])
-    ->get();
+    switch ($request->movimiento_id) {
 
-//     foreach ($detalles as $detalle) {
+        // Compras
+        case '1':
+            $detalles = $this->obtenerCompras(
+                $producto,
+                $request->fecha_inicio,
+                $request->fecha_fin
+            );
+            break;
 
-//     echo "Fecha: ".$detalle->traspaso->fecha."<br>";
+        // Traspasos
+        case '2':
+            $detalles = $this->obtenerTraspasos(
+                $producto,
+                $request->fecha_inicio,
+                $request->fecha_fin
+            );
+            break;
 
-//     echo "Origen: "
-//         .$detalle->traspaso->almacenOrigen->nombre."<br>";
+        // Documentos (ventas)
+        case '3':
+            $detalles = $this->obtenerDocumentos(
+                $producto,
+                $request->fecha_inicio,
+                $request->fecha_fin
+            );
+            break;
 
-//     echo "Destino: "
-//         .$detalle->traspaso->almacenDestino->nombre."<br>";
+        // Kardex global
+        case '4':
 
-//     echo "Cantidad: ".$detalle->cantidad."<br>";
+            $detalles = collect()
+                ->merge(
+                    $this->obtenerCompras(
+                        $producto,
+                        $request->fecha_inicio,
+                        $request->fecha_fin
+                    )
+                )
+                ->merge(
+                    $this->obtenerTraspasos(
+                        $producto,
+                        $request->fecha_inicio,
+                        $request->fecha_fin
+                    )
+                )
+                ->merge(
+                    $this->obtenerDocumentos(
+                        $producto,
+                        $request->fecha_inicio,
+                        $request->fecha_fin
+                    )
+                );
 
-//     echo "<hr>";
-// }
-
-//ENCUENTRA DOCUMENTOS
-$detalles = $producto->documentosDetalles()
-    ->whereHas('documento', function ($query) use ($request) {
-        $query->whereBetween('fecha', [
-            $request->fecha_inicio,
-            $request->fecha_fin
-        ])
-        ->where('estatus', 4);
-    })
-    ->with([
-        'documento.cliente',
-    ])
-    ->get();
-
-    foreach ($detalles as $detalle) {
-
-    echo "Fecha: ".$detalle->documento->fecha."<br>";
-
-    echo "Cliente: "         .$detalle->documento->cliente->nombre."<br>";
-    echo "Cantidad: ".$detalle->cantidad."<br>";
-   echo "<hr>";
-}
-        // dd($detalles);
-        // dd($producto);
+            break;
     }
+
+    $detalles = $detalles
+        ->sortBy('fecha')
+        ->values();
+
+    return view('kardex.show', compact(
+        'producto',
+        'detalles'
+    ));
+}
+
+private function obtenerCompras($producto, $fechaInicio, $fechaFin)
+{
+    $detalles = collect();
+
+    $compras = $producto->comprasDetalles()
+        ->whereHas('compra', function ($query) use ($fechaInicio, $fechaFin) {
+
+            $query->whereBetween('fecha', [
+                $fechaInicio,
+                $fechaFin
+            ])
+            ->where('estatus', 4);
+
+        })
+        ->with('compra')
+        ->get();
+
+    foreach ($compras as $detalle) {
+
+        $detalles->push([
+            'fecha'       => $detalle->compra->fecha,
+            'tipo'        => 'COMPRA',
+            'referencia'  => $detalle->compra->id,
+            'descripcion' => 'Compra',
+            'movimiento'  => null,
+            'entrada'     => $detalle->cantidad,
+            'salida'      => 0,
+        ]);
+    }
+
+    return $detalles;
+}
+private function obtenerTraspasos($producto, $fechaInicio, $fechaFin)
+{
+    $detalles = collect();
+
+    $traspasos = $producto->traspasosDetalles()
+        ->whereHas('traspaso', function ($query) use ($fechaInicio, $fechaFin) {
+
+            $query->whereBetween('fecha', [
+                $fechaInicio,
+                $fechaFin
+            ])
+            ->where('estatus', 4);
+
+        })
+        ->with([
+            'traspaso.almacenOrigen',
+            'traspaso.almacenDestino',
+        ])
+        ->get();
+
+    foreach ($traspasos as $detalle) {
+
+        $detalles->push([
+            'fecha'       => $detalle->traspaso->fecha,
+            'tipo'        => 'TRASPASO',
+            'referencia'  => $detalle->traspaso->id,
+            'descripcion' =>
+                ($detalle->traspaso->almacenOrigen->nombre ?? '')
+                .' → '.
+                ($detalle->traspaso->almacenDestino->nombre ?? ''),
+            'movimiento'  => $detalle->cantidad,
+            'entrada'     => 0,
+            'salida'      => 0, // NO afecta saldo global
+        ]);
+    }
+
+    return $detalles;
+}
+
+private function obtenerDocumentos($producto, $fechaInicio, $fechaFin)
+{
+    $detalles = collect();
+
+    $documentos = $producto->documentosDetalles()
+        ->whereHas('documento', function ($query) use ($fechaInicio, $fechaFin) {
+
+            $query->whereBetween('fecha', [
+                $fechaInicio,
+                $fechaFin
+            ])
+            ->where('estatus', 4);
+
+        })
+        ->with('documento.cliente')
+        ->get();
+
+    foreach ($documentos as $detalle) {
+
+        $detalles->push([
+            'fecha'       => $detalle->documento->fecha,
+            'tipo'        => 'DOCUMENTO',
+            'referencia'  => $detalle->documento->id,
+            'descripcion' => $detalle->documento->cliente->nombre ?? '',
+            'movimiento'  => null,
+            'entrada'     => 0,
+            'salida'      => $detalle->cantidad,
+        ]);
+    }
+
+    return $detalles;
+}
 }
