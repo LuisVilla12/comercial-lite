@@ -37,11 +37,21 @@
 
 
     {{-- ORIGEN --}}
-    <div class="mt-5 flex justify-end gap-4">
-        <a href="{{ route('traspasos.pdf', [$traspaso]) }}" target="_blank"
-            class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ml-6">
-            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir carta
-        </a>
+    <div class="mt-5  gap-4">
+        <div class="flex justify-between gap-4">
+            <p class="dark:text-white">Estado: @php
+                $estatusText = match ($traspaso->estatus) {
+                    1 => 'ACTIVA',
+                    2 => 'TRANSFORMADA',
+                    3 => 'CANCELADA',
+                    4 => 'SURTIDA',
+                    5 => 'DEVOLUCIÓN APLICADA',
+                    default => 'DESCONOCIDO',
+                };
+            @endphp
+                <span class="font-bold text-green-600">{{ $estatusText }}</span>
+            </p>
+        <div class="flex gap-4">
         @if ($traspaso->estatus == 1)
             <div>
                 <button onclick="surtirTraspaso()"
@@ -55,13 +65,13 @@
                 class=" flex justify-end">
                 @csrf
             </form>
-        @else
-            <div class="flex justify-end">
-                <a class="block md:inline-block px-6 py-2 bg-green-600 text-white rounded"> TRASPASO REALIZADO</a>
-
-            </div>
         @endif
-
+        <a href="{{ route('traspasos.pdf', [$traspaso]) }}" target="_blank"
+            class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ">
+            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir carta
+        </a>
+        </div>
+        </div>
     </div>
     <div class="grid  md:grid-cols-2 md:gap-6 mt-6">
         {{-- ================= Almacen origen ================= --}}

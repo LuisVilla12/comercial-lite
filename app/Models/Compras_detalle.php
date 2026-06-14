@@ -25,4 +25,5 @@ class Compras_detalle extends TenantModel
     {
         return $this->belongsTo(Producto::class);
     }
+    
 }

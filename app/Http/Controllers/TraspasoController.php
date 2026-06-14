@@ -236,7 +236,7 @@ public function update(Request $request, $traspaso)
                 );
             }
 
-            $traspaso->update(['estatus' => 2]);
+            $traspaso->update(['estatus' => 4]);
         });
         //SUMAR AL ALMACEN DESTINO
         DB::transaction(function () use ($traspaso) {

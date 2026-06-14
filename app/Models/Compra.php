@@ -35,4 +35,5 @@ class Compra extends TenantModel implements Auditable
     public function almacen() {
         return $this->belongsTo(Almacen::class, 'almacen_id');
     }
+    
 }

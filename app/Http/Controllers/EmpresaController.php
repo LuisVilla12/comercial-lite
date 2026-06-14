@@ -33,8 +33,7 @@ class EmpresaController extends Controller
     public function create()
     {
         //
-        $regimenes = Regimen::all();
-        return view('empresas.create', ['regimenes' => $regimenes]);
+        return view('empresas.create');
     }
 
     public function listado($user)
@@ -152,8 +151,7 @@ class EmpresaController extends Controller
      */
     public function show(Empresa $empresa)
     {
-        $regimenes = Regimen::all();
-        return view('empresas.show', ['empresa' => $empresa, 'regimenes' => $regimenes]);
+        return view('empresas.show', ['empresa' => $empresa]);
     }
 
     /**
@@ -161,8 +159,7 @@ class EmpresaController extends Controller
      */
     public function edit(Empresa $empresa)
     {
-        $regimenes = Regimen::all();
-        return view('empresas.edit', ['empresa' => $empresa, 'regimenes' => $regimenes]);
+        return view('empresas.edit', ['empresa' => $empresa]);
     }
 
     /**

@@ -83,7 +83,7 @@
                 </x-slot:icon>
             </x-dashboard-card>
             {{-- KARDEX --}}
-            <x-dashboard-card href="{{ route('ajustes-almacen.index', $tipo = 2) }}" bg="bg-blue-50 dark:bg-blue-900/20"
+            <x-dashboard-card href="{{ route('kardex.index') }}" bg="bg-blue-50 dark:bg-blue-900/20"
                 title="Kardex" desc="Movimientos de cada producto" iconBg="bg-blue-500">
                 <x-slot:icon>
                     <x-heroicon-o-archive-box class="w-6 h-6" />

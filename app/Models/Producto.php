@@ -7,6 +7,10 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use  App\Models\Clasificacion;
 use  App\Models\ExistenciaProducto;
+use  App\Models\Compra;
+use  App\Models\Compras_detalle;
+use  App\Models\TraspasoDetalle;
+
 
 class Producto extends TenantModel implements Auditable
 {
@@ -42,10 +46,24 @@ class Producto extends TenantModel implements Auditable
 {
     return $this->belongsTo(Clasificacion::class, 'valor_clasificacion1');
 }
-public function existencias()
+    public function existencias()
     {
         return $this->hasMany(ExistenciaProducto::class);
     }
 
+    public function compras(){
+        return $this->hasMany(Compra::class);
+    }   
+
+    // RELACION PARA KARDEX
+    public function comprasDetalles()
+{
+    return $this->hasMany(Compras_detalle::class, 'producto_id');
+}
+
+public function traspasosDetalles()
+{
+    return $this->hasMany(TraspasoDetalle::class, 'producto_id');
+}
 
 }

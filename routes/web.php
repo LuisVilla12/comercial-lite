@@ -25,6 +25,7 @@ use App\Http\Controllers\DatosBancarioController;
 use App\Http\Controllers\AgenteController;
 use App\Http\Controllers\AjustesAlmacenController;
 use App\Http\Controllers\RegisteredUserController;
+use App\Http\Controllers\KardexController;
 use App\Mail\TestMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -56,6 +57,8 @@ Route::middleware('auth')->group(function () {
 
 // Solo administrador puede entrar
 Route::middleware(['auth', 'admin'])->group(function () {
+    
+
     //Usuarios
     Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
     Route::get('/usuarios/{usuario}', [UserController::class, 'show'])->name('usuarios.show');
@@ -78,6 +81,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/configuracion-empresa/edit', action: [ConfiguracionEmpresaController::class, 'edit'])->name('configuracion-empresa.edit');
     Route::put('/configuracion-empresa/{empresa}/edit', [ConfiguracionEmpresaController::class, 'update'])->name('configuracion-empresa.update');
 
+    // KARDEX
+    Route::get('/kardex', action: [KardexController::class, 'index'])->name('kardex.index');
+    Route::post('/kardex', action: [KardexController::class, 'store'])->name('kardex.store');
 
     //Sucursales
     Route::get('/sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
@@ -157,6 +163,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::put('/bancos/{banco}', [DatosBancarioController::class, 'update'])->name('bancos.update');
     Route::delete('/bancos/{banco}', [DatosBancarioController::class, 'destroy'])->name('bancos.destroy');
     Route::put('/bancos/{banco}/predeterminado', [DatosBancarioController::class, 'predeterminado'])->name('bancos.predeterminado');
+    
     //Compras
     Route::get('/compras', action: [CompraController::class, 'index'])->name('compras.index');
     Route::get('/compras/create', [CompraController::class, 'create'])->name('compras.create');
@@ -201,9 +208,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 
-
     Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrarSAT'])->name('timbrarSAT');
-
 
     //Devoluciones
     Route::get('/devoluciones/{documento}', [DevolucionController::class, 'create'])->name('devoluciones.create');
