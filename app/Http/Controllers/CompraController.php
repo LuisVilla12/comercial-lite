@@ -168,7 +168,7 @@ class CompraController extends Controller
             }
 
             $compra->update([
-                'estatus' => 2
+                'estatus' => 4
             ]);
         });
 

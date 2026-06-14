@@ -91,7 +91,7 @@
                                             class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
                                             Activo
                                         </span>
-                                    @elseif ($traspaso->estatus == 2)
+                                    @elseif ($traspaso->estatus == 4)
                                         <span
                                             class="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">
                                             Surtida

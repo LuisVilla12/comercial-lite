@@ -34,7 +34,7 @@ class KardexController extends Controller
             $request->fecha_inicio,
             $request->fecha_fin
         ])
-        ->where('estatus', 2);
+        ->where('estatus', 4);
     })
     ->with('compra')
     ->get();
@@ -53,7 +53,7 @@ class KardexController extends Controller
             $request->fecha_inicio,
             $request->fecha_fin
         ])
-        ->where('estatus', 2);
+        ->where('estatus', 4);
     })
     ->with([
         'traspaso.almacenOrigen',
