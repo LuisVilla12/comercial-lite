@@ -5,6 +5,8 @@ namespace App\Models;
 use Dom\Document;
 use Illuminate\Database\Eloquent\Model;
 use  App\Models\Producto;
+use  App\Models\Documento;
+
 
 class DocumentosDetalle extends TenantModel
 {
@@ -18,7 +20,7 @@ class DocumentosDetalle extends TenantModel
 
     public function documento()
     {
-        return $this->belongsTo(Document::class);
+        return $this->belongsTo(Documento::class);
     }
       public function producto()
     {

@@ -10,6 +10,7 @@ use  App\Models\ExistenciaProducto;
 use  App\Models\Compra;
 use  App\Models\Compras_detalle;
 use  App\Models\TraspasoDetalle;
+use  App\Models\DocumentosDetalle;
 
 
 class Producto extends TenantModel implements Auditable
@@ -66,4 +67,8 @@ public function traspasosDetalles()
     return $this->hasMany(TraspasoDetalle::class, 'producto_id');
 }
 
+public function documentosDetalles()
+{
+    return $this->hasMany(DocumentosDetalle::class, 'producto_id');
+}
 }

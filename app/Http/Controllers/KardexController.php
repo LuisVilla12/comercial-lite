@@ -27,23 +27,77 @@ class KardexController extends Controller
 // $detalles = $producto->comprasDetalles()
 //                       ->with('compra')
 //                       ->get();
-    $detalles = $producto->comprasDetalles()
+    // ENCUENTRA COMPRAS
+    $detallesCompras = $producto->comprasDetalles()
     ->whereHas('compra', function ($query) use ($request) {
         $query->whereBetween('fecha', [
             $request->fecha_inicio,
             $request->fecha_fin
-        ]);
+        ])
+        ->where('estatus', 2);
     })
     ->with('compra')
     ->get();
 
 
-     foreach ($detalles as $detalle) {
-     echo "Compra: ".$detalle->compra->id."<br>";
-     echo "Fecha: ".$detalle->compra->fecha."<br>";
-     echo "Cantidad: ".$detalle->cantidad."<br>";
-     echo "Costo: ".$detalle->costo_unitario."<br>";
- }
+//      foreach ($detalles as $detalle) {
+//      echo "Compra: ".$detalle->traspaso->id."<br>";
+//      echo "Fecha: ".$detalle->traspaso->fecha."<br>";
+//      echo "Cantidad: ".$detalle->cantidad."<br>";
+//      echo "Costo: ".$detalle->costo_unitario."<br>";
+//  }
+    //ENCUENTRA TRASLADOS
+ $detalles = $producto->traspasosDetalles()
+    ->whereHas('traspaso', function ($query) use ($request) {
+        $query->whereBetween('fecha', [
+            $request->fecha_inicio,
+            $request->fecha_fin
+        ])
+        ->where('estatus', 2);
+    })
+    ->with([
+        'traspaso.almacenOrigen',
+        'traspaso.almacenDestino',
+    ])
+    ->get();
+
+//     foreach ($detalles as $detalle) {
+
+//     echo "Fecha: ".$detalle->traspaso->fecha."<br>";
+
+//     echo "Origen: "
+//         .$detalle->traspaso->almacenOrigen->nombre."<br>";
+
+//     echo "Destino: "
+//         .$detalle->traspaso->almacenDestino->nombre."<br>";
+
+//     echo "Cantidad: ".$detalle->cantidad."<br>";
+
+//     echo "<hr>";
+// }
+
+//ENCUENTRA DOCUMENTOS
+$detalles = $producto->documentosDetalles()
+    ->whereHas('documento', function ($query) use ($request) {
+        $query->whereBetween('fecha', [
+            $request->fecha_inicio,
+            $request->fecha_fin
+        ])
+        ->where('estatus', 4);
+    })
+    ->with([
+        'documento.cliente',
+    ])
+    ->get();
+
+    foreach ($detalles as $detalle) {
+
+    echo "Fecha: ".$detalle->documento->fecha."<br>";
+
+    echo "Cliente: "         .$detalle->documento->cliente->nombre."<br>";
+    echo "Cantidad: ".$detalle->cantidad."<br>";
+   echo "<hr>";
+}
         // dd($detalles);
         // dd($producto);
     }
