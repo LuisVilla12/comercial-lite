@@ -13,6 +13,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\DocumentoController;
+use App\Http\Controllers\SesionesController;
 use App\Http\Controllers\ExistenciaProductoController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\TraspasoController;
@@ -83,8 +84,13 @@ Route::middleware(['auth', 'tenant'])->group(function () {
 
     // KARDEX
     Route::get('/kardex', action: [KardexController::class, 'index'])->name('kardex.index');
-    Route::post('/kardex', action: [KardexController::class, 'store'])->name('kardex.store');
+    Route::post('/kardex/global', action: [KardexController::class, 'global'])->name('kardex.global');
+    Route::post('/kardex/sucursal', action: [KardexController::class, 'sucursal'])->name('kardex.sucursal');
 
+    //SESIONES
+    Route::get('/sesiones-activas', action: [SesionesController::class, 'index'])->name('sesiones.index');
+    Route::delete('/cerrar-sesion/{session}', action: [SesionesController::class, 'destroy'])->name('sesiones.destroy');
+    Route::delete('/cerrar-sesion/todas', action: [SesionesController::class, 'destroyAll'])->name('sesiones.destroyAll');
     //Sucursales
     Route::get('/sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
     Route::get('/sucursales/create', [SucursalController::class, 'create'])->name('sucursales.create');

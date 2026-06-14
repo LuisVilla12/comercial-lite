@@ -153,6 +153,23 @@
                         Registrar un nuevo usuario.
                     </span>
                 </a>
+                {{-- SESIONES ACTIVAS --}}
+                <a href="{{ route('sesiones.index') }}"
+                    class="flex flex-col items-center justify-center
+                           bg-white dark:bg-gray-800
+                           border-2 border-dashed border-gray-300 dark:border-gray-600
+                           rounded-xl p-8
+                           hover:bg-gray-50 dark:hover:bg-gray-700
+                           transition duration-200">
+                    <x-heroicon-o-user-minus class="w-8 h-8 dark:text-white" />
+                    <span class="mt-3 text-md font-semibold text-gray-700 dark:text-white">
+                        Sesiones Activas
+                    </span>
+
+                    <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 text-center">
+                        Administra las sesiones
+                    </span>
+                </a>
 
             </div>
         </div>

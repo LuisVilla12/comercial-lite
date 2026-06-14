@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Producto;
+use App\Models\Almacen;
 
 use Illuminate\Http\Request;
 
@@ -10,10 +11,11 @@ class KardexController extends Controller
     //
     public function index(){
     $productos = Producto::where('id', '>', 11130)->get();
-        return view('kardex.index',['productos' => $productos]);
+    $almacenes = Almacen::all();
+        return view('kardex.index',['productos' => $productos,'almacenes' => $almacenes]);
     }
 
-public function store(Request $request)
+public function global(Request $request)
 {
     $request->validate([
         'producto_id'   => 'required|integer',
@@ -27,10 +29,9 @@ public function store(Request $request)
     $detalles = collect();
 
     switch ($request->movimiento_id) {
-
         // Compras
         case '1':
-            $detalles = $this->obtenerCompras(
+            $detalles = $this->obtenerComprasGlobal(
                 $producto,
                 $request->fecha_inicio,
                 $request->fecha_fin
@@ -39,7 +40,7 @@ public function store(Request $request)
 
         // Traspasos
         case '2':
-            $detalles = $this->obtenerTraspasos(
+            $detalles = $this->obtenerTraspasosGlobal(
                 $producto,
                 $request->fecha_inicio,
                 $request->fecha_fin
@@ -48,7 +49,7 @@ public function store(Request $request)
 
         // Documentos (ventas)
         case '3':
-            $detalles = $this->obtenerDocumentos(
+            $detalles = $this->obtenerDocumentosGlobal(
                 $producto,
                 $request->fecha_inicio,
                 $request->fecha_fin
@@ -60,21 +61,21 @@ public function store(Request $request)
 
             $detalles = collect()
                 ->merge(
-                    $this->obtenerCompras(
+                    $this->obtenerComprasGlobal(
                         $producto,
                         $request->fecha_inicio,
                         $request->fecha_fin
                     )
                 )
                 ->merge(
-                    $this->obtenerTraspasos(
+                    $this->obtenerTraspasosGlobal(
                         $producto,
                         $request->fecha_inicio,
                         $request->fecha_fin
                     )
                 )
                 ->merge(
-                    $this->obtenerDocumentos(
+                    $this->obtenerDocumentosGlobal(
                         $producto,
                         $request->fecha_inicio,
                         $request->fecha_fin
@@ -87,14 +88,16 @@ public function store(Request $request)
     $detalles = $detalles
         ->sortBy('fecha')
         ->values();
+    $tipo='Global';
 
     return view('kardex.show', compact(
         'producto',
-        'detalles'
+        'detalles',
+        'tipo'
     ));
 }
 
-private function obtenerCompras($producto, $fechaInicio, $fechaFin)
+private function obtenerComprasGlobal($producto, $fechaInicio, $fechaFin)
 {
     $detalles = collect();
 
@@ -115,9 +118,11 @@ private function obtenerCompras($producto, $fechaInicio, $fechaFin)
 
         $detalles->push([
             'fecha'       => $detalle->compra->fecha,
-            'tipo'        => 'COMPRA',
-            'referencia'  => $detalle->compra->id,
-            'descripcion' => 'Compra',
+            'serie'        => $detalle->compra->serie,
+            'tipo'        => 'Compra',
+            'referencia'  => $detalle->compra->folio,
+            'descripcion' => $detalle->compra->proveedor->nombre,
+            'id'  => $detalle->compra->id,
             'movimiento'  => null,
             'entrada'     => $detalle->cantidad,
             'salida'      => 0,
@@ -126,7 +131,7 @@ private function obtenerCompras($producto, $fechaInicio, $fechaFin)
 
     return $detalles;
 }
-private function obtenerTraspasos($producto, $fechaInicio, $fechaFin)
+private function obtenerTraspasosGlobal($producto, $fechaInicio, $fechaFin)
 {
     $detalles = collect();
 
@@ -150,12 +155,14 @@ private function obtenerTraspasos($producto, $fechaInicio, $fechaFin)
 
         $detalles->push([
             'fecha'       => $detalle->traspaso->fecha,
-            'tipo'        => 'TRASPASO',
-            'referencia'  => $detalle->traspaso->id,
+            'serie'        => $detalle->traspaso->serie,
+            'tipo'        => 'Traspaso',
+            'referencia'  => $detalle->traspaso->folio,
             'descripcion' =>
                 ($detalle->traspaso->almacenOrigen->nombre ?? '')
                 .' → '.
                 ($detalle->traspaso->almacenDestino->nombre ?? ''),
+            'id'  => $detalle->traspaso->id,
             'movimiento'  => $detalle->cantidad,
             'entrada'     => 0,
             'salida'      => 0, // NO afecta saldo global
@@ -165,7 +172,7 @@ private function obtenerTraspasos($producto, $fechaInicio, $fechaFin)
     return $detalles;
 }
 
-private function obtenerDocumentos($producto, $fechaInicio, $fechaFin)
+private function obtenerDocumentosGlobal($producto, $fechaInicio, $fechaFin)
 {
     $detalles = collect();
 
@@ -186,8 +193,11 @@ private function obtenerDocumentos($producto, $fechaInicio, $fechaFin)
 
         $detalles->push([
             'fecha'       => $detalle->documento->fecha,
-            'tipo'        => 'DOCUMENTO',
-            'referencia'  => $detalle->documento->id,
+            'tipo'        => 'Documento',
+            'serie'        => $detalle->documento->serie,
+            'sucursal'  => $detalle->documento->sucursal_id,
+            'referencia'  => $detalle->documento->folio,
+            'id'  => $detalle->documento->id,
             'descripcion' => $detalle->documento->cliente->nombre ?? '',
             'movimiento'  => null,
             'entrada'     => 0,
@@ -197,4 +207,217 @@ private function obtenerDocumentos($producto, $fechaInicio, $fechaFin)
 
     return $detalles;
 }
+
+public function sucursal(Request $request) {
+    $request->validate([
+        'producto_id'   => 'required|integer',
+        'almacen_id' => 'required|integer',
+        'movimiento_id' => 'required|in:1,2,3,4',
+        'fecha_inicio'  => 'required|date',
+        'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
+    ]);
+    // dd($request);
+        
+    $producto = Producto::findOrFail($request->producto_id);
+    $detalles = collect();
+
+    switch ($request->movimiento_id) {
+        // Compras
+        case '1':
+            $detalles = $this->obtenerComprasSucursal(
+                $producto,
+                $request->fecha_inicio,
+                $request->fecha_fin,
+                $request->almacen_id,
+            );
+            break;
+
+        // Traspasos
+        case '2':
+            $detalles = $this->obtenerTraspasosSucursal(
+                $producto,
+                $request->fecha_inicio,
+                $request->fecha_fin,
+                $request->almacen_id,
+            );
+            break;
+
+        // Documentos (ventas)
+        case '3':
+            $detalles = $this->obtenerDocumentosSucursal(
+                $producto,
+                $request->fecha_inicio,
+                $request->fecha_fin,
+                $request->almacen_id,
+            );
+            break;
+
+        // Kardex global
+        case '4':
+
+            $detalles = collect()
+                ->merge(
+                    $this->obtenerComprasSucursal(
+                        $producto,
+                        $request->fecha_inicio,
+                        $request->fecha_fin,
+                        $request->almacen_id,
+                    )
+                )
+                ->merge(
+                    $this->obtenerTraspasosSucursal(
+                        $producto,
+                        $request->fecha_inicio,
+                        $request->fecha_fin,
+                        $request->almacen_id,
+                    )
+                )
+                ->merge(
+                    $this->obtenerDocumentosSucursal(
+                        $producto,
+                        $request->fecha_inicio,
+                        $request->fecha_fin,
+                        $request->almacen_id,
+                        $request->almacen_id,
+                    )
+                );
+
+            break;
+    }
+
+    $detalles = $detalles
+        ->sortBy('fecha')
+        ->values();
+    $tipo='Sucursal';
+
+    return view('kardex.show', compact(
+        'producto',
+        'detalles',
+        'tipo'
+    ));
+
 }
+private function obtenerComprasSucursal($producto, $fechaInicio, $fechaFin, $almacen_id)
+{
+    $detalles = collect();
+
+    $compras = $producto->comprasDetalles()
+        ->whereHas('compra', function ($query) use ($fechaInicio, $fechaFin,$almacen_id) {
+
+            $query->whereBetween('fecha', [
+                $fechaInicio,
+                $fechaFin
+            ])
+            ->where('estatus', 4)
+            ->where('almacen_id', $almacen_id);
+
+        })
+        ->with('compra')
+        ->get();
+
+    foreach ($compras as $detalle) {
+
+        $detalles->push([
+            'fecha'       => $detalle->compra->fecha,
+            'serie'        => $detalle->compra->serie,
+            'tipo'        => 'Compra',
+            'id'       => $detalle->compra->id,
+            'referencia'  => $detalle->compra->folio,
+            'descripcion' => $detalle->compra->proveedor->nombre,
+            'movimiento'  => null,
+            'entrada'     => $detalle->cantidad,
+            'salida'      => 0,
+        ]);
+    }
+
+    return $detalles;
+}
+private function obtenerTraspasosSucursal($producto, $fechaInicio, $fechaFin,$almacen_id){
+    $detalles = collect();
+
+    $traspasos = $producto->traspasosDetalles()
+        ->whereHas('traspaso', function ($query) use ($fechaInicio, $fechaFin,$almacen_id) {
+
+            $query->whereBetween('fecha', [
+                $fechaInicio,
+                $fechaFin
+            ])
+            ->where('estatus', 4);
+        })
+        ->with([
+            'traspaso.almacenOrigen',
+            'traspaso.almacenDestino',
+        ])
+        ->get();
+
+    foreach ($traspasos as $detalle) {
+
+    $entrada = 0;
+    $salida = 0;
+
+    if ($detalle->traspaso->almacen_destino_id == $almacen_id) {
+        $entrada = $detalle->cantidad;
+    }
+
+    if ($detalle->traspaso->almacen_origen_id == $almacen_id) {
+        $salida = $detalle->cantidad;
+    }
+
+    $detalles->push([
+        'fecha'       => $detalle->traspaso->fecha,
+        'tipo'        => 'Traspaso',
+        'id'       => $detalle->traspaso->id,
+        'serie'        => $detalle->traspaso->serie,
+        'referencia'  => $detalle->traspaso->folio,
+        'descripcion' =>
+            $detalle->traspaso->almacenOrigen->nombre
+            .' → '.
+            $detalle->traspaso->almacenDestino->nombre,
+        'movimiento'  => $detalle->cantidad,
+        'entrada'     => $entrada,
+        'salida'      => $salida,
+    ]);
+}
+
+    return $detalles;
+}
+
+private function obtenerDocumentosSucursal($producto, $fechaInicio, $fechaFin,$almacen_id)
+{
+    $detalles = collect();
+
+    $documentos = $producto->documentosDetalles()
+        ->whereHas('documento', function ($query) use ($fechaInicio, $fechaFin,$almacen_id) {
+
+            $query->whereBetween('fecha', [
+                $fechaInicio,
+                $fechaFin
+            ])
+            ->where('estatus', 4)
+            ->where('almacen_id', $almacen_id);
+
+        })
+        ->with('documento.cliente')
+        ->get();
+
+    foreach ($documentos as $detalle) {
+
+        $detalles->push([
+            'fecha'       => $detalle->documento->fecha,
+            'serie'        => $detalle->documento->serie,
+            'id'       => $detalle->documento->id,
+            'tipo'        => 'Documento',
+            'referencia'  => $detalle->documento->folio,
+            'descripcion' => $detalle->documento->cliente->nombre ?? '',
+            'sucursal'  => $detalle->documento->sucursal_id,
+            'movimiento'  => null,
+            'entrada'     => 0,
+            'salida'      => $detalle->cantidad,
+        ]);
+    }
+
+    return $detalles;
+}
+
+}
+

@@ -8,12 +8,12 @@
                 {{-- Encabezado --}}
                 <div class="px-6 py-4 border-b">
                     <h2 class="text-2xl font-bold">
-                        Kardex Global del Producto
+                        Kardex del Producto ({{$tipo}})
                     </h2>
 
                     <div class="mt-2 text-sm text-gray-700">
-                        <strong>Producto:</strong>
-                        {{ $producto->nombre_producto }}
+                        <strong>Nombre del producto:</strong>
+                        {{ $producto->nombre_producto . " (".   $producto->codigo_producto . ")"}}
                     </div>
 
                     <div class="mt-1 text-sm text-gray-700">
@@ -101,8 +101,23 @@
                                         {{ $movimiento['tipo'] }}
                                     </td>
 
-                                    <td class="border px-3 py-2 text-center">
-                                        {{ $movimiento['referencia'] }}
+                                    <td class="border px-3 py-2 text-center flex items-center justify-center">
+                                        {{  $movimiento['serie'] . "-". $movimiento['referencia'] }}
+                                        @if ($movimiento['tipo']=='Compra')
+                                            <a href="{{route('compras.show',$movimiento['id'])}}"> 
+                                                <x-heroicon-o-document class="w-4 h-4" />
+                                            </a>
+                                        @elseif ($movimiento['tipo']=='Traspaso')
+                                            <a href="{{route('traspasos.show',$movimiento['id'])}}"> 
+                                                <x-heroicon-o-document class="w-4 h-4" />
+                                            </a>
+                                        @elseif ($movimiento['tipo']=='Documento')
+                                            <a href="{{ route('documentos.show', ['sucursal' => $movimiento['sucursal'], 'documento' => $movimiento['id']]) }}"
+                                        class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
+                                                <x-heroicon-o-document class="w-4 h-4" />
+                                    </a>
+                                        @endif
+                                        
                                     </td>
 
                                     <td class="border px-3 py-2">
@@ -185,5 +200,9 @@
 
         </div>
     </div>
-
+     <div class="flex justify-between items-center gap-3 mt-4">
+            <a href="{{ route('kardex.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
+                Volver
+            </a>
+        </div>
 </x-app-layout>
