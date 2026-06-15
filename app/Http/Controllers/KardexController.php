@@ -296,7 +296,7 @@ public function sucursal(Request $request) {
             );
             break;
         case '4':
-            $detalles = $this->obtenerDocumentosSucursal(
+            $detalles = $this->obtenerAjusteInventarioSucursal(
                 $producto,
                 $request->fecha_inicio,
                 $request->fecha_fin,
@@ -328,7 +328,6 @@ public function sucursal(Request $request) {
                         $producto,
                         $request->fecha_inicio,
                         $request->fecha_fin,
-                        $request->almacen_id,
                         $request->almacen_id,
                     )
                 );
@@ -393,7 +392,11 @@ private function obtenerTraspasosSucursal($producto, $fechaInicio, $fechaFin,$al
                 $fechaInicio,
                 $fechaFin
             ])
-            ->where('estatus', 4);
+            ->where('estatus', 4)
+            ->where(function ($q) use ($almacen_id) {
+                $q->where('almacen_origen_id', $almacen_id)
+                  ->orWhere('almacen_destino_id', $almacen_id);
+            });
         })
         ->with([
             'traspaso.almacenOrigen',
@@ -469,6 +472,36 @@ private function obtenerDocumentosSucursal($producto, $fechaInicio, $fechaFin,$a
 
     return $detalles;
 }
+private function obtenerAjusteInventarioSucursal($producto, $fechaInicio, $fechaFin,$almacen_id)
+{
+    $detalles = collect();
+    $ajustes = $producto->AjustesDetalles()
+        ->whereHas('ajuste', function ($query) use ($fechaInicio, $fechaFin,$almacen_id) {
+            $query->whereBetween('fecha', [
+                $fechaInicio,
+                $fechaFin
+            ])
+            ->where('estatus', 4)
+            ->where('almacen_id', $almacen_id);
+        })
+        ->with('ajuste')
+        ->get();
+    // dd($ajustes);
+    foreach ($ajustes as $detalle) {
+        $detalles->push([
+            'fecha'       => $detalle->ajuste->fecha,
+            'serie'        => $detalle->ajuste->serie,
+            'tipo'        => $detalle->ajuste->tipo=='1'?'Entrada Almacen':'Salida Almacen',
+            'referencia'  => $detalle->ajuste->id,
+            'descripcion' => $detalle->ajuste->almacen->nombre,
+            'id'  => $detalle->ajuste->id,
+            'movimiento'  => null,
+            'entrada'     => $detalle->ajuste->tipo=='1'? $detalle->cantidad:0,
+            'salida'      => $detalle->ajuste->tipo=='2'? $detalle->cantidad:0,
+        ]);
+    }
 
+    return $detalles;
+}
 }
 

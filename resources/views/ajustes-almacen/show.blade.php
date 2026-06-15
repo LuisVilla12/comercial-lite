@@ -26,7 +26,7 @@
         @endif #{{ $ajuste->id }}
     </h1>
     <div class="display  mt-6">
-        <div class="flex flex justify-between gap-5">
+        <div class="flex justify-between gap-5">
             <p class="dark:text-white">Estado: @php
                 $estatusText = match ($ajuste->estatus) {
                     1 => 'ACTIVO',
@@ -39,7 +39,7 @@
             @endphp
                 <span class="font-bold text-green-600">{{ $estatusText }}</span>
             </p>
-            <div>
+            <div class="flex gap-4">
                 <a href="{{ route('ajustes-almacen.pdf', $ajuste) }}" target="_blank"
                     class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
                     <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
