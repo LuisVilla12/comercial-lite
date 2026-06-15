@@ -12,11 +12,23 @@
             class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-4 mt-4">{{ session('error') }}
         </p>
     @endif
-
-    <div class="display flex justify-between mt-6">
-        <h1 class="block text-lg font-medium mb-2 dark:text-white">
+<h1 class="block text-lg font-medium mb-2 dark:text-white mt-6">
             Compra #{{ $compra->id }}
         </h1>
+    <div class="display flex justify-between mt-4">
+
+        <p class="dark:text-white">Estado: @php
+                $estatusText = match ($compra->estatus) {
+                    1 => 'ACTIVA',
+                    2 => 'TRANSFORMADA',
+                    3 => 'CANCELADA',
+                    4 => 'SURTIDA',
+                    5 => 'DEVOLUCIÓN APLICADA',
+                    default => 'DESCONOCIDO',
+                };
+            @endphp
+                <span class="font-bold text-green-600">{{ $estatusText }}</span>
+            </p>
         @if ($compra->estatus == 1)
         <div>
 <button
@@ -29,10 +41,6 @@
             <form method="POST" action="{{ route('compras.surtir', $compra) }}" class="hidden" id="formSurtirCompra">
                 @csrf
             </form>
-        @else
-            <a class="px-6 py-2 bg-indigo-600  text-white rounded">
-                COMPRA SURTIDA
-            </a>
         @endif
 
     </div>

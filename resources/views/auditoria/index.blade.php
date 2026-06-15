@@ -175,7 +175,7 @@
                 </div>
             @else
                 <div class="bg-white py-4 mt-3">
-                    <p class="text-sm text-gray-600 ml-6 text-center"> No hay almacenes registrados</p>
+                    <p class="text-sm text-gray-600 ml-6 text-center"> No hay registros</p>
                 </div>
             @endif
             @if ($audits->count() > 0)

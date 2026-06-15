@@ -248,7 +248,7 @@ public function update(Request $request, $traspaso)
                 );
             }
 
-            $traspaso->update(['estatus' => 2]);
+            $traspaso->update(['estatus' => 4]);
         });
     } catch (\Exception $e) {
         return back()->with('error', $e->getMessage());

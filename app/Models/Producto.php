@@ -68,6 +68,7 @@ class Producto extends TenantModel implements Auditable
     return $this->hasMany(Compras_detalle::class, 'producto_id');
 }
 
+
 public function traspasosDetalles()
 {
     return $this->hasMany(TraspasoDetalle::class, 'producto_id');
@@ -77,4 +78,9 @@ public function documentosDetalles()
 {
     return $this->hasMany(DocumentosDetalle::class, 'producto_id');
 }
+public function AjustesDetalles()
+{
+    return $this->hasMany(AjustesAlmacenDetalles::class, 'producto_id');
+}
+
 }

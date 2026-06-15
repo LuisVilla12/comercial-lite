@@ -1,7 +1,7 @@
 @section('title', content: 'Detalles de ajuste')
 
 <x-app-layout>
-     <x-slot name="header">
+    <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
             Detalles sobre ajuste de inventario
         </h2>
@@ -18,37 +18,47 @@
             class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-4 mt-4">{{ session('error') }}
         </p>
     @endif
-
-    <div class="display flex justify-between mt-6">
-        <h1 class="block text-lg font-medium mb-2 dark:text-white">
-            Ajuste de @if ($ajuste->tipo == 1)
-                Entradas
-            @else
-                Salidas
-            @endif #{{ $ajuste->id }}
-        </h1>
-        <div class="flex gap-5">
-<a href="{{ route('ajustes-almacen.pdf', $ajuste) }}" target="_blank"
+    <h1 class="block text-lg font-medium mb-2 dark:text-white mt-4">
+        @if ($ajuste->tipo == 1)
+            Entradas de almacen
+        @else
+            Salidas de almacen
+        @endif #{{ $ajuste->id }}
+    </h1>
+    <div class="display  mt-6">
+        <div class="flex flex justify-between gap-5">
+            <p class="dark:text-white">Estado: @php
+                $estatusText = match ($ajuste->estatus) {
+                    1 => 'ACTIVO',
+                    2 => 'TRANSFORMADA',
+                    3 => 'CANCELADA',
+                    4 => 'SURTIDO',
+                    5 => 'DEVOLUCIÓN APLICADA',
+                    default => 'DESCONOCIDO',
+                };
+            @endphp
+                <span class="font-bold text-green-600">{{ $estatusText }}</span>
+            </p>
+            <div>
+                <a href="{{ route('ajustes-almacen.pdf', $ajuste) }}" target="_blank"
                     class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
                     <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
                 </a>
-        @if ($ajuste->estatus == 1)
-            <div>
-                <button onclick="surtirAjuste()"
-                    class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full mb-4 md:mb-0 ">
-                    <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
-                    Surtir
-                </button>
+                @if ($ajuste->estatus == 1)
+                    <div>
+                        <button onclick="surtirAjuste()"
+                            class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full mb-4 md:mb-0 ">
+                            <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
+                            Surtir
+                        </button>
+                    </div>
+                    <form method="POST" action="{{ route('ajustes-almacen.surtir', $ajuste) }}" class="hidden"
+                        id="formSurtirAJUSTE">
+                        @csrf
+                    </form>
+                @endif
             </div>
-            <form method="POST" action="{{ route('ajustes-almacen.surtir', $ajuste) }}" class="hidden"
-                id="formSurtirAJUSTE">
-                @csrf
-            </form>
-        @else
-            <a class="px-6 py-2 bg-indigo-600  text-white rounded">
-                DOCUMENTO SURTIDO
-            </a>
-        @endif
+
 
         </div>
 

@@ -14,8 +14,9 @@ class DevolucionController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index(Sucursal $sucursal,Request $request)
+    public function index( $sucursal,Request $request)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
         $documentos = Devolucion::where('serie', $sucursal->serie_devolucion)
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($query) use ($search) {
@@ -55,8 +56,10 @@ class DevolucionController extends Controller
      * Display the specified resource.
      */
 
-     public function show(Sucursal $sucursal, Devolucion $documento)
+     public function show( $sucursal,  $documento)
     {
+        $sucursal = Sucursal::findOrFail($sucursal);
+        $documento = Devolucion::findOrFail($documento);
         $usos_cfdi = UsoCfdi::all();
         $documento->load([
             'cliente',

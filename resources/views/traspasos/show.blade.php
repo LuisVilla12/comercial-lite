@@ -41,10 +41,10 @@
         <div class="flex justify-between gap-4">
             <p class="dark:text-white">Estado: @php
                 $estatusText = match ($traspaso->estatus) {
-                    1 => 'ACTIVA',
+                    1 => 'ACTIVO',
                     2 => 'TRANSFORMADA',
                     3 => 'CANCELADA',
-                    4 => 'SURTIDA',
+                    4 => 'SURTIDO',
                     5 => 'DEVOLUCIÓN APLICADA',
                     default => 'DESCONOCIDO',
                 };

@@ -133,7 +133,7 @@
                                             </td>
 
                                             <td class="p-2 text-center">
-                                                <input type="number" :name="`productos[${index}][costo]`"
+                                                <input type="number" readonly :name="`productos[${index}][costo]`"
                                                     @input="calcular" x-model.number="item.costo"
                                                     class="border rounded p-1 w-24 text-center bg-gray-100">
                                             </td>

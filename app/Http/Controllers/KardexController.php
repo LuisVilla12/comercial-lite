@@ -10,7 +10,7 @@ class KardexController extends Controller
 {
     //
     public function index(){
-    $productos = Producto::where('id', '>', 11130)->get();
+    $productos = Producto::where('codigo_producto', '=', 'CE101045LH**')->get();
     $almacenes = Almacen::all();
         return view('kardex.index',['productos' => $productos,'almacenes' => $almacenes]);
     }
@@ -19,7 +19,7 @@ public function global(Request $request)
 {
     $request->validate([
         'producto_id'   => 'required|integer',
-        'movimiento_id' => 'required|in:1,2,3,4',
+        'movimiento_id' => 'required|in:1,2,3,4,5',
         'fecha_inicio'  => 'required|date',
         'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
     ]);
@@ -38,6 +38,7 @@ public function global(Request $request)
             );
             break;
 
+
         // Traspasos
         case '2':
             $detalles = $this->obtenerTraspasosGlobal(
@@ -55,9 +56,15 @@ public function global(Request $request)
                 $request->fecha_fin
             );
             break;
-
-        // Kardex global
         case '4':
+            $detalles = $this->obtenerAjusteInventarioGlobal(
+                $producto,
+                $request->fecha_inicio,
+                $request->fecha_fin
+            );
+            break;
+        // Kardex global
+        case '5':
 
             $detalles = collect()
                 ->merge(
@@ -69,6 +76,13 @@ public function global(Request $request)
                 )
                 ->merge(
                     $this->obtenerTraspasosGlobal(
+                        $producto,
+                        $request->fecha_inicio,
+                        $request->fecha_fin
+                    )
+                )
+                 ->merge(
+                    $this->obtenerAjusteInventarioGlobal(
                         $producto,
                         $request->fecha_inicio,
                         $request->fecha_fin
@@ -97,6 +111,36 @@ public function global(Request $request)
     ));
 }
 
+private function obtenerAjusteInventarioGlobal($producto, $fechaInicio, $fechaFin)
+{
+    $detalles = collect();
+    $ajustes = $producto->AjustesDetalles()
+        ->whereHas('ajuste', function ($query) use ($fechaInicio, $fechaFin) {
+            $query->whereBetween('fecha', [
+                $fechaInicio,
+                $fechaFin
+            ])
+            ->where('estatus', 4);
+        })
+        ->with('ajuste')
+        ->get();
+    // dd($ajustes);
+    foreach ($ajustes as $detalle) {
+        $detalles->push([
+            'fecha'       => $detalle->ajuste->fecha,
+            'serie'        => $detalle->ajuste->serie,
+            'tipo'        => $detalle->ajuste->tipo=='1'?'Entrada Almacen':'Salida Almacen',
+            'referencia'  => $detalle->ajuste->id,
+            'descripcion' => $detalle->ajuste->almacen->nombre,
+            'id'  => $detalle->ajuste->id,
+            'movimiento'  => null,
+            'entrada'     => $detalle->ajuste->tipo=='1'? $detalle->cantidad:0,
+            'salida'      => $detalle->ajuste->tipo=='2'? $detalle->cantidad:0,
+        ]);
+    }
+
+    return $detalles;
+}
 private function obtenerComprasGlobal($producto, $fechaInicio, $fechaFin)
 {
     $detalles = collect();
@@ -121,7 +165,7 @@ private function obtenerComprasGlobal($producto, $fechaInicio, $fechaFin)
             'serie'        => $detalle->compra->serie,
             'tipo'        => 'Compra',
             'referencia'  => $detalle->compra->folio,
-            'descripcion' => $detalle->compra->proveedor->nombre,
+            'descripcion' => $detalle->compra->proveedor->nombre ."(" . $detalle->compra->almacen->nombre .")",
             'id'  => $detalle->compra->id,
             'movimiento'  => null,
             'entrada'     => $detalle->cantidad,
@@ -193,7 +237,7 @@ private function obtenerDocumentosGlobal($producto, $fechaInicio, $fechaFin)
 
         $detalles->push([
             'fecha'       => $detalle->documento->fecha,
-            'tipo'        => 'Documento',
+            'tipo'        => 'Venta',
             'serie'        => $detalle->documento->serie,
             'sucursal'  => $detalle->documento->sucursal_id,
             'referencia'  => $detalle->documento->folio,
@@ -212,12 +256,12 @@ public function sucursal(Request $request) {
     $request->validate([
         'producto_id'   => 'required|integer',
         'almacen_id' => 'required|integer',
-        'movimiento_id' => 'required|in:1,2,3,4',
+        'movimiento_id' => 'required|in:1,2,3,4,5',
         'fecha_inicio'  => 'required|date',
         'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
     ]);
     // dd($request);
-        
+
     $producto = Producto::findOrFail($request->producto_id);
     $detalles = collect();
 
@@ -251,9 +295,16 @@ public function sucursal(Request $request) {
                 $request->almacen_id,
             );
             break;
-
-        // Kardex global
         case '4':
+            $detalles = $this->obtenerDocumentosSucursal(
+                $producto,
+                $request->fecha_inicio,
+                $request->fecha_fin,
+                $request->almacen_id,
+            );
+            break;
+        // Kardex global
+        case '5':
 
             $detalles = collect()
                 ->merge(
@@ -323,7 +374,7 @@ private function obtenerComprasSucursal($producto, $fechaInicio, $fechaFin, $alm
             'tipo'        => 'Compra',
             'id'       => $detalle->compra->id,
             'referencia'  => $detalle->compra->folio,
-            'descripcion' => $detalle->compra->proveedor->nombre,
+            'descripcion' => $detalle->compra->proveedor->nombre ."(" . $detalle->compra->almacen->nombre .")",
             'movimiento'  => null,
             'entrada'     => $detalle->cantidad,
             'salida'      => 0,

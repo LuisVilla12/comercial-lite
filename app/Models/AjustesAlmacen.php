@@ -31,3 +31,4 @@ class AjustesAlmacen extends TenantModel
         return $this->belongsTo(Almacen::class, 'almacen_id');
     }
 }
+

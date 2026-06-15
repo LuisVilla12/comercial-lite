@@ -11,7 +11,7 @@
         {{-- Buscador --}}
         <form method="GET" action="{{ route('cotizacion.index') }}" class="w-full md:w-1/3">
             <div class="relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar compra..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar documento..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
                 <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"

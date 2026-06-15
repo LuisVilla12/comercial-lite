@@ -25,7 +25,7 @@
                         @forelse ($productos as $producto)
                             <option value="{{$producto->id}}" >{{$producto->nombre_producto}}</option>
                         @empty
-                            
+
                         @endforelse
                     </select>
                 </div>
@@ -40,7 +40,8 @@
                         <option value="1" >Compras</option>
                         <option value="2" >Traslados</option>
                         <option value="3" >Remisiones/Facturas</option>
-                        <option value="4" >Todos los movimientos</option>
+                        <option value="4" >Ajustes de inventario</option>
+                        <option value="5" >Todos los movimientos</option>
                     </select>
                 </div>
                 {{-- Fecha inicio --}}
@@ -92,7 +93,7 @@
                         @forelse ($productos as $producto)
                             <option value="{{$producto->id}}" >{{$producto->nombre_producto}}</option>
                         @empty
-                            
+
                         @endforelse
                     </select>
                 </div>

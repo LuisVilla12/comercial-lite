@@ -85,7 +85,7 @@ class AjustesAlmacenController extends Controller
             DB::rollBack();
             throw $e;
         }
-        return redirect()->route('ajustes-almacen.show', $ajuste)->with('success', 'Ajusto de almacén creado exitosamente.');
+        return redirect()->route('ajustes-almacen.show', $ajuste)->with('success', 'Ajuste de almacén creado exitosamente.');
     }
 
     /**

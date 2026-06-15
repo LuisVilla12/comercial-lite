@@ -16,7 +16,7 @@ class AjustesAlmacenDetalles extends TenantModel
 
     public function ajuste()
     {
-        return $this->belongsTo(AjustesAlmacen::class);
+        return $this->belongsTo(AjustesAlmacen::class,'ajustes_almacen_id');
     }
       public function producto()
     {

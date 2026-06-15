@@ -3,7 +3,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Catálogo de @if ($tipo == 1)
+            Listado de @if ($tipo == 1)
                 Entradas
             @else
                 Salidas
@@ -13,12 +13,12 @@
 
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
-        <form method="GET" action="{{ route('compras.index') }}"
+        <form method="GET" action="{{ route('ajustes-almacen.index',$tipo) }}"
             class="w-full flex flex-col md:flex-row md:items-center gap-3">
 
             {{-- Buscador --}}
             <div class="relative w-full md:w-1/2">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar compra..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar ajuste de inventario..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
                 <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -27,7 +27,7 @@
                         d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
                 </svg>
                 @if (request('search'))
-                    <a href="{{ route('compras.index') }}"
+                    <a href="{{ route('ajustes-almacen.index',$tipo) }}"
                         class="inline-block mt-1 text-sm text-gray-500 hover:text-indigo-600">
                         Limpiar búsqueda
                     </a>

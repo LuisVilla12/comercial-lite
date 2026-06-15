@@ -102,22 +102,30 @@
                                     </td>
 
                                     <td class="border px-3 py-2 text-center flex items-center justify-center">
-                                        {{  $movimiento['serie'] . "-". $movimiento['referencia'] }}
+                                        {{  $movimiento['serie'] . " ". $movimiento['referencia'] }}
                                         @if ($movimiento['tipo']=='Compra')
-                                            <a href="{{route('compras.show',$movimiento['id'])}}"> 
+                                            <a href="{{route('compras.show',$movimiento['id'])}}">
                                                 <x-heroicon-o-document class="w-4 h-4" />
                                             </a>
                                         @elseif ($movimiento['tipo']=='Traspaso')
-                                            <a href="{{route('traspasos.show',$movimiento['id'])}}"> 
+                                            <a href="{{route('traspasos.show',$movimiento['id'])}}">
                                                 <x-heroicon-o-document class="w-4 h-4" />
                                             </a>
-                                        @elseif ($movimiento['tipo']=='Documento')
+                                        @elseif ($movimiento['tipo']=='Entrada Almacen')
+                                            <a href="{{route('ajustes-almacen.show',$movimiento['id'])}}">
+                                                <x-heroicon-o-document class="w-4 h-4" />
+                                            </a>
+                                        @elseif ($movimiento['tipo']=='Salida Almacen')
+                                            <a href="{{route('ajustes-almacen.show',$movimiento['id'])}}">
+                                                <x-heroicon-o-document class="w-4 h-4" />
+                                            </a>
+                                        @elseif ($movimiento['tipo']=='Venta')
                                             <a href="{{ route('documentos.show', ['sucursal' => $movimiento['sucursal'], 'documento' => $movimiento['id']]) }}"
                                         class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                                 <x-heroicon-o-document class="w-4 h-4" />
                                     </a>
                                         @endif
-                                        
+
                                     </td>
 
                                     <td class="border px-3 py-2">
