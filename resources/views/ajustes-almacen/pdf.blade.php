@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <title>
         {{ match ($ajuste->tipo) {
-            1 => 'Cotización',
-            2 => 'Factura',
+            1 => 'ENTRADA',
+            2 => 'SALIDA',
         } }}
         {{ $ajuste->id }}</title>
 

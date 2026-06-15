@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Almacen;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use Illuminate\Http\Request;
 
@@ -15,6 +16,131 @@ class KardexController extends Controller
         return view('kardex.index',['productos' => $productos,'almacenes' => $almacenes]);
     }
 
+public function pdf(Request $request)
+{
+    $producto = Producto::findOrFail($request->producto_id);
+    if($request->almacen_id){
+    $detalles = $this->generarKardexSucursal(
+        $producto,
+        $request->movimiento_id,
+        $request->fecha_inicio,
+        $request->fecha_fin,
+        $request->almacen_id
+    );
+    }else{
+    $detalles = $this->generarKardexGlobal(
+        $producto,
+        $request->movimiento_id,
+        $request->fecha_inicio,
+        $request->fecha_fin
+    );
+    }
+    $tipo = 'Global';
+
+    $pdf = Pdf::loadView(
+        'kardex.pdf',
+        compact('producto', 'detalles', 'tipo')
+    );
+
+    return $pdf->stream('kardex.pdf');
+}
+
+// public function global(Request $request)
+// {
+//     $request->validate([
+//         'producto_id'   => 'required|integer',
+//         'movimiento_id' => 'required|in:1,2,3,4,5',
+//         'fecha_inicio'  => 'required|date',
+//         'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
+//     ]);
+
+//     $producto = Producto::findOrFail($request->producto_id);
+
+//     $detalles = collect();
+
+//     switch ($request->movimiento_id) {
+//         // Compras
+//         case '1':
+//             $detalles = $this->obtenerComprasGlobal(
+//                 $producto,
+//                 $request->fecha_inicio,
+//                 $request->fecha_fin
+//             );
+//             break;
+
+
+//         // Traspasos
+//         case '2':
+//             $detalles = $this->obtenerTraspasosGlobal(
+//                 $producto,
+//                 $request->fecha_inicio,
+//                 $request->fecha_fin
+//             );
+//             break;
+
+//         // Documentos (ventas)
+//         case '3':
+//             $detalles = $this->obtenerDocumentosGlobal(
+//                 $producto,
+//                 $request->fecha_inicio,
+//                 $request->fecha_fin
+//             );
+//             break;
+//         case '4':
+//             $detalles = $this->obtenerAjusteInventarioGlobal(
+//                 $producto,
+//                 $request->fecha_inicio,
+//                 $request->fecha_fin
+//             );
+//             break;
+//         // Kardex global
+//         case '5':
+
+//             $detalles = collect()
+//                 ->merge(
+//                     $this->obtenerComprasGlobal(
+//                         $producto,
+//                         $request->fecha_inicio,
+//                         $request->fecha_fin
+//                     )
+//                 )
+//                 ->merge(
+//                     $this->obtenerTraspasosGlobal(
+//                         $producto,
+//                         $request->fecha_inicio,
+//                         $request->fecha_fin
+//                     )
+//                 )
+//                  ->merge(
+//                     $this->obtenerAjusteInventarioGlobal(
+//                         $producto,
+//                         $request->fecha_inicio,
+//                         $request->fecha_fin
+//                     )
+//                 )
+//                 ->merge(
+//                     $this->obtenerDocumentosGlobal(
+//                         $producto,
+//                         $request->fecha_inicio,
+//                         $request->fecha_fin
+//                     )
+//                 );
+
+//             break;
+//     }
+
+//     $detalles = $detalles
+//         ->sortBy('fecha')
+//         ->values();
+//     $tipo='Global';
+
+//     return view('kardex.show', compact(
+//         'producto',
+//         'detalles',
+//         'tipo'
+//     ));
+// }
+
 public function global(Request $request)
 {
     $request->validate([
@@ -26,83 +152,14 @@ public function global(Request $request)
 
     $producto = Producto::findOrFail($request->producto_id);
 
-    $detalles = collect();
+    $detalles = $this->generarKardexGlobal(
+        $producto,
+        $request->movimiento_id,
+        $request->fecha_inicio,
+        $request->fecha_fin
+    );
 
-    switch ($request->movimiento_id) {
-        // Compras
-        case '1':
-            $detalles = $this->obtenerComprasGlobal(
-                $producto,
-                $request->fecha_inicio,
-                $request->fecha_fin
-            );
-            break;
-
-
-        // Traspasos
-        case '2':
-            $detalles = $this->obtenerTraspasosGlobal(
-                $producto,
-                $request->fecha_inicio,
-                $request->fecha_fin
-            );
-            break;
-
-        // Documentos (ventas)
-        case '3':
-            $detalles = $this->obtenerDocumentosGlobal(
-                $producto,
-                $request->fecha_inicio,
-                $request->fecha_fin
-            );
-            break;
-        case '4':
-            $detalles = $this->obtenerAjusteInventarioGlobal(
-                $producto,
-                $request->fecha_inicio,
-                $request->fecha_fin
-            );
-            break;
-        // Kardex global
-        case '5':
-
-            $detalles = collect()
-                ->merge(
-                    $this->obtenerComprasGlobal(
-                        $producto,
-                        $request->fecha_inicio,
-                        $request->fecha_fin
-                    )
-                )
-                ->merge(
-                    $this->obtenerTraspasosGlobal(
-                        $producto,
-                        $request->fecha_inicio,
-                        $request->fecha_fin
-                    )
-                )
-                 ->merge(
-                    $this->obtenerAjusteInventarioGlobal(
-                        $producto,
-                        $request->fecha_inicio,
-                        $request->fecha_fin
-                    )
-                )
-                ->merge(
-                    $this->obtenerDocumentosGlobal(
-                        $producto,
-                        $request->fecha_inicio,
-                        $request->fecha_fin
-                    )
-                );
-
-            break;
-    }
-
-    $detalles = $detalles
-        ->sortBy('fecha')
-        ->values();
-    $tipo='Global';
+    $tipo = 'Global';
 
     return view('kardex.show', compact(
         'producto',
@@ -111,6 +168,113 @@ public function global(Request $request)
     ));
 }
 
+public function sucursal(Request $request)
+{
+    // dd($request);
+    $request->validate([
+        'producto_id'   => 'required|integer',
+        'almacen_id' => 'required|integer',
+        'movimiento_id' => 'required|in:1,2,3,4,5',
+        'fecha_inicio'  => 'required|date',
+        'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
+    ]);
+    $producto = Producto::findOrFail($request->producto_id);
+
+    $detalles = $this->generarKardexSucursal(
+        $producto,
+        $request->movimiento_id,
+        $request->fecha_inicio,
+        $request->fecha_fin,
+        $request->almacen_id,
+    );
+
+    $tipo = 'Sucursal';
+
+    return view('kardex.show', compact(
+        'producto',
+        'detalles',
+        'tipo'
+    ));
+}
+
+private function generarKardexGlobal(
+    Producto $producto,
+    $movimientoId,
+    $fechaInicio,
+    $fechaFin
+) {
+    $detalles = collect();
+
+    switch ($movimientoId) {
+        case '1':
+            $detalles = $this->obtenerComprasGlobal($producto, $fechaInicio, $fechaFin);
+            break;
+
+        case '2':
+            $detalles = $this->obtenerTraspasosGlobal($producto, $fechaInicio, $fechaFin);
+            break;
+
+        case '3':
+            $detalles = $this->obtenerDocumentosGlobal($producto, $fechaInicio, $fechaFin);
+            break;
+
+        case '4':
+            $detalles = $this->obtenerAjusteInventarioGlobal($producto, $fechaInicio, $fechaFin);
+            break;
+
+        case '5':
+            $detalles = collect()
+                ->merge($this->obtenerComprasGlobal($producto, $fechaInicio, $fechaFin))
+                ->merge($this->obtenerTraspasosGlobal($producto, $fechaInicio, $fechaFin))
+                ->merge($this->obtenerAjusteInventarioGlobal($producto, $fechaInicio, $fechaFin))
+                ->merge($this->obtenerDocumentosGlobal($producto, $fechaInicio, $fechaFin));
+            break;
+    }
+
+    return $detalles
+        ->sortBy('fecha')
+        ->values();
+}
+
+private function generarKardexSucursal(
+    Producto $producto,
+    $movimientoId,
+    $fechaInicio,
+    $fechaFin,
+    $almacen_id,
+) {
+    $detalles = collect();
+
+    switch ($movimientoId) {
+        case '1':
+            $detalles = $this->obtenerComprasSucursal($producto, $fechaInicio, $fechaFin,$almacen_id);
+            break;
+
+        case '2':
+            $detalles = $this->obtenerTraspasosSucursal($producto, $fechaInicio, $fechaFin,$almacen_id);
+            break;
+
+        case '3':
+            $detalles = $this->obtenerDocumentosSucursal($producto, $fechaInicio, $fechaFin,$almacen_id);
+            break;
+
+        case '4':
+            $detalles = $this->obtenerAjusteInventarioSucursal($producto, $fechaInicio, $fechaFin,$almacen_id);
+            break;
+
+        case '5':
+            $detalles = collect()
+                ->merge($this->obtenerComprasSucursal($producto, $fechaInicio, $fechaFin,$almacen_id))
+                ->merge($this->obtenerTraspasosSucursal($producto, $fechaInicio, $fechaFin,$almacen_id))
+                ->merge($this->obtenerDocumentosSucursal($producto, $fechaInicio, $fechaFin,$almacen_id))
+                ->merge($this->obtenerAjusteInventarioSucursal($producto, $fechaInicio, $fechaFin,$almacen_id));
+            break;
+    }
+
+    return $detalles
+        ->sortBy('fecha')
+        ->values();
+}
 private function obtenerAjusteInventarioGlobal($producto, $fechaInicio, $fechaFin)
 {
     $detalles = collect();
@@ -252,101 +416,101 @@ private function obtenerDocumentosGlobal($producto, $fechaInicio, $fechaFin)
     return $detalles;
 }
 
-public function sucursal(Request $request) {
-    $request->validate([
-        'producto_id'   => 'required|integer',
-        'almacen_id' => 'required|integer',
-        'movimiento_id' => 'required|in:1,2,3,4,5',
-        'fecha_inicio'  => 'required|date',
-        'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
-    ]);
-    // dd($request);
+// public function sucursal(Request $request) {
+//     $request->validate([
+//         'producto_id'   => 'required|integer',
+//         'almacen_id' => 'required|integer',
+//         'movimiento_id' => 'required|in:1,2,3,4,5',
+//         'fecha_inicio'  => 'required|date',
+//         'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
+//     ]);
+//     // dd($request);
 
-    $producto = Producto::findOrFail($request->producto_id);
-    $detalles = collect();
+//     $producto = Producto::findOrFail($request->producto_id);
+//     $detalles = collect();
 
-    switch ($request->movimiento_id) {
-        // Compras
-        case '1':
-            $detalles = $this->obtenerComprasSucursal(
-                $producto,
-                $request->fecha_inicio,
-                $request->fecha_fin,
-                $request->almacen_id,
-            );
-            break;
+//     switch ($request->movimiento_id) {
+//         // Compras
+//         case '1':
+//             $detalles = $this->obtenerComprasSucursal(
+//                 $producto,
+//                 $request->fecha_inicio,
+//                 $request->fecha_fin,
+//                 $request->almacen_id,
+//             );
+//             break;
 
-        // Traspasos
-        case '2':
-            $detalles = $this->obtenerTraspasosSucursal(
-                $producto,
-                $request->fecha_inicio,
-                $request->fecha_fin,
-                $request->almacen_id,
-            );
-            break;
+//         // Traspasos
+//         case '2':
+//             $detalles = $this->obtenerTraspasosSucursal(
+//                 $producto,
+//                 $request->fecha_inicio,
+//                 $request->fecha_fin,
+//                 $request->almacen_id,
+//             );
+//             break;
 
-        // Documentos (ventas)
-        case '3':
-            $detalles = $this->obtenerDocumentosSucursal(
-                $producto,
-                $request->fecha_inicio,
-                $request->fecha_fin,
-                $request->almacen_id,
-            );
-            break;
-        case '4':
-            $detalles = $this->obtenerAjusteInventarioSucursal(
-                $producto,
-                $request->fecha_inicio,
-                $request->fecha_fin,
-                $request->almacen_id,
-            );
-            break;
-        // Kardex global
-        case '5':
+//         // Documentos (ventas)
+//         case '3':
+//             $detalles = $this->obtenerDocumentosSucursal(
+//                 $producto,
+//                 $request->fecha_inicio,
+//                 $request->fecha_fin,
+//                 $request->almacen_id,
+//             );
+//             break;
+//         case '4':
+//             $detalles = $this->obtenerAjusteInventarioSucursal(
+//                 $producto,
+//                 $request->fecha_inicio,
+//                 $request->fecha_fin,
+//                 $request->almacen_id,
+//             );
+//             break;
+//         // Kardex global
+//         case '5':
 
-            $detalles = collect()
-                ->merge(
-                    $this->obtenerComprasSucursal(
-                        $producto,
-                        $request->fecha_inicio,
-                        $request->fecha_fin,
-                        $request->almacen_id,
-                    )
-                )
-                ->merge(
-                    $this->obtenerTraspasosSucursal(
-                        $producto,
-                        $request->fecha_inicio,
-                        $request->fecha_fin,
-                        $request->almacen_id,
-                    )
-                )
-                ->merge(
-                    $this->obtenerDocumentosSucursal(
-                        $producto,
-                        $request->fecha_inicio,
-                        $request->fecha_fin,
-                        $request->almacen_id,
-                    )
-                );
+//             $detalles = collect()
+//                 ->merge(
+//                     $this->obtenerComprasSucursal(
+//                         $producto,
+//                         $request->fecha_inicio,
+//                         $request->fecha_fin,
+//                         $request->almacen_id,
+//                     )
+//                 )
+//                 ->merge(
+//                     $this->obtenerTraspasosSucursal(
+//                         $producto,
+//                         $request->fecha_inicio,
+//                         $request->fecha_fin,
+//                         $request->almacen_id,
+//                     )
+//                 )
+//                 ->merge(
+//                     $this->obtenerDocumentosSucursal(
+//                         $producto,
+//                         $request->fecha_inicio,
+//                         $request->fecha_fin,
+//                         $request->almacen_id,
+//                     )
+//                 );
 
-            break;
-    }
+//             break;
+//     }
 
-    $detalles = $detalles
-        ->sortBy('fecha')
-        ->values();
-    $tipo='Sucursal';
+//     $detalles = $detalles
+//         ->sortBy('fecha')
+//         ->values();
+//     $tipo='Sucursal';
 
-    return view('kardex.show', compact(
-        'producto',
-        'detalles',
-        'tipo'
-    ));
+//     return view('kardex.show', compact(
+//         'producto',
+//         'detalles',
+//         'tipo'
+//     ));
 
-}
+// }
 private function obtenerComprasSucursal($producto, $fechaInicio, $fechaFin, $almacen_id)
 {
     $detalles = collect();
@@ -460,7 +624,7 @@ private function obtenerDocumentosSucursal($producto, $fechaInicio, $fechaFin,$a
             'fecha'       => $detalle->documento->fecha,
             'serie'        => $detalle->documento->serie,
             'id'       => $detalle->documento->id,
-            'tipo'        => 'Documento',
+            'tipo'        => 'Venta',
             'referencia'  => $detalle->documento->folio,
             'descripcion' => $detalle->documento->cliente->nombre ?? '',
             'sucursal'  => $detalle->documento->sucursal_id,

@@ -1,58 +1,85 @@
-<x-app-layout>
+<!DOCTYPE html>
+<html lang="es">
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+<head>
+    <meta charset="UTF-8">
+    <title> KARDEX</title>
 
-            <div class="bg-white shadow rounded-lg">
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 11px;
+            line-height: 1.3;
+        }
 
-                {{-- Encabezado --}}
-                <div class="px-6 py-4 border-b">
-                    <h2 class="text-2xl font-bold">
-                        Kardex del Producto ({{ $tipo }})
-                    </h2>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-                    <div class="mt-2 text-sm text-gray-700">
-                        <strong>Nombre del producto:</strong>
-                        {{ $producto->nombre_producto . ' (' . $producto->codigo_producto . ')' }}
-                    </div>
-                    <div class="mt-2 text-sm text-gray-700">
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 4px;
+        }
+
+        .no-border td {
+            border: none;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .small {
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <br>
+
+    {{-- ================= DATOS EMPRESA ================= --}}
+    <table class="no-border">
+        <tr>
+            <td width="40%">
+                {{-- Fecha: {{ \Carbon\Carbon::parse($ajuste->fecha)->format('d/m/Y') }}<br> --}}
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    {{-- ================= CLIENTE ================= --}}
+    <table>
+        <tr>
+            <td class="bold">Producto: {{ $producto->nombre_producto  }}</td>
+            <td class="bold">Producto: {{ $producto->codigo_producto  }}</td>
+         </tr>
+        <tr>
+            <td class="mt-2 text-sm text-gray-700">
                         <strong>Fecha de inicio:</strong>
-                        {{ request('fecha_inicio') }}
-                    </div>
-                    <div class="mt-2 text-sm text-gray-700">
+                        {{ request('fecha_inicio')}}
+                    </td>
+                    <td class="mt-2 text-sm text-gray-700">
                         <strong>Fecha de fin:</strong>
-                        {{ request('fecha_fin') }}
-                    </div>
-                    <div class="mt-1 text-sm text-gray-700">
-                        <strong>Total de movimientos:</strong>
-                        {{ $detalles->count() }}
-                    </div>
-                </div>
-                <div class="flex justify-end gap-6">
-                    @if ($tipo =='Sucursal')
-                    <a href="{{ route('kardex.pdf', [
-                            'producto_id' => $producto->id,
-                            'movimiento_id' => request('movimiento_id'),
-                            'fecha_inicio' => request('fecha_inicio'),
-                            'fecha_fin' => request('fecha_fin'),
-                            'almacen_id' => request('almacen_id'),
-                        ]) }}"
-                            target="_blank" class="px-4 py-2 bg-red-600 text-white rounded flex items-center mt-4 mr-6">
-                            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
-                        </a>
-                    @elseif ($tipo =='Global')
-                    <a href="{{ route('kardex.pdf', [
-                            'producto_id' => $producto->id,
-                            'movimiento_id' => request('movimiento_id'),
-                            'fecha_inicio' => request('fecha_inicio'),
-                            'fecha_fin' => request('fecha_fin'),
-                        ]) }}"
-                            target="_blank" class="px-4 py-2 bg-red-600 text-white rounded flex items-center mt-4 mr-6">
-                            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
-                        </a>
-                    @endif
+                        {{ request('fecha_fin')}}
+                    </td>
+        </tr>
+    </table>
 
-                </div>
+    <br>
+
+    {{-- ================= PRODUCTOS ================= --}}
 
                 <div class="p-6 overflow-x-auto">
 
@@ -114,6 +141,7 @@
                             </tr>
 
                             @forelse($detalles as $movimiento)
+
                                 @php
                                     $saldo += $movimiento['entrada'];
                                     $saldo -= $movimiento['salida'];
@@ -133,28 +161,23 @@
                                     </td>
 
                                     <td class="border px-3 py-2 text-center flex items-center justify-center">
-                                        {{ $movimiento['serie'] . ' ' . $movimiento['referencia'] }}
-                                        @if ($movimiento['tipo'] == 'Compra')
-                                            <a href="{{ route('compras.show', $movimiento['id']) }}">
-                                                <x-heroicon-o-document class="w-4 h-4" />
+                                        {{  $movimiento['serie'] . " ". $movimiento['referencia'] }}
+                                        @if ($movimiento['tipo']=='Compra')
+                                            <a href="{{route('compras.show',$movimiento['id'])}}">
                                             </a>
-                                        @elseif ($movimiento['tipo'] == 'Traspaso')
-                                            <a href="{{ route('traspasos.show', $movimiento['id']) }}">
-                                                <x-heroicon-o-document class="w-4 h-4" />
+                                        @elseif ($movimiento['tipo']=='Traspaso')
+                                            <a href="{{route('traspasos.show',$movimiento['id'])}}">
                                             </a>
-                                        @elseif ($movimiento['tipo'] == 'Entrada Almacen')
-                                            <a href="{{ route('ajustes-almacen.show', $movimiento['id']) }}">
-                                                <x-heroicon-o-document class="w-4 h-4" />
+                                        @elseif ($movimiento['tipo']=='Entrada Almacen')
+                                            <a href="{{route('ajustes-almacen.show',$movimiento['id'])}}">
                                             </a>
-                                        @elseif ($movimiento['tipo'] == 'Salida Almacen')
-                                            <a href="{{ route('ajustes-almacen.show', $movimiento['id']) }}">
-                                                <x-heroicon-o-document class="w-4 h-4" />
+                                        @elseif ($movimiento['tipo']=='Salida Almacen')
+                                            <a href="{{route('ajustes-almacen.show',$movimiento['id'])}}">
                                             </a>
-                                        @elseif ($movimiento['tipo'] == 'Venta')
+                                        @elseif ($movimiento['tipo']=='Venta')
                                             <a href="{{ route('documentos.show', ['sucursal' => $movimiento['sucursal'], 'documento' => $movimiento['id']]) }}"
-                                                class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
-                                                <x-heroicon-o-document class="w-4 h-4" />
-                                            </a>
+                                        class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
+                                                                                   </a>
                                         @endif
 
                                     </td>
@@ -164,7 +187,7 @@
                                     </td>
 
                                     <td class="border px-3 py-2 text-right">
-                                        @if (!is_null($movimiento['movimiento']))
+                                        @if(!is_null($movimiento['movimiento']))
                                             {{ number_format($movimiento['movimiento'], 2) }}
                                         @else
                                             -
@@ -188,22 +211,26 @@
                             @empty
 
                                 <tr>
-                                    <td colspan="8" class="border px-3 py-4 text-center text-gray-500">
+                                    <td colspan="8"
+                                        class="border px-3 py-4 text-center text-gray-500">
 
                                         No se encontraron movimientos para el período seleccionado.
 
                                     </td>
                                 </tr>
+
                             @endforelse
 
                         </tbody>
 
-                        @if ($detalles->count() > 0)
+                        @if($detalles->count() > 0)
+
                             <tfoot class="bg-gray-100 font-semibold">
 
                                 <tr>
 
-                                    <td colspan="5" class="border px-3 py-2 text-right">
+                                    <td colspan="5"
+                                        class="border px-3 py-2 text-right">
 
                                         Totales
 
@@ -224,19 +251,14 @@
                                 </tr>
 
                             </tfoot>
+
                         @endif
 
                     </table>
 
-                </div>
 
-            </div>
+    <br>
 
-        </div>
-    </div>
-    <div class="flex justify-between items-center gap-3 mt-4">
-        <a href="{{ route('kardex.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
-            Volver
-        </a>
-    </div>
-</x-app-layout>
+</body>
+
+</html>

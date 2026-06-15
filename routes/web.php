@@ -87,6 +87,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/kardex', action: [KardexController::class, 'index'])->name('kardex.index');
     Route::post('/kardex/global', action: [KardexController::class, 'global'])->name('kardex.global');
     Route::post('/kardex/sucursal', action: [KardexController::class, 'sucursal'])->name('kardex.sucursal');
+Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
 
     //SESIONES
     Route::get('/sesiones-activas', action: [SesionesController::class, 'index'])->name('sesiones.index');
