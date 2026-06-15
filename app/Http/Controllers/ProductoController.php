@@ -89,6 +89,8 @@ class ProductoController extends Controller
     public function show($producto)
     {
         $producto=Producto::findOrFail($producto);
+        // $producto = Producto::with('maximominimo')->find($producto);
+
         return view('productos.show', compact('producto'));
     }
 

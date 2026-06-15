@@ -20,8 +20,6 @@
                     class="block text-lg font-medium mb-2 dark:text-white">
                     [1] Movimientos
                 </button>
-
-
             </div>
             <div x-show="tab === 'detalle'">
                 <div class=" mx-auto py-6">
@@ -257,6 +255,7 @@
                     <input type="hidden" name="estatus" :value="1">
                 </div>
             </div>
+
 
             <div class="md:col-span-2 flex justify-between gap-3 mt-4">
 

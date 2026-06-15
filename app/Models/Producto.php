@@ -11,6 +11,7 @@ use  App\Models\Compra;
 use  App\Models\Compras_detalle;
 use  App\Models\TraspasoDetalle;
 use  App\Models\DocumentosDetalle;
+use  App\Models\MaximoMinimo;
 
 
 class Producto extends TenantModel implements Auditable
@@ -47,6 +48,12 @@ class Producto extends TenantModel implements Auditable
 {
     return $this->belongsTo(Clasificacion::class, 'valor_clasificacion1');
 }
+
+    public function maximominimo()
+{
+    return $this->hasMany(MaximoMinimo::class);
+}
+
     public function existencias()
     {
         return $this->hasMany(ExistenciaProducto::class);
@@ -54,9 +61,8 @@ class Producto extends TenantModel implements Auditable
 
     public function compras(){
         return $this->hasMany(Compra::class);
-    }   
+    }
 
-    // RELACION PARA KARDEX
     public function comprasDetalles()
 {
     return $this->hasMany(Compras_detalle::class, 'producto_id');

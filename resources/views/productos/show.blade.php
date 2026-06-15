@@ -7,9 +7,30 @@
         </h2>
     </x-slot>
     <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
-        <div class="grid grid-cols-1 md:grid-cols-3  lg:grid-cols-4 gap-4">
-            {{-- Codigo --}}
+        @if (session('success'))
+        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
+            class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">{{ session('success') }}
+        </p>
+    @endif
+         <div x-data="{ tab: 'detalle' }">
+                <div class="flex gap-4 border-b mt-4">
+                    <button type="button" @click="tab='detalle'"
+                        :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
+                        class="block text-lg font-medium mb-2">
+                        [1] Datos generales
+                    </button>
 
+                    <button type="button" @click="tab='info'"
+                        :class="tab === 'info' ? 'border-b-2 border-blue-500' : ''"
+                        class="block text-lg font-medium mb-2 ">
+                        [2] Datos puntuales
+                    </button>
+                </div>
+        <div  x-show="tab === 'detalle'">
+            <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-3 border-b pb-2">
+            Datos generales del producto
+        </h3>
+<div  class="grid grid-cols-1 md:grid-cols-3  mt-4 lg:grid-cols-4 gap-4">
             <div class="">
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Clave: <span class="text-red-500">*</span>
@@ -145,8 +166,8 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Precio 5:
                 </label>
-                <input type="number" name="precio5" value="{{ $producto->precio5 == '' ? '0' : $producto->precio5 }}"
-                    disabled placeholder="Precio 5"
+                <input type="number" name="precio5"
+                    value="{{ $producto->precio5 == '' ? '0' : $producto->precio5 }}" disabled placeholder="Precio 5"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             </div>
             {{-- Precio Calculado --}}
@@ -185,17 +206,86 @@
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             </div>
             <div class="mb-1 col-span-1 md:col-span-2 lg:col-span-1">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
-                        Exento de impuesto:
-                    </label>
-                    <select name="exento_impuesto" id="exento_impuesto"
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        <option value="" disabled selected>Seleccione</option>
-                        <option value="1" @selected($producto->exento_impuesto == '1')>Si</option>
-                        <option value="0" @selected($producto->exento_impuesto == '0')>No</option>
-                    </select>
-                </div>
+                <label class="block text-md font-medium text-gray-700 mb-1">
+                    Exento de impuesto:
+                </label>
+                <select name="exento_impuesto" id="exento_impuesto"
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    <option value="" disabled selected>Seleccione</option>
+                    <option value="1" @selected($producto->exento_impuesto == '1')>Si</option>
+                    <option value="0" @selected($producto->exento_impuesto == '0')>No</option>
+                </select>
+            </div>
         </div>
+        </div>
+        <div  x-show="tab === 'info'">
+ <div  class="flex justify-between items-center  text-gray-800 mt-6 mb-3 border-b pb-2">
+            <h3 class="text-lg font-semibold">
+                Minimos y Maximos
+            </h3>
+            <a href="{{ route('maxmin.create', $producto) }}"
+            class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-blue-600 hover:bg-blue-600">
+            Definir
+        </a>
+        </div>
+             @if($producto->maximominimo->isNotEmpty())
+<div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                Almacén
+                            </th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                                Mínimo
+                            </th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                                Máximo
+                            </th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($producto->maximominimo as $registro)
+                            <tr class="border-t hover:bg-gray-50">
+                                <td class="px-4 py-3">
+                                    {{ $registro->almacen->nombre }}
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    {{ $registro->minimo }}
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    {{ $registro->maximo }}
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    {{-- Eliminar --}}
+                            <form action="{{ route('maxmin.destroy', ['producto'=>$producto->id,'minimomaximo' => $registro->id]) }}" method="POST"
+                                class="inline">
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit"
+                                    class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                    <x-heroicon-o-trash class="w-4 h-4" />
+                                    <span class="hidden sm:inline">Eliminar</span>
+                                </button>
+                            </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+
+        </div>
+
+
+
+
         {{-- Botones --}}
         <div class="md:col-span-2 flex justify-end gap-3 mt-4">
             <a href="{{ route('productos.index') }}"

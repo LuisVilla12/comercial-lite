@@ -8,6 +8,7 @@ use App\Http\Controllers\DomicilioController;
 use App\Http\Controllers\CodigoPostalController;
 use App\Http\Controllers\ConfiguracionEmpresaController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\MaximoMinimoController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompraController;
@@ -58,7 +59,7 @@ Route::middleware('auth')->group(function () {
 
 // Solo administrador puede entrar
 Route::middleware(['auth', 'admin'])->group(function () {
-    
+
 
     //Usuarios
     Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
@@ -98,9 +99,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/sucursales/{sucursal}/edit', [SucursalController::class, 'edit'])->name('sucursales.edit');
     Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
     Route::get('/sucursales/{sucursal}', action: [SucursalController::class, 'show'])->name('sucursales.show');
-    
+
     Route::get('/sucursales/{sucursal}/conceptos', action: [SucursalController::class, 'conceptos'])->name('sucursales.conceptos');
-    
+
     //Auditorias
     Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
     Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');
@@ -144,6 +145,11 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::put('/productos/{producto}', [ProductoController::class, 'update'])->name('productos.update');
     Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
 
+    //MAXIMOS Y MINIMOS
+    Route::get('/productos/{producto}/maximos-minimos', [MaximoMinimoController::class, 'create'])->name('maxmin.create');
+    Route::post('/productos/maximos-minimos', [MaximoMinimoController::class, 'store'])->name('maxmin.store');
+    Route::delete('/productos/{producto}/maximos-minimos/{minimomaximo}', [MaximoMinimoController::class, 'destroy'])->name('maxmin.destroy');
+
     //Rutas clasificaciones
     Route::get('/clasificaciones', [ClasificacionController::class, 'index'])->name('clasificaciones.index');
     Route::get('/clasificaciones/create', [ClasificacionController::class, 'create'])->name('clasificaciones.create');
@@ -171,7 +177,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::put('/bancos/{banco}', [DatosBancarioController::class, 'update'])->name('bancos.update');
     Route::delete('/bancos/{banco}', [DatosBancarioController::class, 'destroy'])->name('bancos.destroy');
     Route::put('/bancos/{banco}/predeterminado', [DatosBancarioController::class, 'predeterminado'])->name('bancos.predeterminado');
-    
+
     //Compras
     Route::get('/compras', action: [CompraController::class, 'index'])->name('compras.index');
     Route::get('/compras/create', [CompraController::class, 'create'])->name('compras.create');
