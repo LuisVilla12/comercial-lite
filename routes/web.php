@@ -98,7 +98,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/sucursales/{sucursal}/edit', [SucursalController::class, 'edit'])->name('sucursales.edit');
     Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
     Route::get('/sucursales/{sucursal}', action: [SucursalController::class, 'show'])->name('sucursales.show');
-
+    
+    Route::get('/sucursales/{sucursal}/conceptos', action: [SucursalController::class, 'conceptos'])->name('sucursales.conceptos');
+    
     //Auditorias
     Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
     Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');

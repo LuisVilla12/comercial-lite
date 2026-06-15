@@ -22,6 +22,11 @@ class SucursalController extends Controller
         ->withQueryString();
         return view('sucursales.index', ['sucursales'=>$sucursales]);
     }
+     public function conceptos($sucursal)
+    {
+        $sucursal = Sucursal::findOrFail($sucursal);
+        return view('sucursales.dashboard', ['sucursal'=>$sucursal]);
+    }
 
     /**
      * Show the form for creating a new resource.
