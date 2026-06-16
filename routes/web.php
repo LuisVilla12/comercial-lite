@@ -28,6 +28,7 @@ use App\Http\Controllers\AgenteController;
 use App\Http\Controllers\AjustesAlmacenController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\KardexController;
+use App\Http\Controllers\ProductoUbicacionController;
 use App\Mail\TestMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -150,6 +151,8 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
     Route::get('/productos/{producto}/maximos-minimos', [MaximoMinimoController::class, 'create'])->name('maxmin.create');
     Route::post('/productos/maximos-minimos', [MaximoMinimoController::class, 'store'])->name('maxmin.store');
     Route::delete('/productos/{producto}/maximos-minimos/{minimomaximo}', [MaximoMinimoController::class, 'destroy'])->name('maxmin.destroy');
+    //Ubicaciones
+    Route::get('/productos/{producto}/ubicacion', [ProductoUbicacionController::class, 'create'])->name('productoubicacion.create');
 
     //Rutas clasificaciones
     Route::get('/clasificaciones', [ClasificacionController::class, 'index'])->name('clasificaciones.index');

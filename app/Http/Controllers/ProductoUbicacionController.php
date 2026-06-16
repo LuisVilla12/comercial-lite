@@ -1,13 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\MaximoMinimo;
-use App\Models\Almacen;
 use App\Models\Producto;
+use App\Models\Almacen;
+use App\Models\ProductoUbicacion;
 use Illuminate\Http\Request;
 
-class MaximoMinimoController extends Controller
+class ProductoUbicacionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -24,7 +23,7 @@ class MaximoMinimoController extends Controller
     {
         $producto = Producto::findOrFail($producto);
         $almacenes = Almacen::all();
-        return view('maxmin.create', ['almacenes' => $almacenes, 'producto' => $producto]);
+        return view('producto-ubicacion.create', ['almacenes' => $almacenes, 'producto' => $producto]);
     }
 
     /**
@@ -35,11 +34,9 @@ class MaximoMinimoController extends Controller
         $request->validate([
             'almacen_id' => 'required',
             'producto_id' => 'required',
-            'minimo' => 'required',
-            'maximo' => 'required',
         ]);
 
-        $existe = MaximoMinimo::where('almacen_id', $request->almacen_id)
+        $existe = ProductoUbicacion::where('almacen_id', $request->almacen_id)
             ->where('producto_id', $request->producto_id)
             ->exists();
 
@@ -50,20 +47,23 @@ class MaximoMinimoController extends Controller
                 ])
                 ->withInput();
         }
-        MaximoMinimo::create([
+        ProductoUbicacion::create([
             'almacen_id' => $request->almacen_id,
             'producto_id' => $request->producto_id,
-            'minimo' => $request->minimo,
-            'maximo' => $request->maximo,
+            'zona' => $request->zona,
+            'pasillo' => $request->pasillo,
+            'anaquel' => $request->anaquel,
+            'repisa' => $request->repisa,
         ]);
         $producto = Producto::findOrFail($request->producto_id);
         return redirect()->route('productos.show', $producto);
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(MaximoMinimo $maximoMinimo)
+    public function show(ProductoUbicacion $productoUbicacion)
     {
         //
     }
@@ -71,7 +71,7 @@ class MaximoMinimoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MaximoMinimo $maximoMinimo)
+    public function edit(ProductoUbicacion $productoUbicacion)
     {
         //
     }
@@ -79,7 +79,7 @@ class MaximoMinimoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MaximoMinimo $maximoMinimo)
+    public function update(Request $request, ProductoUbicacion $productoUbicacion)
     {
         //
     }
@@ -87,15 +87,8 @@ class MaximoMinimoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($producto,$maximoMinimo)
+    public function destroy(ProductoUbicacion $productoUbicacion)
     {
-    $producto = Producto::findOrFail($producto);
-    $maximoMinimo = MaximoMinimo::findOrFail($maximoMinimo);
-    $maximoMinimo->delete();
-    return redirect()
-        ->route('productos.show',$producto)
-        ->with(
-            'success', 'El registro se ha eliminado correctamente.'
-        );
+        //
     }
 }

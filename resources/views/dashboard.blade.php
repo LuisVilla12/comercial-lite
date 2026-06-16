@@ -172,7 +172,7 @@
         @else
             @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
-                    title="Cotizaciones {{ $sucursal->nombre }}" desc="Generar cotizaciones"
+                    title="Cotizaciones {{ $sucursal->nombre }}" desc=""
                     bg="bg-orange-50 dark:bg-orange-900/20" iconBg="bg-orange-500">
                     <x-slot:icon>
                         <x-heroicon-o-document-currency-dollar class="w-6 h-6" />

@@ -53,6 +53,10 @@ class Producto extends TenantModel implements Auditable
 {
     return $this->hasMany(MaximoMinimo::class);
 }
+public function productoUbicacion()
+{
+    return $this->hasMany(ProductoUbicacion::class);
+}
 
     public function existencias()
     {

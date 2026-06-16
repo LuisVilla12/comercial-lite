@@ -219,7 +219,7 @@
         </div>
         </div>
         <div  x-show="tab === 'info'">
- <div  class="flex justify-between items-center  text-gray-800 mt-6 mb-3 border-b pb-2">
+        <div  class="flex justify-between items-center  text-gray-800 mt-6 mb-3 border-b pb-2">
             <h3 class="text-lg font-semibold">
                 Minimos y Maximos
             </h3>
@@ -228,8 +228,8 @@
             Definir
         </a>
         </div>
-             @if($producto->maximominimo->isNotEmpty())
-<div class="overflow-x-auto">
+        @if($producto->maximominimo->isNotEmpty())
+        <div class="overflow-x-auto">
                 <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
                     <thead class="bg-gray-100">
                         <tr>
@@ -281,6 +281,15 @@
             </div>
         @endif
 
+        <div  class="flex justify-between items-center  text-gray-800 mt-6 mb-3 border-b pb-2">
+            <h3 class="text-lg font-semibold">
+                Ubicaciones
+            </h3>
+            <a href="{{ route('productoubicacion.create', $producto) }}"
+            class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-blue-600 hover:bg-blue-600">
+            Definir
+        </a>
+        </div>
         </div>
 
 
