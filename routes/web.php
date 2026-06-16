@@ -153,7 +153,11 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
     Route::delete('/productos/{producto}/maximos-minimos/{minimomaximo}', [MaximoMinimoController::class, 'destroy'])->name('maxmin.destroy');
     //Ubicaciones
     Route::get('/productos/{producto}/ubicacion', [ProductoUbicacionController::class, 'create'])->name('productoubicacion.create');
-
+    Route::post('/productos/ubicacion', [ProductoUbicacionController::class, 'store'])->name('productoubicacion.store');
+    Route::get('/productos/{producto}/{productoUbicacion}/edit', [ProductoUbicacionController::class, 'edit'])->name('productoubicacion.edit');
+    Route::put('/productos/{productoUbicacion}/update', [ProductoUbicacionController::class, 'update'])->name('productoubicacion.update');
+    Route::delete('/productos/{producto}/ubicacion/{productoUbicacion}', [ProductoUbicacionController::class, 'destroy'])->name('productoubicacion.destroy');
+    
     //Rutas clasificaciones
     Route::get('/clasificaciones', [ClasificacionController::class, 'index'])->name('clasificaciones.index');
     Route::get('/clasificaciones/create', [ClasificacionController::class, 'create'])->name('clasificaciones.create');
@@ -195,7 +199,8 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
     //Existencias
     Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
     Route::get('/inventario/pdf', [ExistenciaProductoController::class, 'pdf'])->name('existencias.pdf');
-
+    //ALERTAS STOCK
+    Route::get('/validacion/inventario', [ExistenciaProductoController::class, 'validacion'])->name('existencias.validacion');
     // TODO:AGREGAR VALIDACION SE SUCURSAL
     // Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
     Route::prefix('sucursales/{sucursal}')->group(function () {

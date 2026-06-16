@@ -279,6 +279,8 @@
                     </tbody>
                 </table>
             </div>
+        @else
+            <p>No hay registrado ningun minimo y maximo</p>
         @endif
 
         <div  class="flex justify-between items-center  text-gray-800 mt-6 mb-3 border-b pb-2">
@@ -290,6 +292,79 @@
             Definir
         </a>
         </div>
+        @if($producto->productoUbicacion->isNotEmpty())
+        <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                Almacén
+                            </th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                                Zona
+                            </th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                                Pasillo
+                            </th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                                Anaquel
+                            </th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                                Repisa
+                            </th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                                
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($producto->productoUbicacion as $registro)
+                            <tr class="border-t hover:bg-gray-50">
+                                <td class="px-4 py-3">
+                                    {{ $registro->almacen->nombre }}
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    {{ $registro->zona }}
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    {{ $registro->pasillo }}
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    {{ $registro->anaquel }}
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    {{ $registro->repisa }}
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                     {{-- Editar --}}
+                                        <a href="{{ route('productoubicacion.edit', ['producto' => $producto,'productoUbicacion' => $registro->id]) }}"
+                                            class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
+                                            <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                            <span class="hidden sm:inline">Editar</span>
+                                        </a>
+                                        <span class="hidden sm:inline text-gray-300">•</span>
+                                    {{-- Eliminar --}}
+                            <form action="{{ route('productoubicacion.destroy', ['producto'=>$producto->id,'productoUbicacion' => $registro->id]) }}" method="POST"
+                                class="inline">
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit"
+                                    class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                    <x-heroicon-o-trash class="w-4 h-4" />
+                                    <span class="hidden sm:inline">Eliminar</span>
+                                </button>
+                            </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <p>No hay registrado ninguna ubicacion</p>
+        @endif
         </div>
 
 

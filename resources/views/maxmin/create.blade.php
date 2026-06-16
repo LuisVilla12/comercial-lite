@@ -1,5 +1,5 @@
 
-@section('title', content: 'Registar datos bancarios')
+@section('title', content: 'Registar minimo y maximo de un producto')
 
 <x-app-layout>
     <x-slot name="header">

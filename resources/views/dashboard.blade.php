@@ -89,8 +89,15 @@
                     <x-heroicon-o-archive-box class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
+            {{-- ALERTAS STOCK --}}
+            <x-dashboard-card href="{{ route('kardex.index') }}" bg="bg-blue-50 dark:bg-blue-900/20"
+                title="Stock" desc="Validacion de minimos y maximos" iconBg="bg-blue-500">
+                <x-slot:icon>
+                    <x-heroicon-o-archive-box class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
         @endif
-        <x-dashboard-card href="{{ route('existencias.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+        <x-dashboard-card href="{{ route('existencias.validacion') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Existencias" desc="Existencias de productos" iconBg="bg-emerald-500">
             <x-slot:icon>
                 <x-heroicon-o-archive-box class="w-6 h-6" />
@@ -125,7 +132,7 @@
         @if (auth()->user()->tipo == 1 )
             @forelse ($sucursales as $sucursal)
                  <x-dashboard-card href="{{route('sucursales.conceptos',$sucursal )}}"
-                    title="{{ $sucursal->nombre }}" desc="Generar cotizaciones"
+                    title="{{ $sucursal->nombre }}" desc=""
                     bg="bg-orange-50 dark:bg-orange-900/20" iconBg="bg-blue-500">
                     <x-slot:icon>
                         <x-heroicon-o-building-storefront class="w-6 h-6" />

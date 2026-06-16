@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProductoUbicacion extends Model
+class ProductoUbicacion extends TenantModel
 {
     //
     protected $fillable = [

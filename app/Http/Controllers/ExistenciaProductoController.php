@@ -31,6 +31,25 @@ class ExistenciaProductoController extends Controller
     return view('existencias.index', compact('existencias', 'almacenes'));
 }
 
+ public function validacion(Request $request)
+{
+    $existencias = ExistenciaProducto::with(['producto', 'almacen'])
+        ->when($request->search, function ($q) use ($request) {
+            $q->whereHas('producto', function ($p) use ($request) {
+                $p->where('nombre_producto', 'like', '%' . $request->search . '%')
+                  ->orWhere('codigo_producto', 'like', '%' . $request->search . '%');
+            });
+        })
+        ->when($request->almacen_id, function ($q) use ($request) {
+            $q->where('almacen_id', $request->almacen_id);
+        })
+        ->paginate(10)
+        ->withQueryString(); // mantiene search + almacen
+
+    $almacenes = Almacen::orderBy('nombre')->get();
+    return view('existencias.validacion', compact('existencias', 'almacenes'));
+}
+
  public function pdf(Request $request)
 {
     // SIN LIMITE DE TIEMPO
