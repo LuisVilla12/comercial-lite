@@ -220,6 +220,13 @@
                     <x-heroicon-o-building-storefront class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
+            <x-dashboard-card href="{{ route('configuracion-empresa.dashboard') }}" bg="bg-teal-50 dark:bg-teal-900/20"
+                title="Dashboard General " desc="" iconBg="bg-teal-500">
+                <x-slot:icon>
+                    <x-heroicon-o-building-storefront class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+
         @endif
     </div>
 </x-app-layout>

@@ -84,6 +84,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/configuracion-empresa/edit', action: [ConfiguracionEmpresaController::class, 'edit'])->name('configuracion-empresa.edit');
     Route::put('/configuracion-empresa/{empresa}/edit', [ConfiguracionEmpresaController::class, 'update'])->name('configuracion-empresa.update');
 
+    Route::get('/empresa/dashboard', action: [ConfiguracionEmpresaController::class, 'dashboard'])->name('configuracion-empresa.dashboard');
+
+
     // KARDEX MENU
     Route::get('/kardex', action: [KardexController::class, 'index'])->name('kardex.index');
     Route::get('/kardex/global', action: [KardexController::class, 'indexGlobal'])->name('kardexGlobal.index');
