@@ -94,8 +94,9 @@ class DomicilioController extends Controller
      * Show the form for editing the specified resource.
      */
 
-    public function edit(string $modeloTipo, Domicilio $domicilio)
+    public function edit(string $modeloTipo,  $domicilio)
     {
+        $domicilio =Domicilio::findOrFail($domicilio);
         $model = $domicilio->domiciliable;
         // dd($model);
         return view('domicilios.edit', ['domicilio' => $domicilio, 'model' => $model, 'modeloTipo' => $modeloTipo]);
@@ -104,8 +105,9 @@ class DomicilioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $modeloTipo,Domicilio $domicilio)
+    public function update(Request $request, string $modeloTipo,$domicilio)
     {
+                $domicilio =Domicilio::findOrFail($domicilio);
         // dd($modeloTipo,$domicilio);
         $request->validate([
             'estado' => 'required|string|max:100',
