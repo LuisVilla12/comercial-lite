@@ -157,7 +157,7 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
     Route::get('/productos/{producto}/{productoUbicacion}/edit', [ProductoUbicacionController::class, 'edit'])->name('productoubicacion.edit');
     Route::put('/productos/{productoUbicacion}/update', [ProductoUbicacionController::class, 'update'])->name('productoubicacion.update');
     Route::delete('/productos/{producto}/ubicacion/{productoUbicacion}', [ProductoUbicacionController::class, 'destroy'])->name('productoubicacion.destroy');
-    
+
     //Rutas clasificaciones
     Route::get('/clasificaciones', [ClasificacionController::class, 'index'])->name('clasificaciones.index');
     Route::get('/clasificaciones/create', [ClasificacionController::class, 'create'])->name('clasificaciones.create');

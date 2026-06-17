@@ -31,7 +31,7 @@ class ProductoUbicacionController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'almacen_id' => 'required',
             'producto_id' => 'required',
@@ -44,7 +44,7 @@ class ProductoUbicacionController extends Controller
         if ($existe) {
             return back()
                 ->withErrors([
-                    'almacen_id' => 'Este producto ya tiene un registro de máximos y mínimos en el almacén seleccionado.'
+                    'almacen_id' => 'Este producto ya tiene un registro de ubicación almacén seleccionado.'
                 ])
                 ->withInput();
         }
@@ -57,7 +57,9 @@ class ProductoUbicacionController extends Controller
             'repisa' => $request->repisa,
         ]);
         $producto = Producto::findOrFail($request->producto_id);
-        return redirect()->route('productos.show', $producto);
+        return redirect()->route('productos.show', $producto)->with(
+            'success', 'Se ha registrado correctamente.'
+        );
 
     }
 
@@ -94,7 +96,7 @@ class ProductoUbicacionController extends Controller
         $producto = Producto::findOrFail($request->producto_id);
         return redirect()->route('productos.show', $producto)->with(
             'success', 'El registro se ha actualizado correctamente.'
-        );;
+        );
 
     }
 

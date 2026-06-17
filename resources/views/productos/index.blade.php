@@ -43,6 +43,7 @@
             class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">{{ session('success') }}
         </p>
     @endif
+
     <div class="shadow-md overflow-x-auto rounded-lg">
         @if ($productos->count() > 0)
             <div class="hidden md:block">

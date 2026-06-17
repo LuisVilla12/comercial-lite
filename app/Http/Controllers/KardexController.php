@@ -11,9 +11,9 @@ class KardexController extends Controller
 {
     //
     public function index(){
-    $productos = Producto::where('codigo_producto', '=', 'CE101045LH**')->get();
+    // $productos = Producto::where('codigo_producto', '=', 'CE101045LH**')->get();
     $almacenes = Almacen::all();
-        return view('kardex.index',['productos' => $productos,'almacenes' => $almacenes]);
+        return view('kardex.index',['almacenes' => $almacenes]);
     }
 
 public function pdf(Request $request)

@@ -57,7 +57,9 @@ class MaximoMinimoController extends Controller
             'maximo' => $request->maximo,
         ]);
         $producto = Producto::findOrFail($request->producto_id);
-        return redirect()->route('productos.show', $producto);
+        return redirect()->route('productos.show', $producto)->with(
+            'success', 'Se ha registrado correctamente.'
+        );
     }
 
     /**
