@@ -61,12 +61,24 @@ class User extends Authenticatable {
     // }
     public function isAdmin()
     {
-        return $this->tipo == 1;
+        if ($this->tipo==1 or $this->tipo==5){
+            return true;
+        }
+    }
+    public function isInventario()
+    {
+        if ($this->tipo==3 or $this->tipo==4){
+            return true;
+        }
+        return false;
     }
 
-    public function isNormal()
+    public function isVendedor()
     {
-        return $this->tipo == 2;
+        if ($this->tipo==2){
+        return true;
+        }
+        return false;
     }
     public function empresa()
 {

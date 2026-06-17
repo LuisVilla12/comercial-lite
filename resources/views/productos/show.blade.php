@@ -12,6 +12,7 @@
             class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">{{ session('success') }}
         </p>
     @endif
+
          <div x-data="{ tab: 'detalle' }">
                 <div class="flex gap-4 border-b mt-4">
                     <button type="button" @click="tab='detalle'"
@@ -371,7 +372,7 @@
 
 
         {{-- Botones --}}
-        <div class="md:col-span-2 flex justify-end gap-3 mt-4">
+        <div class="md:col-span-2 flex  gap-3 mt-4">
             <a href="{{route('productos.index') }}"
                class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
                 <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar

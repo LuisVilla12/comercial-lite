@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sucursal;
 use App\Models\Almacen;
+use App\Models\Documento;
 use Illuminate\Http\Request;
 
 class SucursalController extends Controller
@@ -22,11 +23,53 @@ class SucursalController extends Controller
         ->withQueryString();
         return view('sucursales.index', ['sucursales'=>$sucursales]);
     }
-     public function conceptos($sucursal)
+    //  public function conceptos($sucursal)
+    // {
+
+    //     $sucursal = Sucursal::findOrFail($sucursal);
+    //     return view('sucursales.dashboard', ['sucursal'=>$sucursal]);
+    // }
+    public function conceptos(Request $request, $sucursal)
     {
-        $sucursal = Sucursal::findOrFail($sucursal);
-        return view('sucursales.dashboard', ['sucursal'=>$sucursal]);
+    $sucursal = Sucursal::findOrFail($sucursal);
+    $periodo = $request->get('periodo', 'dia');
+
+    if ($periodo == 'dia') {
+        $ventas = Documento::selectRaw(' HOUR(created_at) as etiqueta, SUM(total) as total')
+            ->whereDate('created_at', today())
+            ->groupByRaw('HOUR(created_at)')
+            ->orderBy('etiqueta')
+            ->get();
+
+            // $ventas = Documento::where('estatus','4')
+            // ->where('documento_modelo_id','3')
+            // ->whereDate('created_at', today())
+            // ->groupByRaw('HOUR(created_at)')
+            // ->orderBy('HOUR(created_at)');
+            // dd($ventas);
+
+    } elseif ($periodo == 'semana') {
+        $ventas = Documento::selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
+            ->whereBetween('created_at', [
+                now()->startOfWeek(),
+                now()->endOfWeek()
+            ])
+            ->groupByRaw('DATE(created_at)')
+            ->orderBy('etiqueta')
+            ->get();
+
+    } else {
+        $ventas = Documento::selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->groupByRaw('DATE(created_at)')
+            ->orderBy('etiqueta')
+            ->get();
     }
+
+        return view('sucursales.dashboard', ['sucursal'=>$sucursal,'periodo'=>$periodo, 'ventas'=>$ventas]);
+    }
+
 
     /**
      * Show the form for creating a new resource.

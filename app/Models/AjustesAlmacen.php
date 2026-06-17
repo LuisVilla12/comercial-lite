@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
-class AjustesAlmacen extends TenantModel
+class AjustesAlmacen extends TenantModel implements Auditable
 {
-    //
+            use AuditableTrait;
         protected $fillable = [
         'id',
         'agente_id',

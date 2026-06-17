@@ -605,7 +605,7 @@
                                                     Precio 2 - $<span x-text="p.costo2"></span>
                                                 </option>
 
-                                                @if (auth()->user()->tipo == 1)
+                                                @if (auth()->user()->isAdmin())
                                                     <option x-show="Number(p.costo3) > 0" :value="String(p.costo3)">
                                                         Precio 3 - $<span x-text="p.costo3"></span>
                                                     </option>

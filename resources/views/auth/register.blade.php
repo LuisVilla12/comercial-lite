@@ -41,10 +41,10 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Tipo:<span class="text-red-500">*</span>
                     </label>
-                    <select name="tipo" id="tipo"
+                    <select required name="tipo"  id="tipo"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="" disabled selected>Seleccione una opcion</option>
-                        <option value="1">Administrador</option>
+                        {{-- <option value="1">Administrador</option> --}}
                         <option value="2">Vendedor</option>
                         <option value="3">Compras</option>
                         <option value="4">Almacén</option>
@@ -58,7 +58,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Empresa:<span class="text-red-500">*</span>
                     </label>
-                    <select name="empresa_id" id="empresa_id"
+                    <select required name="empresa_id" id="empresa_id"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="" disabled selected>Seleccione una opcion</option>
                         @foreach ($empresas as $empresa)
@@ -70,7 +70,8 @@
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-                <div class="">
+                {{-- SOLO EL USUARIO VENDEDOR DEBE SELECCIONAR SUCURSAL --}}
+                <div class="hidden" id="contenedor_select_id">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Sucursal:<span class="text-red-500">*</span>
                     </label>
@@ -127,6 +128,15 @@
 </x-app-layout>
 <scrip>
     <script>
+document.getElementById('tipo').addEventListener('change', async function() {
+    const tipo= document.getElementById('tipo')
+    const contenedorSucursal= document.getElementById('contenedor_select_id')
+    if(tipo.value=='2'){
+        contenedorSucursal.classList.remove('hidden')
+    }else{
+            contenedorSucursal.classList.add('hidden')
+    }
+});
 document.getElementById('empresa_id').addEventListener('change', async function() {
 
     const empresaId = this.value;

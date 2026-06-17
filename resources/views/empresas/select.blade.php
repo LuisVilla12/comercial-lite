@@ -74,7 +74,7 @@
 
             </div>
         </div>
-        @if (auth()->user()->tipo == 1)
+        @if (auth()->user()->isAdmin() )
             {{-- ADMINISTRACIÓN --}}
         <div>
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">

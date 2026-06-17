@@ -2,12 +2,12 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Inventario
+            Validación stock
         </h2>
     </x-slot>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
 
-        <form method="GET" action="{{ route('existencias.index') }}" class="flex flex-col md:flex-row gap-4 w-full">
+        <form method="GET" action="{{ route('existencias.validacion') }}" class="flex flex-col md:flex-row gap-4 w-full">
 
             {{-- Buscador --}}
             <div class="relative w-full md:w-1/3">
@@ -68,11 +68,13 @@ target="_blank"
                             <th class="p-2">Nombre</th>
                             <th class="p-2">Almacen</th>
                             <th class="p-2">Cantidad</th>
+                            <th class="p-2">Minimo</th>
+                            <th class="p-2">Maximo</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($existencias as $existencia)
-                            <tr class="border-t">
+                            <tr class="border-t {{ $existencia->cantidad<=0?'bg-yellow-300':''  }}">
                                 <td class="p-2 text-center">
                                     {{ $existencia->producto->codigo_producto }}
                                 </td>
@@ -85,6 +87,20 @@ target="_blank"
                                 <td class="p-2 text-center">
                                     {{ $existencia->cantidad }}
                                 </td>
+                                @if($existencia->producto->maximominimo->isNotEmpty())
+                                    @foreach ($existencia->producto->maximominimo as $registro)
+                                        @if($registro->almacen_id ==  $existencia->almacen_id)
+                                    <td class="p-2 text-center {{ $existencia->cantidad<=$registro->minimo?'bg-red-300':'bg-green-200'  }}">
+
+                                        {{ $registro->minimo }}
+                                    </td>
+                                    <td class="p-2 text-center {{ $existencia->cantidad>=$registro->maximo?'bg-red-300':'bg-green-200'  }}">
+                                        {{ $registro->maximo }}
+                                    </td>
+                                    @endif
+                                    @endforeach
+                                @endif
+
                             </tr>
                         @endforeach
                     </tbody>

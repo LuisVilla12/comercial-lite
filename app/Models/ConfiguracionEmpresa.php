@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
-class ConfiguracionEmpresa extends TenantModel
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+class ConfiguracionEmpresa extends TenantModel implements Auditable
 {
-    //
+    use AuditableTrait;
     protected $fillable = [
         // DATOS GENERALES
         'codigo',

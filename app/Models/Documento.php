@@ -11,7 +11,6 @@ use  App\Models\User;
 use  App\Models\Domicilio;
 
 class Documento extends TenantModel implements Auditable{
-
     use AuditableTrait;
     protected $fillable = [
         'id',

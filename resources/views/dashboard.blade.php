@@ -48,7 +48,7 @@
                 🔄 Inventarios
             </h2>
         </div>
-        @if (auth()->user()->tipo == 1 or auth()->user()->tipo == 3)
+        @if (auth()->user()->isAdmin() or auth()->user()->isInventario())
                 <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Almacenes" desc="Control de almacenes" iconBg="bg-emerald-500">
             <x-slot:icon>
@@ -90,12 +90,12 @@
                 </x-slot:icon>
             </x-dashboard-card>
             {{-- ALERTAS STOCK --}}
-            {{-- <x-dashboard-card href="{{ route('kardex.index') }}" bg="bg-blue-50 dark:bg-blue-900/20"
+            <x-dashboard-card href="{{ route('existencias.validacion') }}" bg="bg-blue-50 dark:bg-blue-900/20"
                 title="Stock" desc="Validacion de minimos y maximos" iconBg="bg-blue-500">
                 <x-slot:icon>
                     <x-heroicon-o-archive-box class="w-6 h-6" />
                 </x-slot:icon>
-            </x-dashboard-card> --}}
+            </x-dashboard-card>
         @endif
         <x-dashboard-card href="{{ route('existencias.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Existencias" desc="Existencias de productos" iconBg="bg-emerald-500">
@@ -103,6 +103,8 @@
                 <x-heroicon-o-archive-box class="w-6 h-6" />
             </x-slot:icon>
         </x-dashboard-card>
+
+        @if (auth()->user()->isAdmin() or auth()->user()->isVendedor() )
         {{-- ================= OPERACIONES ================= --}}
         <div class="col-span-full mt-6">
             <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
@@ -121,7 +123,8 @@
                 <x-heroicon-o-chart-bar class="w-6 h-6" />
             </x-slot:icon>
         </x-dashboard-card>
-
+        @endif
+        @if(!auth()->user()->isInventario())
         {{-- ================= VENTAS ================= --}}
         <div class="col-span-full mt-6">
             <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
@@ -129,7 +132,9 @@
             </h2>
         </div>
 
-        @if (auth()->user()->tipo == 1 )
+        @endif
+
+        @if (auth()->user()->isAdmin())
             @forelse ($sucursales as $sucursal)
                  <x-dashboard-card href="{{route('sucursales.conceptos',$sucursal )}}"
                     title="{{ $sucursal->nombre }}" desc=""
@@ -141,41 +146,6 @@
             @empty
                 <p>No hay ninguna sucursal registrada</p>
             @endforelse
-            {{-- @foreach ($sucursales as $sucursal)
-                <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
-                    title="Cotizaciones {{ $sucursal->nombre }}" desc="Generar cotizaciones"
-                    bg="bg-orange-50 dark:bg-orange-900/20" iconBg="bg-orange-500">
-                    <x-slot:icon>
-                        <x-heroicon-o-document-currency-dollar class="w-6 h-6" />
-                    </x-slot:icon>
-                </x-dashboard-card>
-            @endforeach --}}
-            {{-- @foreach ($sucursales as $sucursal)
-                <x-dashboard-card href="{{ route('remisiones.index', $sucursal) }}"
-                    bg="bg-indigo-50 dark:bg-indigo-900/20" title="Remisiones {{ $sucursal->nombre }}"
-                    desc="Generar remisiones" iconBg="bg-indigo-500">
-                    <x-slot:icon>
-                        <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
-                    </x-slot:icon>
-                </x-dashboard-card>
-            @endforeach --}}
-            {{-- @foreach ($sucursales as $sucursal)
-                <x-dashboard-card href="{{ route('facturas.index', $sucursal) }}" bg="bg-blue-50 dark:bg-blue-900/20"
-                    title="Facturas {{ $sucursal->nombre }}" desc="Generar facturas" iconBg="bg-blue-500">
-                    <x-slot:icon>
-                        <x-heroicon-o-document-text class="w-6 h-6" />
-                    </x-slot:icon>
-                </x-dashboard-card>
-            @endforeach --}}
-            {{-- @foreach ($sucursales as $sucursal)
-                <x-dashboard-card href="{{ route('devoluciones.index', $sucursal) }}" bg="bg-red-50 dark:bg-red-900/20"
-                    title="Devoluciones {{ $sucursal->nombre }}" desc="Devoluciones de productos"
-                    iconBg="bg-red-500">
-                    <x-slot:icon>
-                        <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
-                    </x-slot:icon>
-                </x-dashboard-card>
-            @endforeach --}}
         @else
             @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
@@ -213,7 +183,7 @@
                 </x-dashboard-card>
             @endforeach
         @endif
-        @if (auth()->user()->tipo == 1)
+        @if (auth()->user()->isAdmin())
             {{-- ================= Administracion ================= --}}
             <div class="col-span-full mt-6">
                 <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
@@ -247,7 +217,7 @@
             <x-dashboard-card href="{{ route('configuracion-empresa.show') }}" bg="bg-teal-50 dark:bg-teal-900/20"
                 title="Empresa" desc="Empresa" iconBg="bg-teal-500">
                 <x-slot:icon>
-                    <x-heroicon-o-users class="w-6 h-6" />
+                    <x-heroicon-o-building-storefront class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
         @endif

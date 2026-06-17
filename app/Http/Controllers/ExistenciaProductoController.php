@@ -44,7 +44,7 @@ class ExistenciaProductoController extends Controller
             $q->where('almacen_id', $request->almacen_id);
         })
         ->paginate(10)
-        ->withQueryString(); // mantiene search + almacen
+        ->withQueryString();
 
     $almacenes = Almacen::orderBy('nombre')->get();
     return view('existencias.validacion', compact('existencias', 'almacenes'));
