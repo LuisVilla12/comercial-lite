@@ -56,7 +56,7 @@
     {{-- ================= ENCABEZADO ================= --}}
     <table class="no-border">
         <tr>
-            <img src="{{ public_path('images/logo.jpeg') }}" style="width: 200px; height: 60px;" alt="Logo">
+            <img src="{{ public_path('images/icono.png') }}" style="width: 80px; height: 80px;" alt="Logo">
             <td class="text-right bold">
                 {{-- {{ match ($documento->documento_modelo_id) {
                     1 => 'Cotización ',

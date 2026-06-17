@@ -32,7 +32,7 @@
 </style>
 <div style="margin-top: 10px">
     <div class="center">
-<img src="{{ public_path('images/logo.jpeg') }}" style="width: 120px; height: 40px;" alt="Logo">        <br>
+<img src="{{ public_path('images/icono.png') }}" style="width: 80px; height: 60px;" alt="Logo">        <br>
         {{-- <strong>{{ $sucursal->empresa->nombre }}</strong><br> --}}
         <strong>{{ $empresa->rfc }}</strong><br>
         {{ $empresa->calle ?? 'Dirección no disponible' }} #{{ $empresa->numero_exterior ?? 'S/N' }},Col. {{ $empresa->colonia ?? 'Colonia no disponible' }},CP:{{ $empresa->cp ?? 'CP no disponible' }},

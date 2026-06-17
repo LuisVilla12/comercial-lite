@@ -27,7 +27,7 @@
                 Fecha: {{ \Carbon\Carbon::parse($documento->fecha)->format('d/m/Y') }}
             </h2>
         </div>
-        
+
     </x-slot>
     <div class="flex justify-between mt-4 items-center gap-2 ">
         <div>
@@ -82,6 +82,7 @@
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
                 <button onclick="seleccionarConversion()"
                     class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded ml-6">
+                     <x-heroicon-o-arrow-path-rounded-square class="w-5 h-5 mr-2" />
                     Convertir
                 </button>
                 <a href="{{ route('documentos.pdf', [$sucursal, $documento]) }}" target="_blank"
@@ -104,6 +105,7 @@
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
                 <button onclick="convertirAFactura()"
                     class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded ">
+                                         <x-heroicon-o-arrow-path-rounded-square class="w-5 h-5 mr-2" />
                     Convertir
                 </button>
                 <form method="POST" class="hidden" id="formConversionFactura"
@@ -134,7 +136,7 @@
             </a>
             @if ($documento->estatus == 4 and $documento->documento_modelo_id == 3)
                 <a
-                    href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="flex  px-6 py-2 ml-4 bg-indigo-600 text-white rounded mt-4  md:mt-0 text-center"> 
+                    href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="flex  px-6 py-2 ml-4 bg-indigo-600 text-white rounded mt-4  md:mt-0 text-center">
                                         <x-heroicon-o-arrow-uturn-right class="w-5 h-5 mr-2" /> Devolucion</a>
             @endif
         </div>

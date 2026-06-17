@@ -422,7 +422,7 @@ class DocumentoController extends Controller
         // dd($documento);
         $width = $mm == 58 ? 164 : 227;
 
-        $customPaper = [0, 0, $width, 256];
+        $customPaper = [0, 0, $width, 350];
 
         $pdf = Pdf::loadView('documentos.pdf_ticket', compact('documento', 'sucursal','empresa'))
             ->setPaper($customPaper);
