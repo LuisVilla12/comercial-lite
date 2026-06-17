@@ -259,11 +259,10 @@
                     </div>
                 </div>
                 <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-
-                    <a href="{{ route('ajustes-almacen.index', $tipo) }}"
-                        class="px-4 py-2 rounded-md border dark:bg-red border-red-300 bg-red-500 text-white hover:bg-red-500">
-                        Cancelar
-                    </a>
+<a href="{{ route('ajustes-almacen.index', $tipo)  }}"
+               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
+            </a>
                     <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
                         <button
                          x-ref="btnGuardar"

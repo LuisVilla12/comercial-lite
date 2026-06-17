@@ -51,10 +51,10 @@
 
 
             <div class="flex items-center justify-end mt-4 gap-4">
-                <a href="{{ route('usuarios.index') }}"
-                    class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
-                    Regresar
-                </a>
+                <a href="{{route('usuarios.index') }}"
+               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
+            </a>
             </div>
         </form>
     </div>

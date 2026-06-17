@@ -42,10 +42,10 @@
         </div>
 
                {{-- Botones --}}
-        <div class="md:col-span-full flex justify-end gap-3 mt-4">
-            <a href="{{ route('empresas.index') }}"
-                class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
-                Regresar
+        <div class="md:col-span-full flex gap-3 mt-4">
+            <a href="{{route('empresas.index')}}"
+               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
             </a>
         </div>
     </div>

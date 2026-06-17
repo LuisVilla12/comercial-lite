@@ -333,9 +333,10 @@
         <input type="hidden" name="devoluciones" x-ref="devoluciones">
         <div class="md:col-span-2 flex justify-between gap-3 mt-4">
             <a href="{{ route(match ($documento->documento_modelo_id) {1 => 'cotizaciones.index',2 => 'facturas.index',3 => 'remisiones.index'},$sucursal) }}"
-                class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-red-600 hover:bg-red-600">
-                Cancelar
+                class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+                 <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
             </a>
+
             <button type="submit"
                 class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                 Realizar </button>

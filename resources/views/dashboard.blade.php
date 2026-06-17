@@ -90,12 +90,12 @@
                 </x-slot:icon>
             </x-dashboard-card>
             {{-- ALERTAS STOCK --}}
-            <x-dashboard-card href="{{ route('kardex.index') }}" bg="bg-blue-50 dark:bg-blue-900/20"
+            {{-- <x-dashboard-card href="{{ route('kardex.index') }}" bg="bg-blue-50 dark:bg-blue-900/20"
                 title="Stock" desc="Validacion de minimos y maximos" iconBg="bg-blue-500">
                 <x-slot:icon>
                     <x-heroicon-o-archive-box class="w-6 h-6" />
                 </x-slot:icon>
-            </x-dashboard-card>
+            </x-dashboard-card> --}}
         @endif
         <x-dashboard-card href="{{ route('existencias.validacion') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Existencias" desc="Existencias de productos" iconBg="bg-emerald-500">
