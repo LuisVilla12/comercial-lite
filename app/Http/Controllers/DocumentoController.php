@@ -765,6 +765,11 @@ class DocumentoController extends Controller
             ->with('success', 'Factura timbrada correctamente');
     }
 
+    public function timbrar($documento){
+        $documento = Documento::findOrFail($documento);
+        // dd('')
+    }
+
     public function timbrarSAT($documento)
     {
         $documento = Documento::findOrFail($documento);

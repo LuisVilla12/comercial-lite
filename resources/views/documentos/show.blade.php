@@ -67,13 +67,13 @@
             @endif
             <div>
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
-                    <form method="POST" action="{{ route('timbrarSAT', ['documento' => $documento]) }}">
-                        @csrf
-                        <button type="submit"
+                        <button  onclick="timbrar()"
                             class="flex items-center px-4 py-2 mr-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
                             <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2" />
                             Timbrar
                         </button>
+                    <form method="POST" action="{{ route('documentos.timbrar', ['documento' => $documento]) }}">
+                        @csrf
                     </form>
                 @endif
 
@@ -504,6 +504,23 @@
         });
     }
 
+    function timbrar() {
+        Swal.fire({
+            title: '¿Esta seguro que requiere timbrar esta factura?',
+              icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: 'Si, timbrar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+  title: "No estan configurados los sellos para el timbrado",
+  text: "Esta en desarollo!",
+  icon: "warning"
+});
+            }
+        });
+    }
     function seleccionarConversion() {
         Swal.fire({
             title: 'Selecciona una opción',

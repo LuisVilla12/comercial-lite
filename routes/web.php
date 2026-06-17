@@ -219,7 +219,6 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
         Route::get('/documentos/{documento}/edit', [DocumentoController::class, 'edit'])->name(name: 'documentos.edit');
         Route::get('/documentos/{documento}', [DocumentoController::class, 'show'])->name('documentos.show');
         Route::put('/documentos/{documento}', action: [DocumentoController::class, 'update'])->name('documentos.update');
-        Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrar'])->name(name: 'documentos.timbrar');
         Route::post('/documentos/{documento}/surtir', [DocumentoController::class, 'surtir'])->name(name: 'documentos.surtir');
 
         Route::get('/devolucion/{documento}', [DocumentoController::class, 'devolucionEdit'])->name(name: 'devolucion.edit');
@@ -237,7 +236,8 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 
-    Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrarSAT'])->name('timbrarSAT');
+    Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrar'])->name(name: 'documentos.timbrar');
+    // Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrarSAT'])->name('timbrarSAT');
 
     //Devoluciones
     Route::get('/devoluciones/{documento}', [DevolucionController::class, 'create'])->name('devoluciones.create');
