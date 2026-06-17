@@ -31,43 +31,69 @@ class SucursalController extends Controller
     // }
     public function conceptos(Request $request, $sucursal)
     {
-    $sucursal = Sucursal::findOrFail($sucursal);
-    $periodo = $request->get('periodo', 'dia');
+$sucursal = Sucursal::findOrFail($sucursal);
 
-    if ($periodo == 'dia') {
-        $ventas = Documento::selectRaw(' HOUR(created_at) as etiqueta, SUM(total) as total')
-            ->whereDate('created_at', today())
-            ->groupByRaw('HOUR(created_at)')
-            ->orderBy('etiqueta')
-            ->get();
+$periodo = $request->get('periodo', 'dia');
 
-            // $ventas = Documento::where('estatus','4')
-            // ->where('documento_modelo_id','3')
-            // ->whereDate('created_at', today())
-            // ->groupByRaw('HOUR(created_at)')
-            // ->orderBy('HOUR(created_at)');
-            // dd($ventas);
+$baseVentas = Documento::where('estatus', 4)
+    ->where('sucursal_id', $sucursal->id)
+    ->whereIn('documento_modelo_id', [2, 3]);
 
-    } elseif ($periodo == 'semana') {
-        $ventas = Documento::selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
-            ->whereBetween('created_at', [
-                now()->startOfWeek(),
-                now()->endOfWeek()
-            ])
-            ->groupByRaw('DATE(created_at)')
-            ->orderBy('etiqueta')
-            ->get();
+if ($periodo == 'dia') {
 
-    } else {
-        $ventas = Documento::selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->groupByRaw('DATE(created_at)')
-            ->orderBy('etiqueta')
-            ->get();
-    }
+    $baseVentas->whereDate('created_at', today());
 
-        return view('sucursales.dashboard', ['sucursal'=>$sucursal,'periodo'=>$periodo, 'ventas'=>$ventas]);
+    $ventas = (clone $baseVentas)
+        ->selectRaw('HOUR(created_at) as etiqueta, SUM(total) as total')
+        ->groupByRaw('HOUR(created_at)')
+        ->orderBy('etiqueta')
+        ->get();
+
+} elseif ($periodo == 'semana') {
+
+    $baseVentas->whereBetween('created_at', [
+        now()->startOfWeek(),
+        now()->endOfWeek()
+    ]);
+
+    $ventas = (clone $baseVentas)
+        ->selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
+        ->groupByRaw('DATE(created_at)')
+        ->orderBy('etiqueta')
+        ->get();
+
+} else {
+
+    $baseVentas->whereMonth('created_at', now()->month)
+               ->whereYear('created_at', now()->year);
+
+    $ventas = (clone $baseVentas)
+        ->selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
+        ->groupByRaw('DATE(created_at)')
+        ->orderBy('etiqueta')
+        ->get();
+}
+
+/*
+|--------------------------------------------------------------------------
+| KPIs
+|--------------------------------------------------------------------------
+*/
+
+$ventasTotal = (clone $baseVentas)->sum('total');
+
+$totalDocumentos = (clone $baseVentas)->count();
+
+$ticketPromedio = (clone $baseVentas)->avg('total') ?? 0;
+
+return view('sucursales.copy', [
+    'sucursal' => $sucursal,
+    'periodo' => $periodo,
+    'ventas' => $ventas,
+    'ventasTotal' => $ventasTotal,
+    'totalDocumentos' => $totalDocumentos,
+    'ticketPromedio' => $ticketPromedio,
+]);
     }
 
 

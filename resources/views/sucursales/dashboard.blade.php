@@ -9,18 +9,15 @@
 
     <div class="  px-4 py-4 mt-4 overflow-x-auto rounded-lg">
     @if(auth()->user()->isAdmin())
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 mx-auto">
-            Panel de ventas
-        </h2>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow mt-4 p-6">
 
+        <div class="grid md:grid-cols-2 bg-white dark:bg-gray-800 rounded-lg shadow mt-4 p-6">
+        <div>
     <div class="flex justify-between items-center  mb-6">
-
-        <h2 class="text-lg font-semibold">
-            Ventas
+        <h2 class="text-lg font-semibold text-center">
+            Total de ventas
         </h2>
-
         <form method="GET">
+
             <select name="periodo"
                     onchange="this.form.submit()"
                     class="rounded border-gray-300">
@@ -39,14 +36,15 @@
 
             </select>
         </form>
-
     </div>
 
-    <canvas id="ventasChart"></canvas>
-
-</div>
-    @endif
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto  mt-6">
+    <canvas class="max-w-3xl " id="ventasChart"></canvas>
+        </div>
+    <div>
+         <h2 class="text-center text-lg font-semibold my-6  md:mt-2">
+            Principales conceptos
+        </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-6xl mx-auto px-6">
     <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
                     title="Cotizaciones {{ $sucursal->nombre }}" desc="Generar cotizaciones"
                     bg="bg-orange-50 dark:bg-orange-900/20" iconBg="bg-orange-500">
@@ -75,6 +73,11 @@
                     </x-slot:icon>
                 </x-dashboard-card>
     </div>
+
+    </div>
+
+</div>
+    @endif
     </div>
 
 </x-app-layout>
