@@ -1,10 +1,10 @@
 
-@section('title', content: 'Registar agente')
+@section('title', content: 'Detalles agente')
 
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Ver Agente
+            Detalles del agente
         </h2>
     </x-slot>
 
@@ -66,13 +66,13 @@
     </div>
 
 
+
         {{-- Botones --}}
         <div class="flex justify-between items-center gap-4 mt-3">
             <a href="{{ route('agentes.index') }}"
-               class="px-4 py-2 rounded-md border-red-100 font-medium  text-white bg-red-600 hover:bg-red-600">
-                Regresar
+               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
             </a>
-
         </div>
     </form>
     </div>

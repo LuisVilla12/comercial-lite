@@ -86,7 +86,7 @@
                     Convertir
                 </button>
                 <a href="{{ route('documentos.pdf', [$sucursal, $documento]) }}" target="_blank"
-                    class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
+                    class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ml-6">
                     <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir carta
                 </a>
                 {{-- OPCINES DE CONVERTIR OCULTAS PARA EVITAR ERRORES DE USUARIOS --}}
@@ -119,7 +119,7 @@
             @endif
             @if ($documento->documento_modelo_id > 1)
                 <button onclick="seleccionarImpresora()"
-                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded flex items-center ml-6">
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded flex items-center ml-6">
                     <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
                 </button>
             @endif

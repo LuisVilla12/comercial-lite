@@ -1,22 +1,22 @@
-@section('title', 'Kardex Global')
+@section('title', 'Kardex Sucursal')
 
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Kardex Global por Producto
+            Kardex de producto por sucursal
         </h2>
     </x-slot>
 
+
+
     <div class="max-w-4xl mx-auto mt-6 bg-white p-6 rounded-lg shadow">
         <h2 class="mb-4 font-semibold text-lg text-gray-800 ">
-            Kardex global de producto
+            Kardex de producto por sucursal
         </h2>
-        <form method="POST" action="{{route('kardex.global')}}">
+        <form method="POST" action="{{route('kardex.sucursal')}}">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-
-                    <div x-data="buscadorProductos()">
+                 <div x-data="buscadorProductos()">
     <label class="block text-sm font-medium text-gray-700 mb-1">
         Producto
     </label>
@@ -99,9 +99,21 @@
                         <option value="4" >Ajustes de almacen</option>
                         <option value="5" >Todos los movimientos</option>
                     </select>
-                    @error('movimiento_id')
-            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-            @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Almacen:
+                    </label>
+                    <select name="almacen_id" id="almacen_id"
+                        class="w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                        <option value="" selected disabled >Seleccione un almacen</option>
+                        @forelse ($almacenes as $almacen)
+                            <option value="{{$almacen->id}}">{{$almacen->nombre}}</option>
+                        @empty
+                                                    <option value="1" >No hay almacenes registrados</option>
+                        @endforelse
+                    </select>
                 </div>
                 {{-- Fecha inicio --}}
                 <div>
@@ -111,9 +123,6 @@
                     <input type="date" name="fecha_inicio"
                         class="w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                         required>
-                         @error('fecha_inicio')
-            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-            @enderror
                 </div>
 
                 {{-- Fecha fin --}}
@@ -124,25 +133,23 @@
                     <input type="date" name="fecha_fin"
                         class="w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                         required>
-                     @error('fecha_fin')
-            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-            @enderror
                 </div>
 
             </div>
 
+
             <div class="mt-6 flex justify-between">
                 <a href="{{ route('kardex.index') }}"
                class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
-                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
             </a>
                 <button type="submit" class="px-6 py-2 bg-indigo-600 text-white flex rounded-md hover:bg-indigo-700">
-                    <x-heroicon-o-document class="w-5 h-5 mr-2" />
-                    Generar
+                     <x-heroicon-o-document class="w-5 h-5 mr-2" /> Generar
                 </button>
             </div>
         </form>
     </div>
+
 </x-app-layout>
 
 <script>

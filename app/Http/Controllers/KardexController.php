@@ -16,6 +16,18 @@ class KardexController extends Controller
         return view('kardex.index',['almacenes' => $almacenes]);
     }
 
+    public function indexGlobal(){
+    // $productos = Producto::where('codigo_producto', '=', 'CE101045LH**')->get();
+    $almacenes = Almacen::all();
+        return view('kardex.global',['almacenes' => $almacenes]);
+    }
+
+    public function indexSucursal(){
+    // $productos = Producto::where('codigo_producto', '=', 'CE101045LH**')->get();
+    $almacenes = Almacen::all();
+        return view('kardex.sucursal',['almacenes' => $almacenes]);
+    }
+
 public function pdf(Request $request)
 {
     $producto = Producto::findOrFail($request->producto_id);

@@ -37,7 +37,7 @@
                             'fecha_fin' => request('fecha_fin'),
                             'almacen_id' => request('almacen_id'),
                         ]) }}"
-                            target="_blank" class="px-4 py-2 bg-red-600 text-white rounded flex items-center mt-4 mr-6">
+                            target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded flex items-center mt-4 mr-6">
                             <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
                         </a>
                     @elseif ($tipo =='Global')
@@ -47,7 +47,7 @@
                             'fecha_inicio' => request('fecha_inicio'),
                             'fecha_fin' => request('fecha_fin'),
                         ]) }}"
-                            target="_blank" class="px-4 py-2 bg-red-600 text-white rounded flex items-center mt-4 mr-6">
+                            target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded flex items-center mt-4 mr-6">
                             <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
                         </a>
                     @endif
@@ -235,8 +235,9 @@
         </div>
     </div>
     <div class="flex justify-between items-center gap-3 mt-4">
-        <a href="{{ route('kardex.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">
-            Volver
-        </a>
+ <a href="{{ route('kardex.index') }}"
+               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
+            </a>
     </div>
 </x-app-layout>

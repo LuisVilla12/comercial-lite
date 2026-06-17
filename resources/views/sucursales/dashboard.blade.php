@@ -8,7 +8,7 @@
     </x-slot>
 
     <div class="  px-4 py-4 mt-4 overflow-x-auto rounded-lg">
-       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
   <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
                     title="Cotizaciones {{ $sucursal->nombre }}" desc="Generar cotizaciones"
                     bg="bg-orange-50 dark:bg-orange-900/20" iconBg="bg-orange-500">
@@ -36,8 +36,6 @@
                         <x-heroicon-o-arrow-uturn-left class="w-6 h-6" />
                     </x-slot:icon>
                 </x-dashboard-card>
-
-
 </div>
 
     </div>

@@ -12,6 +12,7 @@ class ConfiguracionEmpresaController extends Controller
     public function show(){
     $empresa=ConfiguracionEmpresa::first();
     $regimenes=Regimen::all();
+
     return view('empresa-config.show',['empresa'=>$empresa,'regimenes'=>$regimenes]);
 }
 public function edit(){

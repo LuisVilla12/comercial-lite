@@ -28,7 +28,8 @@ class TenantDatabaseSeeder extends Seeder
             ProductosSeeder::class,
             ClientesSeeder::class,
             ExistenciasSeeder::class,
-            DomiciliosSeeder::class
+            DomiciliosSeeder::class,
+            RegimenesSeeder::class
             ]);
     }
 }

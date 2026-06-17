@@ -1,4 +1,4 @@
-@section('title', content: 'Ver Movimiento')
+@section('title', content: 'Detalles del Movimiento')
 
 <x-app-layout>
     <x-slot name="header">
@@ -93,11 +93,13 @@
 
     </div>
 
-    <div class="flex justify-end">
-        <a href="{{ route('auditoria.index') }}"
-            class="px-5 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition">
-            Regresar
-        </a>
+    <div class="flex ">
+
+
+         <a href="{{  route('auditoria.index') }}"
+               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
+            </a>
     </div>
 
 </div>

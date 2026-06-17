@@ -41,7 +41,7 @@
             </p>
             <div class="flex gap-4">
                 <a href="{{ route('ajustes-almacen.pdf', $ajuste) }}" target="_blank"
-                    class="px-4 py-2 bg-red-600 text-white rounded flex items-center ml-6">
+                    class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ml-6">
                     <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
                 </a>
                 @if ($ajuste->estatus == 1)
@@ -136,10 +136,10 @@
 
     </div>
     <div class="mt-6  gap-4">
-        <div class="flex justify-end gap-3 mt-4">
+        <div class="flex justify-between gap-3 mt-4">
             <a href="{{ route('ajustes-almacen.index', $ajuste->tipo) }}"
-                class="px-4 py-2 bg-gray-500 text-white rounded">
-                Volver
+               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
             </a>
             @if ($ajuste->estatus == 1)
                 <a href="" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
