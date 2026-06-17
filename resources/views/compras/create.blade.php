@@ -26,7 +26,7 @@
                 </div>
                 <div x-show="tab === 'detalle'">
                     <div class=" mx-auto py-6">
-                        <div class="flex gap-5 justify-between">
+                        <div class="md:flex md:gap-5 md:justify-between">
                             <div class="w-full">
                                 <div class="md:flex justify-between">
                                     <label class="block text-lg font-medium mb-2 dark:text-white">Proveedor: *</label>

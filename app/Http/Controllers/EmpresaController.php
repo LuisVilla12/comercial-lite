@@ -119,6 +119,7 @@ class EmpresaController extends Controller
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
         ]);
+  
 
         DB::purge('tenant');
         //EJECUTA LAS MIGRACIONES
