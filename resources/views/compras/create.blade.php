@@ -26,7 +26,7 @@
                 </div>
                 <div x-show="tab === 'detalle'">
                     <div class=" mx-auto py-6">
-                        <div class="md:flex md:gap-5 md:justify-between">
+                        <div class="md:flex gap-5 md:justify-between">
                             <div class="w-full">
                                 <div class="md:flex justify-between">
                                     <label class="block text-lg font-medium mb-2 dark:text-white">Proveedor: *</label>
@@ -84,7 +84,7 @@
                                 </ul>
 
                             </div>
-                            <div class="w-full">
+                            <div class="w-full mt-4 md:mt-0">
 <label class="block text-lg font-medium mb-2 dark:text-white">Seleccionar almacen: *</label>
                             <select name="almacen_id" x-model="almacen_origen_id" id="almacen_id"
                                 class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 mb-2">

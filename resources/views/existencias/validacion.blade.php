@@ -116,7 +116,7 @@ target="_blank"
                                 </p>
                             </div>
                             <div>
-                                <p class="mb-2 text-sm">Almacen:
+                                <p class="mb-2 text-sm">Cantidad:
                                     <span class="font-semibold">
                                        {{ $existencia->cantidad }}
                                     </span>

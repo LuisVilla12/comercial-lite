@@ -97,7 +97,7 @@
                 </x-slot:icon>
             </x-dashboard-card> --}}
         @endif
-        <x-dashboard-card href="{{ route('existencias.validacion') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+        <x-dashboard-card href="{{ route('existencias.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
             title="Existencias" desc="Existencias de productos" iconBg="bg-emerald-500">
             <x-slot:icon>
                 <x-heroicon-o-archive-box class="w-6 h-6" />

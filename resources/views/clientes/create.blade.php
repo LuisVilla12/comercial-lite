@@ -11,7 +11,7 @@
         @csrf
         <input type="hidden" name="tipo" value="{{ $tipo }}">
 
-        <div class="">
+        <div class="mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Codigo: <span class="text-red-500">*</span>
             </label>
@@ -25,7 +25,7 @@
 
         </div>
         {{-- Nombre --}}
-        <div class="">
+        <div class="mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Nombre / Razón Social: <span class="text-red-500">*</span>
             </label>
@@ -39,7 +39,7 @@
         </div>
 
         {{-- RFC --}}
-        <div class="mb-1">
+        <div class="mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 RFC: <span class="text-red-500">*</span>
             </label>
@@ -53,7 +53,7 @@
         </div>
 
         {{-- Régimen Fiscal --}}
-        <div class="mb-1">
+        <div class="mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Régimen Fiscal: <span class="text-red-500">*</span>
             </label>
@@ -70,7 +70,7 @@
         </div>
 
         {{-- CURP --}}
-        <div class="mb-1">
+        <div class="mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 CURP:
             </label>
@@ -81,7 +81,7 @@
         </div>
 
         {{-- Email 1 --}}
-        <div class="mb-1">
+        <div class="mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Correo electrónico principal:<span class="text-red-500">*</span>
             </label>
@@ -95,7 +95,7 @@
         </div>
 
         {{-- Email 2 --}}
-        <div class="mb-1">
+        <div class="mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Correo electrónico alterno:
             </label>
@@ -106,7 +106,7 @@
         </div>
 
         {{-- Teléfono --}}
-        <div class="mb-1">
+        <div class="mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Teléfono:
             </label>
@@ -117,7 +117,7 @@
         </div>
 
         {{-- WhatsApp --}}
-        <div class="mb-1">
+        <div class="mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 WhatsApp:
             </label>

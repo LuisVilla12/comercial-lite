@@ -77,7 +77,7 @@
                                     {{ $producto->clasificacion1->nombre ?? 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">
-                                    <div class="flex justify-center items-center gap-4">
+                                    <div class="flex justify-end md:justify-center md:items-center gap-4">
                                         {{-- Ver --}}
                                         <a href="{{ route('productos.show', ['producto' => $producto]) }}"
                                             class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">

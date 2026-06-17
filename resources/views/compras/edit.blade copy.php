@@ -11,7 +11,7 @@
                             {{ now()->format('d/m/Y') }} </label>
                     </div>
                 </div>
-                <div class="grid md:grid-cols-2 md:gap-4">
+                <div class="md:grid md:grid-cols-2 md:gap-4">
                     <div>
                         <label class="block text-lg font-medium mb-2 dark:text-white">Proveedor: *</label>
                         <input type="text" x-model="proveedorQuery" @input.debounce.300ms="buscarProveedor"

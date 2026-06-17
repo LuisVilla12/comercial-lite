@@ -23,7 +23,7 @@
             </div>
             <div x-show="tab === 'detalle'">
                 <div class=" mx-auto py-6">
-                    <div class="flex gap-5 justify-between">
+                    <div class="md:flex gap-5 md:justify-between">
                         <div class="w-full">
                             <label class="block text-lg font-medium mb-2 dark:text-white">Seleccionar almacen de origen:
                                 *</label>
@@ -35,7 +35,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="w-full">
+                        <div class="w-full mt-4 md:mt-0">
                             <label class="block text-lg font-medium mb-2 dark:text-white">Seleccionar almacen destino:
                                 *</label>
                             <select name="almacen_destino_id" x-model="almacen_destino_id" id="almacen_destino_id"
@@ -57,8 +57,8 @@
                                         <th class="p-2">Código</th>
                                         <th class="p-2">Producto</th>
                                         <th class="p-2">Cantidad</th>
-                                        <th class="p-2">Precio</th>
-                                        <th class="p-2">Importe</th>
+                                        {{-- <th class="p-2">Precio</th> --}}
+                                        {{-- <th class="p-2">Importe</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -132,22 +132,22 @@
                                                     class="border rounded p-1 w-20 text-center">
                                             </td>
 
-                                            <td class="p-2 text-center">
+                                            {{-- <td class="p-2 text-center">
                                                 <input type="number" readonly :name="`productos[${index}][costo]`"
                                                     @input="calcular" x-model.number="item.costo"
                                                     class="border rounded p-1 w-24 text-center bg-gray-100">
-                                            </td>
+                                            </td> --}}
 
                                             {{-- <td class="p-2 text-center">
                                                     <input disabled type="number" x-model.number="item.stock"
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td> --}}
 
-                                            <td class="p-2 text-center font-semibold">
+                                            {{-- <td class="p-2 text-center font-semibold">
                                                 $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
                                                 <input type="hidden" :name="`productos[${index}][importe]`"
                                                     :value="(item.cantidad * item.costo).toFixed(2)">
-                                            </td>
+                                            </td> --}}
 
                                             <td class="p-2 text-center">
                                                 <button type="button" @click="eliminarFila(index)"
@@ -200,18 +200,18 @@
                                                 @input="calcular" class="border rounded p-2 w-full text-center">
                                         </div>
 
-                                        <div>
+                                        {{-- <div>
                                             <label class="text-xs text-gray-500">Precio</label>
                                             <input type="number" x-model.number="item.costo"
                                                 class="border rounded p-2 w-full text-center bg-gray-100">
-                                        </div>
+                                        </div> --}}
 
-                                        <div>
+                                        {{-- <div>
                                             <label class="text-xs text-gray-500">Importe</label>
                                             <div class="border rounded p-2 text-center font-semibold bg-gray-50">
                                                 $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
 
                                     <div class="flex justify-end">

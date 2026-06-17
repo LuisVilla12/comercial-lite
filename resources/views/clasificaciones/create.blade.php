@@ -9,7 +9,7 @@
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
     <form method="POST" action="{{ route('clasificaciones.store') }}" class="grid grid-cols-1 md:grid-cols-2 md:gap-4">
         @csrf
-    <div class="md:col-span-2">
+    <div class="md:col-span-2 mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Codigo: <span class="text-red-500">*</span>
             </label>
@@ -23,7 +23,7 @@
 
         </div>
         {{-- Nombre --}}
-        <div class="md:col-span-2">
+        <div class="md:col-span-2 mb-2 md:mb-0">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Nombre de la clasificación: <span class="text-red-500">*</span>
             </label>
@@ -38,7 +38,7 @@
 
 
         {{-- Botones --}}
-        <div class="md:col-span-2 flex justify-end gap-3 mt-4">
+        <div class="md:col-span-2 flex justify-between gap-3 mt-4">
 <a href="{{ route('clasificaciones.index')  }}"
                class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
                 <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
