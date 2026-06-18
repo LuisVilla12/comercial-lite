@@ -109,7 +109,7 @@
             </div>
 
 
-        {{-- @if ($cajaAbierta and auth()->user()->isVendedor())
+        @if ($cajaAbierta and auth()->user()->isVendedor())
             <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-6 shadow md:col-span-2">
                 <div class="flex justify-between items-center">
                     <div>
@@ -141,8 +141,6 @@
                 </x-dashboard-card>
             @endforeach
         @endif
- --}}
-
 
         @if (auth()->user()->isAdmin() or auth()->user()->isVendedor())
             <x-dashboard-card href="{{ route('puntos.index') }}" bg="bg-yellow-50 dark:bg-yellow-900/20"
