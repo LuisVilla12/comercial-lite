@@ -1,9 +1,9 @@
 @section('title', 'Panel de control')
 <x-app-layout>
-     <h3 class="text-xl font-semibold text-gray-900 mt-6 dark:text-white mb-4">
-                Empresa: {{ $empresa->nombre}}
-            </h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+    <h3 class="text-xl font-semibold text-gray-900 mt-6 dark:text-white mb-4">
+        Empresa: {{ $empresa->nombre }}
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
         {{-- ================= CATÁLOGOS ================= --}}
         <div class="col-span-full">
             <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
@@ -40,8 +40,6 @@
         </x-dashboard-card>
 
 
-
-
         {{-- ================= INVENTARIOS ================= --}}
         <div class="col-span-full mt-6">
             <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
@@ -49,12 +47,12 @@
             </h2>
         </div>
         @if (auth()->user()->isAdmin() or auth()->user()->isInventario())
-                <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
-            title="Almacenes" desc="Control de almacenes" iconBg="bg-emerald-500">
-            <x-slot:icon>
-                <x-heroicon-o-building-storefront class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
+            <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
+                title="Almacenes" desc="Control de almacenes" iconBg="bg-emerald-500">
+                <x-slot:icon>
+                    <x-heroicon-o-building-storefront class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
             <x-dashboard-card href="{{ route('compras.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
                 title="Compras" desc="Control de compras" iconBg="bg-emerald-500">
                 <x-slot:icon>
@@ -83,8 +81,8 @@
                 </x-slot:icon>
             </x-dashboard-card>
             {{-- KARDEX --}}
-            <x-dashboard-card href="{{ route('kardex.index') }}" bg="bg-blue-50 dark:bg-blue-900/20"
-                title="Kardex" desc="Movimientos de cada producto" iconBg="bg-blue-500">
+            <x-dashboard-card href="{{ route('kardex.index') }}" bg="bg-blue-50 dark:bg-blue-900/20" title="Kardex"
+                desc="Movimientos de cada producto" iconBg="bg-blue-500">
                 <x-slot:icon>
                     <x-heroicon-o-archive-box class="w-6 h-6" />
                 </x-slot:icon>
@@ -104,41 +102,77 @@
             </x-slot:icon>
         </x-dashboard-card>
 
-        @if (auth()->user()->isAdmin() or auth()->user()->isVendedor() )
-        {{-- ================= OPERACIONES ================= --}}
-        <div class="col-span-full mt-6">
-            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
-                🔄 Operaciones
-            </h2>
-        </div>
-        <x-dashboard-card href="{{ route('puntos.index') }}" bg="bg-yellow-50 dark:bg-yellow-900/20" title="Monedero"
-            desc="Monedero digital" iconBg="bg-yellow-500">
-            <x-slot:icon>
-                <x-heroicon-o-gift class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
-        <x-dashboard-card href="{{ route('reportes.index') }}" bg="bg-red-50 dark:bg-red-900/20" title="Reportes"
-            desc="Generar reportes" iconBg="bg-red-500">
-            <x-slot:icon>
-                <x-heroicon-o-chart-bar class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
-        @endif
-        @if(!auth()->user()->isInventario())
-        {{-- ================= VENTAS ================= --}}
-        <div class="col-span-full mt-6">
-            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
-                💼 Ventas
-            </h2>
-        </div>
+            <div class="col-span-full mt-6">
+                <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                    🔄 Operaciones
+                </h2>
+            </div>
 
+
+        {{-- @if ($cajaAbierta and auth()->user()->isVendedor())
+            <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-6 shadow md:col-span-2">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-xl font-bold text-green-600">
+                            🟢 Caja Abierta
+                        </h3>
+                        <p>
+                            Apertura:
+                            {{ $cajaAbierta->fecha_apertura->format('d/m/Y H:i') }}
+                        </p>
+
+                        <p>
+                            Fondo inicial:
+                            ${{ number_format($cajaAbierta->monto_inicial, 2) }}
+                        </p>
+                    </div>
+                    <a href="{{ route('cajas.edit') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg">
+                        Cerrar Caja
+                    </a>
+                </div>
+            </div>
+        @elseif(auth()->user()->isVendedor())
+            @foreach ($sucursales as $sucursal)
+                <x-dashboard-card href="{{ route('cajas.create', $sucursal) }}" bg="bg-teal-50 dark:bg-teal-900/20"
+                    title="Abrir caja" desc="" iconBg="bg-teal-500">
+                    <x-slot:icon>
+                        <x-heroicon-o-building-storefront class="w-6 h-6" />
+                    </x-slot:icon>
+                </x-dashboard-card>
+            @endforeach
+        @endif
+ --}}
+
+
+        @if (auth()->user()->isAdmin() or auth()->user()->isVendedor())
+            <x-dashboard-card href="{{ route('puntos.index') }}" bg="bg-yellow-50 dark:bg-yellow-900/20"
+                title="Monedero" desc="Monedero digital" iconBg="bg-yellow-500">
+                <x-slot:icon>
+                    <x-heroicon-o-gift class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+            <x-dashboard-card href="{{ route('reportes.index') }}" bg="bg-red-50 dark:bg-red-900/20" title="Reportes"
+                desc="Generar reportes" iconBg="bg-red-500">
+                <x-slot:icon>
+                    <x-heroicon-o-chart-bar class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+        @endif
+
+                @if (!auth()->user()->isInventario())
+            {{-- ================= VENTAS ================= --}}
+            <div class="col-span-full mt-6">
+                <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                    💼 Ventas
+                </h2>
+            </div>
         @endif
 
         @if (auth()->user()->isAdmin())
             @forelse ($sucursales as $sucursal)
-                 <x-dashboard-card href="{{route('sucursales.conceptos',$sucursal )}}"
-                    title="{{ $sucursal->nombre }}" desc=""
-                    bg="bg-orange-50 dark:bg-orange-900/20" iconBg="bg-blue-500">
+                <x-dashboard-card href="{{ route('sucursales.conceptos', $sucursal) }}"
+                    title="{{ $sucursal->nombre }}" desc="" bg="bg-orange-50 dark:bg-orange-900/20"
+                    iconBg="bg-blue-500">
                     <x-slot:icon>
                         <x-heroicon-o-building-storefront class="w-6 h-6" />
                     </x-slot:icon>
@@ -220,13 +254,12 @@
                     <x-heroicon-o-building-storefront class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            <x-dashboard-card href="{{ route('configuracion-empresa.dashboard') }}" bg="bg-teal-50 dark:bg-teal-900/20"
-                title="Dashboard General " desc="" iconBg="bg-teal-500">
+            <x-dashboard-card href="{{ route('configuracion-empresa.dashboard') }}"
+                bg="bg-teal-50 dark:bg-teal-900/20" title="Dashboard General " desc="" iconBg="bg-teal-500">
                 <x-slot:icon>
                     <x-heroicon-o-building-storefront class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-
         @endif
     </div>
 </x-app-layout>

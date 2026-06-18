@@ -1,3 +1,5 @@
+@section('title', content: 'Iniciar sesión')
+
 <x-guest-layout>
 
     <x-auth-session-status class="mb-4" :status="session('status')" />

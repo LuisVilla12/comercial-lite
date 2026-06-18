@@ -26,6 +26,7 @@ use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DatosBancarioController;
 use App\Http\Controllers\AgenteController;
 use App\Http\Controllers\AjustesAlmacenController;
+use App\Http\Controllers\CajaController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\ProductoUbicacionController;
@@ -209,7 +210,12 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
     Route::get('/validacion/inventario', [ExistenciaProductoController::class, 'validacion'])->name('existencias.validacion');
     // TODO:AGREGAR VALIDACION SE SUCURSAL
     // Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
+    Route::get('/cajas/cerrar', [CajaController::class, 'edit'])->name(name: 'cajas.edit');
+
     Route::prefix('sucursales/{sucursal}')->group(function () {
+        Route::get('/cajas/crear', action: [CajaController::class, 'create'])->name('cajas.create');
+        Route::post('/cajas/crear', action: [CajaController::class, 'store'])->name('cajas.store');
+
         //Documentos
         Route::get('/cotizacion', action: [DocumentoController::class, 'indexCotizacion'])->name('cotizaciones.index');
         Route::get('/facturas', action: [DocumentoController::class, 'indexFacturas'])->name('facturas.index');
