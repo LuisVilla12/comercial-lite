@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Caja;
+use App\Models\Documento;
 use App\Models\Clasificacion;
+use App\Models\Empresa;
 use App\Models\Sucursal;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CajaController extends Controller
 {
@@ -50,39 +53,81 @@ class CajaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($clasificacion)
+    public function show($caja)
     {
-        $clasificacion=Clasificacion::findOrFail($clasificacion);
-        return view('clasificaciones.show', compact('clasificacion'));
+        $caja=Caja::findOrFail($caja);
+        $ventas = Documento::where('estatus', 4)
+        ->where('caja_id', $caja->id)
+        ->whereIn('documento_modelo_id', [2, 3])
+        ->selectRaw('forma_pago,SUM(total) as total')
+        ->groupByRaw('forma_pago')
+        ->get();
+        $totalVentas = $ventas->sum('total');
+
+        // dd($ventas);
+        return view('cajas.show', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas]);
+
+    }
+    public function pdf( $caja,$mm = 80)
+    {
+        $caja = Caja::findOrFail($caja);
+        $empresa=Empresa::first();
+
+        $ventas = Documento::where('estatus', 4)
+        ->where('caja_id', $caja->id)
+        ->whereIn('documento_modelo_id', [2, 3])
+        ->selectRaw('forma_pago,SUM(total) as total')
+        ->groupByRaw('forma_pago')
+        ->get();
+
+        $totalVentas = $ventas->sum('total');
+        $width = $mm == 58 ? 164 : 227;
+        $customPaper = [0, 0, $width, 350];
+
+        $pdf = Pdf::loadView('cajas.pdf', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas])
+            ->setPaper($customPaper);
+
+        return $pdf->stream("corte_caja{$caja->id}-{$caja->fecha_cierre}.pdf");
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($clasificacion)
+    public function edit($caja)
     {
-                $clasificacion=Clasificacion::findOrFail($clasificacion);
-        return view('clasificaciones.edit', compact('clasificacion'));
+        $caja=Caja::findOrFail($caja);
+        $ventas = Documento::where('estatus', 4)
+        ->where('caja_id', $caja->id)
+        ->whereIn('documento_modelo_id', [2, 3])
+        ->selectRaw('forma_pago,SUM(total) as total')
+        ->groupByRaw('forma_pago')
+        ->get();
+        $totalVentas = $ventas->sum('total');
+
+        // dd($ventas);
+        return view('cajas.edit', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $clasificacion)
+    public function update(Request $request, $caja)
     {
         $request->validate([
-            'codigo' => 'required|string|max:50',
-            'nombre' => 'required|string|max:255',
-
-            ]);
-        $clasificacion=Clasificacion::findOrFail($clasificacion);
-        $clasificacion->update([
-            'codigo' => $request->codigo,
-            'nombre' => $request->nombre,
+            'monto_final' => 'required',
         ]);
+
+        $caja=Caja::findOrFail($caja);
+        $caja->update([
+            'fecha_cierre' => now(),
+            'monto_final' => $request->monto_final,
+            'estado'=>'cerrada'
+            ]);
+
+
         return redirect()
-            ->route('clasificaciones.index')
-            ->with('success', 'Clasificación actualizada correctamente.');
+            ->route('cajas.show',$caja)
+            ->with('success', 'La caja se ha cerrado correctamente.');
     }
 
     /**

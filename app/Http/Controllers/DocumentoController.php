@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Documento;
 use App\Models\ConfiguracionEmpresa;
 use App\Models\Empresa;
+use App\Models\Caja;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Agente;
@@ -121,8 +122,11 @@ class DocumentoController extends Controller
 
     public function store($sucursal, Request $request)
     {
+        // OBTENER SUCURSAL
         $sucursal = Sucursal::findOrFail($sucursal);
-
+        //OBTENER CAJA
+        $caja = Caja::where('user_id', auth()->id())->where('estado', 'abierta')->first();
+        // OBTENER PRODUCTOS
         $productos = collect($request->productos)
             ->filter(fn($p) => !empty($p['producto_id']))
             ->values()
@@ -200,6 +204,7 @@ class DocumentoController extends Controller
                 'uso_cfdi' => $request->uso_cfdi,
                 'vigencia' => $request->vigencia,
                 'agente_id' => $request->agente_id,
+                'caja_id' => $caja->id,
                 'observaciones' => $request->observaciones,
                 'estado' => 'PENDIENTE',
             ]);

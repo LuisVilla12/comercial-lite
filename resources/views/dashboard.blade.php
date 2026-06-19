@@ -114,19 +114,19 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="text-xl font-bold text-green-600">
-                            🟢 Caja Abierta
+                            Caja Abierta
                         </h3>
-                        <p>
+                        <p class="dark:text-white">
                             Apertura:
                             {{ $cajaAbierta->fecha_apertura->format('d/m/Y H:i') }}
                         </p>
 
-                        <p>
+                        <p class="dark:text-white">
                             Fondo inicial:
                             ${{ number_format($cajaAbierta->monto_inicial, 2) }}
                         </p>
                     </div>
-                    <a href="{{ route('cajas.edit') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg">
+                    <a href="{{ route('cajas.edit',$cajaAbierta) }}" class="bg-red-600 text-white px-4 py-2 rounded-lg">
                         Cerrar Caja
                     </a>
                 </div>

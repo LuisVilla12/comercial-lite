@@ -210,7 +210,12 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
     Route::get('/validacion/inventario', [ExistenciaProductoController::class, 'validacion'])->name('existencias.validacion');
     // TODO:AGREGAR VALIDACION SE SUCURSAL
     // Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
-    Route::get('/cajas/cerrar', [CajaController::class, 'edit'])->name(name: 'cajas.edit');
+
+    Route::get('/cajas/{caja}/cerrar', [CajaController::class, 'edit'])->name(name: 'cajas.edit');
+    Route::put('/cajas/{caja}', action: [CajaController::class, 'update'])->name('cajas.update');
+    Route::get('/cajas/{caja}/show', [CajaController::class, 'show'])->name('cajas.show');
+    Route::get('/cajas/{caja}/pdf', [CajaController::class, 'pdf'])->name('cajas.pdf');
+
 
     Route::prefix('sucursales/{sucursal}')->group(function () {
         Route::get('/cajas/crear', action: [CajaController::class, 'create'])->name('cajas.create');

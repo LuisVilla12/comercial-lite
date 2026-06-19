@@ -19,9 +19,9 @@ class SucursalController extends Controller
         $sucursales = Sucursal::when($search, function ($query, $search) {
             $query->where('nombre', 'like', "%{$search}%");
         })
-        ->paginate(10)
-        ->withQueryString();
-        return view('sucursales.index', ['sucursales'=>$sucursales]);
+            ->paginate(10)
+            ->withQueryString();
+        return view('sucursales.index', ['sucursales' => $sucursales]);
     }
     //  public function conceptos($sucursal)
     // {
@@ -31,69 +31,67 @@ class SucursalController extends Controller
     // }
     public function conceptos(Request $request, $sucursal)
     {
-$sucursal = Sucursal::findOrFail($sucursal);
+        $sucursal = Sucursal::findOrFail($sucursal);
 
-$periodo = $request->get('periodo', 'dia');
+        $periodo = $request->get('periodo', 'dia');
 
-$baseVentas = Documento::where('estatus', 4)
-    ->where('sucursal_id', $sucursal->id)
-    ->whereIn('documento_modelo_id', [2, 3]);
+        $baseVentas = Documento::where('estatus', 4)
+            ->where('sucursal_id', $sucursal->id)
+            ->whereIn('documento_modelo_id', [2, 3]);
 
-if ($periodo == 'dia') {
+        if ($periodo == 'dia') {
 
-    $baseVentas->whereDate('created_at', today());
+            $baseVentas->whereDate('created_at', today());
 
-    $ventas = (clone $baseVentas)
-        ->selectRaw('HOUR(created_at) as etiqueta, SUM(total) as total')
-        ->groupByRaw('HOUR(created_at)')
-        ->orderBy('etiqueta')
-        ->get();
+            $ventas = (clone $baseVentas)
+                ->selectRaw('HOUR(created_at) as etiqueta, SUM(total) as total')
+                ->groupByRaw('HOUR(created_at)')
+                ->orderBy('etiqueta')
+                ->get();
+        } elseif ($periodo == 'semana') {
 
-} elseif ($periodo == 'semana') {
+            $baseVentas->whereBetween('created_at', [
+                now()->startOfWeek(),
+                now()->endOfWeek()
+            ]);
 
-    $baseVentas->whereBetween('created_at', [
-        now()->startOfWeek(),
-        now()->endOfWeek()
-    ]);
+            $ventas = (clone $baseVentas)
+                ->selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
+                ->groupByRaw('DATE(created_at)')
+                ->orderBy('etiqueta')
+                ->get();
+        } else {
 
-    $ventas = (clone $baseVentas)
-        ->selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
-        ->groupByRaw('DATE(created_at)')
-        ->orderBy('etiqueta')
-        ->get();
+            $baseVentas->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year);
 
-} else {
+            $ventas = (clone $baseVentas)
+                ->selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
+                ->groupByRaw('DATE(created_at)')
+                ->orderBy('etiqueta')
+                ->get();
+        }
 
-    $baseVentas->whereMonth('created_at', now()->month)
-               ->whereYear('created_at', now()->year);
-
-    $ventas = (clone $baseVentas)
-        ->selectRaw('DATE(created_at) as etiqueta, SUM(total) as total')
-        ->groupByRaw('DATE(created_at)')
-        ->orderBy('etiqueta')
-        ->get();
-}
-
-/*
+        /*
 |--------------------------------------------------------------------------
 | KPIs
 |--------------------------------------------------------------------------
 */
 
-$ventasTotal = (clone $baseVentas)->sum('total');
+        $ventasTotal = (clone $baseVentas)->sum('total');
 
-$totalDocumentos = (clone $baseVentas)->count();
+        $totalDocumentos = (clone $baseVentas)->count();
 
-$ticketPromedio = (clone $baseVentas)->avg('total') ?? 0;
+        $ticketPromedio = (clone $baseVentas)->avg('total') ?? 0;
 
-return view('sucursales.copy', [
-    'sucursal' => $sucursal,
-    'periodo' => $periodo,
-    'ventas' => $ventas,
-    'ventasTotal' => $ventasTotal,
-    'totalDocumentos' => $totalDocumentos,
-    'ticketPromedio' => $ticketPromedio,
-]);
+        return view('sucursales.copy', [
+            'sucursal' => $sucursal,
+            'periodo' => $periodo,
+            'ventas' => $ventas,
+            'ventasTotal' => $ventasTotal,
+            'totalDocumentos' => $totalDocumentos,
+            'ticketPromedio' => $ticketPromedio,
+        ]);
     }
 
 
@@ -103,8 +101,8 @@ return view('sucursales.copy', [
     public function create()
     {
         //
-        $almacenes=Almacen::all();
-        return view('sucursales.create',['almacenes'=>$almacenes]);
+        $almacenes = Almacen::all();
+        return view('sucursales.create', ['almacenes' => $almacenes]);
     }
 
     /**
@@ -114,35 +112,35 @@ return view('sucursales.copy', [
     {
         //
         $request->validate([
-            'codigo'=>'required|string|max:50',
-            'nombre'=>'required|string|max:50',
-            'serie_cotizacion'=>'required|string|max:50',
-            'serie_remision'=>'required|string|max:50',
-            'serie_factura'=>'required|string|max:50',
-            'serie_devolucion'=>'required|string|max:50',
-            'folio_cotizacion'=>'required',
-            'folio_remision'=>'required',
-            'folio_factura'=>'required',
-            'folio_devolucion'=>'required',
-            'almacen_id'=>'required',
+            'codigo' => 'required|string|max:50',
+            'nombre' => 'required|string|max:50',
+            'serie_cotizacion' => 'required|string|max:50',
+            'serie_remision' => 'required|string|max:50',
+            'serie_factura' => 'required|string|max:50',
+            'serie_devolucion' => 'required|string|max:50',
+            'folio_cotizacion' => 'required',
+            'folio_remision' => 'required',
+            'folio_factura' => 'required',
+            'folio_devolucion' => 'required',
+            'almacen_id' => 'required',
         ]);
         $sucursal = Sucursal::create([
-                'almacen_id' => $request->almacen_id,
-                'empresa_id' => 1,
-                'codigo' => $request->codigo,
-                'nombre'   => $request->nombre,
-                'serie_cotizacion'      => $request->serie_cotizacion,
-                'serie_remision'        => $request->serie_remision,
-                'serie_factura'     => $request->serie_factura,
-                'serie_devolucion'     => $request->serie_devolucion,
-                'folio_cotizacion' => $request->folio_cotizacion,
-                'folio_remision' => $request->folio_remision,
-                'folio_factura'      => $request->folio_factura,
-                'folio_devolucion'      => $request->folio_devolucion,
-            ]);
+            'almacen_id' => $request->almacen_id,
+            'empresa_id' => 1,
+            'codigo' => $request->codigo,
+            'nombre'   => $request->nombre,
+            'serie_cotizacion'      => $request->serie_cotizacion,
+            'serie_remision'        => $request->serie_remision,
+            'serie_factura'     => $request->serie_factura,
+            'serie_devolucion'     => $request->serie_devolucion,
+            'folio_cotizacion' => $request->folio_cotizacion,
+            'folio_remision' => $request->folio_remision,
+            'folio_factura'      => $request->folio_factura,
+            'folio_devolucion'      => $request->folio_devolucion,
+        ]);
 
-         return redirect()->route('sucursales.index')
-             ->with('success', 'Sucursal creada correctamente');
+        return redirect()->route('sucursales.index')
+            ->with('success', 'Sucursal creada correctamente');
     }
 
     /**
@@ -151,9 +149,8 @@ return view('sucursales.copy', [
     public function show($sucursal)
     {
         $sucursal = Sucursal::findOrFail($sucursal);
-        $almacenes=Almacen::all();
-        return view('sucursales.show', ['sucursal'=>$sucursal,'almacenes'=>$almacenes]);
-
+        $almacenes = Almacen::all();
+        return view('sucursales.show', ['sucursal' => $sucursal, 'almacenes' => $almacenes]);
     }
 
     /**
@@ -162,8 +159,8 @@ return view('sucursales.copy', [
     public function edit($sucursal)
     {
         $sucursal = Sucursal::findOrFail($sucursal);
-        $almacenes=Almacen::all();
-        return view('sucursales.edit', ['sucursal'=>$sucursal,'almacenes'=>$almacenes]);
+        $almacenes = Almacen::all();
+        return view('sucursales.edit', ['sucursal' => $sucursal, 'almacenes' => $almacenes]);
     }
 
     /**
@@ -172,24 +169,23 @@ return view('sucursales.copy', [
     public function update(Request $request, $sucursal)
     {
         // dd($request);
-         $request->validate([
-            'codigo'=>'required|string|max:50',
-            'nombre'=>'required|string|max:50',
-            'serie_cotizacion'=>'required|string|max:50',
-            'serie_remision'=>'required|string|max:50',
-            'serie_factura'=>'required|string|max:50',
-            'serie_devolucion'=>'required|string|max:50',
-            'folio_cotizacion'=>'required',
-            'folio_remision'=>'required',
-            'folio_factura'=>'required',
-            'folio_devolucion'=>'required',
+        $request->validate([
+            'codigo' => 'required|string|max:50',
+            'nombre' => 'required|string|max:50',
+            'serie_cotizacion' => 'required|string|max:50',
+            'serie_remision' => 'required|string|max:50',
+            'serie_factura' => 'required|string|max:50',
+            'serie_devolucion' => 'required|string|max:50',
+            'folio_cotizacion' => 'required',
+            'folio_remision' => 'required',
+            'folio_factura' => 'required',
+            'folio_devolucion' => 'required',
         ]);
         $sucursal = Sucursal::findOrFail($sucursal);
         $sucursal->update($request->all());
 
         return redirect()->route('sucursales.index')
             ->with('success', 'Sucursal ha sido actualizada correctamente.');
-
     }
 
     /**
@@ -199,5 +195,4 @@ return view('sucursales.copy', [
     {
         //
     }
-
 }

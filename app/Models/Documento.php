@@ -32,6 +32,7 @@ class Documento extends TenantModel implements Auditable{
         'estatus',
         'vigencia',
         'agente_id',
+        'caja_id',
     ];
     public function detalles() {
         return $this->hasMany(DocumentosDetalle::class);
