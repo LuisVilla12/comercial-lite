@@ -16,7 +16,7 @@
                     </h2>
                 </div>
 
-                <form action="{{ route('cajas.update',$caja) }}" method="POST">
+                <form action="{{ route('cajas.update',$caja) }}" id="formCerrarCaja" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 px-6">
@@ -56,8 +56,8 @@
                                 name="monto_inicial" class="w-full rounded-lg" placeholder="0.00" required>
                         </div>
                     </div>
-                    <div class="mt-6">
-
+                    @if($ventas->count()>0)
+<div class="mt-6">
                         <h3 class="text-lg font-semibold mb-4 dark:text-white ml-4">
                             Resumen de Ventas por Forma de Pago
                         </h3>
@@ -116,29 +116,48 @@
                             @endforeach
 
                         </div>
-                        <div class="flex justify-end px-6 mt-4">
+
+                    </div>
+                    @endif
+                    <div class="flex justify-end px-6 mt-4">
                             <h3 class="text-lg font-semibold mb-4 dark:text-white ml-4">
                                 TOTAL VENDIDO: <span
                                     class="font-bold text-green-600 text-xl">${{ number_format($totalVentas, 2) }}</span>
                             </h3>
                             <input type="hidden" name="monto_final" value="{{ $totalVentas }}">
                         </div>
-                    </div>
-
-                    <div class="flex justify-between gap-3 p-6 ">
+                </form>
+                                    <div class="flex justify-between gap-3 p-6 ">
                         <a href="{{ url()->previous() }}"
                             class="px-4 py-2 rounded-md border-red-100 font-medium flex text-white bg-red-600 hover:bg-red-600">
                             <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Cancelar
                         </a>
 
-                        <button type="submit" class="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
+                        <button onclick="cerrarCaja()" class="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
                             Cerrar Caja
                         </button>
 
                     </div>
-                </form>
             </div>
-
         </div>
     </div>
 </x-app-layout>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function cerrarCaja() {
+        Swal.fire({
+            title: '¿Seguro que deseas realizar el corte de caja?',
+            text: "Esta acción es irreversible.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cerrar caja',
+            cancelButtonText: 'No, cancelar',
+            reverseButtons: true
+        }).then((confirmResult) => {
+            if (confirmResult.isConfirmed) {
+                document.getElementById('formCerrarCaja').submit();
+            }
+        });
+    }
+</script>

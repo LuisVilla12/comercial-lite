@@ -1,4 +1,4 @@
-@section('title', 'Cerrar una caja ')
+@section('title', 'Detalles de una caja ')
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
@@ -124,7 +124,7 @@
                     <div class="flex justify-between gap-3 p-6 ">
                         <a href="{{route('dashboard') }}"
                             class="px-4 py-2 rounded-md border-red-100 font-medium flex text-white bg-red-600 hover:bg-red-600">
-                            <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Cancelar
+                            <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar
                         </a>
                         <a href="{{ route('cajas.pdf', $caja) }}" target="_blank"
                     class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ml-6">

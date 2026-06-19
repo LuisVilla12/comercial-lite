@@ -21,9 +21,7 @@
                    placeholder="Nombre del banco"
                    value="{{ old('nombre_banco') }}"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-            @error('nombre_banco')
-            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-            @enderror
+
 
         </div>
         {{-- Cuenta bancaria --}}

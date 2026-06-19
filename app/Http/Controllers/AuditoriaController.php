@@ -16,7 +16,6 @@ class AuditoriaController extends Controller
     // 🔍 Buscador general
     if ($request->filled('search')) {
         $search = $request->search;
-
         $query->where(function ($q) use ($search) {
             $q->where('event', 'like', "%{$search}%")
               ->orWhere('auditable_type', 'like', "%{$search}%")

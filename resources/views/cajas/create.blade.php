@@ -20,7 +20,7 @@
                 </p>
             </div>
 
-            <form action="{{ route('cajas.store',$sucursal) }}" method="POST">
+            <form action="{{ route('cajas.store',$sucursal) }}" id="formAbrirCaja" method="POST">
                 @csrf
 
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 px-6">
@@ -75,30 +75,44 @@
                             placeholder="0.00"
                             required>
                     </div>
-
+                    @error('monto_inicial')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
-
-                <div class="flex justify-between gap-3 p-6 ">
-
+            </form>
+         <div class="flex justify-between gap-3 p-6 ">
                     <a href="{{ url()->previous() }}"
                        class="px-4 py-2 rounded-md border-red-100 font-medium flex text-white bg-red-600 hover:bg-red-600">
                         <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Cancelar
                     </a>
 
                     <button
-                        type="submit"
+                        onclick="abrirCaja()"
                         class="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
-
                         Abrir Caja
-
                     </button>
 
                 </div>
-
-            </form>
-
         </div>
 
     </div>
 </div>
 </x-app-layout>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function abrirCaja() {
+        Swal.fire({
+            title: '¿Seguro que deseas abrir una caja?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, abrir caja',
+            cancelButtonText: 'No, cancelar',
+            reverseButtons: true
+        }).then((confirmResult) => {
+            if (confirmResult.isConfirmed) {
+                document.getElementById('formAbrirCaja').submit();
+            }
+        });
+    }
+</script>

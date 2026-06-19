@@ -222,6 +222,12 @@
                     ⚙️ Administración
                 </h2>
             </div>
+            <x-dashboard-card href="{{ route('cajas.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
+                title="Cajas" desc="Listado de cajas" iconBg="bg-teal-500">
+                <x-slot:icon>
+                    <x-heroicon-o-currency-dollar class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
             <x-dashboard-card href="{{ route('sucursales.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
                 title="Sucursales" desc="Administrar sucursales" iconBg="bg-teal-500">
                 <x-slot:icon>

@@ -3,21 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Models\Caja;
+use App\Models\User;
 use App\Models\Documento;
 use App\Models\Clasificacion;
 use App\Models\Empresa;
 use App\Models\Sucursal;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+
 
 class CajaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query=Caja::all();
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+        // 📅 Filtro por fechas (correcto)
+    if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
+        $query->whereBetween('created_at', [
+            Carbon::parse($request->fecha_inicio)->startOfDay(),
+            Carbon::parse($request->fecha_fin)->endOfDay()
+        ]);
     }
+
+        $cajas = $query->paginate(20)->withQueryString();
+
+        $sucursales = Sucursal::orderBy('nombre')->get();
+           // Para el select de usuarios
+        $users = User::orderBy('name')->get();
+
+        return view('cajas.index',['cajas'=>$cajas,'sucursales'=>$sucursales,'users'=>$users]);
+        }
 
     /**
      * Show the form for creating a new resource.

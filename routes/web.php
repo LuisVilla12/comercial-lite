@@ -215,7 +215,7 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
     Route::put('/cajas/{caja}', action: [CajaController::class, 'update'])->name('cajas.update');
     Route::get('/cajas/{caja}/show', [CajaController::class, 'show'])->name('cajas.show');
     Route::get('/cajas/{caja}/pdf', [CajaController::class, 'pdf'])->name('cajas.pdf');
-
+    Route::get('/cajas', action: [CajaController::class, 'index'])->name('cajas.index');
 
     Route::prefix('sucursales/{sucursal}')->group(function () {
         Route::get('/cajas/crear', action: [CajaController::class, 'create'])->name('cajas.create');
