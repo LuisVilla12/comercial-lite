@@ -20,19 +20,24 @@ class CajaController extends Controller
      */
     public function index(Request $request)
     {
-        $query=Caja::all();
+    $query = Caja::query();
+    //FILTRO POR USUARIO
         if ($request->filled('user_id')) {
             $query->where('user_id', $request->user_id);
         }
+    //FILTRO POR SUCURSAL
+         if ($request->filled('sucursal_id')) {
+            $query->where('sucursal_id', $request->sucursal_id);
+        }
         // 📅 Filtro por fechas (correcto)
-    if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
+        if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
         $query->whereBetween('created_at', [
             Carbon::parse($request->fecha_inicio)->startOfDay(),
             Carbon::parse($request->fecha_fin)->endOfDay()
         ]);
     }
 
-        $cajas = $query->paginate(20)->withQueryString();
+        $cajas = $query->paginate(10)->withQueryString();
 
         $sucursales = Sucursal::orderBy('nombre')->get();
            // Para el select de usuarios

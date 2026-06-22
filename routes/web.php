@@ -99,8 +99,16 @@ Route::middleware(['auth', 'tenant'])->group(function () {
 Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
 
     //METODO DE PAGO
-    Route::get('/metodos-pago', action: [MedioPagoController::class, 'index'])->name('metodo.index');
-    Route::get('/metodos-pago/create', action: [MedioPagoController::class, 'index'])->name('metodo.create');
+    Route::get('/metodos-pago', action: [MedioPagoController::class, 'index'])->name('metodos.index');
+    Route::get('/metodos-pago/create', action: [MedioPagoController::class, 'create'])->name('metodos.create');
+    Route::post('/metodos-pago', [MedioPagoController::class, 'store'])->name('metodos.store');
+    Route::get('/metodos-pago/{medio}', action: [MedioPagoController::class, 'show'])->name('metodos.show');
+    Route::get('/metodos-pago/{medio}/edit', [MedioPagoController::class, 'edit'])->name('metodos.edit');
+    Route::put('/metodos-pago/{medio}', [MedioPagoController::class, 'update'])->name('metodos.update');
+    Route::delete('/metodos-pago/{medio}', action: [MedioPagoController::class, 'destroy'])->name('metodos.destroy');
+
+
+
     //SESIONES
     Route::get('/sesiones-activas', action: [SesionesController::class, 'index'])->name('sesiones.index');
     Route::delete('/cerrar-sesion/{session}', action: [SesionesController::class, 'destroy'])->name('sesiones.destroy');

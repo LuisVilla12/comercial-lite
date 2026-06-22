@@ -24,7 +24,7 @@
             </div>
             {{-- Filtro por usuario --}}
             <div class="w-full md:w-1/4">
-                <select name="sucursal_id" onchange="this.form.submit()"
+                <select name="user_id" onchange="this.form.submit()"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Todos los usuarios</option>
                     @foreach ($users as $user)
@@ -37,13 +37,13 @@
             </div>
             {{-- 📅 Fecha inicio --}}
             <div>
-                <input type="date" name="fecha_inicio" value="{{ request('fecha_inicio') }}"
+                <input type="date" name="fecha_inicio" value="{{ request('fecha_inicio') }}" onchange="this.form.submit()"
                     class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
             </div>
 
             {{-- 📅 Fecha fin --}}
             <div>
-                <input type="date" name="fecha_fin" value="{{ request('fecha_fin') }}"
+                <input type="date" name="fecha_fin" value="{{ request('fecha_fin') }}" onchange="this.form.submit()"
                     class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
             </div>
             <button type="submit"
@@ -80,10 +80,10 @@
                                     {{ $caja->fecha_apertura->format('d/m/Y') }}
                                 </td>
                                 <td class="p-2 text-center">
-                                    {{ $caja->fecha_apertura->format('H:i:s') }}
+                                    {{ $caja->fecha_apertura->format('H:i') }}
                                 </td>
                                 <td class="p-2 text-center">
-                                    {{ $caja->fecha_cierre->format('H:i:s') }}
+                                    {{ $caja->fecha_cierre==''?'---':$caja->fecha_cierre->format('H:i') }}
                                 </td>
 
                                 <td class="p-2">

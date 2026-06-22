@@ -210,7 +210,6 @@
                             <div class="lg:hidden space-y-4">
                                 <template x-for="(item, index) in items" :key="index">
                                     <div class="bg-white border shadow rounded p-4 space-y-3">
-
                                         <div class="flex justify-between text-sm">
                                             <span class="text-gray-500">Código</span>
                                             <span class="font-mono" x-text="item.codigo"></span>
