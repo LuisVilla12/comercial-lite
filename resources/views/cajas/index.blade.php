@@ -38,18 +38,18 @@
             {{-- 📅 Fecha inicio --}}
             <div>
                 <input type="date" name="fecha_inicio" value="{{ request('fecha_inicio') }}" onchange="this.form.submit()"
-                    class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
+                    class="w-full p-3 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
             </div>
 
             {{-- 📅 Fecha fin --}}
             <div>
                 <input type="date" name="fecha_fin" value="{{ request('fecha_fin') }}" onchange="this.form.submit()"
-                    class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
+                    class="w-full p-3 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
             </div>
-            <button type="submit"
-            class="hidden md:inline-flex px-4 py-2 bg-indigo-600 text-white rounded-md">
-            Buscar
-        </button>
+            <a href="{{ route('cajas.index') }}"
+            class="hidden md:inline-flex px-6 py-2 bg-indigo-600 text-white rounded-md text-center">
+            Limpiar
+        </a>
         </form>
 
     </div>
@@ -90,7 +90,11 @@
                                     {{  $caja->sucursal->nombre}}
                                 </td>
                                 <td class="p-2 text-center">
-                                    {{  $caja->user_id}}
+                                    @foreach ($users as $user)
+                                        @if ($user->id==$caja->user_id)
+                                            {{ $user->name }}
+                                        @endif
+                                    @endforeach
                                 </td>
                                 <td class="p-2">
                                     {{  $caja->monto_final}}
