@@ -176,7 +176,7 @@
                     </x-slot:icon>
                 </x-dashboard-card>
             @empty
-                <p>No hay ninguna sucursal registrada</p>
+                <p class="dark:text-white">No hay ninguna sucursal registrada</p>
             @endforelse
         @else
             @foreach ($sucursales as $sucursal)

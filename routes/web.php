@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MedioPagoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\ClienteController;
@@ -97,6 +98,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::post('/kardex/sucursal', action: [KardexController::class, 'sucursal'])->name('kardex.sucursal');
 Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
 
+    //METODO DE PAGO
+    Route::get('/metodos-pago', action: [MedioPagoController::class, 'index'])->name('metodo.index');
+    Route::get('/metodos-pago/create', action: [MedioPagoController::class, 'index'])->name('metodo.create');
     //SESIONES
     Route::get('/sesiones-activas', action: [SesionesController::class, 'index'])->name('sesiones.index');
     Route::delete('/cerrar-sesion/{session}', action: [SesionesController::class, 'destroy'])->name('sesiones.destroy');
