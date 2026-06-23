@@ -296,19 +296,26 @@
                                 ➕ Agregar producto [F9]
                             </button>
                         </div>
+                        
+                        {{-- ================= TOTALES ================= --}}
+                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
+                            Subtotal:
+                            $<span x-text="subtotal().toFixed(2)"></span>
+                        </div>
 
-                        {{-- ================= TOTAL ================= --}}
-                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            Subtotal: $<span x-text="total.toFixed(2)"></span>
+                        <div class="flex justify-end text-xl font-bold mt-4 text-red-500">
+                            Descuentos:
+                            $<span x-text="totalDescuentos().toFixed(2)"></span>
                         </div>
+
                         <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            Descuentos: $<span x-text="total.toFixed(2)"></span>
+                            IVA:
+                            $<span x-text="iva().toFixed(2)"></span>
                         </div>
-                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            IVA: $<span x-text="(total*1.16-total).toFixed(2)"></span>
-                        </div>
-                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            Total: $<span x-text="(total * 1.16).toFixed(2)"></span>
+
+                        <div class="flex justify-end text-xl font-bold mt-4 text-green-600">
+                            Total:
+                            $<span x-text="totalFinal().toFixed(2)"></span>
                         </div>
 
                         {{-- -ENVIO DE DATOS --}}
@@ -853,10 +860,6 @@
 
 
                     calcular() {
-                        // this.total = this.items.reduce(
-                        //     (t, i) => t + (Number(i.cantidad) * Number(i.costo)),
-                        //     0
-                        // )
                         this.total = this.items.reduce((t, i) => {
 
                             const subtotal =
@@ -874,7 +877,35 @@
                         const descuento = subtotal * (Number(item.descuento || 0) / 100);
 
                         return subtotal - descuento;
-                    }
+                    },
+                    subtotal() {
+                        return this.items.reduce((total, item) => {
+                            return total + (Number(item.cantidad) * Number(item.costo));
+                        }, 0);
+                    },
+
+                    totalDescuentos() {
+                        return this.items.reduce((total, item) => {
+                            const subtotalLinea =
+                                Number(item.cantidad) * Number(item.costo);
+
+                            return total + (
+                                subtotalLinea * (Number(item.descuento || 0) / 100)
+                            );
+                        }, 0);
+                    },
+
+                    subtotalConDescuento() {
+                        return this.subtotal() - this.totalDescuentos();
+                    },
+
+                    iva() {
+                        return this.subtotalConDescuento() * 0.16;
+                    },
+
+                    totalFinal() {
+                        return this.subtotalConDescuento() + this.iva();
+                    },
                 }
             }
         </script>
