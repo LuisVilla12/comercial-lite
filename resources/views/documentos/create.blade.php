@@ -103,7 +103,8 @@
                                             <th class="p-2">Producto</th>
                                             <th class="p-2">Cantidad</th>
                                             <th class="p-2">Precio</th>
-                                            <th class="p-2">Existencia</th>
+                                            <th class="p-2">Descuento %</th>
+                                            {{-- <th class="p-2">Existencia</th> --}}
                                             <th class="p-2">Importe</th>
                                             <th class="p-2"></th>
                                         </tr>
@@ -184,18 +185,27 @@
                                                         x-model.number="item.costo"
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
-
                                                 <td class="p-2 text-center">
-                                                    <input disabled type="number" x-model.number="item.stock"
+                                                    <input readonly type="number" x-model.number="item.descuento"
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
 
-                                                <td class="p-2 text-center font-semibold">
+                                                {{-- <td class="p-2 text-center">
+                                                    <input disabled type="number" x-model.number="item.stock"
+                                                        class="border rounded p-1 w-24 text-center bg-gray-100">
+                                                </td> --}}
+
+                                                {{-- <td class="p-2 text-center font-semibold">
                                                     $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
                                                     <input type="hidden" :name="`productos[${index}][importe]`"
                                                         :value="(item.cantidad * item.costo).toFixed(2)">
-                                                </td>
+                                                </td> --}}
+                                                <td class="p-2 text-center font-semibold">
+                                                    $<span x-text="calcularImporte(item).toFixed(2)"></span>
 
+                                                    <input type="hidden" :name="`productos[${index}][importe]`"
+                                                        :value="calcularImporte(item).toFixed(2)">
+                                                </td>
                                                 <td class="p-2 text-center">
                                                     <button type="button" @click="eliminarFila(index)"
                                                         class="text-red-600 hover:text-red-800">
@@ -290,6 +300,9 @@
                         {{-- ================= TOTAL ================= --}}
                         <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
                             Subtotal: $<span x-text="total.toFixed(2)"></span>
+                        </div>
+                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
+                            Descuentos: $<span x-text="total.toFixed(2)"></span>
                         </div>
                         <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
                             IVA: $<span x-text="(total*1.16-total).toFixed(2)"></span>
@@ -493,9 +506,7 @@
                         <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar
                     </a>
                     <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
-                        <button
-                         x-ref="btnGuardar"
-                        type="submit"
+                        <button x-ref="btnGuardar" type="submit"
                             class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                             GUARDAR [F10]
                         </button>
@@ -505,9 +516,9 @@
 
                 {{-- MODAL --}}
                 <div x-show="modalProducto" @keydown.window.escape="cerrarModalProducto()" x-cloak
-                    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    class="fixed inset-0 bg-black/50 flex  items-center justify-center z-50">
 
-                    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+                    <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">Buscar producto</h2>
 
@@ -551,8 +562,8 @@
                                 <div @mouseenter="modalProductoSeleccionado = i" @click="agregarProductoDesdeModal(p)"
                                     class="p-3 border-b cursor-pointer"
                                     :class="modalProductoSeleccionado === i ? 'bg-blue-100' : 'hover:bg-gray-100'">
-                                    <div class="flex justify-between items-center gap-4 mb-1">
-                                        <div>
+                                    <div class="grid md:grid-cols-5 gap-4 mb-1">
+                                        <div class="md:col-span-3 ">
                                             <p class="font-semibold" x-text="p.nombre"></p>
 
                                             <div class="flex flex-wrap items-center gap-3 text-sm">
@@ -574,35 +585,63 @@
                                         </div>
 
                                         <!-- Lista de precios -->
-                                        <div @click.stop>
-                                            <label class="font-bold text-gray-700 text-sm block mb-1">
-                                                Precios:
-                                            </label>
+                                        <div @click.stop
+                                            class="md:col-span-2 flex md:grid md:grid-cols-4 gap-4 items-center justify-center">
+                                            <div class="md:col-span-2">
+                                                <label class="font-bold text-gray-700 text-sm block mb-1">
+                                                    Precios:
+                                                </label>
 
-                                            <select x-model="p.precioSeleccionado" x-init="if (!p.precioSeleccionado) p.precioSeleccionado = String(p.costo)"
-                                                class="border rounded p-1 text-sm">
-                                                <option :value="String(p.costo)">
-                                                    Precio 1 - $<span x-text="p.costo"></span>
-                                                </option>
+                                                <select x-model="p.precioSeleccionado" x-init="if (!p.precioSeleccionado) p.precioSeleccionado = String(p.costo)"
+                                                    class="border rounded p-1 text-sm w-full">
 
-                                                <option x-show="Number(p.costo2) > 0" :value="String(p.costo2)">
-                                                    Precio 2 - $<span x-text="p.costo2"></span>
-                                                </option>
-
-                                                @if (auth()->user()->isAdmin() )
-                                                    <option x-show="Number(p.costo3) > 0" :value="String(p.costo3)">
-                                                        Precio 3 - $<span x-text="p.costo3"></span>
+                                                    <option :value="String(p.costo)">
+                                                        Precio 1 - $<span x-text="p.costo"></span>
                                                     </option>
 
-                                                    <option x-show="Number(p.costo4) > 0" :value="String(p.costo4)">
-                                                        Precio 4 - $<span x-text="p.costo4"></span>
+                                                    <option x-show="Number(p.costo2) > 0" :value="String(p.costo2)">
+                                                        Precio 2 $<span x-text="p.costo2"></span>
                                                     </option>
 
-                                                    <option x-show="Number(p.costo5) > 0" :value="String(p.costo5)">
-                                                        Precio 5 - $<span x-text="p.costo5"></span>
-                                                    </option>
-                                                @endif
-                                            </select>
+                                                    @if (auth()->user()->isAdmin())
+                                                        <option x-show="Number(p.costo3) > 0" :value="String(p.costo3)">
+                                                            Precio 3 $<span x-text="p.costo3"></span>
+                                                        </option>
+
+                                                        <option x-show="Number(p.costo4) > 0" :value="String(p.costo4)">
+                                                            Precio 4 $<span x-text="p.costo4"></span>
+                                                        </option>
+
+                                                        <option x-show="Number(p.costo5) > 0" :value="String(p.costo5)">
+                                                            Precio 5 $<span x-text="p.costo5"></span>
+                                                        </option>
+                                                    @endif
+
+                                                </select>
+                                            </div>
+
+
+                                            <!-- Cantidad y descuento -->
+
+                                            <div>
+                                                <label class="font-bold text-gray-700 text-sm block mb-1">
+                                                    Cantidad
+                                                </label>
+
+                                                <input type="number" min="1" step="1" x-model="p.cantidad"
+                                                    @click.stop class="border rounded p-1 text-sm w-full">
+                                            </div>
+
+                                            <div>
+                                                <label class="font-bold text-gray-700 text-sm block mb-1">
+                                                    Desc. %
+                                                </label>
+
+                                                <input type="number" min="0" max="100" step="0.01"
+                                                    x-model="p.descuento" @click.stop
+                                                    class="border rounded p-1 text-sm w-full">
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -674,6 +713,7 @@
                             costo3: 0,
                             costo4: 0,
                             stock: 0,
+                            descuento: 0,
                             resultados: [],
                             resultadoSeleccionado: -1
                         })
@@ -744,7 +784,8 @@
                         item.producto_id = p.id
                         item.codigo = p.codigo
                         item.query = p.nombre
-                        item.costo = parseFloat(p.costo) || 0
+                        item.cantidad = Number(p.cantidad) || 1,
+                            item.costo = parseFloat(p.costo) || 0
                         item.costo2 = parseFloat(p.costo2) || 0
                         item.costo3 = parseFloat(p.costo3) || 0
                         item.costo4 = parseFloat(p.costo4) || 0
@@ -766,7 +807,13 @@
 
                         const res = await fetch(
                             `/productos-existencias/buscar?q=${encodeURIComponent(q)}&almacen=${ALMACEN_ID}`);
-                        this.resultadosModal = await res.json();
+                        const productos = await res.json();
+                        this.resultadosModal = productos.map(p => ({
+                            ...p,
+                            cantidad: 1,
+                            descuento: 0,
+                            precioSeleccionado: String(p.costo)
+                        }));
                         this.modalProductoSeleccionado = this.resultadosModal.length ? 0 : -1;
                     },
 
@@ -780,7 +827,8 @@
                             producto_id: p.id,
                             codigo: p.codigo,
                             query: p.nombre,
-                            cantidad: 1,
+                            cantidad: Number(p.cantidad) || 1,
+                            descuento: Number(p.descuento) || 0,
 
                             // Precio seleccionado en el combo
                             costo: parseFloat(p.precioSeleccionado ?? p.costo) || 0,
@@ -805,10 +853,27 @@
 
 
                     calcular() {
-                        this.total = this.items.reduce(
-                            (t, i) => t + (Number(i.cantidad) * Number(i.costo)),
-                            0
-                        )
+                        // this.total = this.items.reduce(
+                        //     (t, i) => t + (Number(i.cantidad) * Number(i.costo)),
+                        //     0
+                        // )
+                        this.total = this.items.reduce((t, i) => {
+
+                            const subtotal =
+                                Number(i.cantidad) * Number(i.costo);
+
+                            const descuento =
+                                subtotal * (Number(i.descuento || 0) / 100);
+
+                            return t + (subtotal - descuento);
+
+                        }, 0);
+                    },
+                    calcularImporte(item) {
+                        const subtotal = Number(item.cantidad) * Number(item.costo);
+                        const descuento = subtotal * (Number(item.descuento || 0) / 100);
+
+                        return subtotal - descuento;
                     }
                 }
             }

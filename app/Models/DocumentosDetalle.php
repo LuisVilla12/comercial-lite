@@ -15,7 +15,8 @@ class DocumentosDetalle extends TenantModel
         'producto_id',
         'cantidad',
         'costo_unitario',
-        'importe'
+        'importe',
+        'descuento'
     ];
 
     public function documento()

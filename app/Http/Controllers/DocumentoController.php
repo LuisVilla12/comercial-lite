@@ -204,7 +204,7 @@ class DocumentoController extends Controller
                 'uso_cfdi' => $request->uso_cfdi,
                 'vigencia' => $request->vigencia,
                 'agente_id' => $request->agente_id,
-                'caja_id' => $caja->id,
+                'caja_id' => $caja->id?? null,
                 'observaciones' => $request->observaciones,
                 'estado' => 'PENDIENTE',
             ]);

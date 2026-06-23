@@ -24,6 +24,7 @@ class Documento extends TenantModel implements Auditable{
         'user_id',
         'subtotal',
         'impuestos',
+        'descuentos',
         'total',
         'metodo_pago',
         'forma_pago',
