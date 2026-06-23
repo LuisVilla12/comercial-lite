@@ -45,11 +45,11 @@
             </p>
 
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
             <button
                         onclick="surtirRemision()"
-                        class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full mb-4 md:mb-0 mr-6">
+                        class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full">
                         <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
                         Surtir
                     </button>
@@ -61,8 +61,8 @@
             @endif
             @if ($documento->estatus == 1 and $documento->documento_modelo_id > 1)
                 <button type="button" onclick="openCambioModal()"
-                    class="flex items-center px-4 py-2 mr-6 bg-green-500 text-white rounded" title="Cambio">
-                    <x-heroicon-o-currency-dollar class="w-5 h-5 mr-2" /> Cambio
+                    class="flex items-center px-4 py-2 bg-green-500 text-white rounded" title="Cambio">
+                    <x-heroicon-o-currency-dollar class="w-5 h-5" /> Cambio
                 </button>
             @endif
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
