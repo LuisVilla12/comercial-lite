@@ -29,9 +29,9 @@
         </div>
 
     </x-slot>
-    <div class="flex justify-between mt-4 items-center gap-2 ">
+    <div class="md:flex md:justify-between mt-4 md:items-center gap-2 ">
         <div>
-            <p class="dark:text-white">Estado: @php
+            <p class="dark:text-white text-center md:text-left">Estado: @php
                 $estatusText = match ($documento->estatus) {
                     1 => 'ACTIVA',
                     2 => 'TRANSFORMADA',
@@ -45,7 +45,7 @@
             </p>
 
         </div>
-        <div class="flex">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
             <button
                         onclick="surtirRemision()"
@@ -65,7 +65,6 @@
                     <x-heroicon-o-currency-dollar class="w-5 h-5 mr-2" /> Cambio
                 </button>
             @endif
-            <div>
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
                         <button  onclick="timbrar()"
                             class="flex items-center px-4 py-2 mr-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
@@ -77,7 +76,6 @@
                     </form>
                 @endif
 
-            </div>
 
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
                 <button onclick="seleccionarConversion()"
@@ -119,24 +117,24 @@
             @endif
             @if ($documento->documento_modelo_id > 1)
                 <button onclick="seleccionarImpresora()"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded flex items-center ml-6">
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded flex items-center">
                     <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
                 </button>
             @endif
 
             <button type="button" onclick="openEmailModal()"
-                class="flex items-center px-4 py-2 ml-6 bg-yellow-500 text-white rounded" title="Enviar por correo">
+                class="flex items-center px-4 py-2  bg-yellow-500 text-white rounded" title="Enviar por correo">
                 <x-heroicon-o-envelope class="w-5 h-5 mr-2" /> Enviar
             </button>
             <a href="https://wa.me/521{{ $documento->cliente->whatsapp }}?text={{ urlencode('Hola  tu compra fue de $' . $documento->total . '. Gracias por tu preferencia.') }}"
                 target="_blank">
-                <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded flex items-center ml-6">
+                <button class="px-4 py-2 w-full bg-green-600 hover:bg-green-700 text-white rounded flex items-center ">
                     <x-heroicon-o-device-phone-mobile class="w-5 h-5 mr-2" /> WhatsApp
                 </button>
             </a>
             @if ($documento->estatus == 4 and $documento->documento_modelo_id == 3)
                 <a
-                    href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="flex  px-6 py-2 ml-4 bg-indigo-600 text-white rounded mt-4  md:mt-0 text-center">
+                    href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="flex  px-6 py-2 bg-indigo-600 text-white rounded  md:mt-0 text-center">
                                         <x-heroicon-o-arrow-uturn-right class="w-5 h-5 mr-2" /> Devolucion</a>
             @endif
         </div>
@@ -219,7 +217,7 @@
                             </p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+                        <div class="grid grid-cols-3 gap-4 mt-3 text-sm">
                             <div>
                                 <p class="text-gray-500">Cantidad</p>
                                 <p class="font-medium">{{ $detalle->cantidad }}</p>
@@ -229,6 +227,12 @@
                                 <p class="text-gray-500">Costo</p>
                                 <p class="font-medium">
                                     ${{ number_format($detalle->costo_unitario, 2) }}
+                                </p>
+                            </div>
+                             <div>
+                                <p class="text-gray-500">Descuento</p>
+                                <p class="font-medium">
+                                    {{ number_format($detalle->descuento) }} %
                                 </p>
                             </div>
                         </div>

@@ -8,7 +8,7 @@
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
 
     <div class="bg-green-50 rounded-xl p-4 shadow">
-        <p class="text-sm text-gray-500">Ventas Hoy</p>
+        <p class="text-sm text-gray-500">Ventas </p>
         <p class="text-2xl font-bold text-green-600">
             ${{ number_format($ventasTotal, 2) }}
         </p>

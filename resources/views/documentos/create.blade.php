@@ -186,7 +186,7 @@
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
                                                 <td class="p-2 text-center">
-                                                    <input readonly type="number" :name="`productos[${index}][descuento]`" x-model.number="item.descuento"
+                                                    <input  type="number" :name="`productos[${index}][descuento]`" x-model.number="item.descuento"
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
 

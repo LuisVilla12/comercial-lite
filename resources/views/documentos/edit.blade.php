@@ -103,7 +103,7 @@
                                             <th class="p-2">Producto</th>
                                             <th class="p-2">Cantidad</th>
                                             <th class="p-2">Precio</th>
-                                            <th class="p-2">Existencia</th>
+                                            <th class="p-2">Descuentos</th>
                                             <th class="p-2">Importe</th>
                                             <th class="p-2"></th>
                                         </tr>
@@ -185,11 +185,15 @@
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
 
-                                                <td class="p-2 text-center">
+                                                {{-- <td class="p-2 text-center">
                                                     <input disabled type="number" x-model.number="item.stock"
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
-                                                </td>
+                                                </td> --}}
 
+                                                 <td class="p-2 text-center">
+                                                    <input readonly type="number" :name="`productos[${index}][descuento]`" x-model.number="item.descuento"
+                                                        class="border rounded p-1 w-24 text-center bg-gray-100">
+                                                </td>
                                                 <td class="p-2 text-center font-semibold">
                                                     $<span x-text="(item.cantidad * item.costo).toFixed(2)"></span>
                                                     <input type="hidden" :name="`productos[${index}][importe]`"
@@ -683,6 +687,7 @@
                             codigo: d.producto.codigo_producto,
                             query: d.producto.nombre_producto,
                             cantidad: d.cantidad,
+                            descuento: d.descuento,
                             stock: d.stock,
                             costo: parseFloat(d.costo_unitario),
                             resultados: []
@@ -695,6 +700,7 @@
                             codigo: '',
                             query: '',
                             cantidad: 1,
+                            descuento: 0,
                             costo: 0,
                             costo2: 0,
                             costo3: 0,
