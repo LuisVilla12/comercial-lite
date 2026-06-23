@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\ConfiguracionEmpresa;
 use App\Models\Regimen;
 use App\Models\Documento;
+use App\Models\DocumentosDetalle;
+
 
 
 class ConfiguracionEmpresaController extends Controller
@@ -47,23 +49,18 @@ public function edit(){
     }
 
     public function dashboard(Request $request){
-$empresa = ConfiguracionEmpresa::first();
-
+    $empresa = ConfiguracionEmpresa::first();
     $periodo = $request->get('periodo', 'dia');
-
-$baseVentas = Documento::where('estatus', 4)
+    $baseVentas = Documento::where('estatus', 4)
     ->whereIn('documento_modelo_id', [2, 3]);
 
 if ($periodo == 'dia') {
-
     $baseVentas->whereDate('created_at', today());
-
     $ventas = (clone $baseVentas)
         ->selectRaw('HOUR(created_at) as etiqueta, SUM(total) as total')
         ->groupByRaw('HOUR(created_at)')
         ->orderBy('etiqueta')
         ->get();
-
 } elseif ($periodo == 'semana') {
 
     $baseVentas->whereBetween('created_at', [
@@ -96,10 +93,18 @@ if ($periodo == 'dia') {
 */
 
 $ventasTotal = (clone $baseVentas)->sum('total');
-
 $totalDocumentos = (clone $baseVentas)->count();
-
 $ticketPromedio = (clone $baseVentas)->avg('total') ?? 0;
+
+//VER MEJORES PRODUCTOS
+$productos = DocumentosDetalle::join('productos', 'documentos_detalles.producto_id', '=', 'productos.id')
+    ->selectRaw('productos.codigo_producto as codigo_producto, SUM(documentos_detalles.cantidad) as total_cantidad')
+    ->groupBy('productos.codigo_producto', 'documentos_detalles.producto_id')
+    ->get();
+
+    // Extraemos los arrays para JavaScript
+$labelsProductos = $productos->pluck('codigo_producto'); // Reemplaza por 'producto.nombre' si haces un join
+$dataProductos = $productos->pluck('total_cantidad');
 
 return view('empresa-config.dashboard', [
     'empresa' => $empresa,
@@ -108,6 +113,9 @@ return view('empresa-config.dashboard', [
     'ventasTotal' => $ventasTotal,
     'totalDocumentos' => $totalDocumentos,
     'ticketPromedio' => $ticketPromedio,
+    'productos'=>$productos,
+    'labelsProductos'=>$labelsProductos,
+    'dataProductos'=>$dataProductos
 ]);
 
     }
