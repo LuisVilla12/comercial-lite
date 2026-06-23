@@ -171,6 +171,7 @@
                             <th class="p-2">Producto</th>
                             <th class="p-2">Cantidad</th>
                             <th class="p-2">Costo</th>
+                            <th class="p-2">Descuento</th>
                             <th class="p-2">Importe</th>
                         </tr>
                     </thead>
@@ -188,6 +189,9 @@
                                 </td>
                                 <td class="p-2 text-right">
                                     ${{ number_format($detalle->costo_unitario, 2) }}
+                                </td>
+                                <td class="p-2 text-right">
+                                    {{ number_format($detalle->descuento) }}%
                                 </td>
                                 <td class="p-2 text-right">
                                     ${{ number_format($detalle->importe, 2) }}
@@ -242,8 +246,11 @@
             <div class="text-right mt-6 space-y-1">
                 <p class="uppercase block text-lg font-medium mb-2 dark:text-white">Subtotal:
                     ${{ number_format($documento->subtotal, 2) }}</p>
+                <p class="uppercase block text-lg font-medium mb-2 dark:text-white">Descuento:
+                    ${{ number_format($documento->descuentos, 2) }}</p>
                 <p class="uppercase block text-lg font-medium mb-2 dark:text-white">IVA:
                     ${{ number_format($documento->impuestos, 2) }}</p>
+
                 <p class="uppercase block text-lg font-medium mb-2 dark:text-white">
                     Total: ${{ number_format($documento->total, 2) }}
                 </p>

@@ -134,7 +134,7 @@ class DocumentoController extends Controller
         $request->merge([
             'productos' => $productos
         ]);
-                        // dd($productos);
+        
         $request->validate([
             'proveedor_id' => 'required',
             'almacen_id' => 'required',
@@ -143,6 +143,7 @@ class DocumentoController extends Controller
             'fecha' => 'required|date',
             'subtotal' => 'required|numeric',
             'impuestos' => 'required|numeric',
+            'descuentos' => 'required|numeric',
             'total' => 'required|numeric',
             'productos' => 'required|array|min:1',
             'tipo' => 'required',
@@ -197,6 +198,7 @@ class DocumentoController extends Controller
                 'user_id' => $request->user_id,
                 'subtotal' => $request->subtotal,
                 'impuestos' => $request->impuestos,
+                'descuentos' => $request->descuentos,
                 'total' => $request->total,
                 'estatus' => 1,
                 'metodo_pago' => $request->metodo_pago,
@@ -239,6 +241,7 @@ class DocumentoController extends Controller
                     'cantidad' => $item['cantidad'],
                     'costo_unitario' => $item['costo'],
                     'importe' => $item['importe'],
+                    'descuento' => $item['descuento'],
                 ]);
             }
         } catch (\Throwable $e) {

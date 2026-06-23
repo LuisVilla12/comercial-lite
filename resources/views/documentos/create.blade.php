@@ -186,7 +186,7 @@
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
                                                 <td class="p-2 text-center">
-                                                    <input readonly type="number" x-model.number="item.descuento"
+                                                    <input readonly type="number" :name="`productos[${index}][descuento]`" x-model.number="item.descuento"
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
 
@@ -296,7 +296,7 @@
                                 ➕ Agregar producto [F9]
                             </button>
                         </div>
-                        
+
                         {{-- ================= TOTALES ================= --}}
                         <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
                             Subtotal:
@@ -323,9 +323,10 @@
                         <input type="hidden" name="almacen_id" value="{{ $sucursal->almacen_id }}">
                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                         <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
-                        <input type="hidden" name="subtotal" x-model="total">
-                        <input type="hidden" name="impuestos" :value="(total * 1.16) - total">
-                        <input type="hidden" name="total" :value="(total * 1.16)">
+                        <input type="hidden" name="subtotal" x-model="subtotal">
+                        <input type="hidden" name="descuentos" x-model="totalDescuentos">
+                        <input type="hidden" name="impuestos" x-model="iva">
+                        <input type="hidden" name="total" x-model="totalFinal">
                         <input type="hidden" name="estatus" :value="1">
                         <input type="hidden" name="tipo" value="{{ $tipo }}">
                         <input type="hidden" name="sucursal_id" value="{{ $sucursal->id }}">
@@ -839,7 +840,6 @@
 
                             // Precio seleccionado en el combo
                             costo: parseFloat(p.precioSeleccionado ?? p.costo) || 0,
-
                             costo2: parseFloat(p.costo2) || 0,
                             costo3: parseFloat(p.costo3) || 0,
                             costo4: parseFloat(p.costo4) || 0,
