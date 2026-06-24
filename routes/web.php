@@ -379,6 +379,7 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
                 'productos.precio3 as costo3',
                 'productos.precio4 as costo4',
                 'productos.precio5 as costo5',
+                'productos.impuesto1 as iva',
                 DB::raw('COALESCE(existencia_productos.cantidad, 0) as stock')
             )
             ->limit(10)

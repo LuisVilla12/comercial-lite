@@ -207,9 +207,9 @@
                 {{-- Impuesto --}}
                 <div class="mb-1">
                     <label class="block text-md font-medium text-gray-700 mb-1">
-                        Impuesto:
+                        IVA(%):
                     </label>
-                    <input type="number" name="impuesto1" value="{{ old(key: 'impuesto1') }}"
+                    <input type="number" name="impuesto1" value="16"
                         placeholder="Impuesto"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 </div>

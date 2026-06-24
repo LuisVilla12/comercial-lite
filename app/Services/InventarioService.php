@@ -36,9 +36,6 @@ class InventarioService
             throw new Exception('No existe stock del producto');
         }
 
-        // if ($existencia->cantidad < $cantidad) {
-        //     // throw new Exception(message: 'Stock insuficiente');
-        // }
 
         $existencia->decrement('cantidad', $cantidad);
     }

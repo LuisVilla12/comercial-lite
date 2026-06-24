@@ -60,7 +60,7 @@ class ProductosSeeder extends Seeder
                 'peso_producto' => trim($row[4])?: null,
                 'estatus_producto' => 1,
                 'unidad_medida' => intval($row[6]) ?: null,
-                'impuesto1' => trim($row[7])?: null,
+                'impuesto1' => 16,
                 'retencion1' => trim($row[8]) ?: null,
                 'valor_clasificacion1' => trim($row[9]) ?: null,
                 'valor_clasificacion2' => trim($row[10]) ?: null,

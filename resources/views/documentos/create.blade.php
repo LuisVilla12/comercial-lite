@@ -186,7 +186,8 @@
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
                                                 <td class="p-2 text-center">
-                                                    <input  type="number" :name="`productos[${index}][descuento]`" x-model.number="item.descuento"
+                                                    <input type="number" :name="`productos[${index}][descuento]`"
+                                                        x-model.number="item.descuento"
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
 
@@ -721,6 +722,7 @@
                             costo3: 0,
                             costo4: 0,
                             stock: 0,
+                            iva: 0,
                             descuento: 0,
                             resultados: [],
                             resultadoSeleccionado: -1
@@ -830,7 +832,7 @@
                             alert('El producto ya fue agregado');
                             return;
                         }
-
+                        console.log(p)
                         this.items.push({
                             producto_id: p.id,
                             codigo: p.codigo,
@@ -845,6 +847,7 @@
                             costo4: parseFloat(p.costo4) || 0,
                             costo5: parseFloat(p.costo5) || 0,
 
+                            iva: Number(p.iva ?? 16),
                             stock: p.stock,
                             resultados: [],
                             resultadoSeleccionado: -1
@@ -871,6 +874,17 @@
                             return t + (subtotal - descuento);
 
                         }, 0);
+                    },
+                    calcularIVA(item) {
+                        const subtotal =
+                            Number(item.cantidad) * Number(item.costo);
+
+                        const descuento =
+                            subtotal * (Number(item.descuento || 0) / 100);
+
+                        const base = subtotal - descuento;
+
+                        return base * (Number(item.iva || 0) / 100);
                     },
                     calcularImporte(item) {
                         const subtotal = Number(item.cantidad) * Number(item.costo);
@@ -900,7 +914,9 @@
                     },
 
                     iva() {
-                        return this.subtotalConDescuento() * 0.16;
+                        return this.items.reduce((total, item) => {
+                            return total + this.calcularIVA(item);
+                        }, 0);
                     },
 
                     totalFinal() {

@@ -188,7 +188,7 @@
                 {{-- Impuesto --}}
                 <div class="mb-1">
                     <label class="block text-md font-medium text-gray-700 mb-1">
-                        Impuesto:
+                        IVA %:
                     </label>
                     <input type="number" name="impuesto1"
                         value="{{ $producto->impuesto1 ?? old(key: 'impuesto1') }}" placeholder="Impuesto"
