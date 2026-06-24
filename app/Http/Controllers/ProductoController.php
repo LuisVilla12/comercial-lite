@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Clasificacion;
 use App\Models\Producto;
+use App\Models\ProductoClave;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -39,7 +40,8 @@ class ProductoController extends Controller
     {
         //
         $clasificaciones = Clasificacion::all();
-        return view('productos.create', compact('clasificaciones'));
+        $claves = ProductoClave::all();
+        return view('productos.create', compact('clasificaciones','claves'));
     }
 
     /**
@@ -100,9 +102,9 @@ class ProductoController extends Controller
     public function edit($producto)
     {
         $producto=Producto::findOrFail($producto);
-
+        $claves = ProductoClave::all();
         $clasificaciones = Clasificacion::all();
-        return view('productos.edit', compact('producto', 'clasificaciones'));
+        return view('productos.edit', compact('producto', 'clasificaciones','claves'));
     }
 
     /**

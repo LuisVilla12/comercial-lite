@@ -22,9 +22,9 @@ class TenantDatabaseSeeder extends Seeder
             RegimenesSeeder::class,
             ClientesSeeder::class,
             DomiciliosSeeder::class,
+            ProductoClaveSeeder::class,
 
             //LLENADO DE INFORMACION
-            // ProductoClaveSeeder::class,
             // AlmacenesSeeder::class,
             // SucursalSeeder::class,
             // ClasificacionSeeder::class,

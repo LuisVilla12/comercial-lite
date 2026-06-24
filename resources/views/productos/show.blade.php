@@ -97,13 +97,9 @@
                 <label class="block text-md font-medium text-gray-700 mb-1">
                     Unidad de medida:<span class="text-red-500">*</span>
                 </label>
-                <select name="unidad_medida" id="unidad_medida"
+               <input type="text" name="peso_producto"
+                    value="{{ $producto->unidad->descripcion}}" disabled
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                    <option value="" disabled selected>Seleccione unidad</option>
-                    <option value="1" disabled @selected($producto->unidad_medida == '1')>PIEZA (PZ)</option>
-                    <option value="2" disabled @selected($producto->unidad_medida == '2')>METRO (MT)</option>
-                    <option value="4" disabled @selected($producto->unidad_medida == '4')>KILO (KG)</option>
-                </select>
                 @error('unidad_medida')
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror

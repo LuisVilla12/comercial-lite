@@ -111,12 +111,15 @@
                     <select name="unidad_medida" id="unidad_medida"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="" disabled selected>Seleccione unidad</option>
-                        <option value="1" @selected(old('unidad_medida') == '1')>PIEZA (PZ)</option>
+                        {{-- <option value="1" @selected(old('unidad_medida') == '1')>PIEZA (PZ)</option>
                         <option value="2" @selected(old('unidad_medida') == '2')>METRO (MT)</option>
                         <option value="3" @selected(old('unidad_medida') == '3')>SET (ST)</option>
                         <option value="4" @selected(old('unidad_medida') == '4')>KILO (KG)</option>
                         <option value="5" @selected(old('unidad_medida') == '5')>PAR (PR)</option>
-                        <option value="6" @selected(old('unidad_medida') == '6')>JUEGO (J)</option>
+                        <option value="6" @selected(old('unidad_medida') == '6')>JUEGO (J)</option> --}}
+                        @foreach ($claves as $clave)
+                        <option value="{{ $clave->id }}" >{{ $clave->descripcion }}</option>
+                        @endforeach
                     </select>
                     @error('unidad_medida')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>

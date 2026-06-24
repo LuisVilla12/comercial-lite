@@ -17,6 +17,7 @@ use  App\Models\MaximoMinimo;
 class Producto extends TenantModel implements Auditable
 {
     //
+
     use AuditableTrait;
     protected $fillable = [
         'codigo_producto',
@@ -47,6 +48,11 @@ class Producto extends TenantModel implements Auditable
     public function clasificacion1()
 {
     return $this->belongsTo(Clasificacion::class, 'valor_clasificacion1');
+}
+
+public function unidad()
+{
+    return $this->belongsTo(ProductoClave::class, 'unidad_medida');
 }
 
     public function maximominimo()
