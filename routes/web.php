@@ -385,4 +385,75 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
             ->limit(10)
             ->get();
     });
+
+    //TEST DE AUTENTICACION EN FACTURAMA
+    Route::get('/test-facturama', function () {
+
+   $response = Http::withBasicAuth(
+    env('FACTURAMA_USER'),
+    env('FACTURAMA_PASSWORD')
+)->get(
+    env('FACTURAMA_URL') . '/api-lite/Catalogs/CfdiTypes'
+);
+   return [
+    'status' => $response->status(),
+    'headers' => $response->headers(),
+    'body' => $response->body(),
+];
+});
+
+//FACTURA DE PRUEBA
+Route::get('/factura-prueba', function () {
+    $payload = [
+    // "Serie" => "R",
+    "Currency" => "MXN",
+    "ExpeditionPlace" => "91130",
+
+    "CfdiType" => "I",
+
+    "PaymentForm" => "03",   // Transferencia
+    "PaymentMethod" => "PUE", // Pago en una sola exhibición
+
+    "Receiver" => [
+        "Rfc" => "XAXX010101000",
+        "Name" => "PUBLICO EN GENERAL",
+        "CfdiUse" => "S01",
+        "FiscalRegime" => "616",
+        "TaxZipCode" => "91130"
+    ],
+"Items" => [
+    [
+        "ProductCode" => "01010101",
+        "IdentificationNumber" => "1",
+        "Description" => "Producto prueba",
+        "Unit" => "Pieza",
+        "UnitCode" => "H87",
+        "UnitPrice" => 100,
+        "Quantity" => 1,
+        "Subtotal" => 100,
+        "Total" => 100,
+        "TaxObject" => "01"
+    ]
+],
+"GlobalInformation" => [
+    "Periodicity" => "04",
+    "Months" => "06",
+    "Year" => 2026
+]
+];
+//RESPUESTA
+    $response = Http::withBasicAuth(
+        env('FACTURAMA_USER'),
+        env('FACTURAMA_PASSWORD')
+    )->post(
+        env('FACTURAMA_URL').'/3/cfdis',
+        $payload
+    );
+
+    dd(
+        $response->status(), //201 es que jalo
+        $response['Id'],
+        $response['Complement']['TaxStamp']['Uuid'] ?? null,
+    );
+});
 });

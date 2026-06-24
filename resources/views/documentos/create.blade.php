@@ -454,7 +454,7 @@
                                 class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                                 <option value="" disabled>Seleccione una opcion</option>
                                 @foreach ($usos as $uso)
-                                    <option selected value="{{ $uso->clave }}">
+                                    <option  value="{{ $uso->clave }}">
                                         {{ $uso->clave . ' ' . $uso->descripcion }}</option>
                                 @endforeach
                             </select>

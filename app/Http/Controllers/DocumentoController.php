@@ -25,6 +25,9 @@ use App\Mail\DocumentoMail;
 use App\Models\DatosBancario;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
+// SERVICIO FACTURA
+use App\Services\FacturamaService;
+
 
 
 class DocumentoController extends Controller
@@ -774,123 +777,6 @@ class DocumentoController extends Controller
             ->with('success', 'Factura timbrada correctamente');
     }
 
-    public function timbrar($documento){
-        $documento = Documento::findOrFail($documento);
-        // dd('')
-    }
-
-    public function timbrarSAT($documento)
-    {
-        $documento = Documento::findOrFail($documento);
-
-        if ($documento->uuid) {
-            return response()->json([
-                'message' => 'Este documento ya está timbrado'
-            ], 422);
-        }
-        $empresa = Empresa::where('id', 1)->first();
-
-        $data = $this->buildFacturamaJson($documento, $empresa);
-        dd($data);
-        $response = Http::withBasicAuth(
-            env('FACTURAMA_USER'),
-            env('FACTURAMA_PASSWORD')
-        )->post(
-            env('FACTURAMA_URL') . '/api-lite/2/cfdis',
-            $data
-        );
-        // dd([
-        //     'status' => $response->status(),
-        //     'body' => $response->body(),
-        // ]);
-
-        if (! $response->successful()) {
-            return response()->json([
-                'error' => 'Error al timbrar',
-                'facturama' => $response->body()
-            ], 500);
-        }
-
-        $result = $response->json(); // ✅
-        // dd($result);
-        $documento->update([
-            'uuid' => $result['Complement']['TaxStamp']['Uuid'],
-            'xml' => $result['Xml'],
-            'estado' => 'timbrado'
-        ]);
-
-        return response()->json([
-            'message' => 'Documento timbrado correctamente',
-            'uuid' => $documento->uuid
-        ]);
-    }
-    private function buildFacturamaJson( $documento,  $empresa): array
-    {
-        $documento = Documento::findOrFail($documento);
-        // dd($empresa);
-        $documento->load([
-            'cliente',
-            'detalles.producto'
-        ]);
-        return [
-            'Serie' => $documento->serie,
-            'Folio' => (string) $documento->folio,
-            'Currency' => 'MXN',
-            //CP del EMISOR
-            'ExpeditionPlace' => $documento->cliente->domicilios->first()->cp,
-            'PaymentConditions' => 'CONTADO',
-            'PaymentForm' => $documento->forma_pago,
-            'PaymentMethod' => $documento->metodo_pago,
-            'CfdiType' => 'I',
-            'Exportation' => '01',
-
-            // EMISOR
-            'Issuer' => [
-                'Rfc' => $empresa->rfc,
-                'Name' => $empresa->nombre,
-                'FiscalRegime' => $empresa->regimen_fiscal,
-            ],
-            //RECEPTOR
-            'Receiver' => [
-                'Rfc' => $documento->cliente->rfc,
-                'Name' => $documento->cliente->nombre ?? 'PUBLICO EN GENERAL',
-                'FiscalRegime' => $documento->cliente->regimen_fiscal,
-                'CfdiUse' => $documento->uso_cfdi,
-                'TaxZipCode' => $documento->cliente->domicilios->first()->cp,
-            ],
-
-            'Items' => $documento->detalles->map(function ($detalle) {
-                $subtotal = round($detalle->cantidad * $detalle->costo_unitario, 2);
-                $iva = round($subtotal * 0.16, 2);
-
-                return [
-                    'ProductCode' => $detalle->producto->clave_sat,
-                    'IdentificationNumber' => $detalle->producto->codigo_producto,
-                    'Description' => $detalle->producto->nombre,
-                    //Unidad de medida
-                    'Unit' => 'Pieza',
-                    //Clave unidad de medida del sat
-                    'UnitCode' => 'H87',
-                    'Quantity' => $detalle->cantidad,
-                    'UnitPrice' => $detalle->costo_unitario,
-                    'Subtotal' => $subtotal,
-                    'Taxes' => [
-                        [
-                            'Total' => $iva,
-                            'Name' => 'IVA',
-                            'Base' => $subtotal,
-                            'Rate' => 0.16,
-                            'IsRetention' => false,
-                        ]
-                    ],
-                    'Total' => $subtotal + $iva,
-                ];
-            })->values()->toArray(),
-
-            'SubTotal' => $documento->subtotal,
-            'Total' => $documento->total
-        ];
-    }
 
     public function enviarEmail( $sucursal, Request $request,  $documento)
     {
@@ -913,4 +799,125 @@ class DocumentoController extends Controller
             ->back()
             ->with('success', '📧 Cotización enviada correctamente');
     }
+
+    //FUNCION PARA TIMBRAR
+    // public function timbrar(FacturamaService $facturama,$documento){
+    //     $documento = Documento::findOrFail($documento);
+    //     $payload = [
+    //         // JSON requerido por Facturama
+    //     ];
+
+    //     $respuesta = $facturama->crearCfdi($payload);
+
+    //     dd($respuesta);
+    // }
+
+// public function timbrar(FacturamaService $facturama,$documento){
+//     $payload = [
+//         "Currency" => "MXN",
+//         "ExpeditionPlace" => "91130",
+
+//         "CfdiType" => "I",
+
+//         "PaymentForm" => "03",
+//         "PaymentMethod" => "PUE",
+
+//         "Receiver" => [
+//             "Rfc" => "XAXX010101000",
+//             "Name" => "PUBLICO EN GENERAL",
+//             "CfdiUse" => "S01",
+//             "FiscalRegime" => "616",
+//             "TaxZipCode" => "91130"
+//         ],
+
+//         "Items" => [
+//             [
+//                 "ProductCode" => "01010101",
+//                 "IdentificationNumber" => "1",
+//                 "Description" => "Producto prueba",
+//                 "Unit" => "Pieza",
+//                 "UnitCode" => "H87",
+//                 "UnitPrice" => 100,
+//                 "Quantity" => 1,
+//                 "Subtotal" => 100,
+//                 "Total" => 100,
+//                 "TaxObject" => "01"
+//             ]
+//         ],
+
+//         "GlobalInformation" => [
+//             "Periodicity" => "04",
+//             "Months" => "06",
+//             "Year" => 2026
+//         ]
+//     ];
+
+//     $response = $facturama->crearCfdi($payload);
+//     $estado=$response->status(); //201 es que jalo
+//     $id=$response['Id'];
+//     $uuid=$response['Complement']['TaxStamp']['Uuid'] ?? null;
+//     return response()->json($response);
+// }
+
+
+//FUNCION PARA TIMBRAR
+public function timbrar($documento, FacturamaService $facturama)
+{
+    $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
+    $empresa = ConfiguracionEmpresa::first();
+    $payload = $this->buildPayload($documento,$empresa);
+    // dd($payload);
+    $response = $facturama->crearCfdi($payload);
+dd($response);
+    $documento->update([
+        'facturama_id' => $response['Id'] ?? null,
+        'uuid' => $response['Complement']['TaxStamp']['Uuid'] ?? null,
+        'estatus' => 'facturada'
+    ]);
+    return response()->json($response);
+}
+//CONSTRUIR JSON PARA ENVIAR
+private function buildPayload($documento,$empresa)
+{
+    return [
+        "Currency" => "MXN",
+        "ExpeditionPlace" => $empresa->cp,
+        "CfdiType" => "I",
+        "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
+        "PaymentMethod" => $documento->metodo_pago, // PUE / PPD
+
+        "Receiver" => [
+            "Rfc" => $documento->cliente->rfc,
+            "Name" => $documento->cliente->nombre,
+            "CfdiUse" => $documento->uso_cfdi,
+            "FiscalRegime" => $documento->cliente->regimen_fiscal,
+            "TaxZipCode" =>  $documento->cliente->domicilios->first()?->cp
+        ],
+
+        "Items" => $documento->detalles->map(function ($d) {
+            return [
+                "ProductCode" => $d->producto->clave_sat,
+                "IdentificationNumber" => $d->producto->codigo_producto,
+                "Description" => $d->producto->nombre_producto,
+                "Unit" => "Pieza",
+                "UnitCode" =>"H87",
+                "UnitPrice" => $d->costo_unitario,
+                "Quantity" => $d->cantidad,
+                "Subtotal" => $d->importe,
+                "Total" => $d->importe,
+                "TaxObject" => "01"
+            ];
+        })->toArray(),
+
+        // SOLO si es público general
+        "GlobalInformation" => $documento->cliente->rfc === 'XAXX010101000'
+            ? [
+                "Periodicity" => "04",
+                "Months" => now()->format('m'),
+                "Year" => now()->year
+            ]
+            : null
+    ];
+}
+
 }

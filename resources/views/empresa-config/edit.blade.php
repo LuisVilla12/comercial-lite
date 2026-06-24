@@ -99,7 +99,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Calle: <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="calle" placeholder="Calle de la sucursal"
+                    <input type="text" name="calle" placeholder="Calle de la empresa"
                         value="{{ $empresa->calle }}"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     @error('calle')
@@ -110,7 +110,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Número exterior: <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="numero_exterior" placeholder="Número exterior de la sucursal"
+                    <input type="text" name="numero_exterior" placeholder="Número exterior de la empresa"
                         value="{{ $empresa->numero_exterior }}"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     @error('numero_exterior')
@@ -121,7 +121,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Número interior:
                     </label>
-                    <input type="text" name="numero_interior" placeholder="Número exterior de la sucursal" value="{{ $empresa->numero_interior }}"
+                    <input type="text" name="numero_interior" placeholder="Número exterior de la empresa" value="{{ $empresa->numero_interior }}"
 
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 </div>
@@ -129,7 +129,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Colonia: <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="colonia" placeholder="Colonia de la sucursal"
+                    <input type="text" name="colonia" placeholder="Colonia de la empresa"
                         value="{{ $empresa->colonia }}"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     @error('colonia')
@@ -140,7 +140,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Ciudad: <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="ciudad" placeholder="Ciudad de la sucursal"
+                    <input type="text" name="ciudad" placeholder="Ciudad de la empresa"
                         value="{{ $empresa->ciudad }}"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     @error('ciudad')
@@ -151,7 +151,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Municipio: <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="municipio" placeholder="Municipio de la sucursal"
+                    <input type="text" name="municipio" placeholder="Municipio de la empresa"
                         value="{{ $empresa->municipio }}"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     @error('municipio')
@@ -162,7 +162,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Estado: <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="estado" placeholder="Estado de la sucursal"
+                    <input type="text" name="estado" placeholder="Estado de la empresa"
                         value="{{ $empresa->estado }}"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     @error('estado')
@@ -173,7 +173,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Codigo Postal: <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="cp" placeholder="Codigo Postal de la sucursal"
+                    <input type="text" name="cp" placeholder="Codigo Postal de la empresa"
                         value="{{ $empresa->cp }}"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     @error('cp')

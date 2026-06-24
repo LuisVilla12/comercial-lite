@@ -19,17 +19,17 @@ class TenantDatabaseSeeder extends Seeder
             DocumentosModeloSeeder::class,
             AgenteSeeder::class,
             BancoSeeder::class,
+            RegimenesSeeder::class,
+            ClientesSeeder::class,
+            DomiciliosSeeder::class,
 
             //LLENADO DE INFORMACION
-
-            AlmacenesSeeder::class,
-            SucursalSeeder::class,
-            ClasificacionSeeder::class,
-            ProductosSeeder::class,
-            ClientesSeeder::class,
-            ExistenciasSeeder::class,
-            DomiciliosSeeder::class,
-            RegimenesSeeder::class
+            // ProductoClaveSeeder::class,
+            // AlmacenesSeeder::class,
+            // SucursalSeeder::class,
+            // ClasificacionSeeder::class,
+            // ProductosSeeder::class,
+            // ExistenciasSeeder::class,
             ]);
     }
 }

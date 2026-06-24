@@ -21,10 +21,11 @@ return new class extends Migration
             $table->string('tipo_producto')->nullable();
             $table->decimal('peso_producto', 15, 4)->nullable()->default(0);
             $table->integer('estatus_producto')->nullable()->default(1);
-            $table->integer('unidad_medida')->nullable()->default(0);
+            // $table->integer('unidad_medida')->nullable()->default(0);
             $table->integer('impuesto1')->default(16);
             $table->integer('retencion1')->nullable()->default(0);
             $table->foreignId(column: 'valor_clasificacion1')->nullable()->constrained('clasificacions')->nullOnDelete();
+            $table->foreignId(column: 'unidad_medida')->nullable()->constrained('producto_claves')->nullOnDelete();
             $table->integer('valor_clasificacion2')->nullable()->default(0);
             $table->decimal('importe_extra', 15, 2)->nullable()->default(0);
             $table->decimal('precio1', 15, 4);

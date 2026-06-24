@@ -74,7 +74,7 @@
                     <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2" />
                     Timbrar
                 </button>
-                <form method="POST" action="{{ route('documentos.timbrar', ['documento' => $documento]) }}">
+                <form method="POST" id="formTimbrar" action="{{ route('documentos.timbrar', ['documento' => $documento]) }}">
                     @csrf
                 </form>
             @endif
@@ -527,10 +527,16 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.fire({
-                    title: "No estan configurados los sellos para el timbrado",
-                    text: "Esta en desarollo!",
-                    icon: "warning"
+                    title: 'Generando factura...',
+                    text: 'Por favor espere mientras se convierte el documento.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
                 });
+                document.getElementById('formTimbrar').submit();
             }
         });
     }
