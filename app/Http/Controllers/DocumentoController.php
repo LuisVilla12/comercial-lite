@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Storage;
 use App\Models\Documento;
 use App\Models\ConfiguracionEmpresa;
 use App\Models\Empresa;
@@ -865,15 +865,30 @@ class DocumentoController extends Controller
     {
         $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
         $empresa = ConfiguracionEmpresa::first();
+        // GENERA EL JSON PARA ENVIAR
         $payload = $this->buildPayload($documento, $empresa);
         // dd($payload);
+        //REALIZA EL TIMBRADO
         $response = $facturama->crearCfdi($payload);
         // dd($response);
+        $uuid = $response['Complement']['TaxStamp']['Uuid'] ?? null;
+        $facturamaId = $response['Id'] ?? null;
+
+        // 2. OBTENER XML (IMPORTANTE)
+        $xml = $facturama->obtenerXml($facturamaId);
+        // 3. GUARDAR XML
+        $path = "cfdi/{$uuid}.xml";
+        Storage::put($path, $xml);
+
+        // 4. ACTUALIZAR BD
         $documento->update([
-            'facturama_id' => $response['Id'] ?? null,
-            'uuid' => $response['Complement']['TaxStamp']['Uuid'] ?? null,
-            'estatus' => '4'
+            'facturama_id' => $facturamaId,
+            'uuid' => $uuid,
+            'estatus' => '4',
+            'xml_path' => $path
         ]);
+
+
         return redirect()
             ->back()
             ->with('success', '📧 La factura fue timbrada correctamente');
@@ -906,7 +921,7 @@ class DocumentoController extends Controller
                     "UnitPrice" => $d->costo_unitario,
                     "Quantity" => $d->cantidad,
                     "Subtotal" => $d->importe,
-
+                    "TaxObject" => "02",
                     "Taxes" => [
                         [
                             "Name" => "IVA",

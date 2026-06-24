@@ -31,4 +31,12 @@ class FacturamaService
             ->throw()
             ->json();
     }
+    public function obtenerXml($id)
+    {
+        return Http::withBasicAuth(
+            env('FACTURAMA_USER'),
+            env('FACTURAMA_PASSWORD')
+        )->get(env('FACTURAMA_URL') . "/3/cfdis/xml/{$id}")
+            ->body();
+    }
 }
