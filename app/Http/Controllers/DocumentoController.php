@@ -209,7 +209,7 @@ class DocumentoController extends Controller
                 'uso_cfdi' => $request->uso_cfdi,
                 'vigencia' => $request->vigencia,
                 'agente_id' => $request->agente_id,
-                'caja_id' => $caja->id?? null,
+                'caja_id' => $caja->id ?? null,
                 'observaciones' => $request->observaciones,
                 'estado' => 'PENDIENTE',
             ]);
@@ -280,7 +280,7 @@ class DocumentoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit( $sucursal,  $documento)
+    public function edit($sucursal,  $documento)
     {
         $documento = Documento::findOrFail($documento);
         $sucursal = Sucursal::findOrFail($sucursal);
@@ -419,7 +419,7 @@ class DocumentoController extends Controller
             'detalles.producto'
         ]);
 
-        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco','empresa'))
+        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco', 'empresa'))
             ->setPaper('letter');
 
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");
@@ -436,7 +436,7 @@ class DocumentoController extends Controller
 
         $customPaper = [0, 0, $width, 350];
 
-        $pdf = Pdf::loadView('documentos.pdf_ticket', compact('documento', 'sucursal','empresa'))
+        $pdf = Pdf::loadView('documentos.pdf_ticket', compact('documento', 'sucursal', 'empresa'))
             ->setPaper($customPaper);
 
         return $pdf->stream("Ticket{$mm}_{$documento->serie}-{$documento->folio}.pdf");
@@ -447,7 +447,7 @@ class DocumentoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy( $documento)
+    public function destroy($documento)
     {
         DB::beginTransaction();
 
@@ -471,7 +471,7 @@ class DocumentoController extends Controller
         }
     }
     //
-    public function convertir( $sucursal, $documento, $tipo)
+    public function convertir($sucursal, $documento, $tipo)
     {
         $documento = Documento::findOrFail($documento);
         $sucursal = Sucursal::findOrFail($sucursal);
@@ -555,7 +555,7 @@ class DocumentoController extends Controller
     }
 
 
-    public function surtir( $sucursal, $documento)
+    public function surtir($sucursal, $documento)
     {
         $sucursal = Sucursal::findOrFail($sucursal);
         $documento = Documento::findOrFail($documento);
@@ -606,9 +606,9 @@ class DocumentoController extends Controller
             ->route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento])
             ->with('success', 'Remisión surtida correctamente');
     }
-    public function devolucionEdit( $sucursal,  $documento)
+    public function devolucionEdit($sucursal,  $documento)
     {
-                $sucursal = Sucursal::findOrFail($sucursal);
+        $sucursal = Sucursal::findOrFail($sucursal);
         $documento = Documento::findOrFail($documento);
 
         $usos_cfdi = UsoCfdi::all();
@@ -630,7 +630,7 @@ class DocumentoController extends Controller
     }
     public function devolucionUpdate(Request $request,  $sucursal,  $documento)
     {
-                $sucursal = Sucursal::findOrFail($sucursal);
+        $sucursal = Sucursal::findOrFail($sucursal);
         $documento = Documento::findOrFail($documento);
 
         $productos = collect($request->productos)
@@ -725,10 +725,10 @@ class DocumentoController extends Controller
         ]);
     }
     // AFECTA INVENTARIO al hacer una factura
-    public function surtirFactura( $sucursal,  $documento)
+    public function surtirFactura($sucursal,  $documento)
     {
-            $sucursal = Sucursal::findOrFail($sucursal);
-            $documento = Documento::findOrFail($documento);
+        $sucursal = Sucursal::findOrFail($sucursal);
+        $documento = Documento::findOrFail($documento);
         if ($documento->estatus != 1) {
             return back()->with('error', 'Factura ya fue surtida');
         }
@@ -778,7 +778,7 @@ class DocumentoController extends Controller
     }
 
 
-    public function enviarEmail( $sucursal, Request $request,  $documento)
+    public function enviarEmail($sucursal, Request $request,  $documento)
     {
         $sucursal = Sucursal::findOrFail($sucursal);
         $documento = Documento::findOrFail($documento);
@@ -794,7 +794,7 @@ class DocumentoController extends Controller
         ]);
 
         Mail::to($request->email)
-            ->send(new DocumentoMail($sucursal, $documento,$empresa));
+            ->send(new DocumentoMail($sucursal, $documento, $empresa));
         return redirect()
             ->back()
             ->with('success', '📧 Cotización enviada correctamente');
@@ -812,112 +812,123 @@ class DocumentoController extends Controller
     //     dd($respuesta);
     // }
 
-// public function timbrar(FacturamaService $facturama,$documento){
-//     $payload = [
-//         "Currency" => "MXN",
-//         "ExpeditionPlace" => "91130",
+    // public function timbrar(FacturamaService $facturama,$documento){
+    //     $payload = [
+    //         "Currency" => "MXN",
+    //         "ExpeditionPlace" => "91130",
 
-//         "CfdiType" => "I",
+    //         "CfdiType" => "I",
 
-//         "PaymentForm" => "03",
-//         "PaymentMethod" => "PUE",
+    //         "PaymentForm" => "03",
+    //         "PaymentMethod" => "PUE",
 
-//         "Receiver" => [
-//             "Rfc" => "XAXX010101000",
-//             "Name" => "PUBLICO EN GENERAL",
-//             "CfdiUse" => "S01",
-//             "FiscalRegime" => "616",
-//             "TaxZipCode" => "91130"
-//         ],
+    //         "Receiver" => [
+    //             "Rfc" => "XAXX010101000",
+    //             "Name" => "PUBLICO EN GENERAL",
+    //             "CfdiUse" => "S01",
+    //             "FiscalRegime" => "616",
+    //             "TaxZipCode" => "91130"
+    //         ],
 
-//         "Items" => [
-//             [
-//                 "ProductCode" => "01010101",
-//                 "IdentificationNumber" => "1",
-//                 "Description" => "Producto prueba",
-//                 "Unit" => "Pieza",
-//                 "UnitCode" => "H87",
-//                 "UnitPrice" => 100,
-//                 "Quantity" => 1,
-//                 "Subtotal" => 100,
-//                 "Total" => 100,
-//                 "TaxObject" => "01"
-//             ]
-//         ],
+    //         "Items" => [
+    //             [
+    //                 "ProductCode" => "01010101",
+    //                 "IdentificationNumber" => "1",
+    //                 "Description" => "Producto prueba",
+    //                 "Unit" => "Pieza",
+    //                 "UnitCode" => "H87",
+    //                 "UnitPrice" => 100,
+    //                 "Quantity" => 1,
+    //                 "Subtotal" => 100,
+    //                 "Total" => 100,
+    //                 "TaxObject" => "01"
+    //             ]
+    //         ],
 
-//         "GlobalInformation" => [
-//             "Periodicity" => "04",
-//             "Months" => "06",
-//             "Year" => 2026
-//         ]
-//     ];
+    //         "GlobalInformation" => [
+    //             "Periodicity" => "04",
+    //             "Months" => "06",
+    //             "Year" => 2026
+    //         ]
+    //     ];
 
-//     $response = $facturama->crearCfdi($payload);
-//     $estado=$response->status(); //201 es que jalo
-//     $id=$response['Id'];
-//     $uuid=$response['Complement']['TaxStamp']['Uuid'] ?? null;
-//     return response()->json($response);
-// }
+    //     $response = $facturama->crearCfdi($payload);
+    //     $estado=$response->status(); //201 es que jalo
+    //     $id=$response['Id'];
+    //     $uuid=$response['Complement']['TaxStamp']['Uuid'] ?? null;
+    //     return response()->json($response);
+    // }
 
 
-//FUNCION PARA TIMBRAR
-public function timbrar($documento, FacturamaService $facturama)
-{
-    $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
-    $empresa = ConfiguracionEmpresa::first();
-    $payload = $this->buildPayload($documento,$empresa);
-    // dd($payload);
-    $response = $facturama->crearCfdi($payload);
-dd($response);
-    $documento->update([
-        'facturama_id' => $response['Id'] ?? null,
-        'uuid' => $response['Complement']['TaxStamp']['Uuid'] ?? null,
-        'estatus' => 'facturada'
-    ]);
-    return response()->json($response);
-}
-//CONSTRUIR JSON PARA ENVIAR
-private function buildPayload($documento,$empresa)
-{
-    return [
-        "Currency" => "MXN",
-        "ExpeditionPlace" => $empresa->cp,
-        "CfdiType" => "I",
-        "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
-        "PaymentMethod" => $documento->metodo_pago, // PUE / PPD
+    //FUNCION PARA TIMBRAR
+    public function timbrar($documento, FacturamaService $facturama)
+    {
+        $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
+        $empresa = ConfiguracionEmpresa::first();
+        $payload = $this->buildPayload($documento, $empresa);
+        // dd($payload);
+        $response = $facturama->crearCfdi($payload);
+        // dd($response);
+        $documento->update([
+            'facturama_id' => $response['Id'] ?? null,
+            'uuid' => $response['Complement']['TaxStamp']['Uuid'] ?? null,
+            'estatus' => '4'
+        ]);
+        return redirect()
+            ->back()
+            ->with('success', '📧 La factura fue timbrada correctamente');
+    }
+    //CONSTRUIR JSON PARA ENVIAR
+    private function buildPayload($documento, $empresa)
+    {
+        return [
+            "Currency" => "MXN",
+            "ExpeditionPlace" => $empresa->cp,
+            "CfdiType" => "I",
+            "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
+            "PaymentMethod" => $documento->metodo_pago, // PUE / PPD
 
-        "Receiver" => [
-            "Rfc" => $documento->cliente->rfc,
-            "Name" => $documento->cliente->nombre,
-            "CfdiUse" => $documento->uso_cfdi,
-            "FiscalRegime" => $documento->cliente->regimen_fiscal,
-            "TaxZipCode" =>  $documento->cliente->domicilios->first()?->cp
-        ],
+            "Receiver" => [
+                "Rfc" => $documento->cliente->rfc,
+                "Name" => $documento->cliente->nombre,
+                "CfdiUse" => $documento->uso_cfdi,
+                "FiscalRegime" => $documento->cliente->regimen_fiscal,
+                "TaxZipCode" =>  $documento->cliente->domicilios->first()?->cp
+            ],
 
-        "Items" => $documento->detalles->map(function ($d) {
-            return [
-                "ProductCode" => $d->producto->clave_sat,
-                "IdentificationNumber" => $d->producto->codigo_producto,
-                "Description" => $d->producto->nombre_producto,
-                "Unit" => "Pieza",
-                "UnitCode" =>"H87",
-                "UnitPrice" => $d->costo_unitario,
-                "Quantity" => $d->cantidad,
-                "Subtotal" => $d->importe,
-                "Total" => $d->importe,
-                "TaxObject" => "01"
-            ];
-        })->toArray(),
+            "Items" => $documento->detalles->map(function ($d) {
+                return [
+                    "ProductCode" => $d->producto->clave_sat,
+                    "IdentificationNumber" => $d->producto->codigo_producto,
+                    "Description" => $d->producto->nombre_producto,
+                    "Unit" => $d->producto->unidad->descripcion,
+                    "UnitCode" => $d->producto->unidad->clave,
+                    "UnitPrice" => $d->costo_unitario,
+                    "Quantity" => $d->cantidad,
+                    "Subtotal" => $d->importe,
 
-        // SOLO si es público general
-        "GlobalInformation" => $documento->cliente->rfc === 'XAXX010101000'
-            ? [
-                "Periodicity" => "04",
-                "Months" => now()->format('m'),
-                "Year" => now()->year
-            ]
-            : null
-    ];
-}
+                    "Taxes" => [
+                        [
+                            "Name" => "IVA",
+                            "Rate" => 0.16,
+                            "Base" => $d->importe,
+                            "Total" => round($d->importe * 0.16, 2),
+                            "IsRetention" => false
+                        ]
+                    ],
 
+                    "Total" => round($d->importe * 1.16, 2),
+                ];
+            })->toArray(),
+
+            // SOLO si es público general
+            "GlobalInformation" => $documento->cliente->rfc === 'XAXX010101000'
+                ? [
+                    "Periodicity" => "04",
+                    "Months" => now()->format('m'),
+                    "Year" => now()->year
+                ]
+                : null
+        ];
+    }
 }

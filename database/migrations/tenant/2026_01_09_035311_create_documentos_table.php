@@ -28,7 +28,9 @@ return new class extends Migration
             $table->string('forma_pago')->nullable();
             $table->string('metodo_pago')->nullable();
             $table->string('uso_cfdi')->nullable();
-            $table->string('uuid', 36)->nullable()->unique();
+            // DATOS DEL FACTURAMA
+            $table->string('uuid')->nullable()->unique();
+            $table->string('facturama_id')->nullable()->unique();
             $table->string('estado')->default('pendiente'); // pendiente | timbrado | cancelado
             $table->text('observaciones')->nullable();
             $table->date('vigencia')->nullable();

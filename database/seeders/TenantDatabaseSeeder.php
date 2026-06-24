@@ -25,11 +25,11 @@ class TenantDatabaseSeeder extends Seeder
             ProductoClaveSeeder::class,
 
             //LLENADO DE INFORMACION
-            // AlmacenesSeeder::class,
-            // SucursalSeeder::class,
-            // ClasificacionSeeder::class,
-            // ProductosSeeder::class,
-            // ExistenciasSeeder::class,
+            AlmacenesSeeder::class,
+            SucursalSeeder::class,
+             ClasificacionSeeder::class,
+             ProductosSeeder::class,
+             ExistenciasSeeder::class,
             ]);
     }
 }

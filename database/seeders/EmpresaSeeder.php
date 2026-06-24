@@ -13,7 +13,6 @@ class EmpresaSeeder extends Seeder
             'nombre' => 'EMPRESA PRUEBA',
             'codigo' => '0001',
             'rfc' => 'RFC001',
-            'regimen_fiscal' => '601',
         ]);
     }
 }
