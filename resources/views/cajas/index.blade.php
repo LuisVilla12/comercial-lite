@@ -50,8 +50,8 @@
             class="hidden md:inline-flex px-6 py-2 bg-indigo-600 text-white rounded-md text-center">
             Limpiar
         </a>
-        </form>
 
+        </form>
     </div>
 
  <div class="shadow-md overflow-x-auto rounded-lg mt-6">

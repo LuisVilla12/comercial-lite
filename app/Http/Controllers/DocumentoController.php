@@ -134,7 +134,7 @@ class DocumentoController extends Controller
         $request->merge([
             'productos' => $productos
         ]);
-        
+
         $request->validate([
             'proveedor_id' => 'required',
             'almacen_id' => 'required',
@@ -368,6 +368,7 @@ class DocumentoController extends Controller
                         'producto_id' => $producto['producto_id'],
                         'cantidad' => $producto['cantidad'],
                         'costo_unitario' => $producto['costo'],
+                        'descuento' => $producto['descuento'],
                         'importe' => $producto['cantidad'] * $producto['costo'],
                     ]
                 );

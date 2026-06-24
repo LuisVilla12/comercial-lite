@@ -1,4 +1,8 @@
-@section('title', content: 'Documento')
+@section('title', match ($documento->documento_modelo_id) {
+    1 => 'Cotización',
+    2 => 'Facturación',
+    3 => 'Remisión',
+    })
 
 <x-app-layout>
 
@@ -45,14 +49,13 @@
             </p>
 
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
+        <div class="flex  gap-4 mt-4">
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-            <button
-                        onclick="surtirRemision()"
-                        class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full">
-                        <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
-                        Surtir
-                    </button>
+                <button onclick="surtirRemision()"
+                    class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full">
+                    <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
+                    Surtir
+                </button>
                 <form method="POST" id="formSurtirRemision"
                     action="{{ route('documentos.surtir', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
                     class="mr-6 hidden">
@@ -65,22 +68,22 @@
                     <x-heroicon-o-currency-dollar class="w-5 h-5" /> Cambio
                 </button>
             @endif
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
-                        <button  onclick="timbrar()"
-                            class="flex items-center px-4 py-2 mr-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
-                            <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2" />
-                            Timbrar
-                        </button>
-                    <form method="POST" action="{{ route('documentos.timbrar', ['documento' => $documento]) }}">
-                        @csrf
-                    </form>
-                @endif
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
+                <button onclick="timbrar()"
+                    class="flex items-center px-4 py-2 mr-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
+                    <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2" />
+                    Timbrar
+                </button>
+                <form method="POST" action="{{ route('documentos.timbrar', ['documento' => $documento]) }}">
+                    @csrf
+                </form>
+            @endif
 
 
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
                 <button onclick="seleccionarConversion()"
                     class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded ml-6">
-                     <x-heroicon-o-arrow-path-rounded-square class="w-5 h-5 mr-2" />
+                    <x-heroicon-o-arrow-path-rounded-square class="w-5 h-5 mr-2" />
                     Convertir
                 </button>
                 <a href="{{ route('documentos.pdf', [$sucursal, $documento]) }}" target="_blank"
@@ -103,7 +106,7 @@
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
                 <button onclick="convertirAFactura()"
                     class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded ">
-                                         <x-heroicon-o-arrow-path-rounded-square class="w-5 h-5 mr-2" />
+                    <x-heroicon-o-arrow-path-rounded-square class="w-5 h-5 mr-2" />
                     Convertir
                 </button>
                 <form method="POST" class="hidden" id="formConversionFactura"
@@ -135,7 +138,7 @@
             @if ($documento->estatus == 4 and $documento->documento_modelo_id == 3)
                 <a
                     href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="flex  px-6 py-2 bg-indigo-600 text-white rounded  md:mt-0 text-center">
-                                        <x-heroicon-o-arrow-uturn-right class="w-5 h-5 mr-2" /> Devolucion</a>
+                    <x-heroicon-o-arrow-uturn-right class="w-5 h-5 mr-2" /> Devolucion</a>
             @endif
         </div>
 
@@ -229,7 +232,7 @@
                                     ${{ number_format($detalle->costo_unitario, 2) }}
                                 </p>
                             </div>
-                             <div>
+                            <div>
                                 <p class="text-gray-500">Descuento</p>
                                 <p class="font-medium">
                                     {{ number_format($detalle->descuento) }} %
@@ -348,33 +351,32 @@
                     @enderror
                 </div>
                 @if ($documento->documento_modelo_id == 1)
-
-                <div class="mb-2">
-                    <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                        Vigencia del documento:<span class="text-red-500">*</span>
-                    </label>
-                    <input type="date" name="vigencia" value="{{ $documento->vigencia }}"
-                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                </div>
+                    <div class="mb-2">
+                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                            Vigencia del documento:<span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" name="vigencia" value="{{ $documento->vigencia }}"
+                            class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
                 @endif
                 <div class="mb-2">
-                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                                    Agente:<span class="text-red-500">*</span>
-                                </label>
-                                <select name="agente_id" id="agente_id"
-                                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                    <option value="" disabled>Seleccione un agente</option>
-                                    {{-- <option value="0">Ninguno</option> --}}
-                                    @foreach ($agentes as $agente)
-                                        <option value="{{ $agente->id }}"  @selected(old('agente_id', $documento->agente_id) === $agente->id)>
-                                            {{ $agente->codigo . " - " . $agente->nombre . " " . $agente->apellidoP }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('agente_id')
-                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                    <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                        Agente:<span class="text-red-500">*</span>
+                    </label>
+                    <select name="agente_id" id="agente_id"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <option value="" disabled>Seleccione un agente</option>
+                        {{-- <option value="0">Ninguno</option> --}}
+                        @foreach ($agentes as $agente)
+                            <option value="{{ $agente->id }}" @selected(old('agente_id', $documento->agente_id) === $agente->id)>
+                                {{ $agente->codigo . ' - ' . $agente->nombre . ' ' . $agente->apellidoP }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('agente_id')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
                 <div class="col-span-2">
                     <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
                         Observaciones <span class="text-red-500">*</span>
@@ -396,14 +398,13 @@
                     class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
                     <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar</a>
                 @if ($documento->estatus == 1)
-                <div x-data @keydown.window.prevent.f10="$refs.btnActualizar.click()">
-                    <a
-                    x-ref="btnActualizar"
-                    href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
-                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                        ACTUALIZAR [F10]
-                    </a>
-                </div>
+                    <div x-data @keydown.window.prevent.f10="$refs.btnActualizar.click()">
+                        <a x-ref="btnActualizar"
+                            href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                            ACTUALIZAR [F10]
+                        </a>
+                    </div>
                 @endif
 
             </div>
@@ -421,7 +422,8 @@
                 por correo
             </h2>
 
-            <form method="POST" action="{{ route('documentos.enviarEmail', ['sucursal' => $sucursal->id, 'documento' => $documento->id]) }}">
+            <form method="POST"
+                action="{{ route('documentos.enviarEmail', ['sucursal' => $sucursal->id, 'documento' => $documento->id]) }}">
                 @csrf
 
                 <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -518,20 +520,21 @@
     function timbrar() {
         Swal.fire({
             title: '¿Esta seguro que requiere timbrar esta factura?',
-              icon: "warning",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonText: 'Si, timbrar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.fire({
-  title: "No estan configurados los sellos para el timbrado",
-  text: "Esta en desarollo!",
-  icon: "warning"
-});
+                    title: "No estan configurados los sellos para el timbrado",
+                    text: "Esta en desarollo!",
+                    icon: "warning"
+                });
             }
         });
     }
+
     function seleccionarConversion() {
         Swal.fire({
             title: 'Selecciona una opción',
@@ -552,6 +555,16 @@
                     reverseButtons: true
                 }).then((confirmResult) => {
                     if (confirmResult.isConfirmed) {
+                        Swal.fire({
+                    title: 'Generando factura...',
+                    text: 'Por favor espere mientras se convierte el documento.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
                         document.getElementById('formFactura').submit();
                     }
                 });
@@ -566,6 +579,16 @@
                     reverseButtons: true
                 }).then((confirmResult) => {
                     if (confirmResult.isConfirmed) {
+                          Swal.fire({
+                    title: 'Generando remisión...',
+                    text: 'Por favor espere mientras se convierte el documento.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
                         document.getElementById('formRemision').submit();
                     }
                 });
@@ -584,10 +607,22 @@
             reverseButtons: true
         }).then((confirmResult) => {
             if (confirmResult.isConfirmed) {
+                // Animación para conversión
+                Swal.fire({
+                    title: 'Generando factura...',
+                    text: 'Por favor espere mientras se convierte el documento.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
                 document.getElementById('formConversionFactura').submit();
             }
         });
     }
+
     function surtirRemision() {
         Swal.fire({
             title: '¿Deseas surtir la remisión?',

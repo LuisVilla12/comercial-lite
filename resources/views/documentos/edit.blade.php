@@ -103,7 +103,7 @@
                                             <th class="p-2">Producto</th>
                                             <th class="p-2">Cantidad</th>
                                             <th class="p-2">Precio</th>
-                                            <th class="p-2">Descuentos</th>
+                                            <th class="p-2">Descuento %</th>
                                             <th class="p-2">Importe</th>
                                             <th class="p-2"></th>
                                         </tr>
@@ -190,8 +190,9 @@
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td> --}}
 
-                                                 <td class="p-2 text-center">
-                                                    <input readonly type="number" :name="`productos[${index}][descuento]`" x-model.number="item.descuento"
+                                                <td class="p-2 text-center">
+                                                    <input type="number" :name="`productos[${index}][descuento]`"
+                                                        x-model.number="item.descuento"  min="0" max="100"
                                                         class="border rounded p-1 w-24 text-center bg-gray-100">
                                                 </td>
                                                 <td class="p-2 text-center font-semibold">
@@ -294,13 +295,23 @@
 
                         {{-- ================= TOTAL ================= --}}
                         <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            Subtotal: $<span x-text="(total*1).toFixed(2)"></span>
+                            Subtotal:
+                            $<span x-text="subtotal().toFixed(2)"></span>
                         </div>
-                        <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            IVA: $<span x-text="(total*1.16-total).toFixed(2)"></span>
+
+                        <div class="flex justify-end text-xl font-bold mt-4 text-red-500">
+                            Descuentos:
+                            $<span x-text="totalDescuentos().toFixed(2)"></span>
                         </div>
+
                         <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
-                            Total: $<span x-text="(total * 1.16).toFixed(2)"></span>
+                            IVA:
+                            $<span x-text="iva().toFixed(2)"></span>
+                        </div>
+
+                        <div class="flex justify-end text-xl font-bold mt-4 text-green-600">
+                            Total:
+                            $<span x-text="totalFinal().toFixed(2)"></span>
                         </div>
 
                         {{-- -ENVIO DE DATOS --}}
@@ -308,9 +319,14 @@
                         <input type="hidden" name="almacen_id" value="{{ $sucursal->almacen_id }}">
                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                         <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
-                        <input type="hidden" name="subtotal" x-model="total">
+                        {{-- <input type="hidden" name="subtotal" x-model="total">
                         <input type="hidden" name="impuestos" :value="(total * 1.16) - total">
-                        <input type="hidden" name="total" :value="(total * 1.16)">
+                        <input type="hidden" name="total" :value="(total * 1.16)"> --}}
+                        <input type="hidden" name="subtotal" x-model="subtotal">
+                        <input type="hidden" name="descuentos" x-model="totalDescuentos">
+                        <input type="hidden" name="impuestos" x-model="iva">
+                        <input type="hidden" name="total" x-model="totalFinal">
+
                         <input type="hidden" name="estatus" :value="1">
                         <input type="hidden" name="tipo" value="{{ $documento->documento_modelo_id }}">
                         <input type="hidden" name="sucursal_id" value="{{ $sucursal->id }}">
@@ -653,7 +669,11 @@
                     proveedorSeleccionado: -1,
 
                     items: [],
-                    total: documento.subtotal,
+                    // total: documento.subtotal,
+                    totalFinal: documento.total,
+                    subtotal: documento.subtotal,
+                    iva: documento.impuestos,
+                    totalDescuentos: documento.descuentos,
                     modalProducto: false,
                     busquedaProducto: '',
                     resultadosModal: [],
@@ -680,7 +700,7 @@
 
 
                     init() {
-                        // this.items = []
+                        // COLOCA LOS PRODUCTOS
                         this.items = documento.detalles.map(d => ({
                             detalle_id: d.id,
                             producto_id: d.producto_id,
@@ -688,6 +708,7 @@
                             query: d.producto.nombre_producto,
                             cantidad: d.cantidad,
                             descuento: d.descuento,
+                            iva:d.producto.impuesto1,
                             stock: d.stock,
                             costo: parseFloat(d.costo_unitario),
                             resultados: []
@@ -706,6 +727,7 @@
                             costo3: 0,
                             costo4: 0,
                             stock: 0,
+                            iva: 0,
                             resultados: [],
                             resultadoSeleccionado: -1
                         })
@@ -780,10 +802,10 @@
                         item.costo2 = parseFloat(p.costo2) || 0
                         item.costo3 = parseFloat(p.costo3) || 0
                         item.costo4 = parseFloat(p.costo4) || 0
+                        iva: Number(p.iva ?? 16),
                         item.stock = p.stock
                         item.resultados = []
                         item.resultadoSeleccionado = -1
-
                         this.calcular()
                     },
 
@@ -813,15 +835,14 @@
                                 codigo: p.codigo,
                                 query: p.nombre,
                                 cantidad: 1,
-
                                 // Precio seleccionado en el combo
                                 costo: parseFloat(p.precioSeleccionado ?? p.costo) || 0,
-
                                 costo2: parseFloat(p.costo2) || 0,
                                 costo3: parseFloat(p.costo3) || 0,
                                 costo4: parseFloat(p.costo4) || 0,
                                 costo5: parseFloat(p.costo5) || 0,
-
+                                iva: Number(p.iva ?? 16),
+                                descuento: 0,
                                 stock: p.stock,
                                 resultados: [],
                                 resultadoSeleccionado: -1
@@ -835,13 +856,66 @@
                         this.modalProductoSeleccionado = -1;
                     },
 
-
                     calcular() {
-                        this.total = this.items.reduce(
-                            (t, i) => t + (Number(i.cantidad) * Number(i.costo)),
-                            0
-                        )
-                    }
+                        this.total = this.items.reduce((t, i) => {
+
+                            const subtotal =
+                                Number(i.cantidad) * Number(i.costo);
+
+                            const descuento =
+                                subtotal * (Number(i.descuento || 0) / 100);
+
+                            return t + (subtotal - descuento);
+
+                        }, 0);
+                    },
+                    calcularIVA(item) {
+                        const subtotal =
+                            Number(item.cantidad) * Number(item.costo);
+
+                        const descuento =
+                            subtotal * (Number(item.descuento || 0) / 100);
+
+                        const base = subtotal - descuento;
+
+                        return base * (Number(item.iva || 0) / 100);
+                    },
+                    calcularImporte(item) {
+                        const subtotal = Number(item.cantidad) * Number(item.costo);
+                        const descuento = subtotal * (Number(item.descuento || 0) / 100);
+
+                        return subtotal - descuento;
+                    },
+                    subtotal() {
+                        return this.items.reduce((total, item) => {
+                            return total + (Number(item.cantidad) * Number(item.costo));
+                        }, 0);
+                    },
+
+                    totalDescuentos() {
+                        return this.items.reduce((total, item) => {
+                            const subtotalLinea =
+                                Number(item.cantidad) * Number(item.costo);
+
+                            return total + (
+                                subtotalLinea * (Number(item.descuento || 0) / 100)
+                            );
+                        }, 0);
+                    },
+
+                    subtotalConDescuento() {
+                        return this.subtotal() - this.totalDescuentos();
+                    },
+
+                    iva() {
+                        return this.items.reduce((total, item) => {
+                            return total + this.calcularIVA(item);
+                        }, 0);
+                    },
+
+                    totalFinal() {
+                        return this.subtotalConDescuento() + this.iva();
+                    },
                 }
             }
         </script>
