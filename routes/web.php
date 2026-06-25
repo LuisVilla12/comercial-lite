@@ -456,4 +456,22 @@ Route::get('/factura-prueba', function () {
         $response['Complement']['TaxStamp']['Uuid'] ?? null,
     );
 });
+
+// Route::get('/test-xml', function () {
+
+//     $id = 'JKbUkkTmzFjxuZMrSHF4PA2';
+
+//     $response = Http::withBasicAuth(
+//         env('FACTURAMA_USER'),
+//         env('FACTURAMA_PASSWORD')
+//     )->get(
+//         env('FACTURAMA_URL') . "/cfdi/xml/issued/{$id}"
+//     );
+
+//     dd(
+//         $response->status(),
+//         $response->body(),
+//         $response->json()
+//     );
+// });
 });

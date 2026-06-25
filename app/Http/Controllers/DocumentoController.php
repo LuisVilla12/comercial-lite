@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Storage;
+
 use App\Models\Documento;
 use App\Models\ConfiguracionEmpresa;
-use App\Models\Empresa;
+use App\Jobs\DescargarXmlCfdi;
 use App\Models\Caja;
 use Illuminate\Http\Request;
 use App\Models\Producto;
@@ -162,10 +162,9 @@ class DocumentoController extends Controller
             'codigo_postal' => 'required|string|max:10',
         ]);
         DB::beginTransaction();
-        // EFECTUAR LA COMPRA
+        // REALIZAR EL DOCUMENTO
         try {
             $sucursal = Sucursal::lockForUpdate()->find($sucursal->id);
-
             switch ($request->tipo) {
                 case 1:
                     $serie = $sucursal->serie_cotizacion;
@@ -190,6 +189,8 @@ class DocumentoController extends Controller
                     $siguienteFolio = 1;
                     break;
             }
+            // Guardar inmediatamente el nuevo consecutivo
+            $sucursal->save();
             $documento = Documento::create([
                 'sucursal_id' => $request->sucursal_id,
                 'documento_modelo_id' => $request->tipo,
@@ -801,66 +802,6 @@ class DocumentoController extends Controller
     }
 
     //FUNCION PARA TIMBRAR
-    // public function timbrar(FacturamaService $facturama,$documento){
-    //     $documento = Documento::findOrFail($documento);
-    //     $payload = [
-    //         // JSON requerido por Facturama
-    //     ];
-
-    //     $respuesta = $facturama->crearCfdi($payload);
-
-    //     dd($respuesta);
-    // }
-
-    // public function timbrar(FacturamaService $facturama,$documento){
-    //     $payload = [
-    //         "Currency" => "MXN",
-    //         "ExpeditionPlace" => "91130",
-
-    //         "CfdiType" => "I",
-
-    //         "PaymentForm" => "03",
-    //         "PaymentMethod" => "PUE",
-
-    //         "Receiver" => [
-    //             "Rfc" => "XAXX010101000",
-    //             "Name" => "PUBLICO EN GENERAL",
-    //             "CfdiUse" => "S01",
-    //             "FiscalRegime" => "616",
-    //             "TaxZipCode" => "91130"
-    //         ],
-
-    //         "Items" => [
-    //             [
-    //                 "ProductCode" => "01010101",
-    //                 "IdentificationNumber" => "1",
-    //                 "Description" => "Producto prueba",
-    //                 "Unit" => "Pieza",
-    //                 "UnitCode" => "H87",
-    //                 "UnitPrice" => 100,
-    //                 "Quantity" => 1,
-    //                 "Subtotal" => 100,
-    //                 "Total" => 100,
-    //                 "TaxObject" => "01"
-    //             ]
-    //         ],
-
-    //         "GlobalInformation" => [
-    //             "Periodicity" => "04",
-    //             "Months" => "06",
-    //             "Year" => 2026
-    //         ]
-    //     ];
-
-    //     $response = $facturama->crearCfdi($payload);
-    //     $estado=$response->status(); //201 es que jalo
-    //     $id=$response['Id'];
-    //     $uuid=$response['Complement']['TaxStamp']['Uuid'] ?? null;
-    //     return response()->json($response);
-    // }
-
-
-    //FUNCION PARA TIMBRAR
     public function timbrar($documento, FacturamaService $facturama)
     {
         $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
@@ -874,18 +815,17 @@ class DocumentoController extends Controller
         $uuid = $response['Complement']['TaxStamp']['Uuid'] ?? null;
         $facturamaId = $response['Id'] ?? null;
 
-        // 2. OBTENER XML (IMPORTANTE)
-        $xml = $facturama->obtenerXml($facturamaId);
-        // 3. GUARDAR XML
-        $path = "cfdi/{$uuid}.xml";
-        Storage::put($path, $xml);
+        dispatch(new DescargarXmlCfdi(
+            $facturamaId,
+            $uuid
+        ));
 
         // 4. ACTUALIZAR BD
         $documento->update([
             'facturama_id' => $facturamaId,
             'uuid' => $uuid,
             'estatus' => '4',
-            'xml_path' => $path
+            'observaciones' => 'DESCARGANDO',
         ]);
 
 

@@ -32,11 +32,23 @@ class FacturamaService
             ->json();
     }
     public function obtenerXml($id)
-    {
-        return Http::withBasicAuth(
-            env('FACTURAMA_USER'),
-            env('FACTURAMA_PASSWORD')
-        )->get(env('FACTURAMA_URL') . "/3/cfdis/xml/{$id}")
-            ->body();
+{
+    $response = Http::withBasicAuth(
+        env('FACTURAMA_USER'),
+        env('FACTURAMA_PASSWORD')
+    )->get(
+        env('FACTURAMA_URL') . "/cfdi/xml/issued/{$id}"
+    );
+
+    $data = $response->json();
+
+    if (
+        !isset($data['Content']) ||
+        empty($data['Content'])
+    ) {
+        return null;
     }
+
+    return base64_decode($data['Content']);
+}
 }
