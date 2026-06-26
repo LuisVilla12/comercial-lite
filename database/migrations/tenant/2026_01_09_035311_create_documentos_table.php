@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('uso_cfdi')->nullable();
             // DATOS DEL FACTURAMA
             $table->string('uuid')->nullable()->unique();
+            $table->string('cadena_original')->nullable()->unique();
             $table->string('facturama_id')->nullable()->unique();
             $table->string('estado')->default('pendiente'); // pendiente | timbrado | cancelado
             $table->text('observaciones')->nullable();

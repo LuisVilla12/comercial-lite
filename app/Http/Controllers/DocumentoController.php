@@ -407,11 +407,21 @@ class DocumentoController extends Controller
             } . ' ha sido actualizada'
         );
     }
-    public function pdf($sucursal,  $documento)
+    public function pdf($sucursal,  $documento,FacturamaService $facturama)
     {
         $documento = Documento::findOrFail($documento);
         $sucursal = Sucursal::findOrFail($sucursal);
         $empresa = ConfiguracionEmpresa::first();
+
+        // LEER EL XML
+        $xml = $facturama->leerXml($documento->uuid);
+        //OBTENER LA INFORMACION NECESARIA
+        $datosXML = $facturama->extraerTimbreCfdi($xml);
+        //GENERAR LA URL
+        $urlQr = $facturama->generarUrl($datosXML, $documento->total);
+        // GENERAR QR
+        $qr = $facturama->generarQrPng($urlQr);
+
         // Seleccionar los datos bancarios
         $banco = DatosBancario::where('predeterminado', true)->first();
 
@@ -420,7 +430,7 @@ class DocumentoController extends Controller
             'detalles.producto'
         ]);
 
-        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco', 'empresa'))
+        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco', 'empresa','datosXML','qr'))
             ->setPaper('letter');
 
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");
@@ -825,7 +835,8 @@ class DocumentoController extends Controller
             'facturama_id' => $facturamaId,
             'uuid' => $uuid,
             'estatus' => '4',
-            'observaciones' => 'DESCARGANDO',
+            'cadena_original' => $response['OriginalString']
+            // 'observaciones' => 'DESCARGANDO',
         ]);
 
 

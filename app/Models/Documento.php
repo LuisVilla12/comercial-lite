@@ -36,7 +36,8 @@ class Documento extends TenantModel implements Auditable{
         'caja_id',
         //DATOS DE FACTURAMA
         'facturama_id',
-        'uuid'
+        'uuid',
+        'cadena_original'
     ];
     public function detalles() {
         return $this->hasMany(DocumentosDetalle::class);

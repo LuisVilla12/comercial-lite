@@ -37,6 +37,7 @@ public function handle(): void
 
                 $data = $response->json();
 
+
                 if (!empty($data['Content'])) {
 
                     $xml = base64_decode($data['Content']);
