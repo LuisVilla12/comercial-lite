@@ -28,6 +28,7 @@ use App\Http\Controllers\DatosBancarioController;
 use App\Http\Controllers\AgenteController;
 use App\Http\Controllers\AjustesAlmacenController;
 use App\Http\Controllers\CajaController;
+use App\Http\Controllers\CertificadoController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\ProductoUbicacionController;
@@ -62,8 +63,6 @@ Route::middleware('auth')->group(function () {
 
 // Solo administrador puede entrar
 Route::middleware(['auth', 'admin'])->group(function () {
-
-
     //Usuarios
     Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
     Route::get('/usuarios/{usuario}', [UserController::class, 'show'])->name('usuarios.show');
@@ -85,9 +84,11 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/configuracion-empresa', action: [ConfiguracionEmpresaController::class, 'show'])->name('configuracion-empresa.show');
     Route::get('/configuracion-empresa/edit', action: [ConfiguracionEmpresaController::class, 'edit'])->name('configuracion-empresa.edit');
     Route::put('/configuracion-empresa/{empresa}/edit', [ConfiguracionEmpresaController::class, 'update'])->name('configuracion-empresa.update');
-
     Route::get('/empresa/dashboard', action: [ConfiguracionEmpresaController::class, 'dashboard'])->name('configuracion-empresa.dashboard');
 
+    Route::get('/certificados-sat', action: [CertificadoController::class, 'create'])->name('certificados-empresa.create');
+    Route::post('/certificados-sat', action: [CertificadoController::class, 'store'])->name('certificados-empresa.store');
+    Route::get('/certificados', action: [CertificadoController::class, 'show'])->name('certificados-empresa.show');
 
     // KARDEX MENU
     Route::get('/kardex', action: [KardexController::class, 'index'])->name('kardex.index');

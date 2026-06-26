@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Certificado;
 use Illuminate\Http\Request;
 use App\Models\ConfiguracionEmpresa;
 use App\Models\Regimen;
@@ -16,8 +17,9 @@ class ConfiguracionEmpresaController extends Controller
     public function show(){
     $empresa=ConfiguracionEmpresa::first();
     $regimenes=Regimen::all();
+    $certificados=Certificado::first();
 
-    return view('empresa-config.show',['empresa'=>$empresa,'regimenes'=>$regimenes]);
+    return view('empresa-config.show',['empresa'=>$empresa,'regimenes'=>$regimenes,'certificados'=>$certificados]);
 }
 public function edit(){
     $empresa=ConfiguracionEmpresa::first();

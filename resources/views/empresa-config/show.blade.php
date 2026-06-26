@@ -10,6 +10,19 @@
         </p>
     @endif
     <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-4">
+
+        <div class="flex justify-end">
+            @if($certificados==null)
+<a href="{{ route('certificados-empresa.create') }}" class="px-6 py-2 bg-blue-500 hover:bg-blue-500 text-white rounded-md font-medium">
+                Configurar certificados
+            </a>
+            @else
+            <a href="{{ route('certificados-empresa.show') }}" class="px-6 py-2 bg-blue-500 hover:bg-blue-500 text-white rounded-md font-medium">
+                Mostrar certificados
+            </a>
+            @endif
+       </div>
+
         <div class=" ">
             <div class="md:grid  md:grid-cols-3 md:gap-4">
                 @csrf
@@ -159,14 +172,13 @@
                 </div>
         {{-- Botones --}}
         <div class="md:col-span-full flex justify-between gap-3 mt-4">
-              <a href="{{route('dashboard')  }}"
-               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+            <a href="{{route('dashboard')  }}" class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
                 <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
             </a>
-                <a href="{{ route('configuracion-empresa.edit') }}"
-                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
-                    Actualizar empresa
-                </a>
+            <a href="{{ route('configuracion-empresa.edit') }}" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
+                Actualizar empresa
+            </a>
+
         </div>
     </div>
 
