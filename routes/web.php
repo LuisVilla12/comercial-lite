@@ -221,6 +221,8 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
     Route::get('/inventario/pdf', [ExistenciaProductoController::class, 'pdf'])->name('existencias.pdf');
     //ALERTAS STOCK
     Route::get('/validacion/inventario', [ExistenciaProductoController::class, 'validacion'])->name('existencias.validacion');
+    Route::get('validacion/inventario/pdf', [ExistenciaProductoController::class, 'validacionPdf'])->name('validacion.pdf');
+
     // TODO:AGREGAR VALIDACION SE SUCURSAL
     // Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
 

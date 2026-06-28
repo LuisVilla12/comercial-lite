@@ -254,10 +254,16 @@ class DocumentoController extends Controller
         }
 
 
+    flash()
+            ->option('timeout', 2000)
+            ->success(match ($request->tipo) {
+                '1' => 'Cotización',
+                '2' => 'Factura',
+                '3' => 'Remisión',
+            } . ' ha sido registrada');
 
         return redirect()
             ->route('documentos.show', ['sucursal' => $sucursal->id, 'documento' => $documento]);
-        // ->with('open_pdf', true);
     }
 
     /**
@@ -817,7 +823,7 @@ class DocumentoController extends Controller
         $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
         $empresa = ConfiguracionEmpresa::first();
         // GENERA EL JSON PARA ENVIAR
-        $payload = $this->buildPayload($documento, $empresa);
+        $payload = $this->buildPayload($documento, $empresa,$certificados);
         // dd($payload);
         //REALIZA EL TIMBRADO
         $response = $facturama->crearCfdi($payload);
@@ -853,7 +859,15 @@ class DocumentoController extends Controller
             "CfdiType" => "I",
             "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
             "PaymentMethod" => $documento->metodo_pago, // PUE / PPD
+            "Date"  =>  $documento->created_at,
+	        "Folio" =>  $documento->folio,
+            	"Serie"=>  $documento->serie,	
 
+            "Issuer"=>[
+        "FiscalRegime"=>"601",
+        "Rfc"=> "EKU9003173C9",
+        "Name"=> "ESCUELA KEMPER URGATE",
+    ],
             "Receiver" => [
                 "Rfc" => $documento->cliente->rfc,
                 "Name" => $documento->cliente->nombre,

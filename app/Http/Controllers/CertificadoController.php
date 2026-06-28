@@ -49,6 +49,28 @@ class CertificadoController extends Controller
             'key_password' => Crypt::encryptString($request->password),
         ]
     );
+    // Enviar a Facturama
+    $response = Http::withBasicAuth(
+            config('services.facturama.user'),
+            config('services.facturama.password')
+        )
+        ->acceptJson()
+        ->post(config('services.facturama.url') . '/csds', [
+            'Rfc' => $empresa->rfc,
+            'Certificate' => $certificate,
+            'PrivateKey' => $privateKey,
+            'PrivateKeyPassword' => $request->password,
+        ]);
+        
+    if (!$response->successful()) {
+        // Opcional: eliminar el registro y archivos si falló la carga
+        $certificado->delete();
+        Storage::delete([$cer, $key]);
+
+        return back()->withErrors([
+            'facturama' => $response->json()['Message'] ?? $response->body()
+        ]);
+    }
             return redirect()->route('configuracion-empresa.show')->with('success', 'Certificados configurados exitosamente.');
 
     }

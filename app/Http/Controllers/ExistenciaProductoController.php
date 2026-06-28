@@ -6,6 +6,10 @@ use App\Models\ExistenciaProducto;
 use Illuminate\Http\Request;
 use App\Models\Almacen;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Jobs\GenerarExistenciasPdf;
+use App\Jobs\GeneraSurtirPdf;
+
+
 
 class ExistenciaProductoController extends Controller
 {
@@ -52,24 +56,31 @@ class ExistenciaProductoController extends Controller
 
  public function pdf(Request $request)
 {
-    // SIN LIMITE DE TIEMPO
-    //   set_time_limit(300);
-    $existencias = ExistenciaProducto::with(['producto', 'almacen'])
-        ->when($request->search, function ($q) use ($request) {
-            $q->whereHas('producto', function ($p) use ($request) {
-                $p->where('nombre_producto', 'like', '%' . $request->search . '%')
-                  ->orWhere('codigo_producto', 'like', '%' . $request->search . '%');
-            });
-        })
-        ->when($request->almacen_id, function ($q) use ($request) {
-            $q->where('almacen_id', $request->almacen_id);
-        })
-        ->get(); // <-- NO paginate()
-    // dd($existencias);
-    $pdf = Pdf::loadView('existencias.pdf', compact('existencias'))
-        ->setPaper('letter');
-
-    return $pdf->stream('existencias.pdf');
+    GenerarExistenciasPdf::dispatch(
+        //SABER QUE EMPRESA ESTA
+        $request->search,
+        $request->almacen_id,
+        auth()->id(),
+        session('empresa_id'),
+    );    
+    flash()
+            ->option('timeout', 2000)
+            ->success('El reporte se está generando. Estará disponible en unos minutos');
+     return back();
+}
+public function validacionPdf(Request $request)
+{
+    GeneraSurtirPdf::dispatch(
+        $request->search,
+        $request->almacen_id,
+        auth()->id(),
+        session('empresa_id'),
+    );    
+    flash()
+            ->option('timeout', 2000)
+            ->success('El reporte se está generando. Estará disponible en unos minutos');
+    
+    return back();
 }
 
     /**

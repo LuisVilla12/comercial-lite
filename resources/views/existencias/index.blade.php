@@ -42,21 +42,14 @@
             Buscar
         </button>
         </form>
-        <a   target="_blank" href="{{ route('existencias.pdf', [
+        <a   href="{{ route('existencias.pdf', [
     'search' => request('search'),
     'almacen_id' => request('almacen_id')
 ]) }}"
-target="_blank"
  class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ml-6">
                     <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
 </a>
     </div>
-
-    @if (session('success'))
-        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
-            class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4">{{ session('success') }}
-        </p>
-    @endif
 
     <div class="shadow-md overflow-x-auto rounded-lg">
         @if ($existencias->count() > 0)
