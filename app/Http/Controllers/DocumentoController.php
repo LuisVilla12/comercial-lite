@@ -419,6 +419,16 @@ class DocumentoController extends Controller
         $sucursal = Sucursal::findOrFail($sucursal);
         $empresa = ConfiguracionEmpresa::first();
 
+        //CARGAR RELACIONES
+        $documento->load([
+            'cliente',
+            'detalles.producto'
+        ]);
+
+        // Seleccionar los datos bancarios
+        $banco = DatosBancario::where('predeterminado', true)->first();
+
+        if($documento->documento_modelo_id==2 and $documento->estatus==4){
         // LEER EL XML
         $xml = $facturama->leerXml($documento->uuid);
         //OBTENER LA INFORMACION NECESARIA
@@ -427,18 +437,21 @@ class DocumentoController extends Controller
         $urlQr = $facturama->generarUrl($datosXML, $documento->total);
         // GENERAR QR
         $qr = $facturama->generarQrPng($urlQr);
+        // $qr='';
 
-        // Seleccionar los datos bancarios
-        $banco = DatosBancario::where('predeterminado', true)->first();
-
-        $documento->load([
-            'cliente',
-            'detalles.producto'
-        ]);
-
-        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco', 'empresa','datosXML','qr'))
+        $pdf = Pdf::loadView('documentos.pdf_factura', compact('documento', 'sucursal', 'banco', 'empresa','datosXML','qr'))
+            ->setPaper('letter');
+        }elseif($documento->documento_modelo_id==2  and $documento->estatus==1){
+        $datosXML='';
+        $qr='';
+        $pdf = Pdf::loadView('documentos.pdf_factura', compact('documento', 'sucursal', 'banco', 'empresa','datosXML','qr'))
             ->setPaper('letter');
 
+        }else{
+        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco', 'empresa'))
+            ->setPaper('letter');
+
+        }
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");
     }
 
@@ -823,7 +836,7 @@ class DocumentoController extends Controller
         $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
         $empresa = ConfiguracionEmpresa::first();
         // GENERA EL JSON PARA ENVIAR
-        $payload = $this->buildPayload($documento, $empresa,$certificados);
+        $payload = $this->buildPayload($documento, $empresa);
         // dd($payload);
         //REALIZA EL TIMBRADO
         $response = $facturama->crearCfdi($payload);
@@ -859,15 +872,15 @@ class DocumentoController extends Controller
             "CfdiType" => "I",
             "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
             "PaymentMethod" => $documento->metodo_pago, // PUE / PPD
-            "Date"  =>  $documento->created_at,
+            "Date"  =>  now()->format('Y-m-d\TH:i:s'),
 	        "Folio" =>  $documento->folio,
-            	"Serie"=>  $documento->serie,	
+            	// "Serie"=>  $documento->serie,	
 
-            "Issuer"=>[
-        "FiscalRegime"=>"601",
-        "Rfc"=> "EKU9003173C9",
-        "Name"=> "ESCUELA KEMPER URGATE",
-    ],
+    //         "Issuer"=>[
+    //     "FiscalRegime"=>"601",
+    //     "Rfc"=> "EKU9003173C9",
+    //     "Name"=> "ESCUELA KEMPER URGATE",
+    // ],
             "Receiver" => [
                 "Rfc" => $documento->cliente->rfc,
                 "Name" => $documento->cliente->nombre,

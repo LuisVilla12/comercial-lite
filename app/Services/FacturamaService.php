@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Services;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Http;
 
 class FacturamaService
@@ -105,15 +106,16 @@ public function generarUrl(array $datos, float $total): string
             . "&tt={$total}"
             . "&fe={$sello}";
     }
-// GENERAR QR
-    public function generarQrPng(string $url): string
-    {
-        return base64_encode(
-            QrCode::format('png')
-                ->size(150)
-                ->errorCorrection('H')
-                ->generate($url)
-        );
-    }
+public function generarQrPng(string $url): string
+{
+    $result = Builder::create()
+        ->writer(new PngWriter())
+        ->data($url)
+        ->size(150)
+        ->margin(5)
+        ->build();
+
+    return base64_encode($result->getString());
+}
 
 }

@@ -195,51 +195,45 @@
 
     <br>
     <table>
-        <tr width="70%" class="no-border">
-
-        </tr>
-        <tr width="30%" class="no-border">
-            <table>
-<tr>
-            <td>Serie del Certificado del emisor: {{ $datosXML['no_cert_emisor'] }}</td>
-        </tr>
         <tr>
-            <td>Folio Fiscal: {{ $datosXML['uuid'] }}</td>
-        </tr>
-         <tr>
-            <td>No. de serie del Certificado del SAT: {{ $datosXML['no_cert_sat'] }}</td>
-        </tr>
-            <tr>
-            <td>Fecha y hora de certificación: {{ $datosXML['fecha_timbrado'] }}</td>
-        </tr>
-            </table>
+            <td colspan="6">
+                <label class="block  text-md font-medium text-gray-700 my-2">
+                </label>
+            </td>
         </tr>
     </table>
-    <br>
-    <table>
-        <tr><td class="">Sello digital del CFDI</td></tr>
+    {{-- ================= BANCOS ================= --}}
+    <table class="no-border small">
         <tr>
-            <td style="font-size: 7px; word-break: break-all; white-space: normal;">
-                {{ $datosXML['sello_cfdi'] }}
-            </td>
-        </tr>
-        <tr><td class="">Sello del SAT</td></tr>
-        <tr>
-            <td style="font-size: 7px;word-break: break-all; white-space: normal;">
-                {{ $datosXML['sello_sat'] }}
-            </td>
-        </tr>
-        <tr><td class="">Cadena original del complemento del certificación digital del SAT:</td></tr>
-        <tr>
-            <td style="font-size: 7px;word-break: break-all; white-space: normal;">
-                {{ $documento->cadena_original }}
+            <td>
+                <strong>DEPOSITOS Y TRANSFERENCIAS</strong><br>
+                Banco: <strong> {{ $banco->nombre_banco }}</strong> <br>
+                Cuenta: <strong>{{ $banco->cuenta_bancaria }} </strong><br>
+                CLABE: <strong>{{ $banco->clabe }}</strong>
             </td>
         </tr>
     </table>
 
+    <br>
+
+    {{-- ================= CONTACTO ================= --}}
+    <table class="no-border small">
+        <tr>
+            <td>
+                <strong>DATOS DE CONTACTO:</strong><br>
+                WhatsApp:<strong> {{ $banco->whatsapp }} </strong><br>
+                Correo: <strong>{{ $banco->correo_electronico }} </strong>
+            </td>
+        </tr>
+    </table>
 
     <br>
 
+    <p class="small" style="text-align: center;">
+        <strong>
+            PRECIOS SUJETOS A CAMBIO SIN PREVIO AVISO. MATERIAL SUJETO A DISPONIBILIDAD. NO ES UN COMPROBANTE FISCAL
+        </strong>
+    </p>
 
 </body>
 
