@@ -258,12 +258,13 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
         Route::get('/documentos/{documento}/pdf', [DocumentoController::class, 'pdf'])->name('documentos.pdf');
         //ENVIO
         Route::post('/documentos/{documento}/enviar-email', [DocumentoController::class, 'enviarEmail'])->name('documentos.enviarEmail');
-    });
+        
+        //TIMBRAR
+        Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrar'])->name(name: 'documentos.timbrar');
+        });
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 
-    Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrar'])->name(name: 'documentos.timbrar');
-    // Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrarSAT'])->name('timbrarSAT');
 
     //Devoluciones
     Route::get('/devoluciones/{documento}', [DevolucionController::class, 'create'])->name('devoluciones.create');

@@ -773,8 +773,6 @@ class DocumentoController extends Controller
                         $detalle->cantidad
                     );
                 }
-                //Documento afectado
-                $documento->update(['estatus' => 4]);
             });
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -800,11 +798,6 @@ class DocumentoController extends Controller
             DB::rollBack();
             throw $e;
         }
-
-
-        return redirect()
-            ->route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento])
-            ->with('success', 'Factura timbrada correctamente');
     }
 
 
@@ -831,7 +824,7 @@ class DocumentoController extends Controller
     }
 
     //FUNCION PARA TIMBRAR
-    public function timbrar($documento, FacturamaService $facturama)
+    public function timbrar($documento, FacturamaService $facturama,$sucursal)
     {
         $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
         $empresa = ConfiguracionEmpresa::first();
@@ -855,9 +848,9 @@ class DocumentoController extends Controller
             'uuid' => $uuid,
             'estatus' => '4',
             'cadena_original' => $response['OriginalString']
-            // 'observaciones' => 'DESCARGANDO',
         ]);
-
+        $sucursal = Sucursal::findOrFail($sucursal);
+        surtirFactura($documento,$sucursal);
 
         return redirect()
             ->back()
@@ -868,7 +861,8 @@ class DocumentoController extends Controller
     {
         return [
             "Currency" => "MXN",
-            "ExpeditionPlace" => $empresa->cp,
+            // "ExpeditionPlace" => $empresa->cp,
+            "ExpeditionPlace"=>"91130",
             "CfdiType" => "I",
             "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
             "PaymentMethod" => $documento->metodo_pago, // PUE / PPD

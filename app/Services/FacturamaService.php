@@ -25,13 +25,28 @@ class FacturamaService
         )->baseUrl($this->baseUrl);
     }
     //FUNCION PARA TIMBRAR
+    // public function crearCfdi(array $payload)
+    // {
+    //     return $this->client()
+    //         ->post('/3/cfdis', $payload)
+    //         ->throw()
+    //         ->json();
+    // }
     public function crearCfdi(array $payload)
-    {
+{
+    try {
         return $this->client()
             ->post('/3/cfdis', $payload)
             ->throw()
             ->json();
+    } catch (\Illuminate\Http\Client\RequestException $e) {
+        dd(
+            $e->response->status(),
+            $e->response->body(),
+            $e->response->json()
+        );
     }
+}
     //FUNCION PARA OBTENER EL XML DE LA FACTURA
     public function obtenerXml($id){
     $response = Http::withBasicAuth(

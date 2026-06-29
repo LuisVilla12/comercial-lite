@@ -74,7 +74,7 @@
                     <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2" />
                     Timbrar
                 </button>
-                <form method="POST" id="formTimbrar" action="{{ route('documentos.timbrar', ['documento' => $documento]) }}">
+                <form method="POST" id="formTimbrar" action="{{ route('documentos.timbrar', ['documento' => $documento,'sucursal'=>$sucursal]) }}">
                     @csrf
                 </form>
             @endif
