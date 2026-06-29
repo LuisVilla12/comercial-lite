@@ -149,7 +149,7 @@
                     <x-heroicon-o-gift class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            <x-dashboard-card href="{{ route('reportes.index') }}" bg="bg-red-50 dark:bg-red-900/20" title="Reportes"
+            <x-dashboard-card href="{{ route('reportes.select') }}" bg="bg-red-50 dark:bg-red-900/20" title="Reportes"
                 desc="Generar reportes" iconBg="bg-red-500">
                 <x-slot:icon>
                     <x-heroicon-o-chart-bar class="w-6 h-6" />

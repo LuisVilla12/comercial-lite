@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\ExistenciaProducto;
 use App\Models\Empresa;
+use App\Models\Reporte;
+
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -21,13 +23,15 @@ class GeneraSurtirPdf implements ShouldQueue
     protected $almacen_id;
     protected $userId;
     protected $empresaId;
+        protected $reporteId;
 
-    public function __construct($search, $almacen_id, $userId,$empresaId)
+    public function __construct($search, $almacen_id, $userId,$empresaId,$reporteId)
     {
         $this->search = $search;
         $this->almacen_id = $almacen_id;
         $this->userId = $userId;
         $this->empresaId = $empresaId;
+                $this->reporteId = $reporteId;
     }
 
     public function handle(): void
@@ -89,5 +93,11 @@ class GeneraSurtirPdf implements ShouldQueue
             'reportes/' . $nombreArchivo,
             $pdf->output()
         );
+        $reporte = Reporte::findOrFail($this->reporteId);
+         //ACTUALIZA
+        $reporte->update([
+    'archivo' => $nombreArchivo,
+    'estado' => 'Finalizado',
+]);        
     }
 }

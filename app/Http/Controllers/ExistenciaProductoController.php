@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExistenciaProducto;
+use App\Models\Reporte;
 use Illuminate\Http\Request;
 use App\Models\Almacen;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -56,13 +57,21 @@ class ExistenciaProductoController extends Controller
 
  public function pdf(Request $request)
 {
+    $reporte=Reporte::create([ 
+        'user_id'=> auth()->id(),
+        'tipo'=>'INVENTARIO',
+        'archivo'=>'--PENDIENTE--',
+        'estado'=>'Procesando'
+    ]);
     GenerarExistenciasPdf::dispatch(
         //SABER QUE EMPRESA ESTA
         $request->search,
         $request->almacen_id,
         auth()->id(),
         session('empresa_id'),
-    );    
+        $reporte->id
+    );
+    
     flash()
             ->option('timeout', 2000)
             ->success('El reporte se está generando. Estará disponible en unos minutos');
@@ -70,11 +79,20 @@ class ExistenciaProductoController extends Controller
 }
 public function validacionPdf(Request $request)
 {
+     $reporte=Reporte::create([ 
+        'user_id'=> auth()->id(),
+        'tipo'=>'EXISTENCIA',
+        'archivo'=>'--PENDIENTE--',
+        'estado'=>'Procesando',
+    ]);
+
     GeneraSurtirPdf::dispatch(
         $request->search,
         $request->almacen_id,
         auth()->id(),
         session('empresa_id'),
+                $reporte->id
+
     );    
     flash()
             ->option('timeout', 2000)

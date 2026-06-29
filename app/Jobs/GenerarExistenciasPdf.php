@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\ExistenciaProducto;
 use App\Models\Empresa;
+use App\Models\Reporte;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -21,13 +22,15 @@ class GenerarExistenciasPdf implements ShouldQueue
     protected $almacen_id;
     protected $userId;
     protected $empresaId;
+    protected $reporteId;
 
-    public function __construct($search, $almacen_id, $userId,$empresaId)
+    public function __construct($search, $almacen_id, $userId,$empresaId,$reporteId)
     {
         $this->search = $search;
         $this->almacen_id = $almacen_id;
         $this->userId = $userId;
         $this->empresaId = $empresaId;
+        $this->reporteId = $reporteId;
     }
 
     public function handle(): void
@@ -85,10 +88,17 @@ $empresa = Empresa::findOrFail($this->empresaId);
             '_' .
             now()->format('Ymd_His') .
             '.pdf';
-
+        // BUSCA REPORTE
+        $reporte = Reporte::findOrFail($this->reporteId);
+        
         Storage::disk('public')->put(
             'reportes/' . $nombreArchivo,
             $pdf->output()
         );
+        //ACTUALIZA
+        $reporte->update([
+    'archivo' => $nombreArchivo,
+    'estado' => 'Finalizado',
+]);        
     }
 }

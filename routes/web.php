@@ -295,9 +295,11 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
 
     //Reportes
     Route::get('/reportes', [ReportesController::class, 'index'])->name('reportes.index');
+    Route::get('/reportes/select', [ReportesController::class, 'select'])->name('reportes.select');
+    Route::get('/reportes/create', [ReportesController::class, 'create'])->name('reportes.create');
     Route::get('/reportes/conceptos/export', [ReportesController::class, 'exportConceptos'])->name('reportes.conceptos.export');
     Route::get('/reportes/productos/export', [ReportesController::class, 'exportProductos'])->name('reportes.productos.export');
-
+    Route::get('/reportes/descargar/{archivo}', [ReportesController::class, 'descargar'])->name('reportes.descargar');
 
     //Puntos
     Route::get('/puntos', action: [PuntosController::class, 'index'])->name('puntos.index');
