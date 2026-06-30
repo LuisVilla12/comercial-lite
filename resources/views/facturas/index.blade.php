@@ -93,7 +93,7 @@
                                     </span>
                                 @elseif ($documento->estatus == 4)
                                     <span class="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">
-                                        Surtida
+                                        Timbrada
                                     </span>
                                 @elseif($documento->estatus == 2)
                                     <span class="px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
