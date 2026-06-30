@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Jobs;
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -17,65 +18,73 @@ class DescargarXmlCfdi implements ShouldQueue
         public string $uuid
     ) {}
 
-public function handle(): void
-{
-    try {
+    public function handle(): void
+    {
+        try {
 
-        $xml = null;
-        $intentos = 0;
+            $xml = null;
+            $intentos = 0;
 
-        while ($intentos < 10) {
-            $response = Http::withBasicAuth(
-                env('FACTURAMA_USER'),
-                env('FACTURAMA_PASSWORD')
-            )->get(
-                env('FACTURAMA_URL') . "/cfdi/xml/issued/{$this->facturamaId}"
-            );
+            while ($intentos < 10) {
+                 $response = Http::withBasicAuth(
+                     env('FACTURAMA_USER'),
+                     env('FACTURAMA_PASSWORD')
+                 )->get(
+                     env('FACTURAMA_URL') . "/cfdi/xml/issued/{$this->facturamaId}"
+                 );
 
-            if ($response->successful()) {
+                // $response = Http::withOptions([
+                //     'verify' => false,
+                // ])->withBasicAuth(
+                //     env('FACTURAMA_USER'),
+                //     env('FACTURAMA_PASSWORD')
+                // )->get(
+                //     env('FACTURAMA_URL') . "/cfdi/xml/issued/{$this->facturamaId}"
+                // );
 
-                $data = $response->json();
+                if ($response->successful()) {
+
+                    $data = $response->json();
 
 
-                if (!empty($data['Content'])) {
+                    if (!empty($data['Content'])) {
 
-                    $xml = base64_decode($data['Content']);
+                        $xml = base64_decode($data['Content']);
 
-                    if (str_contains($xml, '<cfdi:Comprobante')) {
-                        break;
+                        if (str_contains($xml, '<cfdi:Comprobante')) {
+                            break;
+                        }
                     }
                 }
+
+                sleep(1);
+                $intentos++;
             }
 
-            sleep(1);
-            $intentos++;
-        }
+            if (empty($xml)) {
 
-        if (empty($xml)) {
+                Log::error('Error Facturama XML vacío', [
+                    'uuid' => $this->uuid,
+                    'facturamaId' => $this->facturamaId
+                ]);
 
-            Log::error('Error Facturama XML vacío', [
+                throw new \Exception('XML no disponible en Facturama');
+            }
+
+            Storage::put("cfdi/{$this->uuid}.xml", $xml);
+
+            Log::info('XML guardado correctamente', [
                 'uuid' => $this->uuid,
-                'facturamaId' => $this->facturamaId
+                'bytes' => strlen($xml)
+            ]);
+        } catch (\Throwable $e) {
+
+            Log::error('Job DescargarXmlCfdi falló', [
+                'uuid' => $this->uuid,
+                'error' => $e->getMessage()
             ]);
 
-            throw new \Exception('XML no disponible en Facturama');
+            throw $e;
         }
-
-        Storage::put("cfdi/{$this->uuid}.xml", $xml);
-
-        Log::info('XML guardado correctamente', [
-            'uuid' => $this->uuid,
-            'bytes' => strlen($xml)
-        ]);
-
-    } catch (\Throwable $e) {
-
-        Log::error('Job DescargarXmlCfdi falló', [
-            'uuid' => $this->uuid,
-            'error' => $e->getMessage()
-        ]);
-
-        throw $e;
     }
 }
-    }

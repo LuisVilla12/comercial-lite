@@ -1,0 +1,4 @@
+HABILITAR EN PHP.ini
+;extension=gd
+;extension=fileinfo
+

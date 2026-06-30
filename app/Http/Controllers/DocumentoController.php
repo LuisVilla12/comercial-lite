@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Documento;
+use App\Models\Timbre;
 use App\Models\ConfiguracionEmpresa;
 use App\Jobs\DescargarXmlCfdi;
 use App\Models\Caja;
@@ -254,7 +255,7 @@ class DocumentoController extends Controller
         }
 
 
-    flash()
+        flash()
             ->option('timeout', 2000)
             ->success(match ($request->tipo) {
                 '1' => 'Cotización',
@@ -413,7 +414,7 @@ class DocumentoController extends Controller
             } . ' ha sido actualizada'
         );
     }
-    public function pdf($sucursal,  $documento,FacturamaService $facturama)
+    public function pdf($sucursal,  $documento, FacturamaService $facturama)
     {
         $documento = Documento::findOrFail($documento);
         $sucursal = Sucursal::findOrFail($sucursal);
@@ -428,29 +429,27 @@ class DocumentoController extends Controller
         // Seleccionar los datos bancarios
         $banco = DatosBancario::where('predeterminado', true)->first();
 
-        if($documento->documento_modelo_id==2 and $documento->estatus==4){
-        // LEER EL XML
-        $xml = $facturama->leerXml($documento->uuid);
-        //OBTENER LA INFORMACION NECESARIA
-        $datosXML = $facturama->extraerTimbreCfdi($xml);
-        //GENERAR LA URL
-        $urlQr = $facturama->generarUrl($datosXML, $documento->total);
-        // GENERAR QR
-        $qr = $facturama->generarQrPng($urlQr);
-        // $qr='';
+        if ($documento->documento_modelo_id == 2 and $documento->estatus == 4) {
+            // LEER EL XML
+            $xml = $facturama->leerXml($documento->uuid);
+            //OBTENER LA INFORMACION NECESARIA
+            $datosXML = $facturama->extraerTimbreCfdi($xml);
+            //GENERAR LA URL
+            $urlQr = $facturama->generarUrl($datosXML, $documento->total);
+            // GENERAR QR
+            $qr = $facturama->generarQrPng($urlQr);
+            // $qr='';
 
-        $pdf = Pdf::loadView('documentos.pdf_factura', compact('documento', 'sucursal', 'banco', 'empresa','datosXML','qr'))
-            ->setPaper('letter');
-        }elseif($documento->documento_modelo_id==2  and $documento->estatus==1){
-        $datosXML='';
-        $qr='';
-        $pdf = Pdf::loadView('documentos.pdf_factura', compact('documento', 'sucursal', 'banco', 'empresa','datosXML','qr'))
-            ->setPaper('letter');
-
-        }else{
-        $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco', 'empresa'))
-            ->setPaper('letter');
-
+            $pdf = Pdf::loadView('documentos.pdf_factura', compact('documento', 'sucursal', 'banco', 'empresa', 'datosXML', 'qr'))
+                ->setPaper('letter');
+        } elseif ($documento->documento_modelo_id == 2  and $documento->estatus == 1) {
+            $datosXML = '';
+            $qr = '';
+            $pdf = Pdf::loadView('documentos.pdf_factura', compact('documento', 'sucursal', 'banco', 'empresa', 'datosXML', 'qr'))
+                ->setPaper('letter');
+        } else {
+            $pdf = Pdf::loadView('documentos.pdf', compact('documento', 'sucursal', 'banco', 'empresa'))
+                ->setPaper('letter');
         }
         return $pdf->stream("documento_{$documento->serie}-{$documento->folio}.pdf");
     }
@@ -820,64 +819,92 @@ class DocumentoController extends Controller
     }
 
     //FUNCION PARA TIMBRAR
-    public function timbrar($sucursal,$documento, FacturamaService $facturama)
+    public function timbrar($sucursal, $documento, FacturamaService $facturama)
     {
         $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
         $empresa = ConfiguracionEmpresa::first();
         // GENERA EL JSON PARA ENVIAR
         $payload = $this->buildPayload($documento, $empresa);
         // dd($payload);
-        //REALIZA EL TIMBRADO
-        $response = $facturama->crearCfdi($payload);
-        // dd($response);
-        $uuid = $response['Complement']['TaxStamp']['Uuid'] ?? null;
-        $facturamaId = $response['Id'] ?? null;
 
-        dispatch(new DescargarXmlCfdi(
-            $facturamaId,
-            $uuid
-        ));
+        try {
+            //REALIZA EL TIMBRADO
+            $response = $facturama->crearCfdi($payload);
 
-        // 4. ACTUALIZAR BD
-        $documento->update([
-            'facturama_id' => $facturamaId,
-            'uuid' => $uuid,
-            'estatus' => '4',
-            'cadena_original' => $response['OriginalString']
-        ]);
-        //AFECTAR EXISTENCIA
-        $this->surtirFactura($sucursal,$documento->id);
-        
-        return redirect()
+            // dd($response);
+            $uuid = $response['Complement']['TaxStamp']['Uuid'] ?? null;
+            $facturamaId = $response['Id'] ?? null;
+
+            dispatch(new DescargarXmlCfdi(
+                $facturamaId,
+                $uuid
+            ));
+
+            // 4. ACTUALIZAR BD
+            $documento->update([
+                'facturama_id' => $facturamaId,
+                'uuid' => $uuid,
+                'estatus' => '4',
+                'cadena_original' => $response['OriginalString']
+            ]);
+            //CONTEO DE  TIMBRES
+            $timbre = Timbre::first();
+            $timbre->update([
+                'utilizados' => $timbre->utilizados + 1
+            ]);
+
+            //AFECTAR EXISTENCIA
+            $this->surtirFactura($sucursal, $documento->id);
+
+            return redirect()
             ->back()
             ->with('success', '📧 La factura fue timbrada correctamente');
+
+        } catch (\Throwable $e) {
+            flash()
+                ->option('position', 'top-right')
+                ->option('timeout', 5000)
+                ->option('direction', 'top')
+                ->error($e->getMessage());
+            return back();
+        }
     }
+
     //CONSTRUIR JSON PARA ENVIAR
-    private function buildPayload($documento, $empresa)
-    {
-        return [
+    private function buildPayload($documento, $empresa)    {
+
+        //         "Issuer"=>[
+        //     "FiscalRegime"=>"601",
+        //     "Rfc"=> "EKU9003173C9",
+        //     "Name"=> "ESCUELA KEMPER URGATE",
+        // ],
+
+        $receiver = [
+            "Rfc" => $documento->cliente->rfc,
+            "Name" => $documento->cliente->nombre,
+            "CfdiUse" => $documento->uso_cfdi,
+            "FiscalRegime" => $documento->cliente->regimen_fiscal,
+            "TaxZipCode" => $documento->cliente->domicilios->first()?->cp,
+        ];
+
+        // VALIDAR QUE SEA PUBLICO EN GENERAL
+        if ($documento->cliente->rfc === 'XAXX010101000') {
+            $receiver['Name'] = 'PUBLICO EN GENERAL';
+            $receiver['CfdiUse'] = 'S01';
+            $receiver['FiscalRegime'] = '616';
+            $receiver['TaxZipCode'] = $empresa->cp;
+        }
+
+        $payload = [
             "Currency" => "MXN",
-            // "ExpeditionPlace" => $empresa->cp,
-            "ExpeditionPlace"=>"91130",
+            "ExpeditionPlace" => $empresa->cp,
             "CfdiType" => "I",
             "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
             "PaymentMethod" => $documento->metodo_pago, // PUE / PPD
             "Date"  =>  now()->format('Y-m-d\TH:i:s'),
-	        "Folio" =>  $documento->folio,
-            	// "Serie"=>  $documento->serie,	
+            "Folio" =>  $documento->folio,
 
-    //         "Issuer"=>[
-    //     "FiscalRegime"=>"601",
-    //     "Rfc"=> "EKU9003173C9",
-    //     "Name"=> "ESCUELA KEMPER URGATE",
-    // ],
-            "Receiver" => [
-                "Rfc" => $documento->cliente->rfc,
-                "Name" => $documento->cliente->nombre,
-                "CfdiUse" => $documento->uso_cfdi,
-                "FiscalRegime" => $documento->cliente->regimen_fiscal,
-                "TaxZipCode" =>  $documento->cliente->domicilios->first()?->cp
-            ],
+            "Receiver" => $receiver,
 
             "Items" => $documento->detalles->map(function ($d) {
                 return [
@@ -903,14 +930,15 @@ class DocumentoController extends Controller
                     "Total" => round($d->importe * 1.16, 2),
                 ];
             })->toArray(),
-
-            // SOLO si es público general
-            "GlobalInformation" => $documento->cliente->rfc === 'XAXX010101000'? [
-                    "Periodicity" => "04",
-                    "Months" => now()->format('m'),
-                    "Year" => now()->year
-                ]
-                : null
         ];
+        // SI ES PUBLICO EN GENERAL
+        if ($documento->cliente->rfc === 'XAXX010101000') {
+            $payload['GlobalInformation'] = [
+                "Periodicity" => "04",
+                "Months" => now()->format('m'),
+                "Year" => now()->year,
+            ];
+        }
+        return $payload;
     }
 }

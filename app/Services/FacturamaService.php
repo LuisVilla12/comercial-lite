@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Http;
@@ -24,94 +25,134 @@ class FacturamaService
             $this->password
         )->baseUrl($this->baseUrl);
     }
-    //FUNCION PARA TIMBRAR
-    // public function crearCfdi(array $payload)
-    // {
-    //     return $this->client()
-    //         ->post('/3/cfdis', $payload)
-    //         ->throw()
-    //         ->json();
-    // }
+
     public function crearCfdi(array $payload)
-{
-    try {
-        return $this->client()
-            ->post('/3/cfdis', $payload)
-            ->throw()
-            ->json();
-    } catch (\Illuminate\Http\Client\RequestException $e) {
-        dd(
-            $e->response->status(),
-            $e->response->body(),
-            $e->response->json()
-        );
+    {
+        try {
+            return $this->client()
+                ->post('/3/cfdis', $payload)
+                ->throw()
+                ->json();
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            $response = $e->response->json();
+            $errores = [];
+
+            if (isset($response['ModelState'])) {
+                foreach ($response['ModelState'] as $campo => $mensajes) {
+                    foreach ($mensajes as $mensaje) {
+                        $errores[] = $mensaje;
+                    }
+                }
+            }
+
+            throw new \Exception(
+                count($errores)
+                    ? implode("\n", $errores)
+                    : ($response['Message'] ?? 'Error al generar el CFDI.')
+            );
+        }
     }
+public function cancelarCfdi(string $facturamaId, string $motivo, ?string $uuidSustitucion = null)
+{
+    $payload = [
+        'type' => $motivo,
+    ];
+
+    if ($motivo === '01') {
+        $payload['uuidReplacement'] = $uuidSustitucion;
+    }
+
+    return $this->client()
+        ->delete("/3/cfdis/{$facturamaId}", $payload)
+        ->throw()
+        ->json();
 }
+
+
+
     //FUNCION PARA OBTENER EL XML DE LA FACTURA
-    public function obtenerXml($id){
-    $response = Http::withBasicAuth(
-        env('FACTURAMA_USER'),
-        env('FACTURAMA_PASSWORD')
-    )->get(
-        env('FACTURAMA_URL') . "/cfdi/xml/issued/{$id}"
-    );
+    public function obtenerXml($id)
+    {
+        try {
+            $response = Http::withBasicAuth(
+                env('FACTURAMA_USER'),
+                env('FACTURAMA_PASSWORD')
+            )->get(
+                env('FACTURAMA_URL') . "/cfdi/xml/issued/{$id}"
+            );
 
-    $data = $response->json();
+            $data = $response->json();
 
-    if (
-        !isset($data['Content']) ||
-        empty($data['Content'])
-    ) {
-        return null;
+            if (
+                !isset($data['Content']) ||
+                empty($data['Content'])
+            ) {
+                return null;
+            }
+
+            return base64_decode($data['Content']);
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            $response = $e->response->json();
+            $errores = [];
+            if (isset($response[''])) {
+                foreach ($response[''] as $campo => $mensajes) {
+                    foreach ($mensajes as $mensaje) {
+                        $errores[] = $mensaje;
+                    }
+                }
+            }
+            throw new \Exception(
+                count($errores)
+                    ? implode("\n", $errores)
+                    : ($response['Message'] ?? 'Error al obtener el XML.')
+            );
+        }
     }
 
-    return base64_decode($data['Content']);
-}
+    //FUNCION PARA LEER EL XML
+    public function leerXml(string $uuid): \SimpleXMLElement
+    {
+        $ruta = storage_path("app/private/cfdi/{$uuid}.xml");
 
-//FUNCION PARA LEER EL XML
-public function leerXml(string $uuid): \SimpleXMLElement{
-    $ruta = storage_path("app/private/cfdi/{$uuid}.xml");
+        if (!file_exists($ruta)) {
+            throw new \Exception("No existe el XML: {$ruta}");
+        }
 
-    if (!file_exists($ruta)) {
-        throw new \Exception("No existe el XML: {$ruta}");
+        $xml = simplexml_load_file($ruta);
+
+        if ($xml === false) {
+            throw new \Exception("No fue posible leer el XML.");
+        }
+
+        return $xml;
     }
 
-    $xml = simplexml_load_file($ruta);
+    public function extraerTimbreCfdi(\SimpleXMLElement $xml): array
+    {
+        $xml->registerXPathNamespace('tfd', 'http://www.sat.gob.mx/TimbreFiscalDigital');
 
-    if ($xml === false) {
-        throw new \Exception("No fue posible leer el XML.");
+        $timbre = $xml->xpath('//tfd:TimbreFiscalDigital')[0];
+        $comprobante = $xml->xpath('/cfdi:Comprobante')[0];
+        // DATOS DE EMISOR Y RECEPTOR
+        $emisor = $xml->xpath('//cfdi:Emisor')[0];
+        $receptor = $xml->xpath('//cfdi:Receptor')[0];
+
+        return [
+            'uuid' => (string) $timbre['UUID'],
+            'fecha_timbrado' => (string) $timbre['FechaTimbrado'],
+            'rfc_emisor' => (string) $emisor['Rfc'],
+            'rfc_receptor' => (string) $receptor['Rfc'],
+            'no_cert_emisor' => (string) $comprobante['NoCertificado'],
+            'no_cert_sat' => (string) $timbre['NoCertificadoSAT'],
+            'sello_cfdi' => (string) $timbre['SelloCFD'],
+            'sello_sat' => (string) $timbre['SelloSAT'],
+            'cadena_original' => $documento->cadena_original ?? null,
+        ];
     }
-
-    return $xml;
-}
-
-public function extraerTimbreCfdi(\SimpleXMLElement $xml): array
-{
-    $xml->registerXPathNamespace('tfd', 'http://www.sat.gob.mx/TimbreFiscalDigital');
-
-    $timbre = $xml->xpath('//tfd:TimbreFiscalDigital')[0];
-    $comprobante = $xml->xpath('/cfdi:Comprobante')[0];
-    // DATOS DE EMISOR Y RECEPTOR
-    $emisor = $xml->xpath('//cfdi:Emisor')[0];
-    $receptor = $xml->xpath('//cfdi:Receptor')[0];
-
-    return [
-    'uuid' => (string) $timbre['UUID'],
-    'fecha_timbrado' => (string) $timbre['FechaTimbrado'],
-    'rfc_emisor' => (string) $emisor['Rfc'],
-    'rfc_receptor' => (string) $receptor['Rfc'],
-    'no_cert_emisor' => (string) $comprobante['NoCertificado'],
-    'no_cert_sat' => (string) $timbre['NoCertificadoSAT'],
-    'sello_cfdi' => (string) $timbre['SelloCFD'],
-    'sello_sat' => (string) $timbre['SelloSAT'],
-    'cadena_original' => $documento->cadena_original ?? null,
-];
-}
-// GENEAR URL PARA GENERAR EL QR
-public function generarUrl(array $datos, float $total): string
+    // GENEAR URL PARA GENERAR EL QR
+    public function generarUrl(array $datos, float $total): string
     {
         $sello = substr($datos['sello_cfdi'], -8);
-
         $total = number_format($total, 6, '.', '');
 
         return "https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx"
@@ -121,16 +162,15 @@ public function generarUrl(array $datos, float $total): string
             . "&tt={$total}"
             . "&fe={$sello}";
     }
-public function generarQrPng(string $url): string
-{
-    $result = Builder::create()
-        ->writer(new PngWriter())
-        ->data($url)
-        ->size(150)
-        ->margin(5)
-        ->build();
+    public function generarQrPng(string $url): string
+    {
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data($url)
+            ->size(150)
+            ->margin(5)
+            ->build();
 
-    return base64_encode($result->getString());
-}
-
+        return base64_encode($result->getString());
+    }
 }
