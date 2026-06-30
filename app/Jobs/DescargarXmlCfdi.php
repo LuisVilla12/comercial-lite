@@ -26,24 +26,20 @@ class DescargarXmlCfdi implements ShouldQueue
             $intentos = 0;
 
             while ($intentos < 10) {
-                 $response = Http::withBasicAuth(
-                     env('FACTURAMA_USER'),
-                     env('FACTURAMA_PASSWORD')
-                 )->get(
-                     env('FACTURAMA_URL') . "/cfdi/xml/issued/{$this->facturamaId}"
-                 );
-
-                // $response = Http::withOptions([
-                //     'verify' => false,
-                // ])->withBasicAuth(
-                //     env('FACTURAMA_USER'),
-                //     env('FACTURAMA_PASSWORD')
-                // )->get(
-                //     env('FACTURAMA_URL') . "/cfdi/xml/issued/{$this->facturamaId}"
-                // );
+                //  $response = Http::withBasicAuth(
+                //      env('FACTURAMA_USER'),
+                //      env('FACTURAMA_PASSWORD')
+                //  )->get(
+                //      env('FACTURAMA_URL') . "/cfdi/xml/issued/{$this->facturamaId}"
+                //  );
+                $response = Http::withBasicAuth(
+                    config('services.facturama.user'),
+                    config('services.facturama.password')
+                )->get(
+                    config('services.facturama.url') . "/cfdi/xml/issued/{$this->facturamaId}"
+                );
 
                 if ($response->successful()) {
-
                     $data = $response->json();
 
 
