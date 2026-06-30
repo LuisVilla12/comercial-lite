@@ -11,7 +11,8 @@
     @endif
     <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-4">
 
-        <div class="flex justify-end">
+        <div class="flex justify-between">
+                        <label class="block text-md font-bold text-gray-700 mb-2">Timbres utilizados: {{ $timbre->utilizados }} </label>
             @if($certificados==null)
 <a href="{{ route('certificados-empresa.create') }}" class="px-6 py-2 bg-blue-500 hover:bg-blue-500 text-white rounded-md font-medium">
                 Configurar certificados

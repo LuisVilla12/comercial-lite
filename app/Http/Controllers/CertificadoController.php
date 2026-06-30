@@ -6,6 +6,8 @@ use App\Models\Certificado;
 use App\Models\ConfiguracionEmpresa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Http;
+
 class CertificadoController extends Controller
 {
     /**
@@ -61,7 +63,7 @@ class CertificadoController extends Controller
             'PrivateKey' => $privateKey,
             'PrivateKeyPassword' => $request->password,
         ]);
-        
+
     if (!$response->successful()) {
         // Opcional: eliminar el registro y archivos si falló la carga
         $certificado->delete();

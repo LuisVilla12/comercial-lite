@@ -117,7 +117,6 @@
                                             <a href="{{ route('reportes.descargar', $reporte->archivo) }}"
                                             class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                             <x-heroicon-o-eye class="w-4 h-4" />
-                                            <span class="hidden sm:inline">Descargar</span>
                                         </a>
                                         </div>
                                     </td>
@@ -146,7 +145,7 @@
                                 </div>
                                 <div>
                                     <p class="mb-2 text-sm">Evento:
-                                        
+
                                     </p>
                                 </div>
                             </div>
@@ -180,7 +179,7 @@
                     </p>
                     {{ $reportes->links() }}
                 </div>
-            @endif 
+            @endif
 
         </div>
     </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificado;
+use App\Models\Timbre;
 use Illuminate\Http\Request;
 use App\Models\ConfiguracionEmpresa;
 use App\Models\Regimen;
@@ -18,8 +19,9 @@ class ConfiguracionEmpresaController extends Controller
     $empresa=ConfiguracionEmpresa::first();
     $regimenes=Regimen::all();
     $certificados=Certificado::first();
+    $timbre=Timbre::first();
 
-    return view('empresa-config.show',['empresa'=>$empresa,'regimenes'=>$regimenes,'certificados'=>$certificados]);
+    return view('empresa-config.show',['empresa'=>$empresa,'regimenes'=>$regimenes,'certificados'=>$certificados,'timbre'=>$timbre]);
 }
 public function edit(){
     $empresa=ConfiguracionEmpresa::first();
