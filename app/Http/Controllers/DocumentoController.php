@@ -759,10 +759,6 @@ class DocumentoController extends Controller
     {
         $sucursal = Sucursal::findOrFail($sucursal);
         $documento = Documento::findOrFail($documento);
-        if ($documento->estatus != 1) {
-            return back()->with('error', 'Factura ya fue surtida');
-        }
-
         try {
             DB::transaction(function () use ($documento) {
                 // Resta a inventario
@@ -824,7 +820,7 @@ class DocumentoController extends Controller
     }
 
     //FUNCION PARA TIMBRAR
-    public function timbrar($documento, FacturamaService $facturama,$sucursal)
+    public function timbrar($sucursal,$documento, FacturamaService $facturama)
     {
         $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
         $empresa = ConfiguracionEmpresa::first();
@@ -849,9 +845,9 @@ class DocumentoController extends Controller
             'estatus' => '4',
             'cadena_original' => $response['OriginalString']
         ]);
-        $sucursal = Sucursal::findOrFail($sucursal);
-        surtirFactura($documento,$sucursal);
-
+        //AFECTAR EXISTENCIA
+        $this->surtirFactura($sucursal,$documento->id);
+        
         return redirect()
             ->back()
             ->with('success', '📧 La factura fue timbrada correctamente');
@@ -909,8 +905,7 @@ class DocumentoController extends Controller
             })->toArray(),
 
             // SOLO si es público general
-            "GlobalInformation" => $documento->cliente->rfc === 'XAXX010101000'
-                ? [
+            "GlobalInformation" => $documento->cliente->rfc === 'XAXX010101000'? [
                     "Periodicity" => "04",
                     "Months" => now()->format('m'),
                     "Year" => now()->year

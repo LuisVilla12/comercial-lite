@@ -72,13 +72,12 @@
                 <button onclick="timbrar()"
                     class="flex items-center px-4 py-2 mr-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
                     <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2" />
-                    Timbrar
+                    Timbrar 
                 </button>
-                <form method="POST" id="formTimbrar" action="{{ route('documentos.timbrar', ['documento' => $documento,'sucursal'=>$sucursal]) }}">
+                <form method="POST" id="formTimbrar" action="{{ route('documentos.timbrar', ['sucursal'=>$sucursal,'documento' => $documento->id]) }}">
                     @csrf
                 </form>
             @endif
-
 
             @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
                 <button onclick="seleccionarConversion()"

@@ -25,7 +25,6 @@ public function handle(): void
         $intentos = 0;
 
         while ($intentos < 10) {
-
             $response = Http::withBasicAuth(
                 env('FACTURAMA_USER'),
                 env('FACTURAMA_PASSWORD')
