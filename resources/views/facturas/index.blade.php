@@ -11,7 +11,7 @@
             class="w-full flex flex-col md:flex-row md:items-center gap-3">
 
             {{-- Buscador --}}
-            <div class="relative w-full md:w-1/2">
+            <div class="relative w-full md:w-2/6">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar factura..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
 
@@ -28,6 +28,38 @@
                 <option value="">Todas</option>
                 <option value="hoy" {{ request('fecha') === 'hoy' ? 'selected' : '' }}>
                     Hoy
+                </option>
+            </select>
+
+            {{-- Filtro por estatus --}}
+            <select name="estatus" onchange="this.form.submit()"
+                class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
+                <option value="">Todas</option>
+                <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>
+                    Activa
+                </option>
+                <option value="2" {{ request('estatus') === '2' ? 'selected' : '' }}>
+                    Transformada
+                </option>
+                <option value="3" {{ request('estatus') === '3' ? 'selected' : '' }}>
+                    Cancelada
+                </option>
+                <option value="4" {{ request('estatus') === '4' ? 'selected' : '' }}>
+                    Timbrada
+                </option>
+            </select>
+            {{-- Filtro por estatus --}}
+            <select name="cantidad" onchange="this.form.submit()"
+                class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
+                <option value="">Default</option>
+                <option value="10" {{ request('cantidad') === '10' ? 'selected' : '' }}>
+                    10
+                </option>
+                <option value="15" {{ request('cantidad') === '15' ? 'selected' : '' }}>
+                    15
+                </option>
+                <option value="20" {{ request('cantidad') === '20' ? 'selected' : '' }}>
+                    20
                 </option>
             </select>
 

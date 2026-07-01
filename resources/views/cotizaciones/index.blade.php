@@ -31,7 +31,33 @@
                     Hoy
                 </option>
             </select>
-
+             <select name="estatus" onchange="this.form.submit()"
+                class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
+                <option value="">Todas</option>
+                <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>
+                    Activa
+                </option>
+                <option value="2" {{ request('estatus') === '2' ? 'selected' : '' }}>
+                    Transformada
+                </option>
+                <option value="3" {{ request('estatus') === '3' ? 'selected' : '' }}>
+                    Vencida
+                </option>
+            </select>
+{{-- Filtro por estatus --}}
+            <select name="cantidad" onchange="this.form.submit()"
+                class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
+                <option value="">Default</option>
+                <option value="10" {{ request('cantidad') === '10' ? 'selected' : '' }}>
+                    10
+                </option>
+                <option value="15" {{ request('cantidad') === '15' ? 'selected' : '' }}>
+                    15
+                </option>
+                <option value="20" {{ request('cantidad') === '20' ? 'selected' : '' }}>
+                    20
+                </option>
+            </select>
 
         </form>
 

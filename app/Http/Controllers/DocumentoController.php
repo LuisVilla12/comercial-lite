@@ -49,8 +49,21 @@ class DocumentoController extends Controller
             ->when($request->fecha === 'hoy', function ($q) {
                 $q->whereDate('fecha', now()->toDateString());
             })
+            ->when($request->estatus === '1', function ($q) {
+                $q->where('estatus', 1);
+            })
+            ->when($request->estatus === '2', function ($q) {
+                $q->where('estatus', 2);
+            })
+            ->when($request->estatus === '3', function ($q) {
+                $q->where('estatus', 3);
+            })
+            ->when($request->estatus === '4', function ($q) {
+                $q->where('estatus', 4);
+            })
+
             ->orderBy('folio', 'desc')
-            ->paginate(10)
+            ->paginate(15)
             ->withQueryString();
 
         return view('cotizaciones.index', ['documentos' => $documentos, 'sucursal' => $sucursal]);
@@ -71,8 +84,20 @@ class DocumentoController extends Controller
             ->when($request->fecha === 'hoy', function ($q) {
                 $q->whereDate('fecha', now()->toDateString());
             })
+            ->when($request->estatus === '1', function ($q) {
+                $q->where('estatus', 1);
+            })
+            ->when($request->estatus === '2', function ($q) {
+                $q->where('estatus', 2);
+            })
+            ->when($request->estatus === '3', function ($q) {
+                $q->where('estatus', 3);
+            })
+            ->when($request->estatus === '4', function ($q) {
+                $q->where('estatus', 4);
+            })
             ->orderBy('folio', 'desc')
-            ->paginate(10)
+            ->paginate($request->cantidad ?? 15)
             ->withQueryString();
 
         return view('facturas.index', ['documentos' => $documentos, 'sucursal' => $sucursal]);
@@ -92,8 +117,20 @@ class DocumentoController extends Controller
             ->when($request->fecha === 'hoy', function ($q) {
                 $q->whereDate('fecha', now()->toDateString());
             })
+            ->when($request->estatus === '1', function ($q) {
+                $q->where('estatus', 1);
+            })
+            ->when($request->estatus === '2', function ($q) {
+                $q->where('estatus', 2);
+            })
+            ->when($request->estatus === '3', function ($q) {
+                $q->where('estatus', 3);
+            })
+            ->when($request->estatus === '4', function ($q) {
+                $q->where('estatus', 4);
+            })
             ->orderBy('folio', 'desc')
-            ->paginate(10)
+            ->paginate($request->cantidad ?? 15)
             ->withQueryString();
 
         return view('remisiones.index', ['documentos' => $documentos, 'sucursal' => $sucursal]);
