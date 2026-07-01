@@ -8,13 +8,16 @@ use App\Models\DatosBancario;
 use App\Models\Sucursal;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\FacturamaService;
 
-class DocumentoMail extends Mailable
+
+class DocumentoMail extends Mailable  implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -22,7 +25,7 @@ class DocumentoMail extends Mailable
     public Sucursal $sucursal;
     public ConfiguracionEmpresa $empresa;
 
-    public function __construct(Sucursal $sucursal, Documento $documento,ConfiguracionEmpresa $empresa )
+    public function __construct(Sucursal $sucursal, Documento $documento,ConfiguracionEmpresa $empresa)
     {
         $this->documento = $documento;
         $this->sucursal = $sucursal;
@@ -54,19 +57,57 @@ class DocumentoMail extends Mailable
 
     public function attachments(): array
 {
+    //INVOCA EL SERVICIO DE FACTURAMA
+    $facturama = app(FacturamaService::class);
+
     $banco = DatosBancario::where('predeterminado', true)->first();
 
     $this->documento->load([
         'cliente',
         'detalles.producto'
     ]);
-
-    $pdf = Pdf::loadView('documentos.pdf', [
+    // dd($this->documento);
+    if($this->documento->documento_modelo_id == '2' && $this->documento->estatus == '4'){
+            // LEER EL XML
+            $xml = $facturama->leerXml($this->documento->uuid);
+            // //OBTENER LA INFORMACION NECESARIA
+            $datosXML = $facturama->extraerTimbreCfdi($xml);
+            // //GENERAR LA URL
+            $urlQr = $facturama->generarUrl($datosXML, $this->documento->total);
+            // // GENERAR QR
+             $qr = $facturama->generarQrPng($urlQr);
+        $pdf = Pdf::loadView('documentos.pdf_factura', [
+                'documento'=> $this->documento,
+                'sucursal' => $this->sucursal,
+                'banco' => $banco,
+                'empresa' => $this->empresa,
+                'datosXML' => $datosXML,
+                'qr' => $qr
+            ])
+                ->setPaper('letter');
+    }
+    elseif($this->documento->documento_modelo_id == '2' && $this->documento->estatus == '1') {
+            $datosXML = '';
+            $qr = '';
+            $pdf = Pdf::loadView('documentos.pdf_factura', [
+                'documento'=> $this->documento,
+                'sucursal' => $this->sucursal,
+                'banco' => $banco,
+                'empresa' => $this->empresa,
+                'datosXML' => $datosXML,
+                'qr' => $qr
+            ])
+                ->setPaper('letter');
+    }
+    else{
+        $pdf = Pdf::loadView('documentos.pdf', [
         'documento' => $this->documento,
         'sucursal' => $this->sucursal,
         'banco' => $banco,
         'empresa'=>$this->empresa,
     ]);
+    }
+
 
     return [
         Attachment::fromData(

@@ -194,14 +194,7 @@
     </table>
 
     <br>
-    <table>
-        <tr>
-            <td colspan="6">
-                <label class="block  text-md font-medium text-gray-700 my-2">
-                </label>
-            </td>
-        </tr>
-    </table>
+
     {{-- ================= BANCOS ================= --}}
     <table class="no-border small">
         <tr>

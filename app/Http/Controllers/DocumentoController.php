@@ -6,6 +6,7 @@ use App\Models\Documento;
 use App\Models\Timbre;
 use App\Models\ConfiguracionEmpresa;
 use App\Jobs\DescargarXmlCfdi;
+use App\Jobs\EnviarDocumentoMail;
 use App\Models\Caja;
 use Illuminate\Http\Request;
 use App\Models\Producto;
@@ -22,10 +23,7 @@ use App\Models\ExistenciaProducto;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\InventarioService;
-use App\Mail\DocumentoMail;
 use App\Models\DatosBancario;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Http;
 // SERVICIO FACTURA
 use App\Services\FacturamaService;
 
@@ -796,7 +794,7 @@ class DocumentoController extends Controller
     }
 
 
-    public function enviarEmail($sucursal, Request $request,  $documento)
+    public function enviarEmail($sucursal, Request $request,  $documento, FacturamaService $facturama)
     {
         $sucursal = Sucursal::findOrFail($sucursal);
         $documento = Documento::findOrFail($documento);
@@ -811,8 +809,14 @@ class DocumentoController extends Controller
             'email' => 'required|email',
         ]);
 
-        Mail::to($request->email)
-            ->send(new DocumentoMail($sucursal, $documento, $empresa));
+        // Mail::to($request->email)
+        //     ->send(new DocumentoMail($sucursal, $documento, $empresa));
+        EnviarDocumentoMail::dispatch(
+            $empresa->id,
+            $sucursal->id,
+            $documento->id,
+            $request->email
+        );
         return redirect()
             ->back()
             ->with('success', '📧 Cotización enviada correctamente');
@@ -857,9 +861,8 @@ class DocumentoController extends Controller
             $this->surtirFactura($sucursal, $documento->id);
 
             return redirect()
-            ->back()
-            ->with('success', '📧 La factura fue timbrada correctamente');
-
+                ->back()
+                ->with('success', '📧 La factura fue timbrada correctamente');
         } catch (\Throwable $e) {
             flash()
                 ->option('position', 'top-right')
@@ -871,7 +874,8 @@ class DocumentoController extends Controller
     }
 
     //CONSTRUIR JSON PARA ENVIAR
-    private function buildPayload($documento, $empresa)    {
+    private function buildPayload($documento, $empresa)
+    {
 
         //         "Issuer"=>[
         //     "FiscalRegime"=>"601",
