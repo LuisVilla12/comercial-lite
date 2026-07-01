@@ -11,9 +11,9 @@
             @csrf
             <h3 class="mt-4 text-lg font-semibold mb-4">Datos generales de la empresa</h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 md:gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 <div class="">
-                    <label class="block text-md font-medium text-gray-700 mb-1">
+                    <label class="flex  text-md font-medium text-gray-700 mb-1">
                         Codigo: <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="codigo" placeholder="Codigo" value="{{ $empresa->codigo }}"
@@ -23,7 +23,7 @@
                     @enderror
                 </div>
                 {{-- Nombre --}}
-                <div class="col-span-2">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Nombre de la empresa: <span class="text-red-500">*</span>
                     </label>
@@ -35,7 +35,7 @@
                     @enderror
                 </div>
                 {{-- RFC --}}
-                <div class="my-2">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         RFC <span class="text-red-500">*</span>
                     </label>
@@ -47,7 +47,7 @@
                 </div>
 
                 {{-- Régimen Fiscal --}}
-                <div class="my-2 col-span-2">
+                <div class=" ">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Régimen Fiscal <span class="text-red-500">*</span>
                     </label>
@@ -65,7 +65,7 @@
                 </div>
 
                 {{-- CURP --}}
-                <div class="my-2">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         CURP
                     </label>
@@ -74,7 +74,7 @@
                 </div>
 
                 {{-- Email 1 --}}
-                <div class="my-2">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Correo electrónico principal <span class="text-red-500">*</span>
                     </label>
@@ -85,7 +85,7 @@
                     @enderror
                 </div>
                 {{-- WhatsApp --}}
-                <div class="my-2">
+                <div class="">
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         WhatsApp
                     </label>
@@ -93,6 +93,8 @@
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                 </div>
             </div>
+
+
             <h3 class="mt-6 text-lg font-semibold mb-4">Domicilio</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="">
@@ -190,7 +192,7 @@
 
                 <button type="submit"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
-                    Actualizar empresa
+                    Actualizar
                 </button>
 
             </div>

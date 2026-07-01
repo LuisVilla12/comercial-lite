@@ -10,7 +10,7 @@
     <form method="POST" action="{{ route('clasificaciones.update', $clasificacion) }}" class="grid grid-cols-1 md:grid-cols-2 md:gap-4">
         @csrf
         @method('PUT')
-    <div class="md:col-span-2">
+    <div class="">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Codigo <span class="text-red-500">*</span>
             </label>
@@ -24,7 +24,7 @@
 
         </div>
         {{-- Nombre --}}
-        <div class="md:col-span-2">
+        <div class="">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Nombre de la clasificación<span class="text-red-500">*</span>
             </label>

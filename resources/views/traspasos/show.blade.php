@@ -15,13 +15,6 @@
         </div>
 
     </x-slot>
-    @if (session('open_pdf'))
-        {{-- <script>
-            if (confirm('¿Deseas imprimir el traspaso?')) {
-                // window.open("{{ route('documentos.pdf', $documento) }}", "_blank");
-            }
-        </script> --}}
-    @endif
     @if (session('success'))
         <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
             class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4 mt-4">
@@ -38,8 +31,8 @@
 
     {{-- ORIGEN --}}
     <div class="mt-5  gap-4">
-        <div class="flex justify-between gap-4">
-            <p class="dark:text-white">Estado: @php
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <p class="dark:text-white uppercase">Estado: @php
                 $estatusText = match ($traspaso->estatus) {
                     1 => 'ACTIVO',
                     2 => 'TRANSFORMADA',
@@ -51,11 +44,11 @@
             @endphp
                 <span class="font-bold text-green-600">{{ $estatusText }}</span>
             </p>
-        <div class="flex gap-4">
+        <div class="flex gap-2 ">
         @if ($traspaso->estatus == 1)
-            <div>
+            <div class="w-full">
                 <button onclick="surtirTraspaso()"
-                    class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full mb-4 md:mb-0 ">
+                    class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full">
                     <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
                     Surtir
                 </button>
@@ -67,8 +60,8 @@
             </form>
         @endif
         <a href="{{ route('traspasos.pdf', [$traspaso]) }}" target="_blank"
-            class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ">
-            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir carta
+            class="px-4 py-2 bg-blue-600 text-white rounded flex items-center w-full">
+            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
         </a>
         </div>
         </div>

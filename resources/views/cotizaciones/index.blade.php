@@ -45,8 +45,8 @@
                 'sucursal' => $sucursal,
                 'tipo' => 1,
             ]) }}"
-                class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
-                Registrar Cotización [F9]
+                class="inline-flex items-center w-full justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
+                Registrar  [F9]
             </a>
         </div>
 
@@ -159,6 +159,28 @@
             <div class="md:hidden space-y-4">
                 @foreach ($documentos as $documento)
                     <div class="border rounded-lg shadow bg-white p-4">
+                        <div class=" flex justify-end text-sm text-gray-500">
+                                @if ($documento->estatus == 1)
+                                    <span
+                                        class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
+                                        Activo
+                                    </span>
+                                @elseif ($documento->estatus == 4)
+                                    <span
+                                        class="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">
+                                        Surtida
+                                    </span>
+                                @elseif($documento->estatus == 2)
+                                    <span
+                                        class="px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                                        Convertida
+                                    </span>
+                                @else
+                                    <span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">
+                                        Cancelada
+                                    </span>
+                                @endif
+                        </div>
                         <div class="flex justify-between mt-2">
                             <div class=" text-sm text-gray-500">
                                 <span>Fecha</span>

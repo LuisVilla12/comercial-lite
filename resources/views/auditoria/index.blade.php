@@ -140,10 +140,23 @@
                                         {{ $audit->id }}
                                     </span>
                                 </div>
+                                <div class="mb-2 text-sm text-gray-500">
+                                    <span>Fecha:</span>
+                                    <span class=" font-semibold text-gray-800">
+                                        {{ $audit->created_at->format('d/m/Y H:i') }}
+                                    </span>
+                                </div>
                                 <div class="">
                                     <p class="mb-2 text-sm">Usuario:
                                         <span class="font-semibold">
                                             {{ $audit->user->name ?? 'Sistema' }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="">
+                                    <p class="mb-2 text-sm">Módulo:
+                                        <span class="font-semibold">
+                                                                        {{ class_basename($audit->auditable_type) }}
                                         </span>
                                     </p>
                                 </div>

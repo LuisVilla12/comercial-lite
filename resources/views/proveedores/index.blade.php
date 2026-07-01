@@ -31,7 +31,7 @@
         <div x-data @keydown.window.prevent.f9="$refs.btnRegistrar.click()">
             {{-- Botón --}}
             <a x-ref="btnRegistrar" href="{{ route('clientes.create', '3') }}"
-                class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
+                class="inline-flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
                 Registrar proveedor [F9]
             </a>
         </div>

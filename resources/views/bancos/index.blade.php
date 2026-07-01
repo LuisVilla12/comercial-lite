@@ -31,7 +31,7 @@
         <div x-data @keydown.window.prevent.f10="$refs.btnRegistrar.click()">
             {{-- Botón --}}
             <a x-ref="btnRegistrar" href="{{ route('bancos.create') }}"
-                class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
+                class="inline-flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
                 Registrar Datos Bancarios [F10]
             </a>
         </div>
@@ -136,16 +136,42 @@
                                     {{ $banco->nombre_banco }}
                                 </span>
                             </div>
-                            <div class="">
-                                <p class="mb-2 text-sm">Nombre:
+                            <div class="mb-2 text-sm text-gray-500">
+                                <p class="mb-2 text-sm">Clabe bancaria:
                                     <span class="font-semibold">
-                                        {{ $banco->cuenta_bancaria }}
+                                        {{ $banco->clabe }}
                                     </span>
                                 </p>
                             </div>
-
+<div class="mb-2 text-sm text-gray-500">
+                                <span>Cuenta del banco:</span>
+                                <span class="font-medium text-gray-800">
+                                    {{ $banco->cuenta_bancaria }}
+                                </span>
+                            </div>
                         </div>
                         <div class="flex flex-wrap items-center justify-end mt-4 gap-4">
+                            {{-- Seleecionar --}}
+                                        @if($banco->predeterminado)
+                                            <span class="inline-flex items-center gap-1 text-green-500">
+                                                <x-heroicon-o-star class="w-4 h-4" />
+                                                <span class="hidden sm:inline">Predeterminado</span>
+                                            </span>
+                                        @else
+                                                                                <form action="{{ route('bancos.predeterminado', ['banco' => $banco]) }}"
+                                            method="POST" class="inline">
+                                            @csrf
+                                            @method('PUT')
+
+                                            <button type="submit"
+                                                class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                                onclick="return confirm('¿Estás seguro de que deseas seleccionar este banco como predeterminado?')">
+                                                <x-heroicon-o-star class="w-4 h-4" />
+                                                <span class="hidden sm:inline">Seleccionar como predeterminado</span>
+                                            </button>
+                                        </form>
+
+                                        @endif
                             {{-- Ver --}}
                             <a href="{{ route('bancos.show', ['banco' => $banco]) }}"
                                 class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
@@ -160,20 +186,22 @@
                                 <span class="hidden sm:inline">Editar</span>
                             </a>
                             <span class="hidden sm:inline text-gray-300">•</span>
+                            @if(!$banco->predeterminado)
+                                        {{-- Eliminar --}}
+                                        <form action="{{ route('bancos.destroy', ['banco' => $banco]) }}"
+                                            method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
 
-                            {{-- Eliminar --}}
-                            <form action="{{ route('bancos.destroy', ['banco' => $banco]) }}" method="POST"
-                                class="inline">
-                                @csrf
-                                @method('DELETE')
+                                            <button type="submit"
+                                                class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
+                                                onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
+                                                <x-heroicon-o-trash class="w-4 h-4" />
+                                                <span class="hidden sm:inline">Eliminar</span>
+                                            </button>
+                                        </form>
+                                        @endif
 
-                                <button type="submit"
-                                    class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
-                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
-                                    <x-heroicon-o-trash class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Eliminar</span>
-                                </button>
-                            </form>
                         </div>
                     </div>
                 @endforeach

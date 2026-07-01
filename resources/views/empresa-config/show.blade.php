@@ -11,20 +11,20 @@
     @endif
     <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-4">
 
-        <div class="flex justify-between">
-                        <label class="block text-md font-bold text-gray-700 mb-2">Timbres utilizados: {{ $timbre->utilizados }} </label>
+        <div class="flex flex-col md:flex-row md:justify-between">
+                        <label class="block text-md font-bold text-center md:text-left text-gray-700 mb-2">Timbres utilizados: {{ $timbre->utilizados }} </label>
             @if($certificados==null)
 <a href="{{ route('certificados-empresa.create') }}" class="px-6 py-2 bg-blue-500 hover:bg-blue-500 text-white rounded-md font-medium">
                 Configurar certificados
             </a>
             @else
-            <a href="{{ route('certificados-empresa.show') }}" class="px-6 py-2 bg-blue-500 hover:bg-blue-500 text-white rounded-md font-medium">
+            <a href="{{ route('certificados-empresa.show') }}" class="px-6 text-center py-2 bg-blue-500 hover:bg-blue-500 text-white rounded-md font-medium">
                 Mostrar certificados
             </a>
             @endif
        </div>
 
-        <div class=" ">
+        <div class="mt-4">
             <div class="md:grid  md:grid-cols-3 md:gap-4">
                 @csrf
                 <div class="">

@@ -264,8 +264,8 @@
                                             </div>
 
                                             <div>
-                                                <label class="text-xs text-gray-500">Existencia</label>
-                                                <input disabled type="number" x-model.number="item.stock"
+                                                <label class="text-xs text-gray-500">Descuento %</label>
+                                                <input  type="number" x-model.number="item.descuento"
                                                     class="border rounded p-2 w-full text-center bg-gray-100">
                                             </div>
 
@@ -605,24 +605,24 @@
                                                     class="border rounded p-1 text-sm w-full">
 
                                                     <option :value="String(p.costo)">
-                                                        Precio 1 - $<span x-text="p.costo"></span>
+                                                        1.- - $<span x-text="p.costo"></span>
                                                     </option>
 
                                                     <option x-show="Number(p.costo2) > 0" :value="String(p.costo2)">
-                                                        Precio 2 $<span x-text="p.costo2"></span>
+                                                        2.- $<span x-text="p.costo2"></span>
                                                     </option>
 
                                                     @if (auth()->user()->isAdmin())
                                                         <option x-show="Number(p.costo3) > 0" :value="String(p.costo3)">
-                                                            Precio 3 $<span x-text="p.costo3"></span>
+                                                            3.- $<span x-text="p.costo3"></span>
                                                         </option>
 
                                                         <option x-show="Number(p.costo4) > 0" :value="String(p.costo4)">
-                                                            Precio 4 $<span x-text="p.costo4"></span>
+                                                            4.- $<span x-text="p.costo4"></span>
                                                         </option>
 
                                                         <option x-show="Number(p.costo5) > 0" :value="String(p.costo5)">
-                                                            Precio 5 $<span x-text="p.costo5"></span>
+                                                            5.- $<span x-text="p.costo5"></span>
                                                         </option>
                                                     @endif
 

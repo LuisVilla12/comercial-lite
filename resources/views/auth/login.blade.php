@@ -9,7 +9,7 @@
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Correo electronico: ')" />
+            <x-input-label for="email" class="uppercase" :value="__('Correo electronico: ')" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required
                 autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
@@ -17,7 +17,7 @@
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Contraseña: ')" />
+            <x-input-label for="password" class="uppercase" :value="__('Contraseña: ')" />
 
             <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required
                 autocomplete="current-password" />
@@ -33,14 +33,14 @@
         {{-- </label> --}}
         {{-- </div> --}}
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex justify-center items-center mt-4">
             {{-- @if (Route::has('password.request'))
                 <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
                     {{ __('¿Olvidaste tu contraseña?') }}
                 </a>
             @endif --}}
 
-            <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
+            <button type="submit" class="mt-2 uppercase px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
                 Entrar
             </button>
         </div>

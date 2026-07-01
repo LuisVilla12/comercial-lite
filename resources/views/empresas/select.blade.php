@@ -35,7 +35,7 @@
                 Empresas
             </h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 @forelse ($empresas as $empresa)
                     <form method="POST" action="{{ route('empresas.select') }}">
@@ -84,7 +84,7 @@
                 Panel de Administración
             </h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {{-- INDEX EMPRESAS --}}
                 <a href="{{ route('empresas.index') }}"
                     class="flex flex-col items-center justify-center

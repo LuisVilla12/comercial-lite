@@ -12,12 +12,12 @@
             class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-4 mt-4">{{ session('error') }}
         </p>
     @endif
-<h1 class="block text-lg font-medium mb-2 dark:text-white mt-6">
+
+    <div class="display flex justify-between mb-2 mt-4">
+<h1 class="block text-lg font-medium text-center uppercase dark:text-white ">
             Compra #{{ $compra->id }}
         </h1>
-    <div class="display flex justify-between mt-4">
-
-        <p class="dark:text-white">Estado: @php
+        <p class="dark:text-white text-lg uppercase">Estado: @php
                 $estatusText = match ($compra->estatus) {
                     1 => 'ACTIVA',
                     2 => 'TRANSFORMADA',

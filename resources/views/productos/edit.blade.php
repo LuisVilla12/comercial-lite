@@ -130,7 +130,7 @@
             <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-3 border-b pb-2">
                 Precios e impuestos
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {{-- Precio1 --}}
                 <div class="mb-1">
                     <label class="block text-md font-medium text-gray-700 mb-1">
@@ -228,7 +228,7 @@
                 </div>
             </div>
             {{-- Botones --}}
-            <div class="md:col-span-2 flex justify-end gap-3 mt-4">
+            <div class="md:col-span-2 flex justify-between gap-3 mt-4">
 
  <a href="{{  route('productos.index')  }}"
                class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">

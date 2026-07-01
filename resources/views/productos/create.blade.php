@@ -147,7 +147,7 @@
             <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-3 border-b pb-2">
                 Precios e impuestos
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {{-- Precio1 --}}
                 <div class="mb-1">
                     <label class="block text-md font-medium text-gray-700 mb-1">

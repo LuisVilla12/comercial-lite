@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 @if(auth()->user()->isAdmin())
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
 
     <div class="bg-green-50 rounded-xl p-4 shadow">
         <p class="text-sm text-gray-500">Ventas </p>

@@ -8,7 +8,7 @@
     </x-slot>
 
     <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
-        <form method="POST" action="{{ route('sucursales.store') }}" class=" md:grid md:grid-cols-4 md:gap-4">
+        <form method="POST" action="{{ route('sucursales.store') }}" class=" md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-4">
             @csrf
             <div class="mb-2 ">
                 <label class="block mb-2 text-md font-medium text-gray-700 ">
@@ -147,7 +147,7 @@
                     <button type="submit"
                         x-ref="btnRegistrar"
                         class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
-                        Guardar Sucursal [F10]
+                        Guardar [F10]
                     </button>
                 </div>
             </div>

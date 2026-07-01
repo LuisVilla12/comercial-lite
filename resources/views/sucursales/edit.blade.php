@@ -7,7 +7,7 @@
 
     <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
         <form method="POST" action="{{ route('sucursales.update', parameters: $sucursal) }}"
-            class="grid md:grid-cols-4 md:gap-4">
+            class="grid md:grid-cols-3 lg:grid-cols-4 md:gap-4">
             @csrf
             @method('PUT')
             <div class="mb-2 ">
@@ -137,7 +137,7 @@
                 @enderror
             </div>
             {{-- Botones --}}
-            <div class="mb-2 col-span-full flex justify-end gap-3 mt-4">
+            <div class="mb-2 col-span-full flex justify-between gap-3 mt-4">
                 <a href="{{ route('sucursales.index') }}"
                     class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
                 <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
@@ -160,7 +160,7 @@
                         x-ref="btnRegistrar"
                         type="submit"
                         class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
-                        Actualizar Sucursal [F10]
+                        Actualizar [F10]
                     </button>
                 </div>
 

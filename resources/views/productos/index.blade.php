@@ -31,7 +31,7 @@
         <div x-data @keydown.window.prevent.f9="$refs.btnRegistrar.click()">
             {{-- Botón --}}
             <a x-ref="btnRegistrar" href="{{ route('productos.create') }}"
-                class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
+                class="inline-flex items-center justify-center w-full gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-md font-medium shadow transition whitespace-nowrap">
                 Registrar producto [F9]
             </a>
 
@@ -54,7 +54,8 @@
                             <th class="p-2">Codigo</th>
                             <th class="p-2">Nombre</th>
                             <th class="p-2">Precio</th>
-                            <th class="p-2">Clasificación</th>
+
+                            <th class="p-2 md:hidden lg:block">Clasificación</th>
                             <th class="p-2">Acciones</th>
                         </tr>
                     </thead>
@@ -73,7 +74,7 @@
                                 <td class="p-2 text-center">
                                     {{ number_format($producto->precio1, 2) }}
                                 </td>
-                                <td class="p-2 text-center">
+                                <td class="p-2 text-center md:hidden lg:block">
                                     {{ $producto->clasificacion1->nombre ?? 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">

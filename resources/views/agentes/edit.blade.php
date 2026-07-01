@@ -14,7 +14,7 @@
         @csrf
         @method('PUT')
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
- <div class="md:col-span-2 lg:col-span-1 mb-2">
+ <div class="mb-2">
             <label class="block text-md font-medium text-gray-700 mb-1">
                 Codigo: <span class="text-red-500">*</span>
             </label>
