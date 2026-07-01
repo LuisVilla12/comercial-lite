@@ -819,7 +819,7 @@ class DocumentoController extends Controller
         );
         return redirect()
             ->back()
-            ->with('success', '📧 Cotización enviada correctamente');
+            ->with('success', '📧 Documento enviado correctamente');
     }
 
     //FUNCION PARA TIMBRAR

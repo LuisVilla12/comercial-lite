@@ -15,6 +15,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\FacturamaService;
+use Illuminate\Support\Facades\Storage;
 
 
 class DocumentoMail extends Mailable  implements ShouldQueue
@@ -57,6 +58,8 @@ class DocumentoMail extends Mailable  implements ShouldQueue
 
     public function attachments(): array
 {
+        $attachments = [];
+
     //INVOCA EL SERVICIO DE FACTURAMA
     $facturama = app(FacturamaService::class);
 
@@ -107,13 +110,20 @@ class DocumentoMail extends Mailable  implements ShouldQueue
         'empresa'=>$this->empresa,
     ]);
     }
-
-
-    return [
-        Attachment::fromData(
+    // ADJUNTA PDF
+    $attachments[] = Attachment::fromData(
             fn () => $pdf->output(),
             'Documento_'.$this->documento->folio.'.pdf'
-        )->withMime('application/pdf'),
-    ];
+        )->withMime('application/pdf');
+    // XML (si existe el archivo es decir si esta timbrada)
+
+    $rutaXml = "cfdi/{$this->documento->uuid}.xml";
+      if (Storage::exists($rutaXml)) {
+        $attachments[] = Attachment::fromStorage($rutaXml)
+            ->as('Factura_'.$this->documento->serie.$this->documento->folio.'.xml')
+            ->withMime('application/xml');
+    }
+
+return  $attachments;
 }
 }
