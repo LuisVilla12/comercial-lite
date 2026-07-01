@@ -34,9 +34,9 @@
             </div>
 
         </x-slot>
-        <div class="md:flex md:justify-between mt-4 md:items-center gap-2 ">
+        <div class="md:flex md:justify-between mt-4 md:items-center md:gap-2 ">
             <div>
-                <p class="dark:text-white text-center md:text-left">Estado:
+                <p class="dark:text-white text-center uppercase md:text-left">Estado:
                     @php
                         $estatusText = match (true) {
                             $documento->estatus == 4 && $documento->documento_modelo_id == 2 => 'TIMBRADA',
@@ -54,7 +54,7 @@
                 </p>
 
             </div>
-            <div class="flex  gap-4 mt-4">
+            <div class="flex gap-2 mt-4 md:mt-0">
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
                     <button onclick="surtirRemision()"
                         class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full">
@@ -75,8 +75,8 @@
                 @endif
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
                     <button onclick="timbrar()"
-                        class="flex items-center px-4 py-2 mr-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
-                        <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2" />
+                        class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
+                        <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5" />
                         Timbrar
                     </button>
                     <form method="POST" id="formTimbrar"
@@ -390,8 +390,8 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-6  gap-4">
-                <div class="flex justify-between gap-3 mt-4">
+            <div class="mt-6 ">
+                <div class="flex justify-between items-center gap-3 ">
                     <a href="{{ route(
                         match ($documento->documento_modelo_id) {
                             1 => 'cotizaciones.index',
