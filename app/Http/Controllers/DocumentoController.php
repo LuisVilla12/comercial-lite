@@ -808,9 +808,7 @@ class DocumentoController extends Controller
         $request->validate([
             'email' => 'required|email',
         ]);
-
-        // Mail::to($request->email)
-        //     ->send(new DocumentoMail($sucursal, $documento, $empresa));
+        //EJECUTA LA COLA PARA ENVIAR EL CORREO
         EnviarDocumentoMail::dispatch(
             $empresa->id,
             $sucursal->id,
