@@ -84,6 +84,17 @@
                         @csrf
                     </form>
                 @endif
+                @if($documento->estatus == 4 and $documento->documento_modelo_id == 2)
+                    <button onclick="cancelar()"
+                        class="flex items-center px-4 py-2 bg-red-500 text-white rounded  w-full">
+                        <x-heroicon-o-x-mark class="w-5 h-5" />
+                        Cancelar
+                    </button>
+                    <form method="POST" id="formCancelar"
+                        action="{{ route('documentos.cancelar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
+                        @csrf
+                    </form>
+                @endif
 
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
                     <button onclick="seleccionarConversion()"
@@ -542,6 +553,29 @@
                         }
                     });
                     document.getElementById('formTimbrar').submit();
+                }
+            });
+        }
+        function cancelar() {
+            Swal.fire({
+                title: '¿Esta seguro que requiere cancelar esta factura?',
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: 'Si, cancelar',
+                cancelButtonText: 'Regresar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Cancelando factura...',
+                        text: 'Por favor espere mientras se realiza la cancelación del documento.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    document.getElementById('formCancelar').submit();
                 }
             });
         }

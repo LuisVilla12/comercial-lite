@@ -908,6 +908,61 @@ class DocumentoController extends Controller
         }
     }
 
+    public function cancelar(Request $request, $sucursal, $documento, FacturamaService $facturama)
+    {
+
+        $documento = Documento::findOrFail($documento);
+
+        // Solo facturas timbradas
+        if (
+            $documento->documento_modelo_id != 2 ||
+            $documento->estatus != 4
+        ) {
+            return back()->withErrors([
+                'error' => 'Solo se pueden cancelar facturas timbradas.'
+            ]);
+        }
+
+        $request->validate([
+            'motivo' => 'required|in:01,02,03,04',
+            'uuid_sustitucion' => 'nullable|string'
+        ]);
+
+        if (
+            in_array($request->motivo, ['01', '04']) &&
+            empty($request->uuid_sustitucion)
+        ) {
+            return back()->withErrors([
+                'uuid_sustitucion' => 'Debe indicar el UUID de sustitución.'
+            ]);
+        }
+
+        try {
+            $facturama->cancelarCfdi(
+                $documento->facturama_id,
+                $request->motivo,
+                $request->uuid_sustitucion
+            );
+
+            $documento->update([
+                'estatus' => 3,
+                'fecha_cancelacion' => now(),
+                'motivo_cancelacion' => $request->motivo,
+                'uuid_sustitucion' => $request->uuid_sustitucion,
+            ]);
+
+            flash()
+                ->success('La factura fue cancelada correctamente.');
+
+            return back();
+        } catch (\Throwable $e) {
+
+            return back()->withErrors([
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
     //CONSTRUIR JSON PARA ENVIAR
     private function buildPayload($documento, $empresa)
     {
