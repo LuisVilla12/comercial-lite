@@ -215,6 +215,13 @@
                 </x-dashboard-card>
             @endforeach
         @endif
+        <x-dashboard-card href="{{ route('pagos.create') }}"
+                    bg="bg-red-50 dark:bg-red-900/20" title="Recibo electronico de pagos"
+                    desc="" iconBg="bg-red-500">
+                    <x-slot:icon>
+                        <x-heroicon-o-banknotes class="w-6 h-6" />
+                    </x-slot:icon>
+                </x-dashboard-card>
         @if (auth()->user()->isAdmin())
             {{-- ================= Administracion ================= --}}
             <div class="col-span-full mt-6">

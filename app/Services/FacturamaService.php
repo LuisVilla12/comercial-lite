@@ -52,22 +52,42 @@ class FacturamaService
             );
         }
     }
-public function cancelarCfdi(string $facturamaId, string $motivo, ?string $uuidSustitucion = null)
+    public function obtenerCfdi(string $facturamaId)
 {
-    $payload = [
-        'type' => $motivo,
-    ];
-
-    if ($motivo === '01') {
-        $payload['uuidReplacement'] = $uuidSustitucion;
-    }
-
     return $this->client()
-        ->delete("/3/cfdis/{$facturamaId}", $payload)
+        ->get("/cfdi/{$facturamaId}?type=issued")
         ->throw()
         ->json();
 }
 
+    public function cancelarCfdi(
+    string $facturamaId,
+    string $motivo,
+    ?string $uuidSustitucion = null
+) {
+    $url = "/cfdi/{$facturamaId}?type=issued&motive={$motivo}";
+
+    if (in_array($motivo, ['01', '04']) && $uuidSustitucion) {
+        $url .= "&uuidReplacement={$uuidSustitucion}";
+    }
+
+    try {
+
+        return $this->client()
+            ->delete($url)
+            ->throw()
+            ->json();
+
+    } catch (\Illuminate\Http\Client\RequestException $e) {
+
+        $mensaje = $e->response->json()['Message']
+            ?? $e->response->body()
+            ?? 'Error al cancelar el CFDI.';
+
+        throw new \Exception($mensaje);
+
+    }
+}
 
 
     //FUNCION PARA OBTENER EL XML DE LA FACTURA

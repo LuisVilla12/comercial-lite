@@ -158,7 +158,7 @@
             </div>
         @else
             <div class="bg-white py-4 mt-3">
-                <p class="text-sm text-gray-600 ml-6 text-center"> No hay cajas registrados</p>
+                <p class="text-sm text-gray-600 ml-6 text-center"> No hay cajas registradas</p>
             </div>
         @endif
         {{-- @if ($almacenes->count() > 0)

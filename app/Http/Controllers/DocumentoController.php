@@ -227,6 +227,7 @@ class DocumentoController extends Controller
             }
             // Guardar inmediatamente el nuevo consecutivo
             $sucursal->save();
+
             $documento = Documento::create([
                 'sucursal_id' => $request->sucursal_id,
                 'documento_modelo_id' => $request->tipo,
@@ -251,10 +252,9 @@ class DocumentoController extends Controller
                 'estado' => 'PENDIENTE',
             ]);
             //  Guardas el nuevo folio en sucursal
-            $sucursal->save();
+            // $sucursal->save();
 
             // ASIGNAR DOMICILIO AL DOCUMENTO
-            // if($documento->documento_modelo_id == 2){
             $documento->domicilios()->create([
                 'pais' => 'MEXICO',
                 'estado' => $request->estado,
@@ -265,8 +265,13 @@ class DocumentoController extends Controller
                 'numero_exterior' => $request->numero_exterior,
                 'cp' => $request->codigo_postal
             ]);
-            // }
 
+            //ASIGNA SALDOS PENDIENTES
+            if($documento->metodo_pago != 'PPD'){
+                $documento->update(['saldo_pendiente' => 0]);
+            }else{
+                $documento->update(['saldo_pendiente' => $request->total]);
+            }
 
             DB::commit();
             // CREAR DETALLES DOCUMENTOS
@@ -399,7 +404,11 @@ class DocumentoController extends Controller
                 'observaciones' => $request->observaciones,
                 'estado' => 'PENDIENTE',
             ]);
-
+            if($request->metodo_pago != 'PPD'){
+                $documento->update(['saldo_pendiente' => 0]);
+            }else{
+                $documento->update(['saldo_pendiente' => $request->total]);
+            }
             /* ================= DETALLES ================= */
             $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
             $detallesEnFormulario = [];
@@ -907,17 +916,18 @@ class DocumentoController extends Controller
             return back();
         }
     }
-
+    //FUNCION PARA CANCELAR FACTURA
     public function cancelar(Request $request, $sucursal, $documento, FacturamaService $facturama)
     {
-
         $documento = Documento::findOrFail($documento);
 
-        // Solo facturas timbradas
-        if (
-            $documento->documento_modelo_id != 2 ||
-            $documento->estatus != 4
-        ) {
+        if ($documento->documento_modelo_id != 2) {
+            return back()->withErrors([
+                'error' => 'El documento seleccionado no es una factura.'
+            ]);
+        }
+
+        if ($documento->estatus != 4) {
             return back()->withErrors([
                 'error' => 'Solo se pueden cancelar facturas timbradas.'
             ]);
@@ -933,33 +943,34 @@ class DocumentoController extends Controller
             empty($request->uuid_sustitucion)
         ) {
             return back()->withErrors([
-                'uuid_sustitucion' => 'Debe indicar el UUID de sustitución.'
+                'uuid_sustitucion' => 'Debe proporcionar el UUID de sustitución.'
             ]);
         }
-
         try {
-            $facturama->cancelarCfdi(
+            $respuesta = $facturama->cancelarCfdi(
                 $documento->facturama_id,
                 $request->motivo,
                 $request->uuid_sustitucion
             );
-
-            $documento->update([
-                'estatus' => 3,
-                'fecha_cancelacion' => now(),
-                'motivo_cancelacion' => $request->motivo,
-                'uuid_sustitucion' => $request->uuid_sustitucion,
-            ]);
-
+            if (
+                isset($respuesta['Status']) &&
+                strtolower($respuesta['Status']) === 'canceled'
+            ) {
+                $documento->update([
+                    'estatus' => 3,
+                    // 'fecha_cancelacion' => now(),
+                ]);
+            }
             flash()
                 ->success('La factura fue cancelada correctamente.');
 
             return back();
         } catch (\Throwable $e) {
 
-            return back()->withErrors([
-                'error' => $e->getMessage()
-            ]);
+            flash()
+                ->error($e->getMessage());
+
+            return back();
         }
     }
 

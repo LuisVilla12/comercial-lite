@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use  App\Models\DocumentosDetalle;
 use  App\Models\Cliente;
 use  App\Models\User;
 use  App\Models\Domicilio;
+use  App\Models\Pago;
+
 
 class Documento extends TenantModel implements Auditable{
     use AuditableTrait;
@@ -26,6 +27,7 @@ class Documento extends TenantModel implements Auditable{
         'impuestos',
         'descuentos',
         'total',
+        'saldo_pendiente',
         'metodo_pago',
         'forma_pago',
         'uso_cfdi',
@@ -54,6 +56,11 @@ class Documento extends TenantModel implements Auditable{
         public function domicilios()
 {
     return $this->morphMany(Domicilio::class, 'domiciliable');
+}
+
+public function pagos()
+{
+    return $this->hasMany(Pago::class);
 }
     }
 

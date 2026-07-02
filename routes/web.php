@@ -18,6 +18,7 @@ use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\SesionesController;
 use App\Http\Controllers\ExistenciaProductoController;
 use App\Http\Controllers\ReportesController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\TraspasoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
@@ -37,6 +38,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 // MODELOS PARA CONSULTA
 use App\Models\Cliente;
+use App\Models\Documento;
 use App\Models\Producto;
 use Illuminate\Support\Facades\DB;
 
@@ -89,6 +91,14 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/certificados-sat', action: [CertificadoController::class, 'create'])->name('certificados-empresa.create');
     Route::post('/certificados-sat', action: [CertificadoController::class, 'store'])->name('certificados-empresa.store');
     Route::get('/certificados', action: [CertificadoController::class, 'show'])->name('certificados-empresa.show');
+
+    //PAGOS
+    Route::get('/pagos', action: [PagoController::class, 'index'])->name('pagos.index');
+    Route::get('/pagos/create', action: [PagoController::class, 'create'])->name('pagos.create');
+    Route::post('/pagos', action: [PagoController::class, 'store'])->name('pagos.store');
+    // Route::get('/pagos/{pago}', action: [PagoController::class, 'show'])->name('pagos.show');
+    // Route::get('/pagos/{pago}/edit', action: [PagoController::class, 'edit'])->name('pagos.edit');
+    // Route::put('/pagos/{pago}', action: [PagoController::class, 'update'])->name('pagos.update');
 
     // KARDEX MENU
     Route::get('/kardex', action: [KardexController::class, 'index'])->name('kardex.index');
@@ -262,7 +272,7 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
         //TIMBRAR
         Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrar'])->name(name: 'documentos.timbrar');
         //CANCELAR
-        Route::post('/documentos/{documento}/cancelar', [DocumentoController::class, 'cancelar'])->name(name: 'documentos.cancelar');        });
+        Route::delete('/documentos/{documento}/cancelar', [DocumentoController::class, 'cancelar'])->name(name: 'documentos.cancelar');        });
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 
@@ -340,6 +350,7 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
             ->limit(10)
             ->get();
     });
+
     Route::get('buscar/productos', function () {
         $q = request('q', '');
         if (strlen($q) < 2) return [];
@@ -359,6 +370,24 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
             ->limit(10)
             ->get();
     });
+
+Route::get('buscar/facturas/pendientes', function () {
+    $cliente = request('cliente_id');
+    return Documento::where('cliente_id', $cliente)
+        ->where('metodo_pago', 'PPD')
+        ->where('estatus', 1) // Factura timbrada
+        ->select(
+            'id',
+            'fecha',
+            'serie',
+            'folio',
+            'saldo_pendiente',
+            'total',
+        )
+        ->orderBy('fecha')
+        ->get();
+
+});
 
     Route::get('productos-existencias/buscar', function () {
         $q = request('q');
@@ -392,6 +421,8 @@ Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
             ->limit(10)
             ->get();
     });
+
+
 
     //TEST DE AUTENTICACION EN FACTURAMA
     Route::get('/test-facturama', function () {

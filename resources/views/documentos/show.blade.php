@@ -84,15 +84,17 @@
                         @csrf
                     </form>
                 @endif
-                @if($documento->estatus == 4 and $documento->documento_modelo_id == 2)
-                    <button onclick="cancelar()"
-                        class="flex items-center px-4 py-2 bg-red-500 text-white rounded  w-full">
+                @if ($documento->estatus == 4 and $documento->documento_modelo_id == 2)
+                    <button onclick="cancelar()" class="flex items-center px-4 py-2 bg-red-500 text-white rounded  w-full">
                         <x-heroicon-o-x-mark class="w-5 h-5" />
                         Cancelar
                     </button>
-                    <form method="POST" id="formCancelar"
-                        action="{{ route('documentos.cancelar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
+                    <form method="POST" id="formCancelar" action="{{ route('documentos.cancelar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
                         @csrf
+                        @method('DELETE')
+
+                        <input type="hidden" name="motivo" id="motivo">
+                        <input type="hidden" name="uuid_sustitucion" id="uuid_sustitucion">
                     </form>
                 @endif
 
@@ -556,29 +558,116 @@
                 }
             });
         }
+
         function cancelar() {
-            Swal.fire({
-                title: '¿Esta seguro que requiere cancelar esta factura?',
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: 'Si, cancelar',
-                cancelButtonText: 'Regresar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Cancelando factura...',
-                        text: 'Por favor espere mientras se realiza la cancelación del documento.',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        showConfirmButton: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-                    document.getElementById('formCancelar').submit();
+
+    Swal.fire({
+        title: 'Cancelar factura',
+
+        html: `
+            <div style="text-align:left">
+
+                <p style="font-weight:bold; margin-bottom: 5px;">
+                    Motivo de cancelación
+                </p>
+
+                <select id="swal-motivo" class="swal2-input">
+                    <option value="">Seleccione...</option>
+                    <option value="01">
+                        01 - Comprobante emitido con errores con relación
+                    </option>
+                    <option value="02">
+                        02 - Comprobante emitido con errores sin relación
+                    </option>
+                    <option value="03">
+                        03 - No se llevó a cabo la operación
+                    </option>
+                    <option value="04">
+                        04 - Operación nominativa relacionada en una factura global
+                    </option>
+                </select>
+
+                <div id="uuid-container" style="display:none">
+
+                    <p style="font-weight:bold; margin-top: 10px;">
+                        UUID de sustitución
+                    </p>
+
+                    <input
+                        id="swal-uuid"
+                        class="swal2-input"
+                        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+
+                </div>
+
+            </div>
+        `,
+
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Cancelar factura',
+        cancelButtonText: 'Regresar',
+
+        didOpen: () => {
+
+            const motivo = document.getElementById('swal-motivo');
+            const uuidContainer = document.getElementById('uuid-container');
+
+            motivo.addEventListener('change', function () {
+
+                if (this.value === '01' || this.value === '04') {
+                    uuidContainer.style.display = 'block';
+                } else {
+                    uuidContainer.style.display = 'none';
                 }
+
             });
+
+        },
+
+        preConfirm: () => {
+
+            const motivo = document.getElementById('swal-motivo').value;
+            const uuid = document.getElementById('swal-uuid').value;
+
+            if (!motivo) {
+                Swal.showValidationMessage('Seleccione un motivo.');
+                return false;
+            }
+
+            if ((motivo === '01' || motivo === '04') && !uuid) {
+                Swal.showValidationMessage('Debe capturar el UUID de sustitución.');
+                return false;
+            }
+
+            return {
+                motivo,
+                uuid
+            };
         }
+
+    }).then((result) => {
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        document.getElementById('motivo').value = result.value.motivo;
+        document.getElementById('uuid_sustitucion').value = result.value.uuid;
+
+        Swal.fire({
+            title: 'Cancelando factura...',
+            text: 'Por favor espere mientras se realiza la cancelación.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        document.getElementById('formCancelar').submit();
+
+    });
+}
 
         function seleccionarConversion() {
             Swal.fire({
