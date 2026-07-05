@@ -356,7 +356,7 @@
                                 Codigo postal: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                autocomplete="off" class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('codigo_postal')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -366,7 +366,7 @@
                                 Ciudad: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="ciudad" placeholder="Ciudad" x-model="proveedorCiudad"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                autocomplete="off" class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('ciudad')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -377,7 +377,7 @@
                                 Calle: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="calle" placeholder="calle" x-model="proveedorCalle"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                autocomplete="off" class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('calle')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -389,7 +389,7 @@
                                 </label>
                                 <input type="text" name="numero_exterior" placeholder="Número exterior"
                                     x-model="proveedorNumeroExterior"
-                                    class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                    autocomplete="off" class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                                 @error('numero_exterior')
                                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                                 @enderror
@@ -400,7 +400,7 @@
                                 Colonia: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
-                                class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                autocomplete="off" class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('colonia')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -650,7 +650,6 @@
         </form>
         </div>
         {{-- ================= ALPINE ================= --}}
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             const ALMACEN_ID = {{ $sucursal->almacen_id }};
 

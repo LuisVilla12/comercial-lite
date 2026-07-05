@@ -29,7 +29,7 @@ class ExistenciaProductoController extends Controller
         ->when($request->almacen_id, function ($q) use ($request) {
             $q->where('almacen_id', $request->almacen_id);
         })
-        ->paginate(10)
+        ->paginate($request->cantidad ?? 15)
         ->withQueryString(); // mantiene search + almacen
 
     $almacenes = Almacen::orderBy('nombre')->get();
@@ -57,7 +57,7 @@ class ExistenciaProductoController extends Controller
 
  public function pdf(Request $request)
 {
-    $reporte=Reporte::create([ 
+    $reporte=Reporte::create([
         'user_id'=> auth()->id(),
         'tipo'=>'INVENTARIO',
         'archivo'=>'--PENDIENTE--',
@@ -71,7 +71,7 @@ class ExistenciaProductoController extends Controller
         session('empresa_id'),
         $reporte->id
     );
-    
+
     flash()
             ->option('timeout', 2000)
             ->success('El reporte se está generando. Estará disponible en unos minutos');
@@ -79,7 +79,7 @@ class ExistenciaProductoController extends Controller
 }
 public function validacionPdf(Request $request)
 {
-     $reporte=Reporte::create([ 
+     $reporte=Reporte::create([
         'user_id'=> auth()->id(),
         'tipo'=>'EXISTENCIA',
         'archivo'=>'--PENDIENTE--',
@@ -93,11 +93,11 @@ public function validacionPdf(Request $request)
         session('empresa_id'),
                 $reporte->id
 
-    );    
+    );
     flash()
             ->option('timeout', 2000)
             ->success('El reporte se está generando. Estará disponible en unos minutos');
-    
+
     return back();
 }
 

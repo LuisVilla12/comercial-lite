@@ -30,18 +30,19 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
         $user = auth()->user();
         // dd($user);
-    // // Administrador
-    return redirect()->route('empresas.list',['user'=>$user ]);
-    // if ($user->isAdmin()) {
-    // }
+       flash()
+            ->option('timeout', 4000)
+            ->success('Bienvenido ' . $user->name . ' al sistema');
 
-    // // Usuario normal
-    // session([
-    //     'empresa_id' => $user->empresa_id
-    // ]);
+    if ($user->isAdmin()) {
+        return redirect()->route('empresas.list',['user'=>$user ]);
+    } else {
+        session([
+            'empresa_id' => $user->empresa_id
+        ]);
+        return redirect()->intended(route('dashboard', absolute: false));
+    }
 
-
-    //     return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

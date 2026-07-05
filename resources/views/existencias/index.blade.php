@@ -25,9 +25,7 @@
             <div class="w-full md:w-1/4">
                 <select name="almacen_id" onchange="this.form.submit()"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-
                     <option value="">Todos los almacenes</option>
-
                     @foreach ($almacenes as $almacen)
                         <option value="{{ $almacen->id }}"
                             {{ request('almacen_id') == $almacen->id ? 'selected' : '' }}>
@@ -41,6 +39,20 @@
             class="hidden md:inline-flex px-4 py-2 bg-indigo-600 text-white rounded-md">
             Buscar
         </button>
+        {{-- Filtro por cantidad --}}
+            <select name="cantidad" onchange="this.form.submit()"
+                class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
+                <option value="">Default</option>
+                <option value="10" {{ request('cantidad') === '10' ? 'selected' : '' }}>
+                    10
+                </option>
+                <option value="15" {{ request('cantidad') === '15' ? 'selected' : '' }}>
+                    15
+                </option>
+                <option value="20" {{ request('cantidad') === '20' ? 'selected' : '' }}>
+                    20
+                </option>
+            </select>
         </form>
         <a   href="{{ route('existencias.pdf', [
     'search' => request('search'),

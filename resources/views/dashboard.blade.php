@@ -259,12 +259,12 @@
                     <x-heroicon-o-banknotes class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            <x-dashboard-card href="{{ route('metodos.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
+            {{-- <x-dashboard-card href="{{ route('metodos.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
                 title="Metodos de pago" desc="Administrar tus metodos de pago" iconBg="bg-teal-500">
                 <x-slot:icon>
                     <x-heroicon-o-banknotes class="w-6 h-6" />
                 </x-slot:icon>
-            </x-dashboard-card>
+            </x-dashboard-card> --}}
             <x-dashboard-card href="{{ route('agentes.index') }}" bg="bg-teal-50 dark:bg-teal-900/20"
                 title="Agentes" desc="Administrar agentes" iconBg="bg-teal-500">
                 <x-slot:icon>

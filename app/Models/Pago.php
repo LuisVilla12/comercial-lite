@@ -8,15 +8,16 @@ class Pago extends TenantModel
 {
     protected $fillable = [
         'id',
-        'fecha_pago',
+        'cliente_id',
+        'user_id',
+        'fecha',
         'forma_pago',
+        'estatus',
         'monto',
-        'referencia',
         'observaciones',
         //FACTURAMA
         'facturama_id',
         'uuid',
-        'estatus'
     ];
     public function documento()
 {

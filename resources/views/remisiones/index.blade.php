@@ -54,7 +54,7 @@
                 </option>
             </select>
 
-            {{-- Filtro por estatus --}}
+            {{-- Filtro por cantidad --}}
             <select name="cantidad" onchange="this.form.submit()"
                 class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
                 <option value="">Default</option>
@@ -68,7 +68,6 @@
                     20
                 </option>
             </select>
-
 </form>
     <div x-data @keydown.window.prevent.f9="$refs.btnRemision.click()">
         {{-- Botón --}}

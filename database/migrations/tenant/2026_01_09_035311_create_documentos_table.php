@@ -29,16 +29,32 @@ return new class extends Migration
             $table->string('forma_pago')->nullable();
             $table->string('metodo_pago')->nullable();
             $table->string('uso_cfdi')->nullable();
+            $table->string('codigo_unico')->nullable()->unique();
             // DATOS DEL FACTURAMA
             $table->string('uuid')->nullable()->unique();
             $table->longText('cadena_original')->nullable();
             $table->string('facturama_id')->nullable()->unique();
             $table->string('estado')->default('pendiente'); // pendiente | timbrado | cancelado
+            //DATOS DE LA CANCELACION
+            $table->string('motivo_cancelacion')->nullable();
+            $table->string('folio_sustituto')->nullable();
+            $table->string('acuse_cancelacion')->nullable();
+            $table->string('fecha_cancelacion')->nullable();
+            $table->integer('cancelado')->default(0); // 0 pendiente, 1 timbrado
+            //DATOS EXTRAS
             $table->text('observaciones')->nullable();
             $table->date('vigencia')->nullable();
             $table->foreignId(column: 'agente_id')->constrained('agentes')->onDelete('cascade');
             $table->integer(column: 'sucursal_id');
-            $table->integer(column: 'estatus')->default(1); //1 pendiente, 2 convertida, 3 cancelada, 4 efectuada
+            $table->integer(column: 'estatus')->default(1);
+            //1 pendiente, 2 convertida, 3 cancelada, 4 efectuada
+
+
+
+            $table->unique(
+                ['sucursal_id', 'documento_modelo_id', 'serie', 'folio'],
+                'documentos_folio_unique'
+            );
         });
     }
 

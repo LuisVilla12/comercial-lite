@@ -1,3 +1,5 @@
+@section('title', content: 'Sucursal ' . $sucursal->nombre . ' - Dashboard')
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
@@ -140,8 +142,6 @@
 </div>
 @endif
 </x-app-layout>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 

@@ -149,7 +149,7 @@
                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                     <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
                     <input type="hidden" name="estatus" :value="1">
-                    <input type="hidden" name="proveedor_id" :value="proveedor?.id">
+                    <input type="hidden" name="cliente_id" :value="proveedor?.id">
 
                 </div>
             </div>
@@ -274,7 +274,6 @@
     </form>
     </div>
     {{-- ================= ALPINE ================= --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function compraApp() {
             return {

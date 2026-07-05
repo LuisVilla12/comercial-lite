@@ -14,15 +14,17 @@ return new class extends Migration
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->date('fecha_pago');
-            $table->string('forma_pago', 2);
+            $table->date('fecha');
+            $table->integer('user_id');
+            $table->string('forma_pago');
+            $table->foreignId(column: 'cliente_id')->constrained('clientes')->onDelete('cascade');
             $table->decimal('monto', 12, 2);
-            $table->string('referencia')->nullable();
             $table->text('observaciones')->nullable();
+            $table->integer('estatus')->default(1); //1 pendiente, 2 convertida, 3 cancelada, 4 efectuada
+
                // Datos del REP
             $table->string('facturama_id')->nullable();
             $table->uuid('uuid')->nullable();
-            $table->string('estatus')->default('pendiente');
         });
     }
 

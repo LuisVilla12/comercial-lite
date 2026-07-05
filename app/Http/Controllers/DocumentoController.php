@@ -63,7 +63,7 @@ class DocumentoController extends Controller
             })
 
             ->orderBy('folio', 'desc')
-            ->paginate(15)
+            ->paginate($request->cantidad ?? 15)
             ->withQueryString();
 
         return view('cotizaciones.index', ['documentos' => $documentos, 'sucursal' => $sucursal]);
@@ -195,13 +195,14 @@ class DocumentoController extends Controller
             'calle' => 'required|string|max:255',
             'numero_exterior' => 'nullable|string|max:50',
             'agente_id' => 'required',
-            'codigo_postal' => 'required|string|max:10',
+            'codigo_postal' => 'required|string|max:6',
         ]);
+
         DB::beginTransaction();
         // REALIZAR EL DOCUMENTO
         try {
-            $sucursal = Sucursal::lockForUpdate()->find($sucursal->id);
-            switch ($request->tipo) {
+    $sucursal = Sucursal::lockForUpdate()->findOrFail($request->sucursal_id);
+    switch ($request->tipo) {
                 case 1:
                     $serie = $sucursal->serie_cotizacion;
                     $siguienteFolio = $sucursal->folio_cotizacion + 1;

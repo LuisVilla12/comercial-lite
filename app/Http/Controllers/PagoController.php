@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pago;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PagoController extends Controller
 {
@@ -30,11 +31,37 @@ class PagoController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        // dd($request->all());
-        $facturas = json_decode($request->facturas, true);
+        dd($request->all());
+        $request->validate([
+            'fecha' => 'required|date',
+            'proveedor_id' => 'required|integer',
+            'user_id' => 'required',
+            'forma_pago' => 'required|string|max:255',
+            'facturas' => 'required|array',
+            //DATOS DE DOMICLIO
+            'colonia' => 'required|string|max:100',
+            'calle' => 'required|string|max:255',
+            'numero_exterior' => 'nullable|string|max:50',
+            'codigo_postal' => 'required|string|max:6',
+        ]);
+        DB::beginTransaction();
 
-dd($facturas);
+        try {
+            $pago = Pago::create($request->only(['fecha', 'proveedor_id', 'user_id', 'forma_pago']));
+
+            foreach ($request->facturas as $factura) {
+                $pago->facturas()->attach($factura['id'], ['monto' => $factura['monto']]);
+            }
+
+            DB::commit();
+            return redirect()->route('pagos.index')->with('success', 'Pago creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Ocurrió un error al crear el pago: ' . $e->getMessage()]);
+        }
+
+        //$facturas = json_decode($request->facturas, true);
+
     }
 
     /**

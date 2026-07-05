@@ -78,8 +78,6 @@
 </div>
 @endif
 </x-app-layout>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const labels = @json($ventas->pluck('etiqueta'));
@@ -183,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
         type: 'bar', // Puedes cambiarlo a 'line', 'pie' o 'doughnut'
         data: {
             // Pasamos los datos de Laravel convertidos a JSON
-            labels: {!! json_encode($labelsProductos) !!}, 
+            labels: {!! json_encode($labelsProductos) !!},
             datasets: [{
                 label: 'Total Cantidad Vendida',
                 data: {!! json_encode($dataProductos) !!},

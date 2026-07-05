@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Empresa;
 use App\Models\User;
-use App\Models\Regimen;
 use App\Models\Sucursal;
 use App\Models\ConfiguracionEmpresa;
 use Illuminate\Http\Request;
@@ -87,7 +86,7 @@ class EmpresaController extends Controller
             'rfc' => 'required|string|max:13',
             ]);
         // Nombre único para la BD
-        $databaseName = $request->nombre . '_empresa_' . Str::slug($request->codigo, '_');
+        $databaseName = $request->nombre . '_' . Str::slug($request->codigo, '_');
 
         // Crear la base de datos
         DB::statement("CREATE DATABASE `$databaseName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
@@ -106,19 +105,8 @@ class EmpresaController extends Controller
 
             'db_database' => $databaseName,
         ]);
-        // Configurar conexión temporal
-        // Config::set('database.connections.tenant', [
-        //     'driver' => 'mysql',
-        //     'host' => env('DB_HOST'),
-        //     'port' => env('DB_PORT'),
-        //     'username' => env('DB_USERNAME'),
-        //     'password' => env('DB_PASSWORD'),
-        //     'database' => $databaseName,
-        //     'charset' => 'utf8mb4',
-        //     'collation' => 'utf8mb4_unicode_ci',
-        //     'prefix' => '',
-        // ]);
-       Config::set('database.connections.tenant', [
+
+    Config::set('database.connections.tenant', [
     'driver' => 'mysql',
     'host' => $empresa->db_host,
     'port' => $empresa->db_port,
@@ -129,22 +117,23 @@ class EmpresaController extends Controller
     'collation' => 'utf8mb4_unicode_ci',
     'prefix' => '',
 ]);
-  
+
 
         DB::purge('tenant');
         DB::reconnect('tenant');
+
         //EJECUTA LAS MIGRACIONES
         Artisan::call('migrate', [
             '--database' => 'tenant',
             '--path' => 'database/migrations/tenant',
             '--force' => true,
         ]);
+
         ConfiguracionEmpresa::create([
             'codigo' => $request->codigo,
             'nombre' => $request->nombre,
             'rfc' => $request->rfc,
             'activo' => 1,
-
         ]);
 
 

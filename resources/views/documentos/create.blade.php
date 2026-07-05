@@ -15,7 +15,7 @@
                 </label>
             </div>
         </x-slot>
-        <form method="POST" action="{{ route('documentos.store', $sucursal) }}" x-data="compraApp()"
+        <form method="POST" action="{{ route('documentos.store', $sucursal) }}" id="formDocumento" x-data="compraApp()"
             x-init="init();
             $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
@@ -265,7 +265,7 @@
 
                                             <div>
                                                 <label class="text-xs text-gray-500">Descuento %</label>
-                                                <input  type="number" x-model.number="item.descuento"
+                                                <input type="number" x-model.number="item.descuento"
                                                     class="border rounded p-2 w-full text-center bg-gray-100">
                                             </div>
 
@@ -357,6 +357,7 @@
                                 Codigo postal: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP"
+                                autocomplete="off"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('codigo_postal')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -367,6 +368,7 @@
                                 Ciudad: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="ciudad" placeholder="Ciudad" x-model="proveedorCiudad"
+                                autocomplete="off"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('ciudad')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -378,6 +380,7 @@
                                 Calle: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="calle" placeholder="calle" x-model="proveedorCalle"
+                                autocomplete="off"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('calle')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -389,7 +392,7 @@
                                     Número exterior: <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="numero_exterior" placeholder="Número exterior"
-                                    x-model="proveedorNumeroExterior"
+                                    x-model="proveedorNumeroExterior" autocomplete="off"
                                     class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                                 @error('numero_exterior')
                                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -401,6 +404,7 @@
                                 Colonia: <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
+                                autocomplete="off"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                             @error('colonia')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -454,7 +458,7 @@
                                 class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                                 <option value="" disabled>Seleccione una opcion</option>
                                 @foreach ($usos as $uso)
-                                    <option  value="{{ $uso->clave }}">
+                                    <option value="{{ $uso->clave }}">
                                         {{ $uso->clave . ' ' . $uso->descripcion }}</option>
                                 @endforeach
                             </select>
@@ -515,7 +519,7 @@
                         <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar
                     </a>
                     <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
-                        <button x-ref="btnGuardar" type="submit"
+                        <button x-ref="btnGuardar" id="btnGuardar" type="submit"
                             class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                             GUARDAR [F10]
                         </button>
@@ -662,8 +666,24 @@
         </form>
         </div>
         {{-- ================= ALPINE ================= --}}
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            //DESHABILITAR BOTON DE GUARDAR AL DAR CLICK
+            document.getElementById('formDocumento').addEventListener('submit', function() {
+                const boton = document.getElementById('btnGuardar');
+                boton.disabled = true;
+                boton.textContent = 'Guardando...';
+                Swal.fire({
+                                title: 'Guardando documento ...',
+                                text: 'Por favor espere mientras se guarda el documento.',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                showConfirmButton: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+            });
+
             const ALMACEN_ID = {{ $sucursal->almacen_id }};
 
             function compraApp() {

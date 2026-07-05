@@ -30,8 +30,8 @@ use App\Http\Controllers\AgenteController;
 use App\Http\Controllers\AjustesAlmacenController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CertificadoController;
-use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\KardexController;
+use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\ProductoUbicacionController;
 use App\Mail\TestMail;
 use Illuminate\Http\Request;
@@ -50,6 +50,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::get('/empresas/listado/{user}', [EmpresaController::class, 'listado'])->middleware('auth')->name('empresas.list');
 Route::post('/empresas/listado', [EmpresaController::class, 'set'])->middleware('auth')->name('empresas.select');
 
+Route::get('/facturacion-en-linea', [FacturacionController::class, 'create'])->name('facturas.online');
+Route::post('/facturacion-en-linea', [FacturacionController::class, 'store'])->name('facturas.online.store');
 
 Route::get('/test-email', function () {
     Mail::to('luisjivl.01@gmail.com')->send(new TestMail());
