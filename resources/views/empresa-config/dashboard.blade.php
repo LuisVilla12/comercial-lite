@@ -1,3 +1,4 @@
+@section('title', 'Dashboard de la empresa')
 
 <x-app-layout>
     <x-slot name="header">

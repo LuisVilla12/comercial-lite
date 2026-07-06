@@ -149,7 +149,7 @@
                                     @endif
                                 </td>
                                 <td class="p-2 text-right">
-                                    @if ($documento->timbrado_online == 1)
+                                    @if ($documento->codigo_utilizado == 1)
                                         <span
                                             class="px-2 py-1 text-xs ml-2 font-semibold text-blue-800 bg-blue-100 rounded-full">
                                             Si

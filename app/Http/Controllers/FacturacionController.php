@@ -14,6 +14,8 @@ use App\Models\Timbre;
 // SERVICIO
 use App\Services\FacturamaService;
 use App\Jobs\DescargarXmlCfdi;
+use App\Jobs\EnviarDocumentoMail;
+
 
 
 
@@ -43,7 +45,7 @@ class FacturacionController extends Controller
         $documento = Documento::where('serie', $request->input('serie'))
             ->where('folio', $request->input('folio'))
             ->where('codigo_unico', $request->input('codigo_unico'))
-            ->where('timbrado_online',0)
+            ->where('codigo_utilizado',0)
             ->where('estatus', 1)->first();
 
         return view('facturas.online', compact('documento'));
@@ -113,7 +115,7 @@ class FacturacionController extends Controller
             // ACTUALIZAR ESTADO DE LA REMISON CONVERTIDA EN LINEA
             $documento->update([
                 'estatus' => '4',
-                'timbrado_online'=>1,
+                'codigo_utilizado'=>1,
             ]);
 
             //CONTEO DE  TIMBRES
@@ -171,7 +173,25 @@ class FacturacionController extends Controller
                 'cadena_original' => $response['OriginalString'],
                 'timbrado_online'=>1,
             ]);
+            //CREAR UN DOMICILIO
+            $documento_convertido->domicilios()->create([
+                'pais' => 'MEXICO',
+                'estado' => '',
+                'municipio' => '',
+                'ciudad' => '',
+                'colonia' =>'',
+                'calle' =>  '',
+                'numero_exterior' => '',
+                'cp' => $request->cp,
+            ]);
             DB::commit();
+            //EJECUTA LA COLA PARA ENVIAR EL CORREO
+        EnviarDocumentoMail::dispatch(
+            $empresa->id,
+            $sucursal->id,
+            $documento_convertido->id,
+            $request->email
+        );
 
             return redirect()
                 ->back()

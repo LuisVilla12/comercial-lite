@@ -32,6 +32,8 @@ return new class extends Migration
             // Timbrado on line
             $table->string('codigo_unico')->nullable()->unique();
             $table->integer('timbrado_online')->default(0); // 0 pendiente, 1 timbrado
+            //CODIGO UTILIZADO
+            $table->integer('codigo_utilizado')->default(0);
             // DATOS DEL FACTURAMA
             $table->string('uuid')->nullable()->unique();
             $table->longText('cadena_original')->nullable();
@@ -53,10 +55,10 @@ return new class extends Migration
 
 
 
-            $table->unique(
-                ['sucursal_id', 'documento_modelo_id', 'serie', 'folio'],
-                'documentos_folio_unique'
-            );
+            // $table->unique(
+            //     ['sucursal_id', 'documento_modelo_id', 'serie', 'folio'],
+            //     'documentos_folio_unique'
+            // );
         });
     }
 

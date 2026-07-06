@@ -206,27 +206,28 @@ class DocumentoController extends Controller
             switch ($request->tipo) {
                 case 1:
                     $serie = $sucursal->serie_cotizacion;
-                    $siguienteFolio = $sucursal->folio_cotizacion + 1;
-                    $sucursal->folio_cotizacion = $siguienteFolio;
+                    $folioAsignado = $sucursal->folio_cotizacion; // Usamos el folio actual
+                    $sucursal->increment('folio_cotizacion');    // Guarda e incrementa (+1) en un solo paso
                     break;
 
                 case 2:
                     $serie = $sucursal->serie_factura;
-                    $siguienteFolio = $sucursal->folio_factura + 1;
-                    $sucursal->folio_factura = $siguienteFolio;
+                    $folioAsignado = $sucursal->folio_factura;
+                    $sucursal->increment('folio_factura');
                     break;
 
                 case 3:
                     $serie = $sucursal->serie_remision;
-                    $siguienteFolio = $sucursal->folio_remision + 1;
-                    $sucursal->folio_remision = $siguienteFolio;
+                    $folioAsignado = $sucursal->folio_remision;
+                    $sucursal->increment('folio_remision');
                     break;
 
                 default:
                     $serie = 'XX';
-                    $siguienteFolio = 1;
+                    $folioAsignado = 1;
                     break;
             }
+
             // Guardar inmediatamente el nuevo consecutivo
             $sucursal->save();
 
@@ -234,7 +235,7 @@ class DocumentoController extends Controller
                 'sucursal_id' => $request->sucursal_id,
                 'documento_modelo_id' => $request->tipo,
                 'serie' => $serie,
-                'folio' => $siguienteFolio,
+                'folio' => $folioAsignado,
                 'fecha' => $request->fecha,
                 'cliente_id' => $request->proveedor_id,
                 'almacen_id' => $request->almacen_id,
@@ -275,7 +276,7 @@ class DocumentoController extends Controller
                 $documento->update(['saldo_pendiente' => $request->total]);
             }
             //ASIGNAR UN CODIGO UNICO PARA LAS REMISIONES
-            if($documento->documento_modelo_id == 3){
+            if ($documento->documento_modelo_id == 3) {
                 $codigo_unico = 'REM-' . Str::upper(Str::random(10));
                 $documento->update(['codigo_unico' => $codigo_unico]);
             }

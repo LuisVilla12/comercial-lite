@@ -23,10 +23,10 @@ return new class extends Migration
             $table->string('serie_devolucion', 10);
 
             // FOLIOS
-            $table->unsignedBigInteger('folio_cotizacion')->default(0);
-            $table->unsignedBigInteger('folio_remision')->default(0);
-            $table->unsignedBigInteger('folio_factura')->default(0);
-            $table->unsignedBigInteger('folio_devolucion')->default(0);
+            $table->integer('folio_cotizacion')->default(1);
+            $table->integer('folio_remision')->default(1);
+            $table->integer('folio_factura')->default(1);
+            $table->integer('folio_devolucion')->default(1);
 
             // Relación con almacén (opcional pero recomendado)
             $table->foreignId('almacen_id');

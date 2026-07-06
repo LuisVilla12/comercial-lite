@@ -37,6 +37,7 @@ class SucursalController extends Controller
 
         $baseVentas = Documento::where('estatus', 4)
             ->where('sucursal_id', $sucursal->id)
+            ->where('timbrado_online', 0)
             ->whereIn('documento_modelo_id', [2, 3]);
 
         if ($periodo == 'dia') {

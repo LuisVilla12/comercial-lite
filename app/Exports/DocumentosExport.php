@@ -32,6 +32,7 @@ class DocumentosExport implements
         return Documento::with(['cliente', 'usuario'])
             ->whereIn('documento_modelo_id', $this->documentoModeloIds)
             ->whereIn('serie', $this->series)
+            ->where('timbrado_online', 0)
             ->where('estatus', 4)
             ->where('user_id', $this->user_id)
             ->whereBetween('fecha', [$this->fechaInicio, $this->fechaFin])
