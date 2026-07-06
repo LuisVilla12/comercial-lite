@@ -16,6 +16,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
+
 <body class="font-sans text-gray-900 antialiased">
     <header class="bg-white flex justify-between items-center p-4 shadow-md">
         <div class="mx-auto container w-10/12">
@@ -33,7 +34,7 @@
             <div class="mt-2 mx-auto p-4 lg:p-6 ">
                 <form class="p-6 bg-white shadow-md rounded-lg" method="GET" action="{{ route('facturas.online') }}">
                     @csrf
-                    <p class="flex items-center gap-1"><x-heroicon-o-ticket class="w-5 h-5 mr-2 text-blue-500" />Datos
+                    <p class="flex items-center gap-1"><x-heroicon-o-ticket class="w-5 h-5 mr-2 text-blue-500" />1.- Datos
                         de la compra</p>
                     <div class="grid md:grid-cols-3 gap-2 mt-2">
                         <div>
@@ -67,24 +68,31 @@
                     action="{{ route('facturas.online.store') }}">
                     @csrf
                     <p class="flex items-center gap-1 mt-4"><x-heroicon-o-user-circle
-                            class="w-5 h-5 mr-2 text-blue-500" />Datos del cliente</p>
+                            class="w-5 h-5 mr-2 text-blue-500" />2.- Datos del cliente para la factura </p>
                     <div class="grid md:grid-cols-2 gap-2 mt-4">
                         <div>
                             <label for="razon_social" class="block text-sm font-medium text-gray-700">Razón
                                 social:</label>
                             <input type="text" name="razon_social" id="razon_social" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm">
-                        </div>
+                            @error('razon_social')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                            </div>
                         <div>
                             <label for="rfc" class="block text-sm font-medium text-gray-700">RFC:</label>
                             <input type="text" name="rfc" id="rfc" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm">
-                        </div>
+                            @error('rfc')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                            </div>
                         <div>
                             <label for="regimen_fiscal" class="block text-sm font-medium text-gray-700">Régimen
                                 fiscal:</label>
                             <select name="regimen_fiscal" id="regimen_fiscal" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm">
+                                <option value="">Seleccionar...</option>
                                 <option value="601">601 - General de Ley Personas Morales</option>
                                 <option value="603">603 - Personas Morales con Fines no Lucrativos</option>
                                 <option value="605">605 - Sueldos y Salarios e Ingresos Asimilados a Salarios
@@ -116,6 +124,9 @@
                                     Multinacionales</option>
                                 <option value="630">630 - Enajenación de acciones en bolsa de valores</option>
                             </select>
+                            @error('regimen_fiscal')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label for="usos_cfdi" class="block text-sm font-medium text-gray-700">Uso de CFDI:</label>
@@ -128,24 +139,37 @@
                                 <option value="I01">I01 - Ingresos por servicios prestados</option>
                                 <option value="I02">I02 - Ingresos por ventas de mercancías</option>
                             </select>
+                            @error('usos_cfdi')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Correo
                                 electrónico:</label>
                             <input type="email" name="email" id="email" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm">
-                        </div>
+                            @error('email')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                            </div>
                         <div>
                             <label for="cp" class="block text-sm font-medium text-gray-700">Código
                                 postal:</label>
                             <input type="text" name="cp" id="cp" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm">
-                        </div>
+                            @error('cp')
+                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                            </div>
                         @if($documento!=null)
                         <input hidden name="documento_id" value="{{ $documento->id }}">
+
                         @endif
                     </div>
                     <div class="mt-6 mb-2">
+                        @error('documento_id')
+                                <p class="text-red-600 text-xl text-center font-bold mt-2 mb-2">¡Primero debes realizar la busqueda de la compra!</p>
+                        @enderror
                         <button type="submit"
                             class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Generar
                             factura</button>

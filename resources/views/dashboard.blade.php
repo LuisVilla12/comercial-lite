@@ -222,6 +222,13 @@
                         <x-heroicon-o-banknotes class="w-6 h-6" />
                     </x-slot:icon>
                 </x-dashboard-card>
+                <x-dashboard-card href="{{ route('facturas.online') }}"
+                    bg="bg-green-50 dark:bg-green-900/20" title="Factura en linea"
+                    desc="" iconBg="bg-green-500">
+                    <x-slot:icon>
+                        <x-heroicon-o-globe-alt class="w-6 h-6" />
+                    </x-slot:icon>
+                </x-dashboard-card>
         @if (auth()->user()->isAdmin())
             {{-- ================= Administracion ================= --}}
             <div class="col-span-full mt-6">

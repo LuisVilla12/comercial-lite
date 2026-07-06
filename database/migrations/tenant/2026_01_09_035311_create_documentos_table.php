@@ -29,7 +29,9 @@ return new class extends Migration
             $table->string('forma_pago')->nullable();
             $table->string('metodo_pago')->nullable();
             $table->string('uso_cfdi')->nullable();
+            // Timbrado on line
             $table->string('codigo_unico')->nullable()->unique();
+            $table->integer('timbrado_online')->default(0); // 0 pendiente, 1 timbrado
             // DATOS DEL FACTURAMA
             $table->string('uuid')->nullable()->unique();
             $table->longText('cadena_original')->nullable();

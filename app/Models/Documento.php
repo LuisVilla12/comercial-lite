@@ -38,6 +38,7 @@ class Documento extends TenantModel implements Auditable{
         'caja_id',
         //FACTURAR EN LINEA
         'codigo_unico',
+        'timbrado_online',
         //DATOS DE FACTURAMA
         'facturama_id',
         'uuid',

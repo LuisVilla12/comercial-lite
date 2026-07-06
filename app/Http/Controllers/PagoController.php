@@ -6,6 +6,7 @@ use App\Models\Pago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+
 class PagoController extends Controller
 {
     /**
@@ -31,7 +32,7 @@ class PagoController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $request->validate([
             'fecha' => 'required|date',
             'proveedor_id' => 'required|integer',

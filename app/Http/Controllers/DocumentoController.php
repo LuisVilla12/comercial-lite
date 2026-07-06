@@ -26,6 +26,7 @@ use App\Services\InventarioService;
 use App\Models\DatosBancario;
 // SERVICIO FACTURA
 use App\Services\FacturamaService;
+use Illuminate\Support\Str;
 
 
 
@@ -201,8 +202,8 @@ class DocumentoController extends Controller
         DB::beginTransaction();
         // REALIZAR EL DOCUMENTO
         try {
-    $sucursal = Sucursal::lockForUpdate()->findOrFail($request->sucursal_id);
-    switch ($request->tipo) {
+            $sucursal = Sucursal::lockForUpdate()->findOrFail($request->sucursal_id);
+            switch ($request->tipo) {
                 case 1:
                     $serie = $sucursal->serie_cotizacion;
                     $siguienteFolio = $sucursal->folio_cotizacion + 1;
@@ -268,10 +269,15 @@ class DocumentoController extends Controller
             ]);
 
             //ASIGNA SALDOS PENDIENTES
-            if($documento->metodo_pago != 'PPD'){
+            if ($documento->metodo_pago != 'PPD') {
                 $documento->update(['saldo_pendiente' => 0]);
-            }else{
+            } else {
                 $documento->update(['saldo_pendiente' => $request->total]);
+            }
+            //ASIGNAR UN CODIGO UNICO PARA LAS REMISIONES
+            if($documento->documento_modelo_id == 3){
+                $codigo_unico = 'REM-' . Str::upper(Str::random(10));
+                $documento->update(['codigo_unico' => $codigo_unico]);
             }
 
             DB::commit();
@@ -405,9 +411,9 @@ class DocumentoController extends Controller
                 'observaciones' => $request->observaciones,
                 'estado' => 'PENDIENTE',
             ]);
-            if($request->metodo_pago != 'PPD'){
+            if ($request->metodo_pago != 'PPD') {
                 $documento->update(['saldo_pendiente' => 0]);
-            }else{
+            } else {
                 $documento->update(['saldo_pendiente' => $request->total]);
             }
             /* ================= DETALLES ================= */
@@ -577,11 +583,13 @@ class DocumentoController extends Controller
                 'user_id'             => $documento->user_id,
                 'subtotal'            => $documento->subtotal,
                 'impuestos'           => $documento->impuestos,
+                'descuentos'           => $documento->descuentos,
                 'total'               => $documento->total,
                 'estatus'             => 1,
                 'metodo_pago'         => $documento->metodo_pago,
                 'forma_pago'          => $documento->forma_pago,
                 'uso_cfdi'            => $documento->uso_cfdi,
+                'saldo_pendiente'            => 0,
                 'observaciones'       => $documento->observaciones,
                 'agente_id' => $documento->agente_id,
             ]);
@@ -603,6 +611,7 @@ class DocumentoController extends Controller
                     'cantidad'      => $detalle->cantidad,
                     'costo_unitario' => $detalle->costo_unitario,
                     'importe'       => $detalle->importe,
+                    'descuento'       => $detalle->descuento,
                 ]);
             }
 
