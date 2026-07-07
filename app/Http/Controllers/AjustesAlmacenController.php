@@ -68,7 +68,6 @@ class AjustesAlmacenController extends Controller
         try {
             //Registra el ajuste
             $ajuste = AjustesAlmacen::create($data);
-            DB::commit();
             //CREAR LOS REGISTROS EN LA TABLA DE DETALLES
             foreach ($request->productos as $item) {
                 // Evitar filas vacías (la fila extra de Alpine)
@@ -85,6 +84,7 @@ class AjustesAlmacenController extends Controller
             DB::rollBack();
             throw $e;
         }
+        DB::commit();
         return redirect()->route('ajustes-almacen.show', $ajuste)->with('success', 'Ajuste de almacén creado exitosamente.');
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pago;
+use App\Models\PagosDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,8 +16,8 @@ class PagoController extends Controller
     public function index()
     {
         //
-        $pagos =Pago::orderBy("created_at","desc")->paginate(10);
-        return view('pagos.index', compact('pagos'));
+        $documentos =Pago::orderBy("created_at","desc")->paginate(10);
+        return view('pagos.index', compact('documentos'));
     }
 
     /**
@@ -32,45 +33,66 @@ class PagoController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-        $request->validate([
+// dd($facturas);
+       $request->validate([
             'fecha' => 'required|date',
             'proveedor_id' => 'required|integer',
             'user_id' => 'required',
             'forma_pago' => 'required|string|max:255',
-            'facturas' => 'required|array',
+            'facturas' => 'required',
             //DATOS DE DOMICLIO
             'colonia' => 'required|string|max:100',
             'calle' => 'required|string|max:255',
             'numero_exterior' => 'nullable|string|max:50',
             'codigo_postal' => 'required|string|max:6',
         ]);
-        DB::beginTransaction();
-
         try {
-            $pago = Pago::create($request->only(['fecha', 'proveedor_id', 'user_id', 'forma_pago']));
+            DB::beginTransaction();
+            //calcular monto total de pago
+            $facturas = json_decode($request->facturas, true);
+            $montoTotal=0;
+            foreach($facturas as $factura => $value) {
+                $montoTotal+=$value['monto'];}
 
-            foreach ($request->facturas as $factura) {
-                $pago->facturas()->attach($factura['id'], ['monto' => $factura['monto']]);
+            $pago = Pago::create([
+                'cliente_id'=> $request->proveedor_id,
+                'user_id'=>$request->user_id,
+                'fecha'=> $request->fecha,
+                'forma_pago'=> $request->forma_pago,
+                'monto'=> $montoTotal,
+                'estatus'=> 1,
+            ]);
+
+            //ALMACENAR LOS DETALLES DEL PAGO
+            foreach ($facturas as $item) {
+                // dd($item);
+                PagosDetalle::create([
+                    'pago_id' => $pago->id,
+                    'documento_id' => $item['id'],
+                    'monto' => $item['monto'],
+                ]);
             }
 
             DB::commit();
-            return redirect()->route('pagos.index')->with('success', 'Pago creado exitosamente.');
+
+            // return redirect()->route('pagos.index')->with('success', 'Pago creado exitosamente.');
+            return redirect()->back()->with('success', 'Pago creado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Ocurrió un error al crear el pago: ' . $e->getMessage()]);
         }
 
-        //$facturas = json_decode($request->facturas, true);
 
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Pago $pago)
+    public function show($pago)
     {
-        //
+        //Buscar pago
+        $documento=Pago::findOrFail($pago);
+        return view('pagos.show', compact('documento'));
     }
 
     /**

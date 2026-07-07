@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->date('fecha');
+            $table->integer('folio');
             $table->integer('user_id');
             $table->string('forma_pago');
             $table->foreignId(column: 'cliente_id')->constrained('clientes')->onDelete('cascade');
             $table->decimal('monto', 12, 2);
-            $table->text('observaciones')->nullable();
             $table->integer('estatus')->default(1); //1 pendiente, 2 convertida, 3 cancelada, 4 efectuada
 
                // Datos del REP

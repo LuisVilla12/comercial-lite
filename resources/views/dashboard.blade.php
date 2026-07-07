@@ -215,7 +215,7 @@
                 </x-dashboard-card>
             @endforeach
         @endif
-        <x-dashboard-card href="{{ route('pagos.create') }}"
+        <x-dashboard-card href="{{ route('pagos.index') }}"
                     bg="bg-red-50 dark:bg-red-900/20" title="Recibo electronico de pagos"
                     desc="" iconBg="bg-red-500">
                     <x-slot:icon>

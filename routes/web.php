@@ -98,7 +98,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/pagos', action: [PagoController::class, 'index'])->name('pagos.index');
     Route::get('/pagos/create', action: [PagoController::class, 'create'])->name('pagos.create');
     Route::post('/pagos', action: [PagoController::class, 'store'])->name('pagos.store');
-    // Route::get('/pagos/{pago}', action: [PagoController::class, 'show'])->name('pagos.show');
+    Route::get('/pagos/{documento}', action: [PagoController::class, 'show'])->name('pagos.show');
     // Route::get('/pagos/{pago}/edit', action: [PagoController::class, 'edit'])->name('pagos.edit');
     // Route::put('/pagos/{pago}', action: [PagoController::class, 'update'])->name('pagos.update');
 
@@ -388,7 +388,6 @@ Route::get('buscar/facturas/pendientes', function () {
         )
         ->orderBy('fecha')
         ->get();
-
 });
 
     Route::get('productos-existencias/buscar', function () {
