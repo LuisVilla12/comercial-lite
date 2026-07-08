@@ -6,6 +6,7 @@ use App\Models\Pago;
 use App\Models\PagosDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class PagoController extends Controller
@@ -16,7 +17,7 @@ class PagoController extends Controller
     public function index()
     {
         //
-        $documentos =Pago::orderBy("created_at","desc")->paginate(10);
+        $documentos = Pago::orderBy("created_at", "desc")->paginate(10);
         return view('pagos.index', compact('documentos'));
     }
 
@@ -33,8 +34,8 @@ class PagoController extends Controller
      */
     public function store(Request $request)
     {
-// dd($facturas);
-       $request->validate([
+        // dd($facturas);
+        $request->validate([
             'fecha' => 'required|date',
             'proveedor_id' => 'required|integer',
             'user_id' => 'required',
@@ -50,17 +51,18 @@ class PagoController extends Controller
             DB::beginTransaction();
             //calcular monto total de pago
             $facturas = json_decode($request->facturas, true);
-            $montoTotal=0;
-            foreach($facturas as $factura => $value) {
-                $montoTotal+=$value['monto'];}
+            $montoTotal = 0;
+            foreach ($facturas as $factura => $value) {
+                $montoTotal += $value['monto'];
+            }
 
             $pago = Pago::create([
-                'cliente_id'=> $request->proveedor_id,
-                'user_id'=>$request->user_id,
-                'fecha'=> $request->fecha,
-                'forma_pago'=> $request->forma_pago,
-                'monto'=> $montoTotal,
-                'estatus'=> 1,
+                'cliente_id' => $request->proveedor_id,
+                'user_id' => $request->user_id,
+                'fecha' => $request->fecha,
+                'forma_pago' => $request->forma_pago,
+                'monto' => $montoTotal,
+                'estatus' => 1,
             ]);
 
             //ALMACENAR LOS DETALLES DEL PAGO
@@ -72,17 +74,24 @@ class PagoController extends Controller
                     'monto' => $item['monto'],
                 ]);
             }
-
+            //CREAR DOMICILIO RELACIONADO ASIGNAR DOMICILIO AL DOCUMENTO
+            $pago->domicilios()->create([
+                'pais' => 'MEXICO',
+                'estado' => $request->estado,
+                'municipio' => $request->municipio . '',
+                'ciudad' => $request->ciudad ?? '',
+                'colonia' => $request->colonia,
+                'calle' => $request->calle,
+                'numero_exterior' => $request->numero_exterior,
+                'cp' => $request->codigo_postal
+            ]);
             DB::commit();
 
-            // return redirect()->route('pagos.index')->with('success', 'Pago creado exitosamente.');
-            return redirect()->back()->with('success', 'Pago creado exitosamente.');
+            return redirect()->route('pagos.show', $pago)->with('success', 'Pago creado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Ocurrió un error al crear el pago: ' . $e->getMessage()]);
         }
-
-
     }
 
     /**
@@ -91,31 +100,120 @@ class PagoController extends Controller
     public function show($pago)
     {
         //Buscar pago
-        $documento=Pago::findOrFail($pago);
+        $documento = Pago::findOrFail($pago);
+        $documento->load([
+            'cliente',
+            'detalles.documento',
+        ]);
         return view('pagos.show', compact('documento'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Pago $pago)
+    public function edit($pago)
     {
-        //
+        $documento = Pago::findOrFail($pago);
+        if ($documento->estatus != 1) {
+            return redirect()
+                ->route('pagos.edit', $documento)
+                ->with('error', 'El pago ya fue timbrado');
+        }
+
+        $documento->load([
+            'cliente',
+            'detalles.documento',
+            'domicilios'
+        ]);
+        return view('pagos.edit', compact('documento'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Pago $pago)
+
+    public function update(Request $request, $documento)
     {
         //
+        $request->validate([
+            'fecha' => 'required|date',
+            'proveedor_id' => 'required|integer',
+            'user_id' => 'required',
+            'forma_pago' => 'required|string|max:255',
+            'facturas' => 'required',
+            //DATOS DE DOMICLIO
+            'colonia' => 'required|string|max:100',
+            'calle' => 'required|string|max:255',
+            'numero_exterior' => 'nullable|string|max:50',
+            'codigo_postal' => 'required|string|max:6',
+        ]);
+        try {
+            DB::beginTransaction();
+            $pago = Pago::findOrFail($documento);
+            //calcular monto total de pago
+            $facturas = json_decode($request->facturas, true);
+            $montoTotal = 0;
+
+            foreach ($facturas as $factura => $value) {
+                $montoTotal += $value['monto'];
+            }
+
+            //ACTUALIZAR PAGO
+            $pago->update([
+                'cliente_id' => $request->proveedor_id,
+                'user_id' => $request->user_id,
+                'fecha' => $request->fecha,
+                'forma_pago' => $request->forma_pago,
+                'monto' => $montoTotal,
+                'estatus' => 1,
+            ]);
+
+            /* ================= DETALLES ================= */
+
+            $facturasData = json_decode($request->facturas, true);
+            foreach ($facturasData as $item) {
+                PagosDetalle::where('id', $item['id'])->update([
+                    'monto' => $item['monto'],
+                ]);
+            }
+
+            // $detallesEnFormulario[] = $detalle->id;
+            DB::commit();
+
+            return redirect()->route('pagos.show', ['documento' => $pago])->with('success', 'REP Actualizado correctamente');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pago $pago)
+    public function destroy($documento)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $documento = Pago::findOrFail($documento);
+            // Eliminar detalles
+            $documento->detalles()->delete();
+            // Eliminar documento
+            $documento->delete();
+            DB::commit();
+
+            return redirect()
+                ->route('pagos.index')
+                ->with('success', 'Documento eliminado correctamente');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+    public function pdf($documento){
+        $documento = Pago::findOrFail($documento);
+        $documento->load([
+            'cliente',
+            'detalles.documento'
+        ]);
+
+        $pdf = Pdf::loadView('pagos.pdf', compact('documento'))->setPaper('letter');
+
+        return $pdf->stream("REP_{$documento->folio}.pdf");
     }
 }

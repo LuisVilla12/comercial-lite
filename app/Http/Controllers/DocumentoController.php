@@ -397,8 +397,8 @@ class DocumentoController extends Controller
             'forma_pago' => 'required',
             'uso_cfdi' => 'required',
         ]);
-
-        $documento = DB::transaction(function () use ($request, $documento) {
+        try{
+$documento = DB::transaction(function () use ($request, $documento) {
 
             /* ================= ACTUALIZAR DOCUMENTO ================= */
             $documento->update([
@@ -417,6 +417,7 @@ class DocumentoController extends Controller
             } else {
                 $documento->update(['saldo_pendiente' => $request->total]);
             }
+
             /* ================= DETALLES ================= */
             $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
             $detallesEnFormulario = [];
@@ -465,6 +466,9 @@ class DocumentoController extends Controller
                 3 => 'Remisión',
             } . ' ha sido actualizada'
         );
+        }catch (\Exception $e) {
+            return redirect()->back()->with('error',($e->getMessage()));
+        }
     }
     public function pdf($sucursal,  $documento, FacturamaService $facturama)
     {
@@ -530,14 +534,12 @@ class DocumentoController extends Controller
      */
     public function destroy($documento)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
             $documento = Documento::findOrFail($documento);
-            // 1️⃣ Eliminar detalles
+            // Eliminar detalles
             $documento->detalles()->delete();
-
-            // 2️⃣ Eliminar compra
+            // Eliminar documento
             $documento->delete();
 
             DB::commit();

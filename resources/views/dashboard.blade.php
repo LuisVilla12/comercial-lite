@@ -149,10 +149,16 @@
                     <x-heroicon-o-gift class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            <x-dashboard-card href="{{ route('reportes.select') }}" bg="bg-red-50 dark:bg-red-900/20" title="Reportes"
-                desc="Generar reportes" iconBg="bg-red-500">
+            <x-dashboard-card href="{{ route('reportes.select') }}" bg="bg-orange-50 dark:bg-orange-900/20" title="Reportes"
+                desc="Generar reportes" iconBg="bg-orange-500">
                 <x-slot:icon>
                     <x-heroicon-o-chart-bar class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+            <x-dashboard-card href="{{ route('gastos.index') }}" bg="bg-green-50 dark:bg-green-900/20" title="Movimientos Caja"
+                desc="Administrar los movimientos realizados" iconBg="bg-green-500">
+                <x-slot:icon>
+                    <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
         @endif

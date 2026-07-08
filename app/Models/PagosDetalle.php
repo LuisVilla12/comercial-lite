@@ -11,8 +11,12 @@ class PagosDetalle extends TenantModel
         'documento_id',
         'monto',
     ];
-       public function pago()
-{
+    public function pago(){
     return $this->belongsTo(Pago::class);
 }
+    public function documento()
+{
+    return $this->belongsTo(Documento::class);
+}
+
 }

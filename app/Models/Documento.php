@@ -51,6 +51,7 @@ class Documento extends TenantModel implements Auditable{
         'fecha_cancelacion',
         'cancelado',
     ];
+
     public function detalles() {
         return $this->hasMany(DocumentosDetalle::class);
     }
@@ -63,7 +64,7 @@ class Documento extends TenantModel implements Auditable{
         return $this->belongsTo(User::class, 'user_id');
     }
 
-        public function domicilios()
+    public function domicilios()
 {
     return $this->morphMany(Domicilio::class, 'domiciliable');
 }

@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MedioPago extends TenantModel
 {
-    //
-     protected $fillable = [
+    protected $fillable = [
         'codigo',
         'nombre',
         'tipo',

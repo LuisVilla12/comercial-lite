@@ -32,6 +32,7 @@ use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CertificadoController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\FacturacionController;
+use App\Http\Controllers\GastoController;
 use App\Http\Controllers\ProductoUbicacionController;
 use App\Mail\TestMail;
 use Illuminate\Http\Request;
@@ -99,8 +100,17 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/pagos/create', action: [PagoController::class, 'create'])->name('pagos.create');
     Route::post('/pagos', action: [PagoController::class, 'store'])->name('pagos.store');
     Route::get('/pagos/{documento}', action: [PagoController::class, 'show'])->name('pagos.show');
-    // Route::get('/pagos/{pago}/edit', action: [PagoController::class, 'edit'])->name('pagos.edit');
-    // Route::put('/pagos/{pago}', action: [PagoController::class, 'update'])->name('pagos.update');
+    Route::get('/pagos/{documento}/edit', action: [PagoController::class, 'edit'])->name('pagos.edit');
+    Route::put('/pagos/{documento}', action: [PagoController::class, 'update'])->name('pagos.update');
+    Route::delete('/pagos/{documento}', action: [PagoController::class, 'destroy'])->name('pagos.destroy');
+    Route::get('/pagos/{documento}/pdf', action: [PagoController::class, 'pdf'])->name('pagos.pdf');
+
+    //GASTOS DE CAJA
+    Route::get('/gastos', action: [GastoController::class, 'index'])->name('gastos.index');
+    Route::get('/gastos/create', action: [GastoController::class, 'create'])->name('gastos.create');
+    Route::post('/gastos/create', action: [GastoController::class, 'store'])->name('gastos.store');
+    Route::get('/gastos/{gasto}', action: [GastoController::class, 'show'])->name('gastos.show');
+    // Route::delete('/gastos/{gasto}', action: [GastoController::class, 'destroy'])->name('gastos.show');
 
     // KARDEX MENU
     Route::get('/kardex', action: [KardexController::class, 'index'])->name('kardex.index');
@@ -109,7 +119,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     //OBTENCION DE KARDEX
     Route::post('/kardex/global', action: [KardexController::class, 'global'])->name('kardex.global');
     Route::post('/kardex/sucursal', action: [KardexController::class, 'sucursal'])->name('kardex.sucursal');
-Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
+    Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
 
     //METODO DE PAGO
     Route::get('/metodos-pago', action: [MedioPagoController::class, 'index'])->name('metodos.index');

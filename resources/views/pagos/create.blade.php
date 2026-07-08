@@ -95,6 +95,7 @@
                                 <table class="w-full border bg-white shadow rounded">
                                     <thead class="bg-gray-100">
                                         <tr>
+                                            <th class="p-2">Serie</th>
                                             <th class="p-2">Folio</th>
                                             <th class="p-2">Fecha</th>
                                             <th class="p-2">Total</th>
@@ -107,15 +108,16 @@
 
                                         <template x-for="factura in facturas" :key="factura.id">
                                             <tr class="border-t">
+                                                <td class="p-2 text-center" x-text="factura.serie"></td>
 
-                                                <td class="p-2" x-text="factura.serie + factura.folio"></td>
+                                                <td class="p-2 text-center " x-text="factura.folio"></td>
 
-                                                <td class="p-2" x-text="factura.fecha"></td>
+                                                <td class="p-2 text-center" x-text="factura.fecha"></td>
 
-                                                <td class="p-2 text-right" x-text="Number(factura.total).toFixed(2)">
+                                                <td class="p-2 text-center" x-text="Number(factura.total).toFixed(2)">
                                                 </td>
 
-                                                <td class="p-2 text-right"
+                                                <td class="p-2 text-center"
                                                     x-text="Number(factura.saldo_pendiente).toFixed(2)">
                                                 </td>
 
@@ -346,6 +348,7 @@
                         this.facturas = [];
                         return;
                     }
+
 
                     const response = await fetch(
                         `/buscar/facturas/pendientes?cliente_id=${this.cliente_id}`

@@ -19,12 +19,17 @@ class Pago extends TenantModel
         'facturama_id',
         'uuid',
     ];
-    public function documento()
-{
-    return $this->belongsTo(Documento::class);
-}
+    public function detalles() {
+        return $this->hasMany(PagosDetalle::class);
+    }
+
     public function cliente()
 {
     return $this->belongsTo(Cliente::class);
 }
+    public function domicilios()
+{
+    return $this->morphMany(Domicilio::class, 'domiciliable');
+}
+
 }

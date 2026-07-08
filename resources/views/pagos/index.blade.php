@@ -39,14 +39,11 @@
                 <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>
                     Activa
                 </option>
-                <option value="2" {{ request('estatus') === '2' ? 'selected' : '' }}>
-                    Transformada
-                </option>
                 <option value="3" {{ request('estatus') === '3' ? 'selected' : '' }}>
                     Cancelada
                 </option>
                 <option value="4" {{ request('estatus') === '4' ? 'selected' : '' }}>
-                    Surtida
+                    Timbrada
                 </option>
             </select>
 
@@ -152,7 +149,7 @@
                                         @if ($documento->estatus == 1)
                                             <span class="hidden sm:inline text-gray-300">•</span>
                                             {{-- Editar --}}
-                                            <a href=""
+                                            <a href="{{ route('pagos.edit',$documento) }}"
                                                 class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                                 <x-heroicon-o-pencil-square class="w-4 h-4" />
                                                 <span class="hidden sm:inline">Editar</span>
@@ -161,11 +158,10 @@
 
                                             {{-- Eliminar --}}
                                             <form
-                                                action=""
+                                                action="{{ route('pagos.destroy',$documento) }}"
                                                 method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-
                                                 <button type="submit"
                                                     class="inline-flex items-center gap-1 text-gray-500 hover:text-red-600 transition"
                                                     onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">
@@ -244,7 +240,7 @@
                         </div>
                         <div class="flex flex-wrap items-center justify-end mt-4 gap-4">
                             {{-- Ver --}}
-                            <a href=""
+                            <a href="{{ route('pagos.show',$documento) }}"
                                 class="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition">
                                 <x-heroicon-o-eye class="w-4 h-4" />
                                 <span class="hidden sm:inline">Ver</span>
@@ -252,7 +248,7 @@
                             @if ($documento->estatus == 1)
                                 <span class="hidden sm:inline text-gray-300">•</span>
                                 {{-- Editar --}}
-                                <a href=""
+                                <a href="{{ route('pagos.edit',$documento) }}"
                                     class="inline-flex items-center gap-1 text-gray-600 hover:text-indigo-600 transition">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" />
                                     <span class="hidden sm:inline">Editar</span>
@@ -261,7 +257,7 @@
 
                                 {{-- Eliminar --}}
                                 <form
-                                    action=""
+                                    action="{{ route('pagos.destroy',$documento) }}"
                                     method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
@@ -280,7 +276,7 @@
             </div>
         @else
             <div class="bg-white py-4 mt-3">
-                <p class="text-sm text-gray-600 ml-6 text-center"> No hay remisiones</p>
+                <p class="text-sm text-gray-600 ml-6 text-center"> No hay recibos eletronicos de pago</p>
             </div>
         @endif
 

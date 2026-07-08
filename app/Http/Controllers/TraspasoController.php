@@ -261,7 +261,7 @@ public function update(Request $request, $traspaso)
 
     public function pdf( $traspaso)
     {
-                $traspaso = Traspaso::findOrFail($traspaso);
+    $traspaso = Traspaso::findOrFail($traspaso);
     $banco=DatosBancario::where('predeterminado', true)->first();
     $empresa=Empresa::first();
     $traspaso->load([

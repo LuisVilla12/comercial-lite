@@ -1,14 +1,48 @@
-@section('title', 'Registrar pago')
+@section('title', 'Detalles de un REP')
 <x-app-layout>
     <x-slot name="header">
         <div class="md:flex md:justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                Registrar Pago
+                Detalles del ERP
             </h2>
             <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
             </label>
         </div>
     </x-slot>
+    <div class="md:flex md:justify-between mt-4 md:items-center md:gap-2 ">
+            <div>
+                <p class="dark:text-white text-center uppercase md:text-left">Estado:
+                    @php
+                        $estatusText = match (true) {
+                            $documento->estatus == 1 => 'ACTIVA',
+                            $documento->estatus == 3 => 'CANCELADA',
+                            $documento->estatus == 4 => 'TIMBRADA',
+
+                            default => 'DESCONOCIDO',
+                        };
+                    @endphp
+                    <span class="font-bold text-green-600">{{ $estatusText }}</span>
+                </p>
+
+            </div>
+            <div class="flex gap-2 mt-4 md:mt-0">
+                <a href="{{ route('pagos.pdf',$documento) }}" target="_blank"
+                        class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ml-6">
+                        <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
+                    </a>
+                <div>
+                    <button onclick="timbrar()" disabled
+                        class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
+                        <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5" />
+                        Timbrar
+                    </button>
+                    <form method="POST" id="formTimbrar"
+                        action="">
+                        @csrf
+                    </form>
+                </div>
+            </div>
+    </div>
     <form method="POST" action="{{ route('pagos.store') }}" x-data="compraApp()" x-init="init();">
         @csrf
         <div x-data="{ tab: 'detalle' }">
@@ -31,56 +65,7 @@
                         <div class="md:flex justify-between">
                             <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
                         </div>
-                        <input type="text" x-model="proveedorQuery" autofocus
-                            @input.debounce.300ms="
-        buscarProveedor();
-        proveedorSeleccionado = -1;
-    "
-                            @keydown.arrow-down.prevent="
-        if (proveedores.length) {
-            proveedorSeleccionado =
-                proveedorSeleccionado < proveedores.length - 1
-                    ? proveedorSeleccionado + 1
-                    : 0;
-        }
-    "
-                            @keydown.arrow-up.prevent="
-        if (proveedores.length) {
-            proveedorSeleccionado =
-                proveedorSeleccionado > 0
-                    ? proveedorSeleccionado - 1
-                    : proveedores.length - 1;
-        }
-    "
-                            @keydown.enter.prevent="
-        if (proveedorSeleccionado >= 0) {
-            seleccionarProveedor(proveedores[proveedorSeleccionado]);
-        }
-    "
-                            @keydown.escape="
-        proveedores = [];
-        proveedorSeleccionado = -1;
-    "
-                            class="w-full border rounded p-2" placeholder="Buscar cliente">
-
-                        @error('proveedor_id')
-                            <p class="text-red-600 text-xs mt-1">
-                                Debes seleccionar uno.
-                            </p>
-                        @enderror
-
-                        <ul x-show="proveedores.length"
-                            class="border bg-white rounded shadow mt-1 max-h-48 overflow-y-auto">
-                            <template x-for="(p, index) in proveedores" :key="p.id">
-                                <li @click="seleccionarProveedor(p)" class="p-2 cursor-pointer"
-                                    :class="proveedorSeleccionado === index ?
-                                        'bg-blue-100' :
-                                        'hover:bg-gray-100'"
-                                    x-text="p.nombre + ' (' + p.codigo + ')'">
-                                </li>
-                            </template>
-                        </ul>
-
+                        <input type="text" readonly class="w-full border rounded p-2"  value="{{ $documento->cliente->nombre }}">
                     </div>
                     {{-- ================= FACTURAS ================= --}}
                     <div>
@@ -95,6 +80,7 @@
                                 <table class="w-full border bg-white shadow rounded">
                                     <thead class="bg-gray-100">
                                         <tr>
+                                            <th class="p-2">Serie</th>
                                             <th class="p-2">Folio</th>
                                             <th class="p-2">Fecha</th>
                                             <th class="p-2">Total</th>
@@ -104,57 +90,23 @@
                                     </thead>
 
                                     <tbody>
-
-                                        <template x-for="factura in facturas" :key="factura.id">
+                                    @foreach ($documento->detalles as $detalle)
                                             <tr class="border-t">
-
-                                                <td class="p-2" x-text="factura.serie + factura.folio"></td>
-
-                                                <td class="p-2" x-text="factura.fecha"></td>
-
-                                                <td class="p-2 text-right" x-text="Number(factura.total).toFixed(2)">
-                                                </td>
-
-                                                <td class="p-2 text-right"
-                                                    x-text="Number(factura.saldo_pendiente).toFixed(2)">
-                                                </td>
-
-                                                <td class="p-2">
-                                                    {{-- <input type="number" step="0.01" min="0"
-                                                        :max="factura.saldo_pendiente" x-model="factura.monto"
-                                                        class="w-full border rounded p-1 text-right"> --}}
-                                                    <input type="number" step="0.01" min="0"
-                                                        :max="factura.saldo_captura" x-model.number="factura.monto"
-                                                        class="w-full border rounded p-1 text-right">
-                                                </td>
-
+                                                <td class="p-2 text-center">{{ $detalle->documento->serie }}</td>
+                                                <td class="p-2 text-center">{{ $detalle->documento->folio }}</td>
+                                                <td class="p-2 text-center">{{ $detalle->documento->fecha }}</td>
+                                                <td class="p-2 text-center"> {{ number_format($detalle->documento->total,2) }}</td>
+                                                <td class="p-2 text-center"> {{ number_format($detalle->documento->saldo_pendiente,2) }} </td>
+                                                <td class="p-2 text-center">{{ number_format($detalle->monto,2) }}</td>
                                             </tr>
-                                        </template>
-
-                                        <tr x-show="facturas.length == 0">
-                                            <td colspan="5" class="text-center p-4 text-gray-500">
-                                                No hay facturas pendientes.
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
+                                    @endforeach
+                                        </tbody>
 
                                 </table>
                             </div>
                         </div>
 
                     </div>
-
-
-                    {{-- -ENVIO DE DATOS --}}
-                    {{-- MANDA LOS DATOS DE LAS FACTURAS QUE ABONO --}}
-                    <input type="hidden"
-                        name="facturas":value="JSON.stringify(facturas.filter(f => Number(f.monto) > 0))">
-                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-                    <input type="hidden" name="fecha" value="{{ now()->format('Y-m-d') }}">
-                    <input type="hidden" name="estatus" :value="1">
-                    <input type="hidden" name="proveedor_id" :value="proveedor?.id">
-
                 </div>
             </div>
             <div x-show="tab === 'info'" x-cloak class="space-y-4">
@@ -169,66 +121,48 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             RFC: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="rfc" placeholder="RFC" x-model="proveedorRfc"
+                        <input type="text" name="rfc" placeholder="RFC" value="{{ $documento->cliente->rfc }}"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        @error('rfc')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Codigo postal: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="codigo_postal" placeholder="Codigo postal" x-model="proveedorCP"
+                        <input type="text" name="codigo_postal" placeholder="Codigo postal" value="{{ optional($documento->domicilios->first())->cp }}"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        @error('codigo_postal')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
                     </div>
                     <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Ciudad: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="ciudad" placeholder="Ciudad" x-model="proveedorCiudad"
+                        <input type="text" name="ciudad" placeholder="Ciudad" value="{{ optional($documento->domicilios->first())->ciudad }}"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        @error('ciudad')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
                     </div>
                     {{--  --}}
                     <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Calle: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="calle" placeholder="calle" x-model="proveedorCalle"
+                        <input type="text" name="calle" placeholder="calle" value="{{ optional($documento->domicilios->first())->calle }}"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        @error('calle')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
+
                     </div>
                     <div>
                         <div class="mb-2">
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                                 Número exterior: <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="numero_exterior" placeholder="Número exterior"
-                                x-model="proveedorNumeroExterior"
+                            <input type="text" name="numero_exterior" placeholder="Número exterior" value="{{ optional($documento->domicilios->first())->numero_exterior }}"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @error('numero_exterior')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
                         </div>
                     </div>
                     <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Colonia: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="colonia" placeholder="colonia" x-model="proveedorColonia"
+                        <input type="text" name="colonia" placeholder="colonia" value="{{ optional($documento->domicilios->first())->colonia }}"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        @error('colonia')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
                     </div>
                     <div class="col-span-full">
                         <label for="metodo_pago"
@@ -244,16 +178,13 @@
                         </label>
                         <select name="forma_pago" id="forma_pago"
                             class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            <option value="01" selected>01 Efectivo</option>
-                            <option value="03">03 Transferencia</option>
-                            <option value="04">04 Tarjeta de crédito</option>
-                            <option value="28">28 Tarjeta de débito</option>
-                            <option value="05">05 Monedero electrónico</option>
-                            <option value="02">02 Cheque nominativo</option>
+                            <option value="01" @selected(old('forma_pago', $documento->forma_pago) === '01')>01 Efectivo</option>
+                            <option value="03" @selected(old('forma_pago', $documento->forma_pago) === '03')>03 Transferencia</option>
+                            <option value="04" @selected(old('forma_pago', $documento->forma_pago) === '04')>04 Tarjeta de crédito</option>
+                            <option value="28" @selected(old('forma_pago', $documento->forma_pago) === '28')>28 Tarjeta de débito</option>
+                            <option value="05" @selected(old('forma_pago', $documento->forma_pago) === '05')>05 Monedero electrónico</option>
+                            <option value="02" @selected(old('forma_pago', $documento->forma_pago) === '02')>02 Cheque nominativo</option>
                         </select>
-                        @error('forma_pago')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
                     </div>
 
                 </div>
@@ -264,12 +195,14 @@
                     class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
                     <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar
                 </a>
-                <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
-                    <button x-ref="btnGuardar" type="submit"
-                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                        GUARDAR [F10]
-                    </button>
-                </div>
+                @if ($documento->estatus == 1)
+            <div x-data @keydown.window.prevent.f9="$refs.btnRegistrar.click()">
+                <a x-ref="btnRegistrar" href="{{ route('pagos.edit', $documento) }}"
+                    class="px-6 py-2 uppercase bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                    Actualizar [F9]
+                </a>
+            </div>
+            @endif
 
             </div>
 
@@ -281,102 +214,32 @@
     <script>
         function compraApp() {
             return {
-                proveedor: null,
-                proveedorQuery: '',
-                proveedorRfc: '',
-                proveedorCP: '',
-                proveedorCalle: '',
-                proveedorNumeroInterior: '',
-                proveedorNumeroExterior: '',
-                proveedorCiudad: '',
-                proveedorColonia: '',
-                proveedores: [],
-                proveedorSeleccionado: -1,
-                cliente_id: '',
-                facturas: [],
-
                 init() {
-                    // Inicializar cualquier dato necesario al cargar la página
-                },
-
-                async buscarProveedor() {
-                    if (this.proveedorQuery.length < 2) {
-                        this.proveedores = []
-                        this.proveedorSeleccionado = -1
-                        return
-                    }
-
-                    this.proveedores = []
-                    this.proveedorSeleccionado = -1
-
-                    const res = await fetch(`/clientes/buscar?q=${encodeURIComponent(this.proveedorQuery)}`)
-                    this.proveedores = await res.json()
-                },
-
-                seleccionarProveedor(p) {
-                    if (!p.domicilios || !p.domicilios[0]) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Domicilio no encontrado',
-                            text: 'El cliente seleccionado no tiene un domicilio registrado.'
-                        })
-                        return
-                    }
-
-                    this.proveedor = p
-                    //SELECIONA EL CLIENTE
-                    this.cliente_id = p.id
-                    this.proveedorQuery = p.nombre
-                    this.proveedorRfc = p.rfc
-                    this.proveedorCalle = p.domicilios[0].calle ?? ''
-                    this.proveedorCP = p.domicilios[0].cp ?? ''
-                    this.proveedorNumeroInterior = p.domicilios[0].numero_interior ?? ''
-                    this.proveedorNumeroExterior = p.domicilios[0].numero_exterior ?? ''
-                    this.proveedorCiudad = p.domicilios[0].ciudad ?? ''
-                    this.proveedorColonia = p.domicilios[0].colonia ?? ''
-                    this.proveedores = []
-                    this.proveedorSeleccionado = -1
-                    //BUSCAR LAS FACTURAS
-                    this.cargarFacturas()
-
-                },
-
-                async cargarFacturas() {
-                    if (!this.cliente_id) {
-                        this.facturas = [];
-                        return;
-                    }
-
-                    const response = await fetch(
-                        `/buscar/facturas/pendientes?cliente_id=${this.cliente_id}`
-                    );
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        console.error('Error fetching facturas:', response.statusText);
-                        this.facturas = [];
-                        return;
-                    }
-                    const data = await response.json();
-
-                    this.facturas = data.map(f => ({
-                        ...f,
-                        saldo_captura: Number(Number(f.saldo_pendiente).toFixed(2)),
-                        monto: 0
-                    }));
-
-                    // this.facturas.forEach(f => {
-                    //     f.monto = 0;
-                    // });
-
-                },
-                get totalPago() {
-
-                    return this.facturas.reduce((total, factura) => {
-                        return total + Number(factura.monto || 0);
-                    }, 0);
-
                 },
             }
+        }
+        function timbrar() {
+            Swal.fire({
+                title: '¿Esta seguro que requiere timbrar este recibo electronico?',
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: 'Si, timbrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Generando REP...',
+                        text: 'Por favor espere mientras se realiza el timbrado del documento.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    document.getElementById('formTimbrar').submit();
+                }
+            });
         }
     </script>
 </x-app-layout>
