@@ -28,6 +28,9 @@ return new class extends Migration
             $table->integer('folio_factura')->default(1);
             $table->integer('folio_devolucion')->default(1);
 
+            //Lista de precio predeterminado
+            $table->integer('precio_predeterminado')->default(1);
+
             // Relación con almacén (opcional pero recomendado)
             $table->foreignId('almacen_id');
             $table->foreignId('empresa_id');

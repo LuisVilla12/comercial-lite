@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Cliente;
 use App\Models\Documento;
 use App\Models\Producto;
+use App\Models\Sucursal;
 use Illuminate\Support\Facades\DB;
 
 require __DIR__ . '/auth.php';
@@ -284,7 +285,8 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         //TIMBRAR
         Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrar'])->name(name: 'documentos.timbrar');
         //CANCELAR
-        Route::delete('/documentos/{documento}/cancelar', [DocumentoController::class, 'cancelar'])->name(name: 'documentos.cancelar');        });
+        Route::delete('/documentos/{documento}/cancelar', [DocumentoController::class, 'cancelar'])->name(name: 'documentos.cancelar');
+    });
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 
@@ -383,22 +385,22 @@ Route::middleware(['auth', 'tenant'])->group(function () {
             ->get();
     });
 
-Route::get('buscar/facturas/pendientes', function () {
-    $cliente = request('cliente_id');
-    return Documento::where('cliente_id', $cliente)
-        ->where('metodo_pago', 'PPD')
-        ->where('estatus', 1) // Factura timbrada
-        ->select(
-            'id',
-            'fecha',
-            'serie',
-            'folio',
-            'saldo_pendiente',
-            'total',
-        )
-        ->orderBy('fecha')
-        ->get();
-});
+    Route::get('buscar/facturas/pendientes', function () {
+        $cliente = request('cliente_id');
+        return Documento::where('cliente_id', $cliente)
+            ->where('metodo_pago', 'PPD')
+            ->where('estatus', 1) // Factura timbrada
+            ->select(
+                'id',
+                'fecha',
+                'serie',
+                'folio',
+                'saldo_pendiente',
+                'total',
+            )
+            ->orderBy('fecha')
+            ->get();
+    });
 
     Route::get('productos-existencias/buscar', function () {
         $q = request('q');
@@ -406,7 +408,12 @@ Route::get('buscar/facturas/pendientes', function () {
         if (!$almacenId) {
             return [];
         }
-        return Producto::where('estatus_producto', 1)
+        //SABER QUE SUCURSAL ESTA SOLICITANDO EL PRECIO
+        // $sucursal = auth()->user()->sucursal ?? 1;
+        // $sucursal=Sucursal::findOrFail( $sucursal );
+        // $listaPrecio = $sucursal->precio_predeterminado;
+
+        $productos = Producto::where('estatus_producto', 1)
             ->where(function ($query) use ($q) {
                 $query->where('clave_producto', 'like', "%{$q}%")
                     ->orWhere('codigo_producto', 'like', "%{$q}%")
@@ -431,6 +438,16 @@ Route::get('buscar/facturas/pendientes', function () {
             )
             ->limit(10)
             ->get();
+
+        // DETERMINA EL PRECIO DEFAULT
+        // $productos->each(function ($producto) use ($listaPrecio) {
+        //      $campo = $listaPrecio == 1
+        //          ? 'costo'
+        //          : 'costo' . $listaPrecio;
+        //      $producto->precio_default = $producto->{$campo};
+        //  });
+
+        return $productos;
     });
 
 
@@ -438,89 +455,89 @@ Route::get('buscar/facturas/pendientes', function () {
     //TEST DE AUTENTICACION EN FACTURAMA
     Route::get('/test-facturama', function () {
 
-   $response = Http::withBasicAuth(
-    env('FACTURAMA_USER'),
-    env('FACTURAMA_PASSWORD')
-)->get(
-    env('FACTURAMA_URL') . '/api-lite/Catalogs/CfdiTypes'
-);
-   return [
-    'status' => $response->status(),
-    'headers' => $response->headers(),
-    'body' => $response->body(),
-];
-});
+        $response = Http::withBasicAuth(
+            env('FACTURAMA_USER'),
+            env('FACTURAMA_PASSWORD')
+        )->get(
+            env('FACTURAMA_URL') . '/api-lite/Catalogs/CfdiTypes'
+        );
+        return [
+            'status' => $response->status(),
+            'headers' => $response->headers(),
+            'body' => $response->body(),
+        ];
+    });
 
-//FACTURA DE PRUEBA
-Route::get('/factura-prueba', function () {
-    $payload = [
-    // "Serie" => "R",
-    "Currency" => "MXN",
-    "ExpeditionPlace" => "91130",
+    //FACTURA DE PRUEBA
+    Route::get('/factura-prueba', function () {
+        $payload = [
+            // "Serie" => "R",
+            "Currency" => "MXN",
+            "ExpeditionPlace" => "91130",
 
-    "CfdiType" => "I",
+            "CfdiType" => "I",
 
-    "PaymentForm" => "03",   // Transferencia
-    "PaymentMethod" => "PUE", // Pago en una sola exhibición
+            "PaymentForm" => "03",   // Transferencia
+            "PaymentMethod" => "PUE", // Pago en una sola exhibición
 
-    "Receiver" => [
-        "Rfc" => "XAXX010101000",
-        "Name" => "PUBLICO EN GENERAL",
-        "CfdiUse" => "S01",
-        "FiscalRegime" => "616",
-        "TaxZipCode" => "91130"
-    ],
-"Items" => [
-    [
-        "ProductCode" => "01010101",
-        "IdentificationNumber" => "1",
-        "Description" => "Producto prueba",
-        "Unit" => "Pieza",
-        "UnitCode" => "H87",
-        "UnitPrice" => 100,
-        "Quantity" => 1,
-        "Subtotal" => 100,
-        "Total" => 100,
-        "TaxObject" => "01"
-    ]
-],
-"GlobalInformation" => [
-    "Periodicity" => "04",
-    "Months" => "06",
-    "Year" => 2026
-]
-];
-//RESPUESTA
-    $response = Http::withBasicAuth(
-        env('FACTURAMA_USER'),
-        env('FACTURAMA_PASSWORD')
-    )->post(
-        env('FACTURAMA_URL').'/3/cfdis',
-        $payload
-    );
+            "Receiver" => [
+                "Rfc" => "XAXX010101000",
+                "Name" => "PUBLICO EN GENERAL",
+                "CfdiUse" => "S01",
+                "FiscalRegime" => "616",
+                "TaxZipCode" => "91130"
+            ],
+            "Items" => [
+                [
+                    "ProductCode" => "01010101",
+                    "IdentificationNumber" => "1",
+                    "Description" => "Producto prueba",
+                    "Unit" => "Pieza",
+                    "UnitCode" => "H87",
+                    "UnitPrice" => 100,
+                    "Quantity" => 1,
+                    "Subtotal" => 100,
+                    "Total" => 100,
+                    "TaxObject" => "01"
+                ]
+            ],
+            "GlobalInformation" => [
+                "Periodicity" => "04",
+                "Months" => "06",
+                "Year" => 2026
+            ]
+        ];
+        //RESPUESTA
+        $response = Http::withBasicAuth(
+            env('FACTURAMA_USER'),
+            env('FACTURAMA_PASSWORD')
+        )->post(
+            env('FACTURAMA_URL') . '/3/cfdis',
+            $payload
+        );
 
-    dd(
-        $response->status(), //201 es que jalo
-        $response['Id'],
-        $response['Complement']['TaxStamp']['Uuid'] ?? null,
-    );
-});
+        dd(
+            $response->status(), //201 es que jalo
+            $response['Id'],
+            $response['Complement']['TaxStamp']['Uuid'] ?? null,
+        );
+    });
 
-// Route::get('/test-xml', function () {
+    // Route::get('/test-xml', function () {
 
-//     $id = 'JKbUkkTmzFjxuZMrSHF4PA2';
+    //     $id = 'JKbUkkTmzFjxuZMrSHF4PA2';
 
-//     $response = Http::withBasicAuth(
-//         env('FACTURAMA_USER'),
-//         env('FACTURAMA_PASSWORD')
-//     )->get(
-//         env('FACTURAMA_URL') . "/cfdi/xml/issued/{$id}"
-//     );
+    //     $response = Http::withBasicAuth(
+    //         env('FACTURAMA_USER'),
+    //         env('FACTURAMA_PASSWORD')
+    //     )->get(
+    //         env('FACTURAMA_URL') . "/cfdi/xml/issued/{$id}"
+    //     );
 
-//     dd(
-//         $response->status(),
-//         $response->body(),
-//         $response->json()
-//     );
-// });
+    //     dd(
+    //         $response->status(),
+    //         $response->body(),
+    //         $response->json()
+    //     );
+    // });
 });

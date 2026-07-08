@@ -136,6 +136,23 @@
                     <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
+            <div class="mb-2 ">
+                <label class="block mb-2 text-md font-medium text-gray-700 ">
+                    Precio predeterminado: <span class="text-red-500">*</span>
+                </label>
+                <select name="precio_predeterminado" id="precio_predeterminado"
+                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    <option value="" disabled selected>Seleccione una opcion</option>
+                        <option  value="1" @selected($sucursal->precio_predeterminado == 1)> 1</option>
+                        <option  value="2" @selected($sucursal->precio_predeterminado == 2)> 2</option>
+                        <option  value="3" @selected($sucursal->precio_predeterminado == 3)> 3</option>
+                        <option  value="4" @selected($sucursal->precio_predeterminado == 4)> 4</option>
+                        <option  value="5" @selected($sucursal->precio_predeterminado == 5)> 5</option>
+                </select>
+                @error('precio_predeterminado')
+                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
             {{-- Botones --}}
             <div class="mb-2 col-span-full flex justify-between gap-3 mt-4">
                 <a href="{{ route('sucursales.index') }}"

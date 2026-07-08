@@ -25,6 +25,9 @@ class Sucursal extends TenantModel
         'folio_factura',
         'folio_devolucion',
 
+        //PRECIO DEFAULT
+        'precio_predeterminado',
+
         // RELACIONES
         'almacen_id',
         'empresa_id',

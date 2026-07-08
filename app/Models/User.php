@@ -84,4 +84,8 @@ class User extends Authenticatable {
 {
     return $this->belongsTo(Empresa::class);
 }
+public function sucursal()
+{
+    return $this->belongsTo(Sucursal::class);
+}
 }

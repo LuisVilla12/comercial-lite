@@ -124,6 +124,7 @@ class SucursalController extends Controller
             'folio_factura' => 'required',
             'folio_devolucion' => 'required',
             'almacen_id' => 'required',
+            'precio_predeterminado' => 'required',
         ]);
         $sucursal = Sucursal::create([
             'almacen_id' => $request->almacen_id,
@@ -138,6 +139,7 @@ class SucursalController extends Controller
             'folio_remision' => $request->folio_remision,
             'folio_factura'      => $request->folio_factura,
             'folio_devolucion'      => $request->folio_devolucion,
+            'precio_predeterminado'      => $request->precio_predeterminado,
         ]);
 
         return redirect()->route('sucursales.index')
@@ -181,6 +183,7 @@ class SucursalController extends Controller
             'folio_remision' => 'required',
             'folio_factura' => 'required',
             'folio_devolucion' => 'required',
+            'precio_predeterminado' => 'required',
         ]);
         $sucursal = Sucursal::findOrFail($sucursal);
         $sucursal->update($request->all());
