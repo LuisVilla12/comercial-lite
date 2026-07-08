@@ -13,7 +13,7 @@
         <p>{{ session('success') }}</p>
     </div>
 @endif
-<form method="POST" action="{{ route('domicilios.store', ['modeloTipo' => $modeloTipo, 'id' => $model->id]) }}"  class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<form method="POST" id="formDomicilio" action="{{ route('domicilios.store', ['modeloTipo' => $modeloTipo, 'id' => $model->id]) }}"  class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @csrf
         <div class="md:col-span-2">
             <label for="cp" class="block text-md font-medium text-gray-700 mb-1">
@@ -123,7 +123,7 @@
                class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
                 <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
             </a>
-            <button type="submit"
+            <button type="submit" id="btnGuardar"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
                 Guardar
             </button>
@@ -134,6 +134,16 @@
 </x-app-layout>
 
 <script>
+                            // VALIDAR GUARDAR UNA VEZ
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formDomicilio');
+    const btn  = document.getElementById('btnGuardar');
+    if (!form || !btn) return;
+    form.addEventListener('submit', function () {
+        btn.disabled = true;
+        btn.innerText = 'Guardando...';
+    });
+});
 document.addEventListener('DOMContentLoaded', function () {
 
     const cpInput = document.getElementById('cp');

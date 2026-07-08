@@ -9,7 +9,7 @@
             </label>
         </div>
     </x-slot>
-    <form method="POST" action="{{ route('traspasos.store') }}" x-data="compraApp()" x-init="init();
+    <form method="POST" action="{{ route('traspasos.store') }}" id="formTraspasos" x-data="compraApp()" x-init="init();
     $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
         @csrf
@@ -236,7 +236,7 @@
                     </div>
 
                     {{-- ================= TOTAL ================= --}}
-                    <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
+                    {{-- <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
                         Subtotal: $<span x-text="total.toFixed(2)"></span>
                     </div>
                     <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
@@ -244,7 +244,7 @@
                     </div>
                     <div class="flex justify-end text-xl font-bold mt-4 dark:text-white">
                         Total: $<span x-text="(total * 1.16).toFixed(2)"></span>
-                    </div>
+                    </div> --}}
 
                     {{-- -ENVIO DE DATOS --}}
                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
@@ -265,7 +265,7 @@
                 </a>
 
                 <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
-                    <button x-ref="btnGuardar" type="submit"
+                    <button x-ref="btnGuardar" type="submit" id="btnSave"
                         class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                         GUARDAR [F10]
                     </button>
@@ -370,6 +370,15 @@
     </div>
     {{-- ================= ALPINE ================= --}}
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formTraspasos');
+    const btn  = document.getElementById('btnSave');
+    if (!form || !btn) return;
+    form.addEventListener('submit', function () {
+        btn.disabled = true;
+        btn.innerText = 'Guardando...';
+    });
+});
         function compraApp() {
             return {
                 almacen_origen_id: '',

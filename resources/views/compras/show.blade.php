@@ -1,4 +1,4 @@
-@section('title', content: 'Ver compra')
+@section('title', content: 'Detalles de una compra')
 
 <x-app-layout>
     @if (session('success'))
@@ -12,7 +12,11 @@
             class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-4 mt-4">{{ session('error') }}
         </p>
     @endif
-
+ <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Detalles Compra
+        </h2>
+    </x-slot>
     <div class="display flex justify-between mb-2 mt-4">
 <h1 class="block text-lg font-medium text-center uppercase dark:text-white ">
             Compra #{{ $compra->id }}

@@ -17,7 +17,7 @@
         </x-slot>
 
 
-        <form method="POST" action="{{ route('ajustes-almacen.store') }}" x-data="compraApp()" x-init="init();
+        <form method="POST" action="{{ route('ajustes-almacen.store') }}" id="formAjuste" x-data="compraApp()" x-init="init();
         $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
             @csrf
@@ -265,7 +265,7 @@
             </a>
                     <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
                         <button
-                         x-ref="btnGuardar"
+                         x-ref="btnGuardar" id="btnSave"
                         type="submit"
                             class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                             GUARDAR [F10]
@@ -354,6 +354,17 @@
         </div>
         {{-- ================= ALPINE ================= --}}
         <script>
+                        // VALIDAR GUARDAR UNA VEZ
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formAjuste');
+    const btn  = document.getElementById('btnSave');
+    if (!form || !btn) return;
+    form.addEventListener('submit', function () {
+        btn.disabled = true;
+        btn.innerText = 'Guardando...';
+    });
+});
+
             const ALMACEN_ID = 1;
 
             function compraApp() {

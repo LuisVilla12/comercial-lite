@@ -8,7 +8,7 @@
     </x-slot>
 
     <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
-        <form method="POST" action="{{ route('sucursales.store') }}" class=" md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-4">
+        <form method="POST" id="formSucursal" action="{{ route('sucursales.store') }}" class=" md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-4">
             @csrf
             <div class="mb-2 ">
                 <label class="block mb-2 text-md font-medium text-gray-700 ">
@@ -144,7 +144,7 @@
 
                 </a>
                 <div  x-data @keydown.window.prevent.f10="$refs.btnRegistrar.click()">
-                    <button type="submit"
+                    <button type="submit" id="btnGuardar"
                         x-ref="btnRegistrar"
                         class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
                         Guardar [F10]
@@ -156,3 +156,14 @@
 
 
 </x-app-layout>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formSucursal');
+    const btn  = document.getElementById('btnGuardar');
+    if (!form || !btn) return;
+    form.addEventListener('submit', function () {
+        btn.disabled = true;
+        btn.innerText = 'Guardando...';
+    });
+});
+</script>

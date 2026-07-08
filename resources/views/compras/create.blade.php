@@ -9,7 +9,7 @@
                 </label>
             </div>
         </x-slot>
-        <form method="POST" action="{{ route('compras.store') }}" x-data="compraApp()"
+        <form method="POST" id="formCompras" action="{{ route('compras.store') }}" x-data="compraApp()"
             x-init="init();
             $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
@@ -313,7 +313,7 @@
                     <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
                         <button
                          x-ref="btnGuardar"
-                        type="submit"
+                        type="submit" id="btnSave"
                             class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                             GUARDAR [F10]
                         </button>
@@ -418,7 +418,16 @@
         </div>
         {{-- ================= ALPINE ================= --}}
         <script>
-
+            // VALIDAR GUARDAR UNA VEZ
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formCompras');
+    const btn  = document.getElementById('btnSave');
+    if (!form || !btn) return;
+    form.addEventListener('submit', function () {
+        btn.disabled = true;
+        btn.innerText = 'Guardando...';
+    });
+});
             function compraApp() {
                 return {
                     proveedor: null,

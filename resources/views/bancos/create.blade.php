@@ -10,7 +10,7 @@
 
 
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
-    <form id="" method="POST" action="{{ route('bancos.store') }}" class="">
+    <form id="formBanco" method="POST" action="{{ route('bancos.store') }}" class="">
         @csrf
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
  <div class="md:col-span-2 lg:col-span-1 mb-2">
@@ -97,3 +97,15 @@
 
 
 </x-app-layout>
+<script>
+                            // VALIDAR GUARDAR UNA VEZ
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formBanco');
+    const btn  = document.getElementById('btnGuardar');
+    if (!form || !btn) return;
+    form.addEventListener('submit', function () {
+        btn.disabled = true;
+        btn.innerText = 'Guardando...';
+    });
+});
+</script>

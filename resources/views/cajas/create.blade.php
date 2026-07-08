@@ -100,6 +100,7 @@
 </x-app-layout>
 
 <script>
+
     function abrirCaja() {
         Swal.fire({
             title: '¿Seguro que deseas abrir una caja?',
