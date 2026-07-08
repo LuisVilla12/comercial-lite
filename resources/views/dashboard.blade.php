@@ -89,7 +89,7 @@
             </x-dashboard-card>
             {{-- ALERTAS STOCK --}}
             <x-dashboard-card href="{{ route('existencias.validacion') }}" bg="bg-blue-50 dark:bg-blue-900/20"
-                title="Stock" desc="Validacion de minimos y maximos" iconBg="bg-blue-500">
+                title="Pedidos" desc="Validacion de minimos y maximos" iconBg="bg-blue-500">
                 <x-slot:icon>
                     <x-heroicon-o-archive-box class="w-6 h-6" />
                 </x-slot:icon>
@@ -155,8 +155,8 @@
                     <x-heroicon-o-chart-bar class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-            <x-dashboard-card href="{{ route('gastos.index') }}" bg="bg-green-50 dark:bg-green-900/20" title="Movimientos Caja"
-                desc="Administrar los movimientos realizados" iconBg="bg-green-500">
+            <x-dashboard-card href="{{ route('gastos.index') }}" bg="bg-green-50 dark:bg-green-900/20" title="Movimientos caja"
+                desc="Administrar los movimientos" iconBg="bg-green-500">
                 <x-slot:icon>
                     <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
                 </x-slot:icon>

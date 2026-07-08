@@ -47,20 +47,14 @@
                     class="w-full p-3 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
             </div>
             {{-- Filtro por estatus --}}
-            <select name="estatus" onchange="this.form.submit()"
+            <select name="tipo" onchange="this.form.submit()"
                 class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">
                 <option value="">Todas</option>
-                <option value="1" {{ request('estatus') === '1' ? 'selected' : '' }}>
-                    Activa
+                <option value="1" {{ request('tipo') == 1 ? 'selected' : '' }}>
+                    Gasto
                 </option>
-                <option value="2" {{ request('estatus') === '2' ? 'selected' : '' }}>
-                    Transformada
-                </option>
-                <option value="3" {{ request('estatus') === '3' ? 'selected' : '' }}>
-                    Cancelada
-                </option>
-                <option value="4" {{ request('estatus') === '4' ? 'selected' : '' }}>
-                    Surtida
+                <option value="2" {{ request('tipo') == 2 ? 'selected' : '' }}>
+                    Retiro
                 </option>
             </select>
 
@@ -83,6 +77,7 @@
                         <tr>
                             <th class="p-2">Folio</th>
                             <th class="p-2">Fecha</th>
+                            <th class="p-2">Hora</th>
                             <th class="p-2">Descripcion</th>
                             <th class="p-2">Caja</th>
                             <th class="p-2">Usuario</th>
@@ -98,7 +93,10 @@
                                     {{ $gasto->folio }}
                                 </td>
                                 <td class="p-2 text-center">
-                                    {{ $gasto->fecha->fo }}
+                                    {{ $gasto->fecha->format('d/m/Y') }}
+                                </td>
+                                 <td class="p-2 text-center">
+                                    {{ $gasto->fecha->format('H:i') }}
                                 </td>
                                 <td class="p-2 text-center">
                                     {{ $gasto->descripcion }}
@@ -114,7 +112,7 @@
                                     @endforeach
                                 </td>
                                 <td class="p-2 flex items-center justify-center">
-                                    @if ($gasto->estatus == 1)
+                                    @if ($gasto->tipo == 1)
                                         <span
                                             class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
                                             Gasto
@@ -163,7 +161,7 @@
                             <div class="">
                                 <p class="mb-2 text-sm">Fecha:
                                     <span class="font-semibold">
-                                        {{ $gasto->fecha }}
+                                        {{ $gasto->fecha->format('d/m/Y') }}
                                     </span>
                                 </p>
                             </div>
@@ -192,22 +190,22 @@
                 <p class="text-sm text-gray-600 ml-6 text-center"> No hay gastos registradas</p>
             </div>
         @endif
-        {{-- @if ($almacenes->count() > 0)
+        @if ($gastos->count() > 0)
             <div class="bg-white py-4 my-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
                 <p class="text-sm text-gray-600 ml-6">
                     Mostrando
-                    <span class="font-medium">{{ $almacenes->firstItem() }}</span>
+                    <span class="font-medium">{{ $gastos->firstItem() }}</span>
                     a
-                    <span class="font-medium">{{ $almacenes->lastItem() }}</span>
+                    <span class="font-medium">{{ $gastos->lastItem() }}</span>
                     de
-                    <span class="font-medium">{{ $almacenes->total() }}</span>
+                    <span class="font-medium">{{ $gastos->total() }}</span>
                     registros
                 </p>
 
-                {{ $almacenes->links() }}
+                {{ $gastos->links() }}
             </div>
-        @endif --}}
+        @endif
 
     </div>
 </x-app-layout>

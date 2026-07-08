@@ -7,18 +7,35 @@ use App\Models\Caja;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 
 class GastoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        $gastos = Gasto::all();
+        $query = Gasto::query();
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+        //FILTRO POR SUCURSAL
+         if ($request->filled('tipo')) {
+            $query->where('tipo', $request->tipo);
+        }
+        // 📅 Filtro por fechas (correcto)
+        if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
+        $query->whereBetween('created_at', [
+            Carbon::parse($request->fecha_inicio)->startOfDay(),
+            Carbon::parse($request->fecha_fin)->endOfDay()
+        ]);
+    }
+
+        $gastos = $query->paginate(10)->withQueryString();
         $users = User::all();
-        return view("gastos.index", ['gastos'=>$gastos,'users'=> $users]);
+        return view("gastos.index", ['gastos' => $gastos, 'users' => $users]);
     }
 
     /**
@@ -67,8 +84,8 @@ class GastoController extends Controller
      */
     public function show($gasto)
     {
-        $gasto=Gasto::findOrFail($gasto);
-        return view("gastos.show", ["gasto"=> $gasto]);
+        $gasto = Gasto::findOrFail($gasto);
+        return view("gastos.show", ["gasto" => $gasto]);
     }
 
     /**

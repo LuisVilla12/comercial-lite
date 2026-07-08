@@ -61,6 +61,7 @@
                     <label class="block text-md font-medium text-gray-700 mb-1">
                         Tipo:<span class="text-red-500">*</span>
                     </label>
+
                     <select name="tipo" id="tipo"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="" disabled selected>Seleccione una opcion</option>

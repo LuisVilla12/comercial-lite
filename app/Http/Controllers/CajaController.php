@@ -26,7 +26,7 @@ class CajaController extends Controller
             $query->where('user_id', $request->user_id);
         }
     //FILTRO POR SUCURSAL
-         if ($request->filled('sucursal_id')) {
+        if ($request->filled('sucursal_id')) {
             $query->where('sucursal_id', $request->sucursal_id);
         }
         // 📅 Filtro por fechas (correcto)

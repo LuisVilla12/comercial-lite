@@ -15,4 +15,19 @@ class Gasto extends TenantModel
         'caja_id',
         'user_id',
     ];
+    protected $casts = [
+    'fecha' => 'datetime'
+    ];
+
+
+    public function caja()
+    {
+        return $this->belongsTo(Caja::class);
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'usuario_id');
+    }
+
 }
