@@ -98,7 +98,7 @@
                                     {{ $gasto->folio }}
                                 </td>
                                 <td class="p-2 text-center">
-                                    {{ $gasto->fecha }}
+                                    {{ $gasto->fecha->fo }}
                                 </td>
                                 <td class="p-2 text-center">
                                     {{ $gasto->descripcion }}
@@ -113,7 +113,7 @@
                                         @endif
                                     @endforeach
                                 </td>
-                                <td class="p-2">
+                                <td class="p-2 flex items-center justify-center">
                                     @if ($gasto->estatus == 1)
                                         <span
                                             class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
