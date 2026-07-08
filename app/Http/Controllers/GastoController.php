@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 
 class GastoController extends Controller
@@ -43,10 +44,13 @@ class GastoController extends Controller
      */
     public function create()
     {
-        //
-        $cajas = Caja::all();
+        //OBTENER LA CAJA DEL USUARIO
+        $caja = Caja::where('user_id', Auth::user()->id)
+        ->where('estado','abierta')
+        ->first();
 
-        return view("gastos.create", ["cajas" => $cajas]);
+        $user=User::find(Auth::user()->id);
+        return view("gastos.create", ["caja" => $caja,'user'=> $user]);
     }
 
     /**

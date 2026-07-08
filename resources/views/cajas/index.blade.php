@@ -7,7 +7,6 @@
     </x-slot>
 
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 my-4">
-
         <form method="GET" action="{{ route('cajas.index') }}" class="flex flex-col md:flex-row gap-4 w-full">
             {{-- Filtro por sucursal --}}
             <div class="w-full md:w-1/4">

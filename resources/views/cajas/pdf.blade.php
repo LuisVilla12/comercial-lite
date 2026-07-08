@@ -100,9 +100,7 @@
 </div>
 
 <table>
-
     @foreach($ventas as $venta)
-
     <tr>
         <td>
             @switch($venta->forma_pago)
@@ -137,9 +135,34 @@
             ${{ number_format($venta->total, 2) }}
         </td>
     </tr>
-
     @endforeach
+</table>
+<div class="separator"></div>
+<div class="center">
+    <strong>MOVIMIENTOS DE CAJA</strong>
+</div>
 
+<table>
+    @foreach($gastos as $gasto)
+    <tr>
+        <td>
+            @switch($gasto->tipo)
+                @case('1')
+                    Gasto
+                    @break
+                @case('2')
+                    Retiro
+                    @break
+                @default
+                    Otro
+            @endswitch
+        </td>
+
+        <td class="right">
+            - ${{ number_format($gasto->total, 2) }}
+        </td>
+    </tr>
+    @endforeach
 </table>
 
 <div class="separator"></div>
@@ -149,6 +172,15 @@
         <td>TOTAL VENDIDO</td>
         <td class="right">
             ${{ number_format($totalVentas, 2) }}
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr class="total">
+        <td>TOTAL EFECTIVO</td>
+        <td class="right">
+            ${{ number_format($totalEfectivo, 2) - number_format($totalGastos, 2)  + number_format($caja->monto_inicial, 2) }}
         </td>
     </tr>
 </table>

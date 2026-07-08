@@ -43,15 +43,11 @@
                 </div>
                 <div class="mb-2">
                     <label class="block text-md font-medium text-gray-700 mb-1">
-                        Caja:<span class="text-red-500">*</span>
+                        Caja de:<span class="text-red-500">*</span>
                     </label>
                     <select name="caja_id" id="caja_id"
                         class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        <option value="" disabled selected>Seleccione una opcion</option>
-                        <option value="1">Ninguna</option>
-                        @foreach ($cajas as $caja)
-                            <option value="{{ $caja->id }}">{{ $caja->user_id }}</option>
-                        @endforeach
+                        <option value="{{ $caja->id }}" selected>{{ $user->name }}</option>
                     </select>
                     @error('caja_id')
                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>

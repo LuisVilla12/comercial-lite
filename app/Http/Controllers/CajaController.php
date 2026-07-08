@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Caja;
 use App\Models\User;
+use App\Models\Gasto;
 use App\Models\Documento;
 use App\Models\Clasificacion;
 use App\Models\Empresa;
@@ -85,14 +86,18 @@ class CajaController extends Controller
         $caja=Caja::findOrFail($caja);
         $ventas = Documento::where('estatus', 4)
         ->where('caja_id', $caja->id)
+        ->where('timbrado_online', 0)
         ->whereIn('documento_modelo_id', [2, 3])
         ->selectRaw('forma_pago,SUM(total) as total')
         ->groupByRaw('forma_pago')
         ->get();
         $totalVentas = $ventas->sum('total');
 
-        // dd($ventas);
-        return view('cajas.show', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas]);
+        //CONSULTA DE GASTOS
+        $gastos=Gasto::where('caja_id', $caja->id)->get();
+        $totalGastos = $gastos->sum('total');
+
+        return view('cajas.show', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas,'gastos'=> $gastos,'totalGastos'=>$totalGastos]);
 
     }
     public function pdf( $caja,$mm = 80)
@@ -108,10 +113,27 @@ class CajaController extends Controller
         ->get();
 
         $totalVentas = $ventas->sum('total');
-        $width = $mm == 58 ? 164 : 227;
-        $customPaper = [0, 0, $width, 350];
 
-        $pdf = Pdf::loadView('cajas.pdf', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas])
+        // TOTAL EFECTIVO
+        $ventasEfectivo = Documento::where('estatus', 4)
+        ->where('caja_id', $caja->id)
+        ->whereIn('documento_modelo_id', [2, 3])
+        ->where('forma_pago', '01')
+        ->get();
+        $totalEfectivo = $ventasEfectivo->sum('total');
+
+
+        //GASTOS DE LA CAJA
+        $gastos=Gasto::where('caja_id', $caja->id)
+        ->selectRaw('tipo,SUM(total) as total')
+        ->groupByRaw('tipo')
+        ->get();
+        $totalGastos = $gastos->sum('total');
+
+        $width = $mm == 58 ? 164 : 227;
+        $customPaper = [0, 0, $width, 450];
+
+        $pdf = Pdf::loadView('cajas.pdf', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas,'gastos'=>$gastos,'totalGastos'=>$totalGastos,'totalEfectivo'=>$totalEfectivo])
             ->setPaper($customPaper);
 
         return $pdf->stream("corte_caja{$caja->id}-{$caja->fecha_cierre}.pdf");
@@ -131,8 +153,13 @@ class CajaController extends Controller
         ->get();
         $totalVentas = $ventas->sum('total');
 
+    //CONSULTAR LOS GASTOS
+        $gastos=Gasto::where('caja_id', $caja->id)->get();
+        $totalGastos = $gastos->sum('total');
+
+        // dd($gastos);
         // dd($ventas);
-        return view('cajas.edit', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas]);
+        return view('cajas.edit', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas,'gastos'=> $gastos,'totalGastos'=>$totalGastos]);
     }
 
     /**

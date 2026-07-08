@@ -6,7 +6,7 @@
         </h2>
     </x-slot>
     <div class="py-8">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-6xl mx-auto">
 
             <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl">
 
@@ -16,7 +16,7 @@
                     </h2>
                 </div>
 
-                <form action="{{ route('cajas.update',$caja) }}" id="formCerrarCaja" method="POST">
+                <form action="{{ route('cajas.update', $caja) }}" id="formCerrarCaja" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 px-6">
@@ -56,88 +56,148 @@
                                 name="monto_inicial" class="w-full rounded-lg" placeholder="0.00" required>
                         </div>
                     </div>
-                    @if($ventas->count()>0)
-<div class="mt-6">
-                        <h3 class="text-lg font-semibold mb-4 dark:text-white ml-4">
-                            Resumen de Ventas por Forma de Pago
-                        </h3>
+                    @if ($ventas->count() > 0)
+                        <div class="mt-6">
+                            <h3 class="text-lg font-semibold mb-4 dark:text-white ml-4">
+                                Resumen de Ventas por Forma de Pago
+                            </h3>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-6 py-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 py-4">
 
-                            @foreach ($ventas as $venta)
-                                <div
-                                    class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 shadow-sm border px-4 border-gray-200 dark:border-gray-600">
-                                    <div class="flex justify-between items-center">
-                                        <div>
-                                            <p class="text-sm text-gray-500 dark:text-gray-300">
-                                                Forma de pago
-                                            </p>
-                                            <h4 class="font-bold text-lg dark:text-white">
-                                                @switch($venta->forma_pago)
-                                                    @case('01')
-                                                        Efectivo
-                                                    @break
+                                @foreach ($ventas as $venta)
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 shadow-sm border px-4 border-gray-200 dark:border-gray-600">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <p class="text-sm text-gray-500 dark:text-gray-300">
+                                                    Forma de pago
+                                                </p>
+                                                <h4 class="font-bold text-lg dark:text-white">
+                                                    @switch($venta->forma_pago)
+                                                        @case('01')
+                                                            Efectivo
+                                                        @break
 
-                                                    @case('02')
-                                                        Cheque
-                                                    @break
+                                                        @case('02')
+                                                            Cheque
+                                                        @break
 
-                                                    @case('03')
-                                                        Transferencia
-                                                    @break
+                                                        @case('03')
+                                                            Transferencia
+                                                        @break
 
-                                                    @case('04')
-                                                        Tarjeta de credito
-                                                    @break
+                                                        @case('04')
+                                                            Tarjeta de credito
+                                                        @break
 
-                                                    @case('28')
-                                                        Tarjeta de debito
-                                                    @break
+                                                        @case('28')
+                                                            Tarjeta de debito
+                                                        @break
 
-                                                    @default
-                                                @endswitch
+                                                        @default
+                                                    @endswitch
 
-                                            </h4>
-                                        </div>
+                                                </h4>
+                                            </div>
 
-                                        <div class="text-right">
-                                            <p class="text-sm text-gray-500 dark:text-gray-300">
-                                                Total
-                                            </p>
+                                            <div class="text-right">
+                                                <p class="text-sm text-gray-500 dark:text-gray-300">
+                                                    Total
+                                                </p>
 
-                                            <h4 class="font-bold text-green-600 text-xl">
-                                                ${{ number_format($venta->total, 2) }}
-                                            </h4>
+                                                <h4 class="font-bold text-green-600 text-xl">
+                                                    ${{ number_format($venta->total, 2) }}
+                                                </h4>
+                                            </div>
+
                                         </div>
 
                                     </div>
+                                @endforeach
 
-                                </div>
-                            @endforeach
+                            </div>
 
                         </div>
+                    @endif
+                    @if ($gastos->count() > 0)
+                        <div class="mt-6">
+                            <h3 class="text-lg font-semibold mb-4 dark:text-white ml-4">
+                                Resumen de movimientos de caja
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 py-4">
 
-                    </div>
+                                @foreach ($gastos as $gasto)
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 shadow-sm border px-4 border-gray-200 dark:border-gray-600">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <p class="text-sm text-gray-500 dark:text-gray-300">
+                                                    {{ $gasto->descripcion }}
+                                                </p>
+                                                <h4 class="font-bold text-lg dark:text-white">
+                                                    @switch($gasto->tipo)
+                                                        @case('1')
+                                                            Gasto
+                                                        @break
+
+                                                        @case('2')
+                                                            Retiro
+                                                        @break
+
+
+                                                        @default
+                                                    @endswitch
+
+                                                </h4>
+                                            </div>
+
+                                            <div class="text-right">
+                                                <p class="text-sm text-gray-500 dark:text-gray-300">
+                                                    Total
+                                                </p>
+
+                                                <h4 class="font-bold text-red-600 text-xl">
+                                                    ${{ number_format($gasto->total, 2) }}
+                                                </h4>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                @endforeach
+
+                            </div>
+                        </div>
                     @endif
                     <div class="flex justify-end px-6 mt-4">
-                            <h3 class="text-lg font-semibold mb-4 dark:text-white ml-4">
-                                TOTAL VENDIDO: <span
-                                    class="font-bold text-green-600 text-xl">${{ number_format($totalVentas, 2) }}</span>
-                            </h3>
-                            <input type="hidden" name="monto_final" value="{{ $totalVentas }}">
-                        </div>
-                </form>
-                                    <div class="flex justify-between gap-3 p-6 ">
-                        <a href="{{ url()->previous() }}"
-                            class="px-4 py-2 rounded-md border-red-100 font-medium flex text-white bg-red-600 hover:bg-red-600">
-                            <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Cancelar
-                        </a>
-
-                        <button onclick="cerrarCaja()" class="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
-                            Cerrar Caja
-                        </button>
-
+                       <div>
+                         <h3 class="text-lg font-semibold mb-4 dark:text-white ml-4">
+                            TOTAL VENDIDO: <span
+                                class="font-bold text-green-600 text-xl">+ ${{ number_format($totalVentas, 2) }}</span>
+                        </h3>
+                        <input type="hidden" name="monto_final" value="{{ $totalVentas }}">
+                       </div>
+                       <div>
+                         <h3 class="text-lg font-semibold mb-4 dark:text-white ml-4">
+                            TOTAL MOVIMIENTO: <span
+                                class="font-bold text-red-600 text-xl">- ${{ number_format($totalGastos, 2) }}</span>
+                        </h3>
+                        <input type="hidden" name="monto_final" value="{{ $totalGastos }}">
+                       </div>
                     </div>
+                </form>
+                <div class="flex justify-between gap-3 p-6 ">
+                    <a href="{{ url()->previous() }}"
+                        class="px-4 py-2 rounded-md border-red-100 font-medium flex text-white bg-red-600 hover:bg-red-600">
+                        <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Cancelar
+                    </a>
+
+                    <button onclick="cerrarCaja()"
+                        class="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
+                        Cerrar Caja
+                    </button>
+
+                </div>
             </div>
         </div>
     </div>
