@@ -123,6 +123,7 @@ class CajaController extends Controller
         $totalEfectivo = $ventasEfectivo->sum('total');
 
 
+
         //GASTOS DE LA CAJA
         $gastos=Gasto::where('caja_id', $caja->id)
         ->selectRaw('tipo,SUM(total) as total')
@@ -130,10 +131,12 @@ class CajaController extends Controller
         ->get();
         $totalGastos = $gastos->sum('total');
 
+        $total=$totalEfectivo-$totalGastos+$caja->monto_inicial;
+
         $width = $mm == 58 ? 164 : 227;
         $customPaper = [0, 0, $width, 450];
 
-        $pdf = Pdf::loadView('cajas.pdf', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas,'gastos'=>$gastos,'totalGastos'=>$totalGastos,'totalEfectivo'=>$totalEfectivo])
+        $pdf = Pdf::loadView('cajas.pdf', ['caja'=>$caja, 'ventas'=>$ventas,'totalVentas'=>$totalVentas,'gastos'=>$gastos,'totalGastos'=>$totalGastos,'totalEfectivo'=>$totalEfectivo,'total'=>$total])
             ->setPaper($customPaper);
 
         return $pdf->stream("corte_caja{$caja->id}-{$caja->fecha_cierre}.pdf");
@@ -168,13 +171,15 @@ class CajaController extends Controller
     public function update(Request $request, $caja)
     {
         $request->validate([
-            'monto_final' => 'required',
+            'total_ventas' => 'required',
+            'total_gastos' => 'required',
         ]);
 
         $caja=Caja::findOrFail($caja);
         $caja->update([
             'fecha_cierre' => now(),
-            'monto_final' => $request->monto_final,
+            'total_ventas' => $request->total_ventas,
+            'total_gastos' => $request->total_gastos,
             'estado'=>'cerrada'
             ]);
 

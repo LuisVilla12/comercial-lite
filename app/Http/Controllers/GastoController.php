@@ -19,9 +19,14 @@ class GastoController extends Controller
     public function index(Request $request)
     {
         $query = Gasto::query();
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
-        }
+        //OBTENER LA CAJA ABIERTA ACUALMENTE
+        $cajaAbierta = Caja::where('user_id', auth()->id())->where('estado', 'abierta')->first();
+
+        $query->where('caja_id',$cajaAbierta->id);
+
+        // if ($request->filled('user_id')) {
+        //     $query->where('user_id', $request->user_id);
+        // }
         //FILTRO POR SUCURSAL
          if ($request->filled('tipo')) {
             $query->where('tipo', $request->tipo);

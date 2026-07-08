@@ -19,11 +19,8 @@ return new class extends Migration
             $table->datetime('fecha_apertura');
             $table->decimal('monto_inicial', 12, 2)->default(0);
             $table->datetime('fecha_cierre')->nullable();
-            $table->decimal('monto_final', 12, 2)->nullable();
             $table->decimal('total_ventas', 12, 2)->default(0);
             $table->decimal('total_gastos', 12, 2)->default(0);
-            $table->integer('total_documentos')->default(0);
-            // $table->decimal('diferencia', 12, 2)->default(0);
              // abierta | cerrada
             $table->enum('estado', ['abierta', 'cerrada'])->default('abierta');
                 $table->text('observaciones')->nullable();

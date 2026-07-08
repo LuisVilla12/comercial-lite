@@ -161,7 +161,7 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
+                                <td class="px-4 py-4 text-sm text-gray-700">
                                     <div class="flex justify-center items-center gap-4">
                                         {{-- Ver --}}
                                         <a href="{{ route('documentos.show', ['sucursal' => $sucursal, 'documento' => $documento]) }}"

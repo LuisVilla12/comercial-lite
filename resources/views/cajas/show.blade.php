@@ -171,14 +171,12 @@
                                 TOTAL VENDIDO: <span class="font-bold text-green-600 text-xl">+
                                     ${{ number_format($totalVentas, 2) }}</span>
                             </h3>
-                            <input type="hidden" name="monto_final" value="{{ $totalVentas }}">
                         </div>
                         <div>
                             <h3 class="text-lg font-semibold mb-4 dark:text-white ml-4">
-                                TOTAL MOVIMIENTO: <span class="font-bold text-red-600 text-xl">-
+                                TOTAL MOVIMIENTOS: <span class="font-bold text-red-600 text-xl">-
                                     ${{ number_format($totalGastos, 2) }}</span>
                             </h3>
-                            <input type="hidden" name="monto_final" value="{{ $totalGastos }}">
                         </div>
                     </div>
                     <div class="flex justify-between gap-3 p-6 ">

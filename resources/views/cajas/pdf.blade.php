@@ -180,7 +180,7 @@
     <tr class="total">
         <td>TOTAL EFECTIVO</td>
         <td class="right">
-            ${{ number_format($totalEfectivo, 2) - number_format($totalGastos, 2)  + number_format($caja->monto_inicial, 2) }}
+            ${{  number_format($total, 2) }}
         </td>
     </tr>
 </table>

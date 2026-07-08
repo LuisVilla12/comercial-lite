@@ -17,7 +17,7 @@ class PagoController extends Controller
     public function index()
     {
         //
-        $documentos = Pago::orderBy("created_at", "desc")->paginate(10);
+        $documentos = Pago::where("created_at", "desc");
         return view('pagos.index', compact('documentos'));
     }
 

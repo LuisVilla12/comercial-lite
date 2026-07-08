@@ -23,7 +23,7 @@
                 </select>
             </div> --}}
             {{-- Filtro por usuario --}}
-            <div class="w-full md:w-1/4">
+            {{-- <div class="w-full md:w-1/4">
                 <select name="user_id" onchange="this.form.submit()"
                     class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Todos los usuarios</option>
@@ -33,19 +33,20 @@
                         </option>
                     @endforeach
                 </select>
-            </div>
+            </div> --}}
+
             {{-- 📅 Fecha inicio --}}
-            <div>
+            {{-- <div>
                 <input type="date" name="fecha_inicio" value="{{ request('fecha_inicio') }}"
                     onchange="this.form.submit()"
                     class="w-full p-3 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
-            </div>
+            </div> --}}
 
             {{-- 📅 Fecha fin --}}
-            <div>
+            {{-- <div>
                 <input type="date" name="fecha_fin" value="{{ request('fecha_fin') }}" onchange="this.form.submit()"
                     class="w-full p-3 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
-            </div>
+            </div> --}}
             {{-- Filtro por estatus --}}
             <select name="tipo" onchange="this.form.submit()"
                 class="p-2 w-full md:w-1/4 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm">

@@ -131,6 +131,12 @@
                     </a>
                 </div>
             </div>
+            <x-dashboard-card href="{{ route('gastos.index') }}" bg="bg-green-50 dark:bg-green-900/20" title="Movimientos caja"
+                desc="Administrar los movimientos" iconBg="bg-green-500">
+                <x-slot:icon>
+                    <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
         @elseif(auth()->user()->isVendedor())
             @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('cajas.create', $sucursal) }}" bg="bg-teal-50 dark:bg-teal-900/20"
@@ -153,12 +159,6 @@
                 desc="Generar reportes" iconBg="bg-orange-500">
                 <x-slot:icon>
                     <x-heroicon-o-chart-bar class="w-6 h-6" />
-                </x-slot:icon>
-            </x-dashboard-card>
-            <x-dashboard-card href="{{ route('gastos.index') }}" bg="bg-green-50 dark:bg-green-900/20" title="Movimientos caja"
-                desc="Administrar los movimientos" iconBg="bg-green-500">
-                <x-slot:icon>
-                    <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
         @endif
