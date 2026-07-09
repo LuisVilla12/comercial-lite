@@ -105,6 +105,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::put('/pagos/{documento}', action: [PagoController::class, 'update'])->name('pagos.update');
     Route::delete('/pagos/{documento}', action: [PagoController::class, 'destroy'])->name('pagos.destroy');
     Route::get('/pagos/{documento}/pdf', action: [PagoController::class, 'pdf'])->name('pagos.pdf');
+    //PAGO QUITAR SALDO PENDIENTE
+    Route::post('/pagos/{documento}/timbrar', [PagoController::class, 'timbrar'])->name(name: 'pagos.timbrar');
+
 
     //GASTOS DE CAJA
     Route::get('/gastos', action: [GastoController::class, 'index'])->name('gastos.index');
@@ -396,6 +399,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
                 'serie',
                 'folio',
                 'saldo_pendiente',
+                'uuid',
                 'total',
             )
             ->orderBy('fecha')

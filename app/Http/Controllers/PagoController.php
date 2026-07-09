@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ConfiguracionEmpresa;
 use App\Models\Pago;
 use App\Models\PagosDetalle;
 use Illuminate\Http\Request;
@@ -17,7 +18,8 @@ class PagoController extends Controller
     public function index()
     {
         //
-        $documentos = Pago::where("created_at", "desc");
+        $documentos = Pago::query();
+        $documentos = $documentos->paginate(10);
         return view('pagos.index', compact('documentos'));
     }
 
@@ -34,7 +36,6 @@ class PagoController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($facturas);
         $request->validate([
             'fecha' => 'required|date',
             'proveedor_id' => 'required|integer',
@@ -47,6 +48,7 @@ class PagoController extends Controller
             'numero_exterior' => 'nullable|string|max:50',
             'codigo_postal' => 'required|string|max:6',
         ]);
+
         try {
             DB::beginTransaction();
             //calcular monto total de pago
@@ -55,11 +57,12 @@ class PagoController extends Controller
             foreach ($facturas as $factura => $value) {
                 $montoTotal += $value['monto'];
             }
-
+            $folio=Pago::max('folio');
             $pago = Pago::create([
                 'cliente_id' => $request->proveedor_id,
                 'user_id' => $request->user_id,
                 'fecha' => $request->fecha,
+                'folio' =>  $folio+1,
                 'forma_pago' => $request->forma_pago,
                 'monto' => $montoTotal,
                 'estatus' => 1,
@@ -207,13 +210,22 @@ class PagoController extends Controller
     }
     public function pdf($documento){
         $documento = Pago::findOrFail($documento);
+        $empresa=ConfiguracionEmpresa::first();
         $documento->load([
             'cliente',
             'detalles.documento'
         ]);
 
-        $pdf = Pdf::loadView('pagos.pdf', compact('documento'))->setPaper('letter');
+        $datosXML = '';
+        $qr = '';
+        $pdf = Pdf::loadView('pagos.pdf', ['documento'=>$documento, 'empresa'=>$empresa,'qr'=>$qr, 'datosXML'=>$datosXML])->setPaper('letter');
 
         return $pdf->stream("REP_{$documento->folio}.pdf");
+    }
+
+    public function timbrar($documento){
+        $documento = Pago::findOrFail($documento);
+        //TIMBRADO
+        dd($documento);
     }
 }
