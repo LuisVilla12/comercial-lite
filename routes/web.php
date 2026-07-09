@@ -68,7 +68,7 @@ Route::middleware('auth')->group(function () {
 
 
 // Solo administrador puede entrar
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'role:Administrador'])->group(function () {
     //Usuarios
     Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
     Route::get('/usuarios/{usuario}', [UserController::class, 'show'])->name('usuarios.show');
@@ -86,82 +86,144 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'tenant'])->group(function () {
-    //CONFIGURACION DE LA EMPRESA
-    Route::get('/configuracion-empresa', action: [ConfiguracionEmpresaController::class, 'show'])->name('configuracion-empresa.show');
-    Route::get('/configuracion-empresa/edit', action: [ConfiguracionEmpresaController::class, 'edit'])->name('configuracion-empresa.edit');
-    Route::put('/configuracion-empresa/{empresa}/edit', [ConfiguracionEmpresaController::class, 'update'])->name('configuracion-empresa.update');
-    Route::get('/empresa/dashboard', action: [ConfiguracionEmpresaController::class, 'dashboard'])->name('configuracion-empresa.dashboard');
 
-    Route::get('/certificados-sat', action: [CertificadoController::class, 'create'])->name('certificados-empresa.create');
-    Route::post('/certificados-sat', action: [CertificadoController::class, 'store'])->name('certificados-empresa.store');
-    Route::get('/certificados', action: [CertificadoController::class, 'show'])->name('certificados-empresa.show');
+    Route::middleware(['role:Administrador'])->group(function () {
+        //CONFIGURACION DE LA EMPRESA
+        Route::get('/configuracion-empresa', action: [ConfiguracionEmpresaController::class, 'show'])->name('configuracion-empresa.show');
+        Route::get('/configuracion-empresa/edit', action: [ConfiguracionEmpresaController::class, 'edit'])->name('configuracion-empresa.edit');
+        Route::put('/configuracion-empresa/{empresa}/edit', [ConfiguracionEmpresaController::class, 'update'])->name('configuracion-empresa.update');
+        Route::get('/empresa/dashboard', action: [ConfiguracionEmpresaController::class, 'dashboard'])->name('configuracion-empresa.dashboard');
 
-    //PAGOS
-    Route::get('/pagos', action: [PagoController::class, 'index'])->name('pagos.index');
-    Route::get('/pagos/create', action: [PagoController::class, 'create'])->name('pagos.create');
-    Route::post('/pagos', action: [PagoController::class, 'store'])->name('pagos.store');
-    Route::get('/pagos/{documento}', action: [PagoController::class, 'show'])->name('pagos.show');
-    Route::get('/pagos/{documento}/edit', action: [PagoController::class, 'edit'])->name('pagos.edit');
-    Route::put('/pagos/{documento}', action: [PagoController::class, 'update'])->name('pagos.update');
-    Route::delete('/pagos/{documento}', action: [PagoController::class, 'destroy'])->name('pagos.destroy');
-    Route::get('/pagos/{documento}/pdf', action: [PagoController::class, 'pdf'])->name('pagos.pdf');
-    //PAGO QUITAR SALDO PENDIENTE
-    Route::post('/pagos/{documento}/timbrar', [PagoController::class, 'timbrar'])->name(name: 'pagos.timbrar');
+        Route::get('/certificados-sat', action: [CertificadoController::class, 'create'])->name('certificados-empresa.create');
+        Route::post('/certificados-sat', action: [CertificadoController::class, 'store'])->name('certificados-empresa.store');
+        Route::get('/certificados', action: [CertificadoController::class, 'show'])->name('certificados-empresa.show');
+
+        //METODO DE PAGO
+        Route::get('/metodos-pago', action: [MedioPagoController::class, 'index'])->name('metodos.index');
+        Route::get('/metodos-pago/create', action: [MedioPagoController::class, 'create'])->name('metodos.create');
+        Route::post('/metodos-pago', [MedioPagoController::class, 'store'])->name('metodos.store');
+        Route::get('/metodos-pago/{medio}', action: [MedioPagoController::class, 'show'])->name('metodos.show');
+        Route::get('/metodos-pago/{medio}/edit', [MedioPagoController::class, 'edit'])->name('metodos.edit');
+        Route::put('/metodos-pago/{medio}', [MedioPagoController::class, 'update'])->name('metodos.update');
+        Route::delete('/metodos-pago/{medio}', action: [MedioPagoController::class, 'destroy'])->name('metodos.destroy');
+
+        //SESIONES
+        Route::get('/sesiones-activas', action: [SesionesController::class, 'index'])->name('sesiones.index');
+        Route::delete('/cerrar-sesion/{session}', action: [SesionesController::class, 'destroy'])->name('sesiones.destroy');
+        Route::delete('/cerrar-sesion/todas', action: [SesionesController::class, 'destroyAll'])->name('sesiones.destroyAll');
+
+        //Auditorias
+        Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
+        Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');
+            // DATOS BANCARIOS
+    Route::get('/bancos', [DatosBancarioController::class, 'index'])->name('bancos.index');
+    Route::get('/bancos/create', [DatosBancarioController::class, 'create'])->name('bancos.create');
+    Route::post('/bancos', [DatosBancarioController::class, 'store'])->name('bancos.store');
+    Route::get('/bancos/{banco}', [DatosBancarioController::class, 'show'])->name('bancos.show');
+    Route::get('/bancos/{banco}/edit', [DatosBancarioController::class, 'edit'])->name('bancos.edit');
+    Route::put('/bancos/{banco}', [DatosBancarioController::class, 'update'])->name('bancos.update');
+    Route::delete('/bancos/{banco}', [DatosBancarioController::class, 'destroy'])->name('bancos.destroy');
+    Route::put('/bancos/{banco}/predeterminado', [DatosBancarioController::class, 'predeterminado'])->name('bancos.predeterminado');
+
+            //AGENTES
+        Route::get('/agentes', [AgenteController::class, 'index'])->name('agentes.index');
+        Route::get('/agentes/create', [AgenteController::class, 'create'])->name('agentes.create');
+        Route::post('/agentes', [AgenteController::class, 'store'])->name('agentes.store');
+        Route::get('/agentes/{agente}', [AgenteController::class, 'show'])->name('agentes.show');
+        Route::get('/agentes/{agente}/edit', [AgenteController::class, 'edit'])->name('agentes.edit');
+        Route::put('/agentes/{agente}', [AgenteController::class, 'update'])->name('agentes.update');
+        Route::delete('/agentes/{agente}', [AgenteController::class, 'destroy'])->name('agentes.destroy');
+    });
+
+    Route::middleware(['role:Administrador|Vendedor'])->group(function () {
+        Route::get('/pagos', action: [PagoController::class, 'index'])->name('pagos.index');
+        Route::get('/pagos/create', action: [PagoController::class, 'create'])->name('pagos.create');
+        Route::post('/pagos', action: [PagoController::class, 'store'])->name('pagos.store');
+        Route::get('/pagos/{documento}', action: [PagoController::class, 'show'])->name('pagos.show');
+        Route::get('/pagos/{documento}/edit', action: [PagoController::class, 'edit'])->name('pagos.edit');
+        Route::put('/pagos/{documento}', action: [PagoController::class, 'update'])->name('pagos.update');
+        Route::delete('/pagos/{documento}', action: [PagoController::class, 'destroy'])->name('pagos.destroy');
+        Route::get('/pagos/{documento}/pdf', action: [PagoController::class, 'pdf'])->name('pagos.pdf');
+        //PAGO QUITAR SALDO PENDIENTE
+        Route::post('/pagos/{documento}/timbrar', [PagoController::class, 'timbrar'])->name(name: 'pagos.timbrar');
+
+        //GASTOS DE CAJA
+        Route::get('/gastos', action: [GastoController::class, 'index'])->name('gastos.index');
+        Route::get('/gastos/create', action: [GastoController::class, 'create'])->name('gastos.create');
+        Route::post('/gastos/create', action: [GastoController::class, 'store'])->name('gastos.store');
+        Route::get('/gastos/{gasto}', action: [GastoController::class, 'show'])->name('gastos.show');
+
+        //Sucursales
+        Route::get('/sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
+        Route::get('/sucursales/create', [SucursalController::class, 'create'])->name('sucursales.create');
+        Route::post('/sucursales', [SucursalController::class, 'store'])->name('sucursales.store');
+        Route::get('/sucursales/{sucursal}/edit', [SucursalController::class, 'edit'])->name('sucursales.edit');
+        Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
+        Route::get('/sucursales/{sucursal}', action: [SucursalController::class, 'show'])->name('sucursales.show');
+        Route::get('/sucursales/{sucursal}/conceptos', action: [SucursalController::class, 'conceptos'])->name('sucursales.conceptos');
+
+            Route::get('/cajas/{caja}/cerrar', [CajaController::class, 'edit'])->name(name: 'cajas.edit');
+    Route::put('/cajas/{caja}', action: [CajaController::class, 'update'])->name('cajas.update');
+    Route::get('/cajas/{caja}/show', [CajaController::class, 'show'])->name('cajas.show');
+    Route::get('/cajas/{caja}/pdf', [CajaController::class, 'pdf'])->name('cajas.pdf');
+    Route::get('/cajas', action: [CajaController::class, 'index'])->name('cajas.index');
+
+    });
 
 
-    //GASTOS DE CAJA
-    Route::get('/gastos', action: [GastoController::class, 'index'])->name('gastos.index');
-    Route::get('/gastos/create', action: [GastoController::class, 'create'])->name('gastos.create');
-    Route::post('/gastos/create', action: [GastoController::class, 'store'])->name('gastos.store');
-    Route::get('/gastos/{gasto}', action: [GastoController::class, 'show'])->name('gastos.show');
-    // Route::delete('/gastos/{gasto}', action: [GastoController::class, 'destroy'])->name('gastos.show');
+    Route::middleware(['role:Administrador|Inventarios'])->group(function () {
+        // KARDEX MENU
+        Route::get('/kardex', action: [KardexController::class, 'index'])->name('kardex.index');
+        Route::get('/kardex/global', action: [KardexController::class, 'indexGlobal'])->name('kardexGlobal.index');
+        Route::get('/kardex/sucursal', action: [KardexController::class, 'indexSucursal'])->name('kardexSucursal.index');
+        //OBTENCION DE KARDEX
+        Route::post('/kardex/global', action: [KardexController::class, 'global'])->name('kardex.global');
+        Route::post('/kardex/sucursal', action: [KardexController::class, 'sucursal'])->name('kardex.sucursal');
+        Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
 
-    // KARDEX MENU
-    Route::get('/kardex', action: [KardexController::class, 'index'])->name('kardex.index');
-    Route::get('/kardex/global', action: [KardexController::class, 'indexGlobal'])->name('kardexGlobal.index');
-    Route::get('/kardex/sucursal', action: [KardexController::class, 'indexSucursal'])->name('kardexSucursal.index');
-    //OBTENCION DE KARDEX
-    Route::post('/kardex/global', action: [KardexController::class, 'global'])->name('kardex.global');
-    Route::post('/kardex/sucursal', action: [KardexController::class, 'sucursal'])->name('kardex.sucursal');
-    Route::get('/kardex/pdf', [KardexController::class, 'pdf'])->name('kardex.pdf');
+        //Almacenes
+    Route::get('/almacenes', [AlmacenController::class, 'index'])->name('almacenes.index');
+    Route::get('/almacenes/create', [AlmacenController::class, 'create'])->name('almacenes.create');
+    Route::post('/almacenes', [AlmacenController::class, 'store'])->name('almacenes.store');
+    Route::get('/almacenes/{almacen}', [AlmacenController::class, 'show'])->name('almacenes.show');
+    Route::get('/almacenes/{almacen}/edit', [AlmacenController::class, 'edit'])->name('almacenes.edit');
+    Route::put('/almacenes/{almacen}', [AlmacenController::class, 'update'])->name('almacenes.update');
+    Route::delete('/almacenes/{almacen}', [AlmacenController::class, 'destroy'])->name('almacenes.destroy');
 
-    //METODO DE PAGO
-    Route::get('/metodos-pago', action: [MedioPagoController::class, 'index'])->name('metodos.index');
-    Route::get('/metodos-pago/create', action: [MedioPagoController::class, 'create'])->name('metodos.create');
-    Route::post('/metodos-pago', [MedioPagoController::class, 'store'])->name('metodos.store');
-    Route::get('/metodos-pago/{medio}', action: [MedioPagoController::class, 'show'])->name('metodos.show');
-    Route::get('/metodos-pago/{medio}/edit', [MedioPagoController::class, 'edit'])->name('metodos.edit');
-    Route::put('/metodos-pago/{medio}', [MedioPagoController::class, 'update'])->name('metodos.update');
-    Route::delete('/metodos-pago/{medio}', action: [MedioPagoController::class, 'destroy'])->name('metodos.destroy');
+    //Compras
+    Route::get('/compras', action: [CompraController::class, 'index'])->name('compras.index');
+    Route::get('/compras/create', [CompraController::class, 'create'])->name('compras.create');
+    Route::post('/compras', [CompraController::class, 'store'])->name('compras.store');
+    Route::get('/compras/{compra}', [CompraController::class, 'show'])->name('compras.show');
+    Route::get('/compras/{compra}/edit', [CompraController::class, 'edit'])->name('compras.edit');
+    Route::put('/compras/{compra}', [CompraController::class, 'update'])->name('compras.update');
+    Route::delete('/compras/{compra}', action: [CompraController::class, 'destroy'])->name('compras.destroy');
+    Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('compras.surtir');
+
+        //AJUSTES DE ALMACEN
+    Route::get('/ajustes-almacen/{tipo}', action: [AjustesAlmacenController::class, 'index'])->name('ajustes-almacen.index');
+    Route::get('/ajustes-almacen/{tipo}/create', action: [AjustesAlmacenController::class, 'create'])->name('ajustes-almacen.create');
+    Route::post('/ajustes-almacen', action: [AjustesAlmacenController::class, 'store'])->name('ajustes-almacen.store');
+    Route::get('/ajustes-almacen/detalles/{ajuste}', action: [AjustesAlmacenController::class, 'show'])->name('ajustes-almacen.show');
+    Route::post('/ajustes-almacen/detalles/{ajuste}', action: [AjustesAlmacenController::class, 'surtir'])->name('ajustes-almacen.surtir');
+    Route::delete('/ajustes-almacen/{ajuste}', action: [AjustesAlmacenController::class, 'destroy'])->name('ajustes-almacen.destroy');
+    Route::get('/ajustes-almacen/{ajuste}/pdf', action: [AjustesAlmacenController::class, 'pdf'])->name('ajustes-almacen.pdf');
+
+    //Traspasos
+    Route::get('/traspasos', action: [TraspasoController::class, 'index'])->name('traspasos.index');
+    Route::get('/traspasos/create', action: [TraspasoController::class, 'create'])->name('traspasos.create');
+    Route::post('/traspasos', action: [TraspasoController::class, 'store'])->name('traspasos.store');
+    Route::get('/traspasos/{traspaso}', [TraspasoController::class, 'show'])->name('traspasos.show');
+    Route::get('/traspasos/{traspaso}/edit', [TraspasoController::class, 'edit'])->name('traspasos.edit');
+    Route::put('/traspasos/{traspaso}', action: [TraspasoController::class, 'update'])->name('traspasos.update');
+    Route::post('/traspasos/{traspaso}/surtir', [TraspasoController::class, 'surtir'])->name('traspasos.surtir');
+    Route::delete('/traspasos/{traspaso}', action: [TraspasoController::class, 'destroy'])->name('traspasos.destroy');
+    Route::get('/traspasos/{traspaso}/pdf', [TraspasoController::class, 'pdf'])->name('traspasos.pdf');
 
 
+    });
 
-    //SESIONES
-    Route::get('/sesiones-activas', action: [SesionesController::class, 'index'])->name('sesiones.index');
-    Route::delete('/cerrar-sesion/{session}', action: [SesionesController::class, 'destroy'])->name('sesiones.destroy');
-    Route::delete('/cerrar-sesion/todas', action: [SesionesController::class, 'destroyAll'])->name('sesiones.destroyAll');
-    //Sucursales
-    Route::get('/sucursales', [SucursalController::class, 'index'])->name('sucursales.index');
-    Route::get('/sucursales/create', [SucursalController::class, 'create'])->name('sucursales.create');
-    Route::post('/sucursales', [SucursalController::class, 'store'])->name('sucursales.store');
-    Route::get('/sucursales/{sucursal}/edit', [SucursalController::class, 'edit'])->name('sucursales.edit');
-    Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
-    Route::get('/sucursales/{sucursal}', action: [SucursalController::class, 'show'])->name('sucursales.show');
 
-    Route::get('/sucursales/{sucursal}/conceptos', action: [SucursalController::class, 'conceptos'])->name('sucursales.conceptos');
-
-    //Auditorias
-    Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
-    Route::get('/auditoria/{id}', [AuditoriaController::class, 'show'])->name('auditoria.show');
-
-    //AGENTES
-    Route::get('/agentes', [AgenteController::class, 'index'])->name('agentes.index');
-    Route::get('/agentes/create', [AgenteController::class, 'create'])->name('agentes.create');
-    Route::post('/agentes', [AgenteController::class, 'store'])->name('agentes.store');
-    Route::get('/agentes/{agente}', [AgenteController::class, 'show'])->name('agentes.show');
-    Route::get('/agentes/{agente}/edit', [AgenteController::class, 'edit'])->name('agentes.edit');
-    Route::put('/agentes/{agente}', [AgenteController::class, 'update'])->name('agentes.update');
-    Route::delete('/agentes/{agente}', [AgenteController::class, 'destroy'])->name('agentes.destroy');
 
     // RUTAS DE CLIENTES
     Route::get('/clientes', [ClienteController::class, 'indexClientes'])->name('clientes.index');
@@ -213,35 +275,6 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::put('/clasificaciones/{clasificacion}', [ClasificacionController::class, 'update'])->name('clasificaciones.update');
     Route::delete('/clasificaciones/{clasificacion}', [ClasificacionController::class, 'destroy'])->name('clasificaciones.destroy');
 
-    //Almacenes
-    Route::get('/almacenes', [AlmacenController::class, 'index'])->name('almacenes.index');
-    Route::get('/almacenes/create', [AlmacenController::class, 'create'])->name('almacenes.create');
-    Route::post('/almacenes', [AlmacenController::class, 'store'])->name('almacenes.store');
-    Route::get('/almacenes/{almacen}', [AlmacenController::class, 'show'])->name('almacenes.show');
-    Route::get('/almacenes/{almacen}/edit', [AlmacenController::class, 'edit'])->name('almacenes.edit');
-    Route::put('/almacenes/{almacen}', [AlmacenController::class, 'update'])->name('almacenes.update');
-    Route::delete('/almacenes/{almacen}', [AlmacenController::class, 'destroy'])->name('almacenes.destroy');
-
-    // DATOS BANCARIOS
-    Route::get('/bancos', [DatosBancarioController::class, 'index'])->name('bancos.index');
-    Route::get('/bancos/create', [DatosBancarioController::class, 'create'])->name('bancos.create');
-    Route::post('/bancos', [DatosBancarioController::class, 'store'])->name('bancos.store');
-    Route::get('/bancos/{banco}', [DatosBancarioController::class, 'show'])->name('bancos.show');
-    Route::get('/bancos/{banco}/edit', [DatosBancarioController::class, 'edit'])->name('bancos.edit');
-    Route::put('/bancos/{banco}', [DatosBancarioController::class, 'update'])->name('bancos.update');
-    Route::delete('/bancos/{banco}', [DatosBancarioController::class, 'destroy'])->name('bancos.destroy');
-    Route::put('/bancos/{banco}/predeterminado', [DatosBancarioController::class, 'predeterminado'])->name('bancos.predeterminado');
-
-    //Compras
-    Route::get('/compras', action: [CompraController::class, 'index'])->name('compras.index');
-    Route::get('/compras/create', [CompraController::class, 'create'])->name('compras.create');
-    Route::post('/compras', [CompraController::class, 'store'])->name('compras.store');
-    Route::get('/compras/{compra}', [CompraController::class, 'show'])->name('compras.show');
-    Route::get('/compras/{compra}/edit', [CompraController::class, 'edit'])->name('compras.edit');
-    Route::put('/compras/{compra}', [CompraController::class, 'update'])->name('compras.update');
-    Route::delete('/compras/{compra}', action: [CompraController::class, 'destroy'])->name('compras.destroy');
-    Route::post('/compras/{compra}', [CompraController::class, 'surtir'])->name('compras.surtir');
-
     //Existencias
     Route::get('/inventario', [ExistenciaProductoController::class, 'index'])->name('existencias.index');
     Route::get('/inventario/pdf', [ExistenciaProductoController::class, 'pdf'])->name('existencias.pdf');
@@ -252,11 +285,6 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // TODO:AGREGAR VALIDACION SE SUCURSAL
     // Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
 
-    Route::get('/cajas/{caja}/cerrar', [CajaController::class, 'edit'])->name(name: 'cajas.edit');
-    Route::put('/cajas/{caja}', action: [CajaController::class, 'update'])->name('cajas.update');
-    Route::get('/cajas/{caja}/show', [CajaController::class, 'show'])->name('cajas.show');
-    Route::get('/cajas/{caja}/pdf', [CajaController::class, 'pdf'])->name('cajas.pdf');
-    Route::get('/cajas', action: [CajaController::class, 'index'])->name('cajas.index');
 
     Route::prefix('sucursales/{sucursal}')->group(function () {
         Route::get('/cajas/crear', action: [CajaController::class, 'create'])->name('cajas.create');
@@ -299,27 +327,6 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::post('/devoluciones/{documento}', [DevolucionController::class, 'store'])->name('devoluciones.store');
 
 
-    //AJUSTES DE ALMACEN
-    Route::get('/ajustes-almacen/{tipo}', action: [AjustesAlmacenController::class, 'index'])->name('ajustes-almacen.index');
-    Route::get('/ajustes-almacen/{tipo}/create', action: [AjustesAlmacenController::class, 'create'])->name('ajustes-almacen.create');
-    Route::post('/ajustes-almacen', action: [AjustesAlmacenController::class, 'store'])->name('ajustes-almacen.store');
-    Route::get('/ajustes-almacen/detalles/{ajuste}', action: [AjustesAlmacenController::class, 'show'])->name('ajustes-almacen.show');
-    Route::post('/ajustes-almacen/detalles/{ajuste}', action: [AjustesAlmacenController::class, 'surtir'])->name('ajustes-almacen.surtir');
-    Route::delete('/ajustes-almacen/{ajuste}', action: [AjustesAlmacenController::class, 'destroy'])->name('ajustes-almacen.destroy');
-    Route::get('/ajustes-almacen/{ajuste}/pdf', action: [AjustesAlmacenController::class, 'pdf'])->name('ajustes-almacen.pdf');
-
-
-
-    //Traspasos
-    Route::get('/traspasos', action: [TraspasoController::class, 'index'])->name('traspasos.index');
-    Route::get('/traspasos/create', action: [TraspasoController::class, 'create'])->name('traspasos.create');
-    Route::post('/traspasos', action: [TraspasoController::class, 'store'])->name('traspasos.store');
-    Route::get('/traspasos/{traspaso}', [TraspasoController::class, 'show'])->name('traspasos.show');
-    Route::get('/traspasos/{traspaso}/edit', [TraspasoController::class, 'edit'])->name('traspasos.edit');
-    Route::put('/traspasos/{traspaso}', action: [TraspasoController::class, 'update'])->name('traspasos.update');
-    Route::post('/traspasos/{traspaso}/surtir', [TraspasoController::class, 'surtir'])->name('traspasos.surtir');
-    Route::delete('/traspasos/{traspaso}', action: [TraspasoController::class, 'destroy'])->name('traspasos.destroy');
-    Route::get('/traspasos/{traspaso}/pdf', [TraspasoController::class, 'pdf'])->name('traspasos.pdf');
 
 
     //Reportes

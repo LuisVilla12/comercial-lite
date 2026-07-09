@@ -16,7 +16,7 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         //1 MASTER y 5 SUPERVISOR
-        if (auth()->user()->tipo === 1 or auth()->user()->tipo === 5 ) {
+        if (auth()->user()->tipo === 1 ) {
             return $next($request);
         }
 

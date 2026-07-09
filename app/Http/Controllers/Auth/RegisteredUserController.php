@@ -53,11 +53,13 @@ class RegisteredUserController extends Controller
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request){
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'tipo' => ['required', 'integer', 'in:1,2,3,4,5'],
+            // 'tipo' => ['required', 'integer', 'in:1,2,3,4,5'],
+            'rol' => ['required'],
             'empresa_id' => ['required', 'integer'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -66,11 +68,14 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'tipo' => $request->tipo,
+            'tipo' => 1,
             'empresa_id' => $request->empresa_id,
             'sucursal_id' => $request->sucursal_id,
             'password' => Hash::make($request->password),
         ]);
+        //ASIGNAR ROL
+        $user->assignRole($request->rol);
+
         return redirect()->route('usuarios.index')->with('success', 'Registro exitoso');
     }
 }
