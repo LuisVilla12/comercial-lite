@@ -8,7 +8,9 @@ use  App\Models\Producto;
 class Promocion extends TenantModel
 {
     //
+    protected $table = "promociones";
     protected $fillable = [
+        'codigo',
         'nombre',
         'tipo',
         'valor',
@@ -18,16 +20,14 @@ class Promocion extends TenantModel
     ];
 
     protected $casts = [
-        'activo' => 'boolean',
-        'fecha_inicio' => 'date',
-        'fecha_fin' => 'date',
+        'estatus' => 'boolean',
+        // 'fecha_inicio' => 'date',
+        // 'fecha_fin' => 'date',
     ];
 
-     public function productos()
-    {
-        return $this->belongsToMany(Producto::class, 'promocion_productos');
+    public function detalles() {
+        return $this->hasMany(PromocionDetalles::class);
     }
-
     public function estaActiva(): bool
     {
         return $this->activo &&

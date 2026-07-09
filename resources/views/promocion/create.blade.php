@@ -1,0 +1,117 @@
+@section('title', content: 'Registar Promoción')
+
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Registrar Promoción
+        </h2>
+    </x-slot>
+
+
+    <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+        <form id="formAlmacen" method="POST" action="{{ route('promociones.store') }}" class="">
+            @csrf
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+                 <div class="md:col-span-2 lg:col-span-1 mb-2">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Código de la promoción: <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="codigo" placeholder="Codigo" value="{{ old('codigo') }}"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    @error('codigo')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="md:col-span-2 lg:col-span-1 mb-2">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Nombre de la promoción: <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="name" placeholder="Nombre" value="{{ old('name') }}"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    @error('name')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                {{-- TIPO DE PROMOCION --}}
+                <div class="mb-2">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Tipo:<span class="text-red-500">*</span>
+                    </label>
+                    <select name="tipo" id="tipo"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <option value="" disabled selected>Seleccione una opcion</option>
+                        <option value="PORCENTAJE">PORCENTAJE</option>
+                        <option value="PRECIO">PRECIO</option>
+                    </select>
+                    @error('tipo')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                  {{-- Valor de la promocion --}}
+                <div class="mb-2">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Valor de la promoción: <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="valor" placeholder="Valor de la promocion:" value="{{ old('valor') }}"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    @error('valor')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- FECHA DE INICIO --}}
+                <div class="mb-2">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Fecha de inicio de la promoción: <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" name="fecha_inicio" placeholder="Valor de la promocion:" value="{{ old('fecha_inicio') }}"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    @error('fecha_inicio')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                {{-- FECHA DE FIN --}}
+                <div class="mb-2">
+                    <label class="block text-md font-medium text-gray-700 mb-1">
+                        Fecha de inicio de la promoción: <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" name="fecha_fin" placeholder="Valor de la promocion:" value="{{ old('fecha_fin') }}"
+                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    @error('fecha_fin')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+
+
+
+            {{-- Botones --}}
+            <div class="flex justify-between items-center gap-4 mt-3">
+                <a href="{{ route('promociones.index') }}"
+                    class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
+                    <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar
+                </a>
+                <div x-data @keydown.window.prevent.f9="$refs.btnRegistrar.click()">
+                    <button x-ref="btnRegistrar" type="submit" id="btnGuardar"
+                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium">
+                        Guardar [F9]
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+</x-app-layout>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('formAlmacen');
+        const btn = document.getElementById('btnGuardar');
+        if (!form || !btn) return;
+        form.addEventListener('submit', function() {
+            btn.disabled = true;
+            btn.innerText = 'Guardando...';
+        });
+    });
+</script>

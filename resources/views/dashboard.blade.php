@@ -40,11 +40,11 @@
         </x-dashboard-card>
 
         @hasanyrole('Administrador|Vendedor')
-        <div class="col-span-full mt-6">
-            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
-                🔄 Operaciones
-            </h2>
-        </div>
+            <div class="col-span-full mt-6">
+                <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                    🔄 Operaciones
+                </h2>
+            </div>
         @endhasanyrole
 
 
@@ -88,8 +88,16 @@
                 </x-dashboard-card>
             @endforeach
         @endif
+        @role('Administrador')
+            <x-dashboard-card href="{{ route('promociones.index') }}" bg="bg-purple-50 dark:bg-purple-900/20" title="Promociones"
+                desc="Administra las promociones" iconBg="bg-purple-500">
+                <x-slot:icon>
+                    <x-heroicon-o-archive-box-arrow-down class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+        @endrole
         @hasanyrole('Administrador|Vendedor')
-            <x-dashboard-card href="{{ route('puntos.index') }}" bg="bg-yellow-50 dark:bg-yellow-900/20" title="Monedero"
+            <x-dashboard-card href="{{ route('puntos.index') }}" bg="bg-purple-50 dark:bg-yellow-900/20" title="Monedero"
                 desc="Monedero digital" iconBg="bg-yellow-500">
                 <x-slot:icon>
                     <x-heroicon-o-gift class="w-6 h-6" />
@@ -106,12 +114,12 @@
 
 
         @hasanyrole('Administrador|Inventarios')
-               {{-- ================= INVENTARIOS ================= --}}
-        <div class="col-span-full mt-6">
-            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
-                🔄 Inventarios
-            </h2>
-        </div>
+            {{-- ================= INVENTARIOS ================= --}}
+            <div class="col-span-full mt-6">
+                <h2 class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
+                    🔄 Inventarios
+                </h2>
+            </div>
 
             <x-dashboard-card href="{{ route('almacenes.index') }}" bg="bg-emerald-50 dark:bg-emerald-900/20"
                 title="Almacenes" desc="Control de almacenes" iconBg="bg-emerald-500">
@@ -192,8 +200,8 @@
         @role('Vendedor')
             @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('cotizaciones.index', $sucursal) }}"
-                    title="Cotizaciones {{ $sucursal->nombre }}" desc="Genera cotizaciones" bg="bg-orange-50 dark:bg-orange-900/20"
-                    iconBg="bg-orange-500">
+                    title="Cotizaciones {{ $sucursal->nombre }}" desc="Genera cotizaciones"
+                    bg="bg-orange-50 dark:bg-orange-900/20" iconBg="bg-orange-500">
                     <x-slot:icon>
                         <x-heroicon-o-document-currency-dollar class="w-6 h-6" />
                     </x-slot:icon>
@@ -226,18 +234,18 @@
             @endforeach
         @endrole
         @hasanyrole('Administrador|Vendedor')
-        <x-dashboard-card href="{{ route('pagos.index') }}" bg="bg-red-50 dark:bg-red-900/20"
-            title="Recibo electronico de pagos" desc="" iconBg="bg-red-500">
-            <x-slot:icon>
-                <x-heroicon-o-banknotes class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
-        <x-dashboard-card href="{{ route('facturas.online') }}" bg="bg-green-50 dark:bg-green-900/20"
-            title="Factura en linea" desc="" iconBg="bg-green-500">
-            <x-slot:icon>
-                <x-heroicon-o-globe-alt class="w-6 h-6" />
-            </x-slot:icon>
-        </x-dashboard-card>
+            <x-dashboard-card href="{{ route('pagos.index') }}" bg="bg-red-50 dark:bg-red-900/20"
+                title="Recibo electronico de pagos" desc="" iconBg="bg-red-500">
+                <x-slot:icon>
+                    <x-heroicon-o-banknotes class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+            <x-dashboard-card href="{{ route('facturas.online') }}" bg="bg-green-50 dark:bg-green-900/20"
+                title="Factura en linea" desc="" iconBg="bg-green-500">
+                <x-slot:icon>
+                    <x-heroicon-o-globe-alt class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
         @endhasanyrole
         @role('Administrador')
             {{-- ================= Administracion ================= --}}

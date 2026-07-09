@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('promociones', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('codigo');
             $table->string('nombre');
-            $table->enum('tipo', ['porcentaje', 'dos_por_uno']);
+            $table->enum('tipo', ['PORCENTAJE', 'PRECIO']);
             $table->decimal('valor', 5, 2)->nullable(); // solo porcentaje
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
-            $table->boolean('activo')->default(true);
+            $table->integer('estatus')->default(1);
         });
     }
 
