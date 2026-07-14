@@ -89,7 +89,9 @@ public function indexProveedores(Request $request)
             'email2' => $request->email2,
             'whatsapp' => $request->whatsapp,
             'telefono' => $request->telefono,
-            'regimen_fiscal' => $request->regimen_fiscal
+            'regimen_fiscal' => $request->regimen_fiscal,
+            'credito' => $request->credito,
+            'diasCredito' => $request->diasCredito,
         ]);
         return redirect()
             ->route('clientes.show', [$cliente->id, $cliente->tipo])

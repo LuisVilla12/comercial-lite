@@ -202,7 +202,11 @@ class DocumentoController extends Controller
         DB::beginTransaction();
         // REALIZAR EL DOCUMENTO
         try {
+            //BUSCAR SUCURSAL
             $sucursal = Sucursal::lockForUpdate()->findOrFail($request->sucursal_id);
+            //BUSCAR CLIENTE
+            $cliente=Cliente::findOrFail($request->proveedor_id);
+
             switch ($request->tipo) {
                 case 1:
                     $serie = $sucursal->serie_cotizacion;
@@ -237,7 +241,7 @@ class DocumentoController extends Controller
                 'serie' => $serie,
                 'folio' => $folioAsignado,
                 'fecha' => $request->fecha,
-                'cliente_id' => $request->proveedor_id,
+                'cliente_id' => $cliente->id,
                 'almacen_id' => $request->almacen_id,
                 'user_id' => $request->user_id,
                 'subtotal' => $request->subtotal,
@@ -274,6 +278,8 @@ class DocumentoController extends Controller
                 $documento->update(['saldo_pendiente' => 0]);
             } else {
                 $documento->update(['saldo_pendiente' => $request->total]);
+                //AUMENTAR EN EL SALDO DEL CLIENTE PENDIENTE
+                $cliente->update(['saldo'=>$cliente->saldo + $request->total]);
             }
             //ASIGNAR UN CODIGO UNICO PARA LAS REMISIONES
             if ($documento->documento_modelo_id == 3) {

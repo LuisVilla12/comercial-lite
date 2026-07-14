@@ -21,7 +21,9 @@ class Cliente extends TenantModel implements Auditable{
         'telefono',
         'regimen_fiscal',
         'activo',
-        'saldo'
+        'saldo',
+        'credito',
+        'diasCredito'
     ];
     public function domicilios()
 {

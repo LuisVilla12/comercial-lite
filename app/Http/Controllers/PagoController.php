@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ConfiguracionEmpresa;
 use App\Models\Pago;
+use App\Models\Cliente;
+use App\Models\Documento;
 use App\Models\PagosDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,7 @@ class PagoController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         //
@@ -224,8 +227,50 @@ class PagoController extends Controller
     }
 
     public function timbrar($documento){
-        $documento = Pago::findOrFail($documento);
+        //REP
+        $pago = Pago::findOrFail($documento);
+        $pago->load([
+            'cliente',
+            'detalles.documento'
+        ]);
+
+        // BUSCAR CLIENTE y restarle el moto del pago
+        $cliente=Cliente::findOrFail($pago->cliente_id);
+        $cliente->update(['saldo'=>$cliente->saldo-$pago->monto]);
+
+        //ITERAR POR LAS FACTURAS
+        foreach($pago->detalles as $detalle){
+            //ENCONTRAR EL DOCUMENTO
+            $documento=Documento::find( $detalle->documento_id );
+            //RESTARLE AL SALDO PENDIENTE EL DOCUMENTO
+            $documento->update(['saldo_pendiente'=>$documento->saldo_pendiente - $detalle->monto]);
+
+        }
+        // CAMBIAR ESTATUS
+        $pago->update(['estatus'=>4]);
+        return redirect()
+                ->route('pagos.show', $pago->id)
+                ->with('success', 'Aplicado los saldos correctamente');
+
+
         //TIMBRADO
-        dd($documento);
     }
+
+    public function clientesPorPagar(Request $request){
+    $search = $request->get('search');
+
+    $clientes = Cliente::where('tipo', 1)
+        ->where('saldo', '>',0)
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                ->orWhere('rfc', 'like', "%{$search}%")
+                ;
+            });
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(10)
+        ->withQueryString(); // ← mantiene el search en la paginación
+
+    return view('pagos.pendiente', compact('clientes', 'search'));    }
 }

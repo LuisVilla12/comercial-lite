@@ -247,6 +247,10 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])->name('clientes.update');
     Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])->name('clientes.destroy');
 
+    // POR CLIENTES POR PAGAR
+    Route::get('/clientes/por-pagar', [PagoController::class, 'clientesPorPagar'])->name('clientes.pendientes');
+
+
     // RUTAS DE DOMICILIOS
     // Route::get('/clientes/{cliente}/domicilios/create', [DomicilioController::class, 'create'])->name('domicilios.create');
     // Route::post('/clientes/{cliente}/domicilios', [DomicilioController::class, 'store'])->name('domicilios.store');

@@ -83,6 +83,18 @@
                         WhatsApp : <span>{{ $cliente->whatsapp }}</span>
                     </label>
                 </div>
+
+                <div class="my-2">
+                    <label class="block  text-md font-medium text-gray-700 my-2">
+                        Credito : <span>{{ $cliente->credito }}</span>
+                    </label>
+                </div>
+                <div class="my-2">
+                    <label class="block  text-md font-medium text-gray-700 my-2">
+                        Dias de credito : <span>{{ $cliente->diasCredito }}</span>
+                    </label>
+                </div>
+
             </div>
 
             <div class="mt-2 bg-white shadow rounded px-4">

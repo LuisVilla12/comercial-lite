@@ -126,7 +126,27 @@
                    placeholder="WhatsApp"
                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
-
+        <div></div>
+        {{-- CANTIDAD DE CREDITO --}}
+        <div class="mb-2 md:mb-0">
+            <label class="block text-md font-medium text-gray-700 mb-1">
+                Cantidad de credito:
+            </label>
+            <input type="number" name="credito"
+                value="{{ old(key: 'credito') }}"
+                   placeholder="Monto de credito" min="0"
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+        </div>
+        {{-- DIAS DE CREDITO --}}
+                <div class="mb-2 md:mb-0">
+            <label class="block text-md font-medium text-gray-700 mb-1">
+                Dias de credito:
+            </label>
+            <input type="number" name="diasCredito"
+                value="{{ old(key: 'diasCredito') }}" min="0"
+                   placeholder="Dias de credito"
+                   class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+        </div>
         {{-- Botones --}}
         <div class="md:col-span-2 flex justify-between items-center gap-3 mt-4">
 <a href="{{ route($tipo == 1 ? 'clientes.index' : 'proveedores.index') }}"
