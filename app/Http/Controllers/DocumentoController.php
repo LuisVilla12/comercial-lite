@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Documento;
 use App\Models\Timbre;
 use App\Models\ConfiguracionEmpresa;
-use App\Jobs\DescargarXmlCfdi;
+use App\Jobs\DescargarFacturaAPI;
 use App\Jobs\EnviarDocumentoMail;
 use App\Models\Caja;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\InventarioService;
 use App\Models\DatosBancario;
 // SERVICIO FACTURA
-use App\Services\FacturamaService;
+use App\Services\FacturaApiService;
 use Illuminate\Support\Str;
 
 
@@ -476,7 +476,7 @@ $documento = DB::transaction(function () use ($request, $documento) {
             return redirect()->back()->with('error',($e->getMessage()));
         }
     }
-    public function pdf($sucursal,  $documento, FacturamaService $facturama)
+    public function pdf($sucursal,  $documento, FacturaApiService $facturama)
     {
         $documento = Documento::findOrFail($documento);
         $sucursal = Sucursal::findOrFail($sucursal);
@@ -500,7 +500,6 @@ $documento = DB::transaction(function () use ($request, $documento) {
             $urlQr = $facturama->generarUrl($datosXML, $documento->total);
             // GENERAR QR
             $qr = $facturama->generarQrPng($urlQr);
-            // $qr='';
 
             $pdf = Pdf::loadView('documentos.pdf_factura', compact('documento', 'sucursal', 'banco', 'empresa', 'datosXML', 'qr'))
                 ->setPaper('letter');
@@ -859,7 +858,7 @@ $documento = DB::transaction(function () use ($request, $documento) {
     }
 
 
-    public function enviarEmail($sucursal, Request $request,  $documento, FacturamaService $facturama)
+    public function enviarEmail($sucursal, Request $request,  $documento, FacturaApiService $facturama)
     {
         $sucursal = Sucursal::findOrFail($sucursal);
         $documento = Documento::findOrFail($documento);
@@ -886,34 +885,30 @@ $documento = DB::transaction(function () use ($request, $documento) {
     }
 
     //FUNCION PARA TIMBRAR
-    public function timbrar($sucursal, $documento, FacturamaService $facturama)
+    public function timbrar($sucursal, $documento, FacturaApiService $facturama)
     {
         $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($documento);
         $empresa = ConfiguracionEmpresa::first();
         // GENERA EL JSON PARA ENVIAR
-        $payload = $this->buildPayload($documento, $empresa);
-        // dd($payload);
-
+        $payload = $facturama->buildPayload($documento, $empresa);
         try {
             //REALIZA EL TIMBRADO
             $response = $facturama->crearCfdi($payload);
+            $uuid =$response['uuid'] ?? null;
+            // OBTENER ID de FACTURA
+            $facturaID = $response['id'] ?? null;
 
-            // dd($response);
-            $uuid = $response['Complement']['TaxStamp']['Uuid'] ?? null;
-            $facturamaId = $response['Id'] ?? null;
-
-            dispatch(new DescargarXmlCfdi(
-                $facturamaId,
-                $uuid
-            ));
+            // COLA PARA DESCARGAR XML
+            dispatch(new DescargarFacturaAPI($facturaID,$uuid));
 
             // 4. ACTUALIZAR BD
             $documento->update([
-                'facturama_id' => $facturamaId,
+                'facturama_id' => $facturaID,
                 'uuid' => $uuid,
                 'estatus' => '4',
-                'cadena_original' => $response['OriginalString']
+                'cadena_original' => $response['stamp']['complement_string'] ?? null,
             ]);
+
             //CONTEO DE  TIMBRES
             $timbre = Timbre::first();
             $timbre->update([
@@ -936,7 +931,7 @@ $documento = DB::transaction(function () use ($request, $documento) {
         }
     }
     //FUNCION PARA CANCELAR FACTURA
-    public function cancelar(Request $request, $sucursal, $documento, FacturamaService $facturama)
+    public function cancelar(Request $request, $documento, FacturaApiService $facturama)
     {
         $documento = Documento::findOrFail($documento);
 
@@ -993,76 +988,69 @@ $documento = DB::transaction(function () use ($request, $documento) {
         }
     }
 
-    //CONSTRUIR JSON PARA ENVIAR
-    private function buildPayload($documento, $empresa)
-    {
+    // //CONSTRUIR JSON PARA ENVIAR
+    // private function buildPayload($documento, $empresa)
+    // {
+    //     $receiver = [
+    //         "Rfc" => $documento->cliente->rfc,
+    //         "Name" => $documento->cliente->nombre,
+    //         "CfdiUse" => $documento->uso_cfdi,
+    //         "FiscalRegime" => $documento->cliente->regimen_fiscal,
+    //         "TaxZipCode" => $documento->cliente->domicilios->first()?->cp,
+    //     ];
 
-        //         "Issuer"=>[
-        //     "FiscalRegime"=>"601",
-        //     "Rfc"=> "EKU9003173C9",
-        //     "Name"=> "ESCUELA KEMPER URGATE",
-        // ],
+    //     // VALIDAR QUE SEA PUBLICO EN GENERAL
+    //     if ($documento->cliente->rfc === 'XAXX010101000') {
+    //         $receiver['Name'] = 'PUBLICO EN GENERAL';
+    //         $receiver['CfdiUse'] = 'S01';
+    //         $receiver['FiscalRegime'] = '616';
+    //         $receiver['TaxZipCode'] = $empresa->cp;
+    //     }
 
-        $receiver = [
-            "Rfc" => $documento->cliente->rfc,
-            "Name" => $documento->cliente->nombre,
-            "CfdiUse" => $documento->uso_cfdi,
-            "FiscalRegime" => $documento->cliente->regimen_fiscal,
-            "TaxZipCode" => $documento->cliente->domicilios->first()?->cp,
-        ];
+    //     $payload = [
+    //         "Currency" => "MXN",
+    //         "ExpeditionPlace" => $empresa->cp,
+    //         "CfdiType" => "I",
+    //         "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
+    //         "PaymentMethod" => $documento->metodo_pago, // PUE / PPD
+    //         "Date"  =>  now()->format('Y-m-d\TH:i:s'),
+    //         "Folio" =>  $documento->folio,
 
-        // VALIDAR QUE SEA PUBLICO EN GENERAL
-        if ($documento->cliente->rfc === 'XAXX010101000') {
-            $receiver['Name'] = 'PUBLICO EN GENERAL';
-            $receiver['CfdiUse'] = 'S01';
-            $receiver['FiscalRegime'] = '616';
-            $receiver['TaxZipCode'] = $empresa->cp;
-        }
+    //         "Receiver" => $receiver,
 
-        $payload = [
-            "Currency" => "MXN",
-            "ExpeditionPlace" => $empresa->cp,
-            "CfdiType" => "I",
-            "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
-            "PaymentMethod" => $documento->metodo_pago, // PUE / PPD
-            "Date"  =>  now()->format('Y-m-d\TH:i:s'),
-            "Folio" =>  $documento->folio,
+    //         "Items" => $documento->detalles->map(function ($d) {
+    //             return [
+    //                 "ProductCode" => $d->producto->clave_sat,
+    //                 "IdentificationNumber" => $d->producto->codigo_producto,
+    //                 "Description" => $d->producto->nombre_producto,
+    //                 "Unit" => $d->producto->unidad->descripcion,
+    //                 "UnitCode" => $d->producto->unidad->clave,
+    //                 "UnitPrice" => $d->costo_unitario,
+    //                 "Quantity" => $d->cantidad,
+    //                 "Subtotal" => $d->importe,
+    //                 "TaxObject" => "02",
+    //                 "Taxes" => [
+    //                     [
+    //                         "Name" => "IVA",
+    //                         "Rate" => 0.16,
+    //                         "Base" => $d->importe,
+    //                         "Total" => round($d->importe * 0.16, 2),
+    //                         "IsRetention" => false
+    //                     ]
+    //                 ],
 
-            "Receiver" => $receiver,
-
-            "Items" => $documento->detalles->map(function ($d) {
-                return [
-                    "ProductCode" => $d->producto->clave_sat,
-                    "IdentificationNumber" => $d->producto->codigo_producto,
-                    "Description" => $d->producto->nombre_producto,
-                    "Unit" => $d->producto->unidad->descripcion,
-                    "UnitCode" => $d->producto->unidad->clave,
-                    "UnitPrice" => $d->costo_unitario,
-                    "Quantity" => $d->cantidad,
-                    "Subtotal" => $d->importe,
-                    "TaxObject" => "02",
-                    "Taxes" => [
-                        [
-                            "Name" => "IVA",
-                            "Rate" => 0.16,
-                            "Base" => $d->importe,
-                            "Total" => round($d->importe * 0.16, 2),
-                            "IsRetention" => false
-                        ]
-                    ],
-
-                    "Total" => round($d->importe * 1.16, 2),
-                ];
-            })->toArray(),
-        ];
-        // SI ES PUBLICO EN GENERAL
-        if ($documento->cliente->rfc === 'XAXX010101000') {
-            $payload['GlobalInformation'] = [
-                "Periodicity" => "04",
-                "Months" => now()->format('m'),
-                "Year" => now()->year,
-            ];
-        }
-        return $payload;
-    }
+    //                 "Total" => round($d->importe * 1.16, 2),
+    //             ];
+    //         })->toArray(),
+    //     ];
+    //     // SI ES PUBLICO EN GENERAL
+    //     if ($documento->cliente->rfc === 'XAXX010101000') {
+    //         $payload['GlobalInformation'] = [
+    //             "Periodicity" => "04",
+    //             "Months" => now()->format('m'),
+    //             "Year" => now()->year,
+    //         ];
+    //     }
+    //     return $payload;
+    // }
 }

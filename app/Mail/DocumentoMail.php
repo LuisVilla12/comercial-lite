@@ -14,7 +14,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Services\FacturamaService;
+use App\Services\FacturaApiService;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -61,7 +61,7 @@ class DocumentoMail extends Mailable  implements ShouldQueue
         $attachments = [];
 
     //INVOCA EL SERVICIO DE FACTURAMA
-    $facturama = app(FacturamaService::class);
+    $facturama = app(FacturaApiService::class);
 
     $banco = DatosBancario::where('predeterminado', true)->first();
 

@@ -40,5 +40,9 @@ return [
     'user' => env('FACTURAMA_USER'),
     'password' => env('FACTURAMA_PASSWORD'),
 ],
+'facturaapi' => [
+    'url' => env('FACTURAAPI_URL'),
+    'token' => env('FACTURAAPI_TOKEN'),
+],
 
 ];

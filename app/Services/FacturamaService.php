@@ -5,8 +5,10 @@ namespace App\Services;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Http;
+use App\Services\Facturacion\Contracts\FacturacionProvider;
 
-class FacturamaService
+
+class FacturamaService implements FacturacionProvider
 {
     public function __construct(
         protected string $baseUrl = '',
@@ -60,11 +62,7 @@ class FacturamaService
         ->json();
 }
 
-    public function cancelarCfdi(
-    string $facturamaId,
-    string $motivo,
-    ?string $uuidSustitucion = null
-) {
+    public function cancelarCfdi(string $facturamaId, string $motivo,?string $uuidSustitucion = null) {
     $url = "/cfdi/{$facturamaId}?type=issued&motive={$motivo}";
 
     if (in_array($motivo, ['01', '04']) && $uuidSustitucion) {
@@ -88,7 +86,6 @@ class FacturamaService
 
     }
 }
-
 
     //FUNCION PARA OBTENER EL XML DE LA FACTURA
     public function obtenerXml($id)
