@@ -235,8 +235,6 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         Route::get('/traspasos/{traspaso}/pdf', [TraspasoController::class, 'pdf'])->name('traspasos.pdf');
     });
 
-
-
     // RUTAS DE CLIENTES
     Route::get('/clientes', [ClienteController::class, 'indexClientes'])->name('clientes.index');
     Route::get('/proveedores', action: [ClienteController::class, 'indexProveedores'])->name('proveedores.index');
@@ -250,10 +248,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // POR CLIENTES POR PAGAR
     Route::get('/clientes/por-pagar', [PagoController::class, 'clientesPorPagar'])->name('clientes.pendientes');
 
-
     // RUTAS DE DOMICILIOS
-    // Route::get('/clientes/{cliente}/domicilios/create', [DomicilioController::class, 'create'])->name('domicilios.create');
-    // Route::post('/clientes/{cliente}/domicilios', [DomicilioController::class, 'store'])->name('domicilios.store');
     Route::delete('/clientes/{cliente}/domicilios/{domicilio}', [DomicilioController::class, 'destroy'])->name('domicilios.destroy');
 
     Route::get('/{modeloTipo}/{id}/domicilios/create/', [DomicilioController::class, 'create'])->where('modeloTipo', 'clientes|sucursales|empresas|documentos')->name('domicilios.create');
@@ -302,6 +297,8 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // Route::prefix('sucursales/{sucursal}')->middleware('check.sucursal')->group(function () {
 
 
+    Route::get('/factura-global', action: [DocumentoController::class, 'indexFacturasGlobal'])->name('facturas.globales');
+
     Route::prefix('sucursales/{sucursal}')->group(function () {
         Route::get('/cajas/crear', action: [CajaController::class, 'create'])->name('cajas.create');
         Route::post('/cajas/crear', action: [CajaController::class, 'store'])->name('cajas.store');
@@ -336,6 +333,8 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     });
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');
+
+    //FACTURA GLOBAL
 
 
     //Devoluciones

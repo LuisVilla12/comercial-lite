@@ -97,6 +97,12 @@
             </x-dashboard-card>
         @endrole
         @hasanyrole('Administrador|Vendedor')
+        <x-dashboard-card href="{{ route('clientes.pendientes') }}" bg="bg-purple-50 dark:bg-red-900/20" title="Clientes con saldo"
+                desc="Saldo pendiente de clientes" iconBg="bg-red-500">
+                <x-slot:icon>
+                    <x-heroicon-o-user-circle class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
             <x-dashboard-card href="{{ route('puntos.index') }}" bg="bg-purple-50 dark:bg-yellow-900/20" title="Monedero"
                 desc="Monedero digital" iconBg="bg-yellow-500">
                 <x-slot:icon>
@@ -242,6 +248,12 @@
             </x-dashboard-card>
             <x-dashboard-card href="{{ route('facturas.online') }}" bg="bg-green-50 dark:bg-green-900/20"
                 title="Factura en linea" desc="" iconBg="bg-green-500">
+                <x-slot:icon>
+                    <x-heroicon-o-globe-alt class="w-6 h-6" />
+                </x-slot:icon>
+            </x-dashboard-card>
+            <x-dashboard-card href="{{ route('facturas.globales') }}" bg="bg-yellow-50 dark:bg-yellow-900/20"
+                title="Factura Global" desc="" iconBg="bg-green-500">
                 <x-slot:icon>
                     <x-heroicon-o-globe-alt class="w-6 h-6" />
                 </x-slot:icon>

@@ -12,12 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 use App\Models\Timbre;
 // SERVICIO
-use App\Services\FacturamaService;
-use App\Jobs\DescargarXmlCfdi;
+use App\Jobs\DescargarFacturaAPI;
 use App\Jobs\EnviarDocumentoMail;
-
-
-
+use App\Services\FacturaApiService;
 
 class FacturacionController extends Controller
 {
@@ -45,12 +42,12 @@ class FacturacionController extends Controller
         $documento = Documento::where('serie', $request->input('serie'))
             ->where('folio', $request->input('folio'))
             ->where('codigo_unico', $request->input('codigo_unico'))
-            ->where('codigo_utilizado',0)
-            ->where('estatus', 1)->first();
+            ->where('codigo_utilizado', 0)
+            ->where('estatus', 4)->first();
 
         return view('facturas.online', compact('documento'));
     }
-    public function store(Request $request,FacturamaService $facturama)
+    public function store(Request $request, FacturaApiService $facturama)
     {
         $request->validate([
             'razon_social' => 'required|string|max:255',
@@ -81,20 +78,21 @@ class FacturacionController extends Controller
         $documento = Documento::with(['cliente', 'detalles.producto'])->findOrFail($request->documento_id);
         $empresa = ConfiguracionEmpresa::first();
         // GENERA EL JSON PARA ENVIAR
-        $payload = $this->buildPayload($documento, $empresa,$request);
+        $payload = $this->buildPayload($request, $documento);
 
         //BUSCAR EL CLIENTE
-        $cliente=Cliente::where('rfc',$request->rfc)->first();
+        $cliente = Cliente::where('rfc', $request->rfc)->first();
+
         //SINO EXISTE EL CLIENTE CREARLO
-        if(!$cliente){
+        if (!$cliente) {
             $cliente = Cliente::create([
-            'tipo' => 1,
-            'codigo' => 'PENDIENTE',
-            'nombre' => $request->razon_social,
-            'rfc' => $request->rfc,
-            'email1' => $request->email,
-            'regimen_fiscal' => $request->regimen_fiscal
-        ]);
+                'tipo' => 1,
+                'codigo' => 'PENDIENTE',
+                'nombre' => $request->razon_social,
+                'rfc' => $request->rfc,
+                'email1' => $request->email,
+                'regimen_fiscal' => $request->regimen_fiscal
+            ]);
         }
         //ASIGNAR ID
         $id_cliente = $cliente->id;
@@ -102,20 +100,18 @@ class FacturacionController extends Controller
         try {
             //REALIZA EL TIMBRADO
             $response = $facturama->crearCfdi($payload);
-            //Obtener la respuesta de la factura
 
-            $uuid = $response['Complement']['TaxStamp']['Uuid'] ?? null;
-            $facturamaId = $response['Id'] ?? null;
+            $uuid = $response['uuid'] ?? null;
+            // OBTENER ID de FACTURA
+            $facturaID = $response['id'] ?? null;
 
-            dispatch(new DescargarXmlCfdi(
-                $facturamaId,
-                $uuid
-            ));
+            // COLA PARA DESCARGAR XML
+            dispatch(new DescargarFacturaAPI($facturaID, $uuid));
 
             // ACTUALIZAR ESTADO DE LA REMISON CONVERTIDA EN LINEA
             $documento->update([
                 'estatus' => '4',
-                'codigo_utilizado'=>1,
+                'codigo_utilizado' => 1,
             ]);
 
             //CONTEO DE  TIMBRES
@@ -125,8 +121,8 @@ class FacturacionController extends Controller
             ]);
 
             DB::beginTransaction();
-            $sucursal=Sucursal::where('id',$documento->sucursal_id)->first();
-            $serie=$sucursal->serie_factura;
+            $sucursal = Sucursal::where('id', $documento->sucursal_id)->first();
+            $serie = $sucursal->serie_factura;
             $ultimoFolio = Documento::where('serie', $serie)
                 ->lockForUpdate()
                 ->max('folio');
@@ -136,7 +132,7 @@ class FacturacionController extends Controller
             //CREAR EL DOCUMENTO EN FACTURACION
             $documento_convertido = Documento::create([
                 'sucursal_id'         => $documento->sucursal_id,
-                'documento_modelo_id' => 2,//FACTURA
+                'documento_modelo_id' => 2, //FACTURA
                 'serie'               => $serie,
                 'folio'               => $siguienteFolio,
                 'fecha'               => now(),
@@ -153,7 +149,7 @@ class FacturacionController extends Controller
                 'observaciones'       => $documento->observaciones,
                 'saldo_pendiente'       => 0,
                 'descuentos'       =>  $documento->descuentos,
-                'agente_id'           =>$documento->agente_id,
+                'agente_id'           => $documento->agente_id,
                 'timbrado_online' => 1,
             ]);
             //CREAR LOS DETALLES DEL DOCUMENTO
@@ -168,10 +164,10 @@ class FacturacionController extends Controller
             }
             //ASIGNAR LOS DATOS DE FACTURACION
             $documento_convertido->update([
-                'facturama_id' => $facturamaId,
+                'facturama_id' => $facturaID,
                 'uuid' => $uuid,
-                'cadena_original' => $response['OriginalString'],
-                'timbrado_online'=>1,
+                'cadena_original' => $response['stamp']['complement_string'] ?? null,
+                'timbrado_online' => 1,
             ]);
             //CREAR UN DOMICILIO
             $documento_convertido->domicilios()->create([
@@ -179,25 +175,24 @@ class FacturacionController extends Controller
                 'estado' => '',
                 'municipio' => '',
                 'ciudad' => '',
-                'colonia' =>'',
+                'colonia' => '',
                 'calle' =>  '',
                 'numero_exterior' => '',
                 'cp' => $request->cp,
             ]);
             DB::commit();
             //EJECUTA LA COLA PARA ENVIAR EL CORREO
-        EnviarDocumentoMail::dispatch(
-            $empresa->id,
-            $sucursal->id,
-            $documento_convertido->id,
-            $request->email
-        );
+            EnviarDocumentoMail::dispatch(
+                $empresa->id,
+                $sucursal->id,
+                $documento_convertido->id,
+                $request->email
+            );
 
             return redirect()
-                ->back()
+                ->route('facturas.online')
                 ->with('success', '📧 La factura fue timbrada correctamente');
-
-                } catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             flash()
                 ->option('position', 'top-right')
                 ->option('timeout', 5000)
@@ -205,64 +200,55 @@ class FacturacionController extends Controller
                 ->error($e->getMessage());
             return back();
         }
+    }
 
-        }
-
-    //CONSTRUIR JSON
-        private function buildPayload($documento, $empresa,$request)
+    public function buildPayload($request, $documento)
     {
-        $receiver = [
-            "Rfc" => $request->rfc,
-            "Name" => $request->razon_social,
-            "CfdiUse" =>$request->usos_cfdi,
-            "FiscalRegime" => $request->regimen_fiscal,
-            "TaxZipCode" => $request->cp,
+        return [
+            "payment_form" => $documento->forma_pago,
+            "use" => $request->usos_cfdi,
+            "customer" => [
+                "legal_name" => $request->razon_social,
+                "tax_id" =>  $request->rfc,
+                "tax_system" => $request->regimen_fiscal,
+                "email" => $request->email,
+                "address" => [
+                    "zip" => $request->cp
+                ]
+            ],
+            "items" => $this->buildItems($documento)
         ];
-
-        $payload = [
-            "Currency" => "MXN",
-            "ExpeditionPlace" => $empresa->cp,
-            "CfdiType" => "I",
-            "PaymentForm" => $documento->forma_pago,   // 01, 03, etc
-            "PaymentMethod" => $documento->metodo_pago, // PUE / PPD
-            "Date"  =>  now()->format('Y-m-d\TH:i:s'),
-            "Folio" =>  $documento->folio,
-
-            "Receiver" => $receiver,
-
-            "Items" => $documento->detalles->map(function ($d) {
-                return [
-                    "ProductCode" => $d->producto->clave_sat,
-                    "IdentificationNumber" => $d->producto->codigo_producto,
-                    "Description" => $d->producto->nombre_producto,
-                    "Unit" => $d->producto->unidad->descripcion,
-                    "UnitCode" => $d->producto->unidad->clave,
-                    "UnitPrice" => $d->costo_unitario,
-                    "Quantity" => $d->cantidad,
-                    "Subtotal" => $d->importe,
-                    "TaxObject" => "02",
-                    "Taxes" => [
+    }
+    private function buildItems($documento)
+    {
+        $items = [];
+        foreach ($documento->detalles as $detalle) {
+            $item = [
+                "quantity" => (float) $detalle->cantidad,
+                "product" => [
+                    "description" => $detalle->producto->nombre_producto,
+                    "price" => $detalle->costo_unitario,
+                    "product_key" => $detalle->producto->clave_sat,
+                    "unit_key" => $detalle->producto->unidad->clave,
+                    "tax_included" => false,
+                    "taxes" => [
                         [
-                            "Name" => "IVA",
-                            "Rate" => 0.16,
-                            "Base" => $d->importe,
-                            "Total" => round($d->importe * 0.16, 2),
-                            "IsRetention" => false
+                            "type" => "IVA",
+                            "rate" => $detalle->producto->impuesto1 / 100,
+                            "factor" => "Tasa"
                         ]
-                    ],
-
-                    "Total" => round($d->importe * 1.16, 2),
-                ];
-            })->toArray(),
-        ];
-        // SI ES PUBLICO EN GENERAL
-        if ($documento->cliente->rfc === 'XAXX010101000') {
-            $payload['GlobalInformation'] = [
-                "Periodicity" => "04",
-                "Months" => now()->format('m'),
-                "Year" => now()->year,
+                    ]
+                ]
             ];
+
+            if ($detalle->descuento > 0) {
+                $item["discount"] = (float) $detalle->descuento;
+            }
+
+
+            $items[] = $item;
         }
-        return $payload;
+
+        return $items;
     }
 }

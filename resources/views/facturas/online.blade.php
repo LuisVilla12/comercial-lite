@@ -64,7 +64,7 @@
                         </div>
                     </div>
                 </form>
-                <form class="px-6 mt-2 py-2 bg-white shadow-md rounded-lg" method="POST"
+                <form class="px-6 mt-2 py-2 bg-white shadow-md rounded-lg" method="POST" id="formFactura"
                     action="{{ route('facturas.online.store') }}">
                     @csrf
                     <p class="flex items-center gap-1 mt-4"><x-heroicon-o-user-circle
@@ -171,6 +171,7 @@
                                 <p class="text-red-600 text-xl text-center font-bold mt-2 mb-2">¡Primero debes realizar la busqueda de la compra!</p>
                         @enderror
                         <button type="submit"
+                            id="btnGuardar"
                             class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Generar
                             factura</button>
                     </div>
@@ -254,3 +255,15 @@
 </body>
 
 </html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formFactura');
+    const btn  = document.getElementById('btnGuardar');
+    if (!form || !btn) return;
+    form.addEventListener('submit', function () {
+        btn.disabled = true;
+        btn.innerText = 'Guardando...';
+    });
+});
+</script>

@@ -942,7 +942,7 @@ class DocumentoController extends Controller
         try {
             $resultado = $facturaApi->cancelarCfdi(
                 $documento->facturama_id,
-                "01",
+                $request->motivo,
             );
             $documento->update([
                 'estatus' => 3,
