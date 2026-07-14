@@ -332,7 +332,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         //TIMBRAR
         Route::post('/documentos/{documento}/timbrar', [DocumentoController::class, 'timbrar'])->name(name: 'documentos.timbrar');
         //CANCELAR
-        Route::delete('/documentos/{documento}/cancelar', [DocumentoController::class, 'cancelar'])->name(name: 'documentos.cancelar');
+        Route::post('/documentos/{documento}/cancelar', [DocumentoController::class, 'cancelar'])->name(name: 'documentos.cancelar');
     });
 
     Route::delete('/documentos/{documento}', action: [DocumentoController::class, 'destroy'])->name('documentos.destroy');

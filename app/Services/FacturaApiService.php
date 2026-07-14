@@ -59,22 +59,22 @@ class FacturaApiService implements FacturacionProvider
         }
     }
 
-    public function cancelarCfdi(string $id,string $motivo,?string $uuidSustitucion = null) {
+public function cancelarCfdi(string $facturaID,string $motivo,?string $uuidSustitucion = null) {
     try {
-        $payload = [
+        $query = [
             "motive" => $motivo
         ];
 
+
         if ($uuidSustitucion) {
-            $payload["replacement_uuid"] = $uuidSustitucion;
+            $query["substitution"] = $uuidSustitucion;
         }
 
-
         return $this->client()
-            ->delete("/v2/invoices/{$id}", $payload)
+            ->withQueryParameters($query)
+            ->delete("/v2/invoices/{$facturaID}")
             ->throw()
             ->json();
-
 
     } catch (\Illuminate\Http\Client\RequestException $e) {
 
@@ -86,7 +86,6 @@ class FacturaApiService implements FacturacionProvider
         );
     }
 }
-
 
     public function obtenerCfdi(string $uuid)
     {
@@ -111,7 +110,8 @@ class FacturaApiService implements FacturacionProvider
             "items" => $this->buildItems($documento)
         ];
     }
-    private function buildItems($documento){
+    private function buildItems($documento)
+    {
         $items = [];
         foreach ($documento->detalles as $detalle) {
             $item = [
@@ -143,7 +143,8 @@ class FacturaApiService implements FacturacionProvider
         return $items;
     }
 
-    public function leerXml(string $uuid): \SimpleXMLElement{
+    public function leerXml(string $uuid): \SimpleXMLElement
+    {
         $ruta = storage_path("app/private/facturas/{$uuid}.xml");
         if (!file_exists($ruta)) {
             throw new \Exception("No existe el XML: {$ruta}");
@@ -155,7 +156,8 @@ class FacturaApiService implements FacturacionProvider
         }
         return $xml;
     }
-    public function extraerTimbreCfdi(\SimpleXMLElement $xml): array{
+    public function extraerTimbreCfdi(\SimpleXMLElement $xml): array
+    {
         $xml->registerXPathNamespace(
             'cfdi',
             'http://www.sat.gob.mx/cfd/4'
@@ -194,7 +196,8 @@ class FacturaApiService implements FacturacionProvider
             'sello_sat' => (string) $timbre['SelloSAT'],
         ];
     }
-    public function generarUrl(array $datos, float $total): string{
+    public function generarUrl(array $datos, float $total): string
+    {
         $sello = substr($datos['sello_cfdi'], -8);
         $total = number_format($total, 6, '.', '');
 
@@ -205,7 +208,8 @@ class FacturaApiService implements FacturacionProvider
             . "&tt={$total}"
             . "&fe={$sello}";
     }
-    public function generarQrPng(string $url): string{
+    public function generarQrPng(string $url): string
+    {
         $result = Builder::create()
             ->writer(new PngWriter())
             ->data($url)

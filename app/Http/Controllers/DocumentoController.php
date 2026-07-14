@@ -27,6 +27,7 @@ use App\Models\DatosBancario;
 // SERVICIO FACTURA
 use App\Services\FacturaApiService;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 
 
@@ -205,7 +206,7 @@ class DocumentoController extends Controller
             //BUSCAR SUCURSAL
             $sucursal = Sucursal::lockForUpdate()->findOrFail($request->sucursal_id);
             //BUSCAR CLIENTE
-            $cliente=Cliente::findOrFail($request->proveedor_id);
+            $cliente = Cliente::findOrFail($request->proveedor_id);
 
             switch ($request->tipo) {
                 case 1:
@@ -279,7 +280,7 @@ class DocumentoController extends Controller
             } else {
                 $documento->update(['saldo_pendiente' => $request->total]);
                 //AUMENTAR EN EL SALDO DEL CLIENTE PENDIENTE
-                $cliente->update(['saldo'=>$cliente->saldo + $request->total]);
+                $cliente->update(['saldo' => $cliente->saldo + $request->total]);
             }
             //ASIGNAR UN CODIGO UNICO PARA LAS REMISIONES
             if ($documento->documento_modelo_id == 3) {
@@ -403,77 +404,77 @@ class DocumentoController extends Controller
             'forma_pago' => 'required',
             'uso_cfdi' => 'required',
         ]);
-        try{
-$documento = DB::transaction(function () use ($request, $documento) {
+        try {
+            $documento = DB::transaction(function () use ($request, $documento) {
 
-            /* ================= ACTUALIZAR DOCUMENTO ================= */
-            $documento->update([
-                'proveedor_id' => $request->proveedor_id,
-                'subtotal' => $request->subtotal,
-                'impuestos' => $request->impuestos,
-                'total' => $request->total,
-                'metodo_pago' => $request->metodo_pago,
-                'forma_pago' => $request->forma_pago,
-                'uso_cfdi' => $request->uso_cfdi,
-                'observaciones' => $request->observaciones,
-                'estado' => 'PENDIENTE',
-            ]);
-            if ($request->metodo_pago != 'PPD') {
-                $documento->update(['saldo_pendiente' => 0]);
-            } else {
-                $documento->update(['saldo_pendiente' => $request->total]);
-            }
+                /* ================= ACTUALIZAR DOCUMENTO ================= */
+                $documento->update([
+                    'proveedor_id' => $request->proveedor_id,
+                    'subtotal' => $request->subtotal,
+                    'impuestos' => $request->impuestos,
+                    'total' => $request->total,
+                    'metodo_pago' => $request->metodo_pago,
+                    'forma_pago' => $request->forma_pago,
+                    'uso_cfdi' => $request->uso_cfdi,
+                    'observaciones' => $request->observaciones,
+                    'estado' => 'PENDIENTE',
+                ]);
+                if ($request->metodo_pago != 'PPD') {
+                    $documento->update(['saldo_pendiente' => 0]);
+                } else {
+                    $documento->update(['saldo_pendiente' => $request->total]);
+                }
 
-            /* ================= DETALLES ================= */
-            $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
-            $detallesEnFormulario = [];
+                /* ================= DETALLES ================= */
+                $detallesExistentes = $documento->detalles()->pluck('id')->toArray();
+                $detallesEnFormulario = [];
 
-            foreach ($request->productos as $producto) {
+                foreach ($request->productos as $producto) {
 
-                $detalle = $documento->detalles()->updateOrCreate(
-                    [
-                        'id' => $producto['detalle_id'] ?? null
-                    ],
-                    [
-                        'producto_id' => $producto['producto_id'],
-                        'cantidad' => $producto['cantidad'],
-                        'costo_unitario' => $producto['costo'],
-                        'descuento' => $producto['descuento'],
-                        'importe' => $producto['cantidad'] * $producto['costo'],
-                    ]
+                    $detalle = $documento->detalles()->updateOrCreate(
+                        [
+                            'id' => $producto['detalle_id'] ?? null
+                        ],
+                        [
+                            'producto_id' => $producto['producto_id'],
+                            'cantidad' => $producto['cantidad'],
+                            'costo_unitario' => $producto['costo'],
+                            'descuento' => $producto['descuento'],
+                            'importe' => $producto['cantidad'] * $producto['costo'],
+                        ]
+                    );
+
+                    $detallesEnFormulario[] = $detalle->id;
+                }
+
+                /* ================= ELIMINAR DETALLES BORRADOS ================= */
+                $detallesParaEliminar = array_diff(
+                    $detallesExistentes,
+                    $detallesEnFormulario
                 );
 
-                $detallesEnFormulario[] = $detalle->id;
-            }
+                if (!empty($detallesParaEliminar)) {
+                    $documento->detalles()
+                        ->whereIn('id', $detallesParaEliminar)
+                        ->delete();
+                }
 
-            /* ================= ELIMINAR DETALLES BORRADOS ================= */
-            $detallesParaEliminar = array_diff(
-                $detallesExistentes,
-                $detallesEnFormulario
+                return $documento;
+            });
+
+            return redirect()->route('documentos.show', [
+                'sucursal'  => $sucursal->id,
+                'documento' => $documento->id,
+            ])->with(
+                'success',
+                match ($documento->documento_modelo_id) {
+                    1 => 'Cotización',
+                    2 => 'Factura',
+                    3 => 'Remisión',
+                } . ' ha sido actualizada'
             );
-
-            if (!empty($detallesParaEliminar)) {
-                $documento->detalles()
-                    ->whereIn('id', $detallesParaEliminar)
-                    ->delete();
-            }
-
-            return $documento;
-        });
-
-        return redirect()->route('documentos.show', [
-            'sucursal'  => $sucursal->id,
-            'documento' => $documento->id,
-        ])->with(
-            'success',
-            match ($documento->documento_modelo_id) {
-                1 => 'Cotización',
-                2 => 'Factura',
-                3 => 'Remisión',
-            } . ' ha sido actualizada'
-        );
-        }catch (\Exception $e) {
-            return redirect()->back()->with('error',($e->getMessage()));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', ($e->getMessage()));
         }
     }
     public function pdf($sucursal,  $documento, FacturaApiService $facturama)
@@ -894,12 +895,12 @@ $documento = DB::transaction(function () use ($request, $documento) {
         try {
             //REALIZA EL TIMBRADO
             $response = $facturama->crearCfdi($payload);
-            $uuid =$response['uuid'] ?? null;
+            $uuid = $response['uuid'] ?? null;
             // OBTENER ID de FACTURA
             $facturaID = $response['id'] ?? null;
 
             // COLA PARA DESCARGAR XML
-            dispatch(new DescargarFacturaAPI($facturaID,$uuid));
+            dispatch(new DescargarFacturaAPI($facturaID, $uuid));
 
             // 4. ACTUALIZAR BD
             $documento->update([
@@ -931,50 +932,29 @@ $documento = DB::transaction(function () use ($request, $documento) {
         }
     }
     //FUNCION PARA CANCELAR FACTURA
-    public function cancelar(Request $request, $documento, FacturaApiService $facturama)
+    public function cancelar(Request $request, $sucursal, $documento, FacturaApiService $facturaApi)
     {
-        $documento = Documento::findOrFail($documento);
-
-        if ($documento->documento_modelo_id != 2) {
-            return back()->withErrors([
-                'error' => 'El documento seleccionado no es una factura.'
-            ]);
-        }
-
-        if ($documento->estatus != 4) {
-            return back()->withErrors([
-                'error' => 'Solo se pueden cancelar facturas timbradas.'
-            ]);
-        }
-
+        $documento = Documento::find($documento);
         $request->validate([
-            'motivo' => 'required|in:01,02,03,04',
-            'uuid_sustitucion' => 'nullable|string'
+            'motivo' => 'required',
+            'uuid_sustitucion' => 'nullable'
         ]);
-
-        if (
-            in_array($request->motivo, ['01', '04']) &&
-            empty($request->uuid_sustitucion)
-        ) {
-            return back()->withErrors([
-                'uuid_sustitucion' => 'Debe proporcionar el UUID de sustitución.'
-            ]);
-        }
         try {
-            $respuesta = $facturama->cancelarCfdi(
+            $resultado = $facturaApi->cancelarCfdi(
                 $documento->facturama_id,
-                $request->motivo,
-                $request->uuid_sustitucion
+                "01",
             );
-            if (
-                isset($respuesta['Status']) &&
-                strtolower($respuesta['Status']) === 'canceled'
-            ) {
-                $documento->update([
-                    'estatus' => 3,
-                    // 'fecha_cancelacion' => now(),
-                ]);
-            }
+            $documento->update([
+                'estatus' => 3,
+                'motivo_cancelacion' => $request->motivo,
+                'fecha_cancelacion' => Carbon::parse(
+                    $resultado['canceled_at']
+                ),
+                'uuid_cancelado' => $resultado['uuid'],
+                'id_cancelado' => $resultado['id'],
+                'cancellation_status' => $resultado['cancellation']['status']
+            ]);
+
             flash()
                 ->success('La factura fue cancelada correctamente.');
 

@@ -91,8 +91,6 @@
                     </button>
                     <form method="POST" id="formCancelar" action="{{ route('documentos.cancelar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
                         @csrf
-                        @method('DELETE')
-
                         <input type="hidden" name="motivo" id="motivo">
                         <input type="hidden" name="uuid_sustitucion" id="uuid_sustitucion">
                     </form>

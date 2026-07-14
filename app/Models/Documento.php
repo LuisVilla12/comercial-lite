@@ -46,10 +46,10 @@ class Documento extends TenantModel implements Auditable{
         'cadena_original',
         //DATPS DE CANCELACION
         'motivo_cancelacion',
-        'folio_sustituto',
-        'acuse_cancelacion',
         'fecha_cancelacion',
-        'cancelado',
+        'uuid_cancelado',
+        'id_cancelado',
+        'cancellation_status',
     ];
 
     public function detalles() {

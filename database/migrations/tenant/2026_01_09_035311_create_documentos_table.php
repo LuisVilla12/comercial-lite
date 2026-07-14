@@ -41,10 +41,10 @@ return new class extends Migration
             $table->string('estado')->default('pendiente'); // pendiente | timbrado | cancelado
             //DATOS DE LA CANCELACION
             $table->string('motivo_cancelacion')->nullable();
-            $table->string('folio_sustituto')->nullable();
-            $table->string('acuse_cancelacion')->nullable();
-            $table->string('fecha_cancelacion')->nullable();
-            $table->integer('cancelado')->default(0); // 0 pendiente, 1 timbrado
+            $table->date('fecha_cancelacion')->nullable();
+            $table->string('uuid_cancelado')->nullable();
+            $table->string('id_cancelado')->nullable();
+            $table->string('cancellation_status')->nullable();
             //DATOS EXTRAS
             $table->text('observaciones')->nullable();
             $table->date('vigencia')->nullable();
