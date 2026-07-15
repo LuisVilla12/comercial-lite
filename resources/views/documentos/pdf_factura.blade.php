@@ -18,7 +18,7 @@
             line-height: 1.3;
         }
         p {
-            margin: 0;      
+            margin: 0;
         }
         table {
             width: 100%;
@@ -132,8 +132,8 @@
 
     <br>
 
-  
-    
+
+
     {{-- ================= TOTALES ================= --}}
     <table>
         <tr>
@@ -210,8 +210,8 @@
         </tr>
         <tr><td class="text-center"><strong> Cadena original del complemento del certificación digital del SAT:</strong></td></tr>
         <tr>
-            <td style="font-size: 7px;word-break: break-all; white-space: normal;">
-                {{ $documento->cadena_original ??'' }}
+            <td style="font-size: 7px;">
+                    {!! nl2br(e(chunk_split( $documento->cadena_original ??'' , 160, "\n"))) !!}
             </td>
         </tr>
     </table>
