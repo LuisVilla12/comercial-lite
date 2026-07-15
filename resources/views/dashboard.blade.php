@@ -88,14 +88,14 @@
         @endif
         @endrole
 
-        @role('Administrador')
+        {{-- @role('Administrador')
             <x-dashboard-card href="{{ route('promociones.index') }}" bg="bg-purple-50 dark:bg-purple-900/20" title="Promociones"
                 desc="Administra las promociones" iconBg="bg-purple-500">
                 <x-slot:icon>
                     <x-heroicon-o-archive-box-arrow-down class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-        @endrole
+        @endrole --}}
         @hasanyrole('Administrador|Vendedor')
         <x-dashboard-card href="{{ route('clientes.pendientes') }}" bg="bg-purple-50 dark:bg-red-900/20" title="Clientes con saldo"
                 desc="Saldo pendiente de clientes" iconBg="bg-red-500">
