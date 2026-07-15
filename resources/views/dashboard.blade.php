@@ -46,10 +46,8 @@
                 </h2>
             </div>
         @endhasanyrole
-
-
-
-        @if ($cajaAbierta and auth()->user()->isVendedor())
+        @role('Vendedor')
+        @if ($cajaAbierta)
             <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-6 shadow md:col-span-2">
                 <div class="flex justify-between items-center">
                     <div>
@@ -78,7 +76,7 @@
                     <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
                 </x-slot:icon>
             </x-dashboard-card>
-        @elseif(auth()->user()->isVendedor())
+        @else
             @foreach ($sucursales as $sucursal)
                 <x-dashboard-card href="{{ route('cajas.create', $sucursal) }}" bg="bg-teal-50 dark:bg-teal-900/20"
                     title="Abrir caja" desc="" iconBg="bg-teal-500">
@@ -88,6 +86,8 @@
                 </x-dashboard-card>
             @endforeach
         @endif
+        @endrole
+
         @role('Administrador')
             <x-dashboard-card href="{{ route('promociones.index') }}" bg="bg-purple-50 dark:bg-purple-900/20" title="Promociones"
                 desc="Administra las promociones" iconBg="bg-purple-500">
