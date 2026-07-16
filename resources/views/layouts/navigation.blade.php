@@ -1,6 +1,6 @@
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="container w-5/6 mx-auto ">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
@@ -8,6 +8,7 @@
                     <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
+                    {{-- <h1>{{ $empresa->nombre }}</h1> --}}
                 </div>
 
                 <!-- Navigation Links -->
@@ -19,6 +20,10 @@
 
                     <x-nav-link :href="route('existencias.index')" :active="request()->routeIs('existencias.index')">
                         Existencias
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('reportes.select')" :active="request()->routeIs('reportes.select')">
+                        Reportes
                     </x-nav-link>
 
                 </div>
