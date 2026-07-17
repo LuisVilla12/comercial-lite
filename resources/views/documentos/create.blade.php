@@ -5,7 +5,7 @@
     '3' => 'Remisión',
     })
     <x-app-layout>
-        <div class="flex items-center mt-4 py-2 gap-3 mb-4 bg-white w-full rounded-md">
+        <div class="flex items-center mt-4 py-2 gap-3 mb-4 bg-white dark:bg-slate-800 w-full rounded-md">
             <a href="{{ route(
                 match ($tipo) {
                     '1' => 'cotizaciones.index',
@@ -31,11 +31,11 @@
             $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
             @csrf
-            <div class="flex justify-between gap-2">
+            <div class="md:flex md:justify-between gap-2">
                 {{-- VENTAS --}}
-                <div class="w-9/12 px-1 ">
+                <div class="md:w-9/12 px-1 ">
                     <div x-data="{ tab: 'detalle' }">
-                        <div class="flex gap-4 border-b  bg-white rounded-md p-2">
+                        <div class="flex gap-4 border-b  bg-white dark:bg-slate-800 rounded-md p-2">
                             <button type="button" @click="tab='detalle'"
                                 :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
                                 class="block text-lg font-medium mb-2 dark:text-white">
@@ -49,9 +49,9 @@
                         </div>
                         <div x-show="tab === 'detalle'">
                             <div class="mt-2">
-                                <div class="bg-white p-2 rounded-md">
+                                <div class="bg-white dark:bg-slate-800 p-2 rounded-md">
                                     <div class="md:flex justify-between items-center">
-                                        <label class="block text-lg font-medium  dark:text-white">
+                                        <label class="block text-lg font-medium dark:text-white">
                                             Cliente: </label>
                                     </div>
                                     <input type="text" x-model="proveedorQuery" autofocus
@@ -92,7 +92,7 @@
                                     @enderror
 
                                     <ul x-show="proveedores.length"
-                                        class="border bg-white rounded shadow mt-1 max-h-48 overflow-y-auto">
+                                        class="border bg-white  rounded shadow mt-1 max-h-48 overflow-y-auto">
                                         <template x-for="(p, index) in proveedores" :key="p.id">
                                             <li @click="seleccionarProveedor(p)" class="p-2 cursor-pointer"
                                                 :class="proveedorSeleccionado === index ?
@@ -105,9 +105,9 @@
 
                                 </div>
                                 {{-- ================= PRODUCTOS ================= --}}
-                                <div class="bg-white p-2 rounded-md mt-4">
+                                <div class="bg-white  dark:bg-slate-800 p-2 rounded-md mt-4">
                                     <div class="flex justify-between items-center mb-2 mt-4 ">
-                                        <label class="block text-lg font-medium  dark:text-white">Productos: </label>
+                                        <label class="block text-lg font-medium dark:text-white ">Productos: </label>
                                         <button type="button" @click="abrirModalProducto()"
                                             @keydown.window.prevent.f9="abrirModalProducto()"
                                             class="px-4 py-2 bg-blue-600 text-white rounded flex items-center mr-2">
@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="">
                                         <div class="hidden lg:block">
-                                            <table class="w-full border bg-white shadow rounded">
+                                            <table class="w-full border bg-white  shadow rounded">
                                                 <thead class="bg-gray-100">
                                                     <tr>
                                                         <th class="p-2">Código</th>
@@ -248,7 +248,7 @@
                                         </div>
                                         <div class="lg:hidden space-y-4">
                                             <template x-for="(item, index) in items" :key="index">
-                                                <div class="bg-white border shadow rounded p-4 space-y-3">
+                                                <div class="bg-white  dark:bg-slate-800 border shadow rounded p-4 space-y-3">
                                                     <div class="flex justify-between text-sm">
                                                         <span class="text-gray-500">Código</span>
                                                         <span class="font-mono" x-text="item.codigo"></span>
@@ -334,7 +334,7 @@
                         </div>
                         <div x-show="tab === 'info'" x-cloak class="space-y-4">
                             <div
-                                class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4 bg-white rounded-md p-2 mt-2">
+                                class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4 bg-white  dark:bg-slate-800 rounded-md p-2 mt-2">
                                 <div class="col-span-full">
                                     <label
                                         class="block text-xl mt-4 text-center md:text-left font-medium text-gray-700 dark:text-white">
@@ -510,34 +510,46 @@
                     </div>
                 </div>
                 {{-- PAGAR --}}
-                <div class=" w-3/12">
-                    <div class="bg-white rounded-md p-4">
-<h4 class=" text-center font-semibold uppercase">Resumen:</h4>
-                    <div class="">
-                        {{-- ================= TOTALES ================= --}}
-                        <div class="mt-4">
-                            <p class=" text-base font-semibold dark:text-white uppercase mb-2">Subtotal: <span class="ml-2"></span> $<span
-                                    x-text="subtotal().toFixed(2)"></span></p>
-                            <p class=" text-base font-semibold dark:text-white uppercase mb-2">Descuentos:<span class="ml-2"></span> $<span
-                                    x-text="totalDescuentos().toFixed(2)"></span></p>
-                            <p class=" text-base font-semibold dark:text-white uppercase mb-2">IVA (16%): <span class="ml-2"></span>$<span
-                                    x-text="iva().toFixed(2)"></span></p>
-                            <p class="text-xl font-bold uppercase mb-2">Total: </p>
-                            <p class="text-center text-2xl text-green-600 ">$<span
-                                    x-text="totalFinal().toFixed(2)"></span></p>
+                <div class="md:w-3/12 mt-4 md:mt-0">
+                    <div class="bg-white  dark:bg-slate-800 rounded-md p-4">
+                        <h4 class=" text-center font-semibold uppercase dark:text-white">Resumen:</h4>
+                        <div class="">
+                            {{-- ================= TOTALES ================= --}}
+                            <div class="mt-4">
+                                <div class="flex justify-between">
+                                    <p class=" text-base font-semibold dark:text-white uppercase mb-2">Total de articulos:</p>
+                                    <p class="dark:text-white">0</p>
+                                </div>
+                                <div class="flex justify-between">
+                                    <p class=" text-base font-semibold dark:text-white uppercase mb-2">Subtotal:</p>
+                                    <p class="dark:text-white">$<span x-text="subtotal().toFixed(2)"></span></p>
+                                </div>
+                                <div class="flex justify-between">
+                                    <p class=" text-base font-semibold dark:text-white uppercase mb-2">Descuentos:</p>
+                                    <p class="dark:text-white">$<span x-text="totalDescuentos().toFixed(2)"></span></p>
+                                </div>
+                                <div class="flex justify-between">
+                                    <p class=" text-base font-semibold dark:text-white uppercase mb-2">IVA (16%):</p>
+                                    <p class="dark:text-white">$<span x-text="iva().toFixed(2)"></span></p>
+                                </div>
+                                <div class="flex justify-between">
+                                    <p class="dark:text-white text-xl font-bold uppercase mb-2">Total: </p>
+                                    <p class="text-center text-2xl text-green-600 ">$<span
+                                            x-text="totalFinal().toFixed(2)"></span></p>
+                                </div>
 
-                            <div class="">
-<div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()" class="mt-4 ">
-                                <button x-ref="btnGuardar" id="btnGuardar" type="submit"
-                                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  mx-auto rounded-md font-medium">
-                                    GUARDAR [F10]
-                                </button>
-                            </div>
+                                <div class="">
+                                    <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()" class="mt-4 flex items-center">
+                                        <button x-ref="btnGuardar" id="btnGuardar" type="submit"
+                                            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  mx-auto rounded-md font-medium">
+                                            GUARDAR [F10]
+                                        </button>
+                                    </div>
+                                </div>
+
                             </div>
 
                         </div>
-
-                    </div>
 
                         {{-- -ENVIO DE DATOS --}}
                         <input type="hidden" name="proveedor_id" :value="proveedor?.id">
@@ -636,27 +648,12 @@
 
                                             <select x-model="p.precioSeleccionado" x-init="if (!p.precioSeleccionado) p.precioSeleccionado = String(p.costo)"
                                                 class="border rounded p-1 text-sm w-full">
-
-                                                <option :value="String(p.costo)">
-                                                    1.- - $<span x-text="p.costo"></span>
-                                                </option>
-
-                                                <option x-show="Number(p.costo2) > 0" :value="String(p.costo2)">
-                                                    2.- $<span x-text="p.costo2"></span>
-                                                </option>
-
+                                                <option :value="String(p.costo)">$<span x-text="p.costo"></span></option>
+                                                <option x-show="Number(p.costo2) > 0" :value="String(p.costo2)">$<span x-text="p.costo2"></span></option>
                                                 @if (auth()->user()->isAdmin())
-                                                    <option x-show="Number(p.costo3) > 0" :value="String(p.costo3)">
-                                                        3.- $<span x-text="p.costo3"></span>
-                                                    </option>
-
-                                                    <option x-show="Number(p.costo4) > 0" :value="String(p.costo4)">
-                                                        4.- $<span x-text="p.costo4"></span>
-                                                    </option>
-
-                                                    <option x-show="Number(p.costo5) > 0" :value="String(p.costo5)">
-                                                        5.- $<span x-text="p.costo5"></span>
-                                                    </option>
+                                                    <option x-show="Number(p.costo3) > 0" :value="String(p.costo3)"><span x-text="p.costo3"></span></option>
+                                                    <option x-show="Number(p.costo4) > 0" :value="String(p.costo4)">$<span x-text="p.costo4"></span></option>
+                                                    <option x-show="Number(p.costo5) > 0" :value="String(p.costo5)">$<span x-text="p.costo5"></span></option>
                                                 @endif
 
                                             </select>
@@ -835,29 +832,8 @@
                         this.items[index].resultadoSeleccionado = 0;
                     },
 
-                    seleccionarProducto(index, p) {
-                        if (this.items.some(i => i.producto_id === p.id)) return
-
-                        const item = this.items[index]
-
-                        item.producto_id = p.id
-                        item.codigo = p.codigo
-                        item.query = p.nombre
-                        item.cantidad = Number(p.cantidad) || 1,
-                            item.costo = parseFloat(p.costo) || 0
-                        item.costo2 = parseFloat(p.costo2) || 0
-                        item.costo3 = parseFloat(p.costo3) || 0
-                        item.costo4 = parseFloat(p.costo4) || 0
-                        item.stock = p.stock
-                        item.resultados = []
-                        item.resultadoSeleccionado = -1
-
-                        this.calcular()
-                    },
-
                     async buscarProductoModal() {
                         const q = this.busquedaProducto?.trim() || '';
-
                         if (q.length < 2) {
                             this.resultadosModal = [];
                             this.modalProductoSeleccionado = -1;
@@ -890,7 +866,7 @@
                             descuento: Number(p.descuento) || 0,
 
                             // Precio seleccionado en el combo
-                            costo: parseFloat(p.precioSeleccionado ?? p.costo) || 0,
+                            costo: (parseFloat(p.precioSeleccionado ?? p.costo)) || 0,
                             costo2: parseFloat(p.costo2) || 0,
                             costo3: parseFloat(p.costo3) || 0,
                             costo4: parseFloat(p.costo4) || 0,
