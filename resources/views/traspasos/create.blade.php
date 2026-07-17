@@ -1,20 +1,24 @@
 @section('title', 'TRASPASO')
 
 <x-app-layout>
-    <x-slot name="header">
-        <div class="md:flex md:justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                Registrar un traspaso </h2>
-            <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
-            </label>
+ <div class="flex items-center mt-4 py-2 gap-3 mb-4 bg-white dark:bg-slate-800 w-full rounded-md">
+        <a href="{{ route('traspasos.index') }}" class="flex text-white  bg-red-600 border-1  rounded-lg p-4">
+            <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />Regresar
+        </a>
+        <div class="">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                Registrar un traspaso
+            </h2>
+            <p class="dark:text-white mt-2 font-semibold"> Fecha:
+                {{ now()->format('d/m/Y') }}</span></p>
         </div>
-    </x-slot>
+    </div>
     <form method="POST" action="{{ route('traspasos.store') }}" id="formTraspasos" x-data="compraApp()" x-init="init();
     $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
         @csrf
         <div x-data="{ tab: 'detalle' }">
-            <div class="flex gap-4 border-b mt-4">
+            <div class="flex gap-4 border-b mt-4 bg-white  dark:bg-slate-800 rounded-md p-2">
                 <button type="button" @click="tab='detalle'"
                     :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
                     class="block text-lg font-medium mb-2 dark:text-white">
@@ -22,8 +26,8 @@
                 </button>
             </div>
             <div x-show="tab === 'detalle'">
-                <div class=" mx-auto py-6">
-                    <div class="md:flex gap-5 md:justify-between">
+                <div class=" mx-auto pt-2 ">
+                    <div class="md:flex gap-5 md:justify-between bg-white  dark:bg-slate-800 rounded-md p-2">
                         <div class="w-full">
                             <label class="block text-lg font-medium mb-2 dark:text-white">Seleccionar almacen de origen:
                                 *</label>
@@ -49,9 +53,19 @@
                     </div>
 
                     {{-- ================= PRODUCTOS ================= --}}
-                    <div class="mt-6">
+                    <div class="bg-white dark:bg-slate-800 mt-2  p-2">
+                            <div class="flex justify-between items-center mb-2  ">
+                                <label class="block text-lg font-medium dark:text-white ">Productos: </label>
+                                <button type="button" @click="abrirModalProducto()"
+                                    @keydown.window.prevent.f9="abrirModalProducto()"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded flex items-center mr-2">
+                                    <x-heroicon-o-plus class="w-5 h-5 mr-2" />Agregar [F9]
+                                </button>
+                            </div>
+                    </div>
+                    <div class="mt-6 ">
                         <div class="hidden lg:block">
-                            <table class="w-full border bg-white shadow rounded">
+                            <table class="w-full border bg-white shadow rounded ">
                                 <thead class="bg-gray-100">
                                     <tr>
                                         <th class="p-2">Código</th>
@@ -152,7 +166,8 @@
                                             <td class="p-2 text-center">
                                                 <button type="button" @click="eliminarFila(index)"
                                                     class="text-red-600 hover:text-red-800">
-                                                    ❌
+                                                    <x-heroicon-o-trash class="w-5 h-5 " />
+
                                                 </button>
                                             </td>
                                         </tr>
@@ -228,11 +243,6 @@
                         @error('productos')
                             <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
                         @enderror
-                        <button type="button" @click="abrirModalProducto()"
-                            @keydown.window.prevent.f9="abrirModalProducto()"
-                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-                            ➕ Agregar producto [F9]
-                        </button>
                     </div>
 
                     {{-- ================= TOTAL ================= --}}
@@ -257,13 +267,7 @@
             </div>
 
 
-            <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-
-                <a href="{{ route('traspasos.index') }}"
-                    class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
-                    <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
-                </a>
-
+            <div class="md:col-span-2 flex justify-end gap-3 mt-4">
                 <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
                     <button x-ref="btnGuardar" type="submit" id="btnSave"
                         class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">

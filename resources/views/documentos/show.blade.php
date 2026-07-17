@@ -7,37 +7,30 @@
 
     <x-app-layout>
 
-        @if (session('success'))
-            <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
-                class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4 mt-4">
-                {{ session('success') }}
-            </p>
-        @endif
-        @if (session('error'))
-            <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
-                class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-4 mt-4">{{ session('error') }}
-            </p>
-        @endif
-
-        <x-slot name="header">
-            <div class="md:flex md:justify-between md:items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                    {{ match ($documento->documento_modelo_id) {
-                        1 => 'Cotización',
-                        2 => 'Factura',
-                        3 => 'Remisión',
-                    } }}
-                    {{ $documento->serie . ' #' . $documento->folio }} </h2>
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                    Fecha: {{ \Carbon\Carbon::parse($documento->fecha)->format('d/m/Y') }}
-                </h2>
-            </div>
-
-        </x-slot>
-        <div class="md:flex md:justify-between mt-4 md:items-center md:gap-2 ">
-            <div>
-                <p class="dark:text-white text-center uppercase md:text-left">Estado:
-                    @php
+        <div class="flex items-center mt-4 py-2 gap-3 mb-4 bg-white dark:bg-slate-800 w-full rounded-md">
+            <a href="{{ route(
+                match ($documento->documento_modelo_id) {
+                    1 => 'cotizaciones.index',
+                    2 => 'facturas.index',
+                    3 => 'remisiones.index',
+                },
+                ['sucursal' => $sucursal],
+            ) }}"
+                class="flex text-white  bg-red-600 border-1  rounded-lg p-4">
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />Regresar
+            </a>
+            <div class="md:flex md:justify-between items-center w-full">
+                <div class="">
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                        {{ match ($documento->documento_modelo_id) {1 => 'Cotización',2 => 'Factura',3 => 'Remisión'} . ' ' }}
+                        {{ $documento->serie . ' #' . $documento->folio }}
+                    </h2>
+                    <p class="dark:text-white mt-2 font-semibold"> Sucursal: {{ $sucursal->nombre }}<span class="ml-6">
+                            Fecha:
+                            {{ \Carbon\Carbon::parse($documento->fecha)->format('d/m/Y') }}</span></p>
+                </div>
+                <div class="mt-2 md:mt-0">
+                    <p class="dark:text-white font-semibold">Estado: @php
                         $estatusText = match (true) {
                             $documento->estatus == 4 && $documento->documento_modelo_id == 2 => 'TIMBRADA',
 
@@ -50,10 +43,15 @@
                             default => 'DESCONOCIDO',
                         };
                     @endphp
-                    <span class="font-bold text-green-600">{{ $estatusText }}</span>
-                </p>
-
+                        <span class="font-bold bg-green-500 rounded-md py-2 px-6 text-white mr-6">{{ $estatusText }}</span>
+                    </p>
+                </div>
             </div>
+
+        </div>
+
+        <div class="md:flex md:justify-between mt-4 md:items-center md:gap-2 ">
+
             <div class="flex gap-2 mt-4 md:mt-0">
                 @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
                     <button onclick="surtirRemision()"
@@ -89,7 +87,8 @@
                         <x-heroicon-o-x-mark class="w-5 h-5" />
                         Cancelar
                     </button>
-                    <form method="POST" id="formCancelar" action="{{ route('documentos.cancelar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
+                    <form method="POST" id="formCancelar"
+                        action="{{ route('documentos.cancelar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
                         @csrf
                         <input type="hidden" name="motivo" id="motivo">
                         <input type="hidden" name="uuid_sustitucion" id="uuid_sustitucion">
@@ -157,275 +156,294 @@
                         <x-heroicon-o-arrow-uturn-right class="w-5 h-5 mr-2" /> Devolucion</a>
                 @endif
             </div>
-
-
         </div>
-        <div x-data="{ tab: 'detalle' }">
-            <div class="flex gap-4 border-b mt-4">
-                <button type="button" @click="tab='detalle'"
-                    :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
-                    class="block text-lg font-medium mb-2 dark:text-white">
-                    [1] Movimientos
-                </button>
+        {{-- CONTENEDOR GENERAL --}}
+        <div class="md:flex md:justify-between gap-2">
+            <div class="md:w-9/12 px-1 ">
+                <div x-data="{ tab: 'detalle' }">
+                    <div class="flex gap-4 border-b mt-4 bg-white dark:bg-slate-800 w-full p-1 rounded-md">
+                        <button type="button" @click="tab='detalle'"
+                            :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
+                            class="block text-lg font-medium mb-2 dark:text-white">
+                            [1] Movimientos
+                        </button>
 
-                <button type="button" @click="tab='info'" :class="tab === 'info' ? 'border-b-2 border-blue-500' : ''"
-                    class="block text-lg font-medium mb-2 dark:text-white">
-                    [2] Datos generales
-                </button>
-            </div>
-            <div x-show="tab === 'detalle'">
-                <div class="my-6">
-                    <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
-                    <input type="text" value="{{ $documento->cliente->nombre }}" disabled
-                        class="w-full border rounded p-2 bg-gray-100">
-                </div>
-                <!-- TABLE: solo visible en desktop -->
-                <div class="hidden md:block">
-                    <table class="w-full border bg-white shadow rounded">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="p-2">Código</th>
-                                <th class="p-2">Producto</th>
-                                <th class="p-2">Cantidad</th>
-                                <th class="p-2">Costo</th>
-                                <th class="p-2">Descuento</th>
-                                <th class="p-2">Importe</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($documento->detalles as $detalle)
-                                <tr class="border-t">
-                                    <td class="p-2 text-center">
-                                        {{ $detalle->producto->codigo_producto }}
-                                    </td>
-                                    <td class="p-2">
-                                        {{ $detalle->producto->nombre_producto }}
-                                    </td>
-                                    <td class="p-2 text-center">
-                                        {{ $detalle->cantidad }}
-                                    </td>
-                                    <td class="p-2 text-right">
-                                        ${{ number_format($detalle->costo_unitario, 2) }}
-                                    </td>
-                                    <td class="p-2 text-right">
-                                        {{ number_format($detalle->descuento) }}%
-                                    </td>
-                                    <td class="p-2 text-right">
-                                        ${{ number_format($detalle->importe, 2) }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <!-- CARDS: visible en tablet y móvil -->
-                <div class="md:hidden space-y-4">
-                    @foreach ($documento->detalles as $detalle)
-                        <div class="border rounded-lg shadow bg-white p-4">
-                            <div class="flex justify-between text-sm text-gray-500">
-                                <span>Código</span>
-                                <span class="font-medium text-gray-800">
-                                    {{ $detalle->producto->codigo_producto }}
-                                </span>
-                            </div>
-
-                            <div class="mt-2">
-                                <p class="text-sm text-gray-500">Producto</p>
-                                <p class="font-semibold">
-                                    {{ $detalle->producto->nombre_producto }}
-                                </p>
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-4 mt-3 text-sm">
-                                <div>
-                                    <p class="text-gray-500">Cantidad</p>
-                                    <p class="font-medium">{{ $detalle->cantidad }}</p>
-                                </div>
-
-                                <div>
-                                    <p class="text-gray-500">Costo</p>
-                                    <p class="font-medium">
-                                        ${{ number_format($detalle->costo_unitario, 2) }}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500">Descuento</p>
-                                    <p class="font-medium">
-                                        {{ number_format($detalle->descuento) }} %
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="mt-3 border-t pt-2 flex justify-between">
-                                <span class="text-gray-500 text-sm">Importe</span>
-                                <span class="font-semibold text-lg">
-                                    ${{ number_format($detalle->importe, 2) }}
-                                </span>
-                            </div>
+                        <button type="button" @click="tab='info'"
+                            :class="tab === 'info' ? 'border-b-2 border-blue-500' : ''"
+                            class="block text-lg font-medium mb-2 dark:text-white">
+                            [2] Datos generales
+                        </button>
+                    </div>
+                    <div x-show="tab === 'detalle'" class="">
+                        <div class="my-2 bg-white dark:bg-slate-800 w-full rounded-md p-2">
+                            <label class="block text-lg font-medium mb-2 dark:text-white">Cliente:
+                                {{ $documento->cliente->nombre }}</label>
                         </div>
-                    @endforeach
-                </div>
-                {{-- TOTALES --}}
-                <div class="text-right mt-6 space-y-1">
-                    <p class="uppercase block text-lg font-medium mb-2 dark:text-white">Subtotal:
-                        ${{ number_format($documento->subtotal, 2) }}</p>
-                    <p class="uppercase block text-lg font-medium mb-2 dark:text-white">Descuento:
-                        ${{ number_format($documento->descuentos, 2) }}</p>
-                    <p class="uppercase block text-lg font-medium mb-2 dark:text-white">IVA:
-                        ${{ number_format($documento->impuestos, 2) }}</p>
+                        <!-- TABLE: solo visible en desktop -->
+                        <div class="hidden md:block bg-white  w-full rounded-md">
+                            <table class="w-full border ">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="p-2">Código</th>
+                                        <th class="p-2">Producto</th>
+                                        <th class="p-2">Cantidad</th>
+                                        <th class="p-2">Costo</th>
+                                        <th class="p-2">Descuento</th>
+                                        <th class="p-2">Importe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($documento->detalles as $detalle)
+                                        <tr class="border-t">
+                                            <td class="p-2 text-center">
+                                                {{ $detalle->producto->codigo_producto }}
+                                            </td>
+                                            <td class="p-2">
+                                                {{ $detalle->producto->nombre_producto }}
+                                            </td>
+                                            <td class="p-2 text-center">
+                                                {{ $detalle->cantidad }}
+                                            </td>
+                                            <td class="p-2 text-right">
+                                                ${{ number_format($detalle->costo_unitario, 2) }}
+                                            </td>
+                                            <td class="p-2 text-right">
+                                                {{ number_format($detalle->descuento) }}%
+                                            </td>
+                                            <td class="p-2 text-right">
+                                                ${{ number_format($detalle->importe, 2) }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- CARDS: visible en tablet y móvil -->
+                        <div class="md:hidden space-y-4">
+                            @foreach ($documento->detalles as $detalle)
+                                <div class="border rounded-lg shadow bg-white p-4">
+                                    <div class="flex justify-between text-sm text-gray-500">
+                                        <span>Código</span>
+                                        <span class="font-medium text-gray-800">
+                                            {{ $detalle->producto->codigo_producto }}
+                                        </span>
+                                    </div>
 
-                    <p class="uppercase block text-lg font-medium mb-2 dark:text-white">
-                        Total: ${{ number_format($documento->total, 2) }}
-                    </p>
-                </div>
-            </div>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-500">Producto</p>
+                                        <p class="font-semibold">
+                                            {{ $detalle->producto->nombre_producto }}
+                                        </p>
+                                    </div>
 
-            <div x-show="tab === 'info'" x-cloak class="space-y-4">
-                <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
-                    <label
-                        class="mt-4 col-span-full block text-center md:text-left text-xl font-medium text-gray-700 dark:text-white">
-                        Datos del cliente:</label>
-                    <div class="mb-2">
-                        <label class="block text-lg font-medium mb-2 dark:text-white">RFC: </label>
-                        <input type="text" value="{{ $documento->cliente->rfc }}"
-                            class="w-full border rounded p-2 bg-gray-100">
+                                    <div class="grid grid-cols-3 gap-4 mt-3 text-sm">
+                                        <div>
+                                            <p class="text-gray-500">Cantidad</p>
+                                            <p class="font-medium">{{ $detalle->cantidad }}</p>
+                                        </div>
+
+                                        <div>
+                                            <p class="text-gray-500">Costo</p>
+                                            <p class="font-medium">
+                                                ${{ number_format($detalle->costo_unitario, 2) }}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-500">Descuento</p>
+                                            <p class="font-medium">
+                                                {{ number_format($detalle->descuento) }} %
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3 border-t pt-2 flex justify-between">
+                                        <span class="text-gray-500 text-sm">Importe</span>
+                                        <span class="font-semibold text-lg">
+                                            ${{ number_format($detalle->importe, 2) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
                     </div>
-                    <div class="mb-2">
-                        <label class="block text-lg font-medium mb-2 dark:text-white">Codigo Postal: </label>
-                        <input type="text" value="{{ optional($documento->domicilios->first())->cp }}" disabled
-                            class="w-full border rounded p-2 bg-gray-100">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block text-lg font-medium mb-2 dark:text-white">Ciudad: </label>
-                        <input type="text" value="{{ optional($documento->domicilios->first())->ciudad }}" disabled
-                            class="w-full border rounded p-2 bg-gray-100">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block text-lg font-medium mb-2 dark:text-white">Calle: </label>
-                        <input type="text" value="{{ optional($documento->domicilios->first())->calle }}" disabled
-                            class="w-full border rounded p-2 bg-gray-100">
-                    </div>
-                    {{-- <div class="">
+
+                    <div x-show="tab === 'info'" x-cloak class="space-y-4">
+                        <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
+                            <label
+                                class="mt-4 col-span-full block text-center md:text-left text-xl font-medium text-gray-700 dark:text-white">
+                                Datos del cliente:</label>
+                            <div class="mb-2">
+                                <label class="block text-lg font-medium mb-2 dark:text-white">RFC: </label>
+                                <input type="text" value="{{ $documento->cliente->rfc }}"
+                                    class="w-full border rounded p-2 bg-gray-100">
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-lg font-medium mb-2 dark:text-white">Codigo Postal: </label>
+                                <input type="text" value="{{ optional($documento->domicilios->first())->cp }}"
+                                    disabled class="w-full border rounded p-2 bg-gray-100">
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-lg font-medium mb-2 dark:text-white">Ciudad: </label>
+                                <input type="text" value="{{ optional($documento->domicilios->first())->ciudad }}"
+                                    disabled class="w-full border rounded p-2 bg-gray-100">
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-lg font-medium mb-2 dark:text-white">Calle: </label>
+                                <input type="text" value="{{ optional($documento->domicilios->first())->calle }}"
+                                    disabled class="w-full border rounded p-2 bg-gray-100">
+                            </div>
+                            {{-- <div class="">
                     <label class="block text-lg font-medium mb-2 dark:text-white">Numero interior: </label>
                     <input type="text"
                         value="{{ optional($documento->domicilios->first())->numero_interior }}" disabled
                         class="w-full border rounded p-2 bg-gray-100">
                 </div> --}}
-                    <div class="mb-2">
-                        <label class="block text-lg font-medium mb-2 dark:text-white">Numero exterior: </label>
-                        <input type="text" value="{{ optional($documento->domicilios->first())->numero_exterior }}"
-                            disabled class="w-full border rounded p-2 bg-gray-100">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block text-lg font-medium mb-2 dark:text-white">Colonia: </label>
-                        <input type="text" value="{{ optional($documento->domicilios->first())->colonia }}" disabled
-                            class="w-full border rounded p-2 bg-gray-100">
-                    </div>
-                    <label
-                        class="col-span-full block text-xl text-center md:text-left font-medium text-gray-700 dark:text-white mt-4">
-                        Datos del pago:
-                        </span></label>
-                    <div class="mb-2">
-                        <label for="metodo_pago" class="block text-md font-medium text-gray-700 dark:text-white mb-1">
-                            Metodo de pago: <span class="text-red-500">*</span>
-                        </label>
-                        <select class="p-2 w-full  rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            <option value="PUE" @selected(old('metodo_pago', $documento->metodo_pago) === 'PUE')>PUE Pago en una sola exhibición</option>
-                            <option value="PPD" @selected(old('metodo_pago', $documento->metodo_pago) === 'PPD')>PPD Pago en Parcialidades o Diferido
-                            </option>
-                        </select>
-                        @error('metodo_pago')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div class="mb-2">
-                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                            Forma de pago:<span class="text-red-500">*</span>
-                        </label>
-                        <select class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            <option value="01" @selected(old('forma_pago', $documento->forma_pago) === '01')>01 Efectivo</option>
-                            <option value="03" @selected(old('forma_pago', $documento->forma_pago) === '03')>03 Transferencia</option>
-                            <option value="04" @selected(old('forma_pago', $documento->forma_pago) === '04')>04 Tarjeta de crédito</option>
-                            <option value="28" @selected(old('forma_pago', $documento->forma_pago) === '28')>28 Tarjeta de débito</option>
-                            <option value="05" @selected(old('forma_pago', $documento->forma_pago) === '05')>05 Monedero electrónico</option>
-                            <option value="02" @selected(old('forma_pago', $documento->forma_pago) === '02')>02 Cheque nominativo</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                            Uso de CFDI <span class="text-red-500">*</span>
-                        </label>
-                        <select class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            @foreach ($usos as $uso)
-                                <option value="{{ $uso->clave }}" @selected(old('uso_cfdi', $documento->uso_cfdi) === $uso->clave)>
-                                    {{ $uso->clave }} - {{ $uso->descripcion }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('uso_cfdi')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    @if ($documento->documento_modelo_id == 1)
-                        <div class="mb-2">
-                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                                Vigencia del documento:<span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="vigencia" value="{{ $documento->vigencia }}"
-                                class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            <div class="mb-2">
+                                <label class="block text-lg font-medium mb-2 dark:text-white">Numero exterior: </label>
+                                <input type="text"
+                                    value="{{ optional($documento->domicilios->first())->numero_exterior }}" disabled
+                                    class="w-full border rounded p-2 bg-gray-100">
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-lg font-medium mb-2 dark:text-white">Colonia: </label>
+                                <input type="text" value="{{ optional($documento->domicilios->first())->colonia }}"
+                                    disabled class="w-full border rounded p-2 bg-gray-100">
+                            </div>
+                            <label
+                                class="col-span-full block text-xl text-center md:text-left font-medium text-gray-700 dark:text-white mt-4">
+                                Datos del pago:
+                                </span></label>
+                            <div class="mb-2">
+                                <label for="metodo_pago"
+                                    class="block text-md font-medium text-gray-700 dark:text-white mb-1">
+                                    Metodo de pago: <span class="text-red-500">*</span>
+                                </label>
+                                <select
+                                    class="p-2 w-full  rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="PUE" @selected(old('metodo_pago', $documento->metodo_pago) === 'PUE')>PUE Pago en una sola exhibición
+                                    </option>
+                                    <option value="PPD" @selected(old('metodo_pago', $documento->metodo_pago) === 'PPD')>PPD Pago en Parcialidades o
+                                        Diferido
+                                    </option>
+                                </select>
+                                @error('metodo_pago')
+                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                    Forma de pago:<span class="text-red-500">*</span>
+                                </label>
+                                <select
+                                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="01" @selected(old('forma_pago', $documento->forma_pago) === '01')>01 Efectivo</option>
+                                    <option value="03" @selected(old('forma_pago', $documento->forma_pago) === '03')>03 Transferencia</option>
+                                    <option value="04" @selected(old('forma_pago', $documento->forma_pago) === '04')>04 Tarjeta de crédito</option>
+                                    <option value="28" @selected(old('forma_pago', $documento->forma_pago) === '28')>28 Tarjeta de débito</option>
+                                    <option value="05" @selected(old('forma_pago', $documento->forma_pago) === '05')>05 Monedero electrónico</option>
+                                    <option value="02" @selected(old('forma_pago', $documento->forma_pago) === '02')>02 Cheque nominativo</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                    Uso de CFDI <span class="text-red-500">*</span>
+                                </label>
+                                <select
+                                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                    @foreach ($usos as $uso)
+                                        <option value="{{ $uso->clave }}" @selected(old('uso_cfdi', $documento->uso_cfdi) === $uso->clave)>
+                                            {{ $uso->clave }} - {{ $uso->descripcion }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('uso_cfdi')
+                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            @if ($documento->documento_modelo_id == 1)
+                                <div class="mb-2">
+                                    <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                        Vigencia del documento:<span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="date" name="vigencia" value="{{ $documento->vigencia }}"
+                                        class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                            @endif
+                            <div class="mb-2">
+                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                    Agente:<span class="text-red-500">*</span>
+                                </label>
+                                <select name="agente_id" id="agente_id"
+                                    class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="" disabled>Seleccione un agente</option>
+                                    {{-- <option value="0">Ninguno</option> --}}
+                                    @foreach ($agentes as $agente)
+                                        <option value="{{ $agente->id }}" @selected(old('agente_id', $documento->agente_id) === $agente->id)>
+                                            {{ $agente->codigo . ' - ' . $agente->nombre . ' ' . $agente->apellidoP }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('agente_id')
+                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
+                                    Observaciones <span class="text-red-500">*</span>
+                                </label>
+                                <textarea class="w-full" name="observaciones">{{ $documento->observaciones }}</textarea>
+                            </div>
                         </div>
-                    @endif
-                    <div class="mb-2">
-                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                            Agente:<span class="text-red-500">*</span>
-                        </label>
-                        <select name="agente_id" id="agente_id"
-                            class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                            <option value="" disabled>Seleccione un agente</option>
-                            {{-- <option value="0">Ninguno</option> --}}
-                            @foreach ($agentes as $agente)
-                                <option value="{{ $agente->id }}" @selected(old('agente_id', $documento->agente_id) === $agente->id)>
-                                    {{ $agente->codigo . ' - ' . $agente->nombre . ' ' . $agente->apellidoP }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('agente_id')
-                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-white">
-                            Observaciones <span class="text-red-500">*</span>
-                        </label>
-                        <textarea class="w-full" name="observaciones">{{ $documento->observaciones }}</textarea>
                     </div>
                 </div>
             </div>
-            <div class="mt-6 ">
-                <div class="flex justify-between items-center gap-3 ">
-                    <a href="{{ route(
-                        match ($documento->documento_modelo_id) {
-                            1 => 'cotizaciones.index',
-                            2 => 'facturas.index',
-                            3 => 'remisiones.index',
-                        },
-                        ['sucursal' => $sucursal],
-                    ) }}"
-                        class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
-                        <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar</a>
+            {{-- RESUMEN --}}
+            <div class="md:w-3/12 mt-4 ">
+                <div class="bg-white  dark:bg-slate-800 rounded-md p-4">
+                    <h4 class=" text-center font-semibold uppercase dark:text-white">Resumen:</h4>
+                    <div class="">
+                        {{-- ================= TOTALES ================= --}}
+                        <div class="mt-4">
+                            <div class="flex justify-between">
+                                <p class=" text-base font-semibold dark:text-white uppercase mb-2">Total de articulos:</p>
+                                <p class="dark:text-white">0</p>
+                            </div>
+                            <div class="flex justify-between">
+                                <p class=" text-base font-semibold dark:text-white uppercase mb-2">Subtotal:</p>
+                                <p class="dark:text-white"> ${{ number_format($documento->subtotal, 2) }}</p>
+                            </div>
+                            <div class="flex justify-between">
+                                <p class=" text-base font-semibold dark:text-white uppercase mb-2">Descuentos:</p>
+                                <p class="dark:text-white"> ${{ number_format($documento->descuentos, 2) }}</p>
+                            </div>
+                            <div class="flex justify-between">
+                                <p class=" text-base font-semibold dark:text-white uppercase mb-2">IVA (16%):</p>
+                                <p class="dark:text-white">${{ number_format($documento->impuestos, 2) }}</p>
+                            </div>
+                            <div class="flex justify-between">
+                                <p class="dark:text-white text-xl font-bold uppercase mb-2">Total: </p>
+                                <p class="text-center text-2xl text-green-600 ">${{ number_format($documento->total, 2) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     @if ($documento->estatus == 1)
-                        <div x-data @keydown.window.prevent.f10="$refs.btnActualizar.click()">
+                        <div x-data @keydown.window.prevent.f10="$refs.btnActualizar.click()"
+                            class="mt-4 flex items-center justify-center">
                             <a x-ref="btnActualizar"
                                 href="{{ route('documentos.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
-                                class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                                class=" px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                                 ACTUALIZAR [F10]
                             </a>
                         </div>
                     @endif
-
                 </div>
             </div>
         </div>
+        </div>
+
         <div id="emailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
             <div class="bg-white rounded-lg w-full max-w-md p-6">
                 <h2 class="text-lg font-semibold mb-4">
@@ -558,10 +576,10 @@
 
         function cancelar() {
 
-    Swal.fire({
-        title: 'Cancelar factura',
+            Swal.fire({
+                title: 'Cancelar factura',
 
-        html: `
+                html: `
             <div style="text-align:left">
 
                 <p style="font-weight:bold; margin-bottom: 5px;">
@@ -600,71 +618,71 @@
             </div>
         `,
 
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Cancelar factura',
-        cancelButtonText: 'Regresar',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Cancelar factura',
+                cancelButtonText: 'Regresar',
 
-        didOpen: () => {
+                didOpen: () => {
 
-            const motivo = document.getElementById('swal-motivo');
-            const uuidContainer = document.getElementById('uuid-container');
+                    const motivo = document.getElementById('swal-motivo');
+                    const uuidContainer = document.getElementById('uuid-container');
 
-            motivo.addEventListener('change', function () {
+                    motivo.addEventListener('change', function() {
 
-                if (this.value === '01' || this.value === '04') {
-                    uuidContainer.style.display = 'block';
-                } else {
-                    uuidContainer.style.display = 'none';
+                        if (this.value === '01' || this.value === '04') {
+                            uuidContainer.style.display = 'block';
+                        } else {
+                            uuidContainer.style.display = 'none';
+                        }
+
+                    });
+
+                },
+
+                preConfirm: () => {
+
+                    const motivo = document.getElementById('swal-motivo').value;
+                    const uuid = document.getElementById('swal-uuid').value;
+
+                    if (!motivo) {
+                        Swal.showValidationMessage('Seleccione un motivo.');
+                        return false;
+                    }
+
+                    if ((motivo === '01' || motivo === '04') && !uuid) {
+                        Swal.showValidationMessage('Debe capturar el UUID de sustitución.');
+                        return false;
+                    }
+
+                    return {
+                        motivo,
+                        uuid
+                    };
                 }
 
+            }).then((result) => {
+
+                if (!result.isConfirmed) {
+                    return;
+                }
+
+                document.getElementById('motivo').value = result.value.motivo;
+                document.getElementById('uuid_sustitucion').value = result.value.uuid;
+
+                Swal.fire({
+                    title: 'Cancelando factura...',
+                    text: 'Por favor espere mientras se realiza la cancelación.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                document.getElementById('formCancelar').submit();
+
             });
-
-        },
-
-        preConfirm: () => {
-
-            const motivo = document.getElementById('swal-motivo').value;
-            const uuid = document.getElementById('swal-uuid').value;
-
-            if (!motivo) {
-                Swal.showValidationMessage('Seleccione un motivo.');
-                return false;
-            }
-
-            if ((motivo === '01' || motivo === '04') && !uuid) {
-                Swal.showValidationMessage('Debe capturar el UUID de sustitución.');
-                return false;
-            }
-
-            return {
-                motivo,
-                uuid
-            };
         }
-
-    }).then((result) => {
-
-        if (!result.isConfirmed) {
-            return;
-        }
-
-        document.getElementById('motivo').value = result.value.motivo;
-        document.getElementById('uuid_sustitucion').value = result.value.uuid;
-
-        Swal.fire({
-            title: 'Cancelando factura...',
-            text: 'Por favor espere mientras se realiza la cancelación.',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
-
-        document.getElementById('formCancelar').submit();
-
-    });
-}
 
         function seleccionarConversion() {
             Swal.fire({
