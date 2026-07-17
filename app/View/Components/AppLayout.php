@@ -15,7 +15,6 @@ class AppLayout extends Component
      */
     public function render(): View
     {
-        // VALIDAR
         $user = auth()->user();
         $empresa=ConfiguracionEmpresa::first();
         // // TODO::VERIFICAR COMO USUARIOS PUEDEN ACCEDER A LA SUCURSAL
