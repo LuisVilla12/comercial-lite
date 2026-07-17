@@ -690,7 +690,6 @@
             </div>
             </div>
         </form>
-        </div>
         {{-- ================= ALPINE ================= --}}
         <script>
             //DESHABILITAR BOTON DE GUARDAR AL DAR CLICK
