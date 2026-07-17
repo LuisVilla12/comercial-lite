@@ -1,52 +1,76 @@
 @section('title', 'Detalles de un REP')
 <x-app-layout>
-    <x-slot name="header">
-        <div class="md:flex md:justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                Detalles del ERP
-            </h2>
-            <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
-            </label>
-        </div>
-    </x-slot>
-    <div class="md:flex md:justify-between mt-4 md:items-center md:gap-2 ">
+    <div class="flex items-center mt-4 py-2 gap-3 mb-4 bg-white dark:bg-slate-800  rounded-md w-full">
+        <a href="{{ route('pagos.index') }}" class="flex text-white  bg-red-600 border-1  rounded-lg p-4">
+            <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />Regresar
+        </a>
+        <div class="md:flex md:justify-between items-center w-full">
             <div>
-                <p class="dark:text-white text-center uppercase md:text-left">Estado:
-                    @php
-                        $estatusText = match (true) {
-                            $documento->estatus == 1 => 'ACTIVA',
-                            $documento->estatus == 3 => 'CANCELADA',
-                            $documento->estatus == 4 => 'TIMBRADA',
-
-                            default => 'DESCONOCIDO',
-                        };
-                    @endphp
-                    <span class="font-bold text-green-600">{{ $estatusText }}</span>
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                    Detalles del REP # {{ $documento->id }}
+                </h2>
+                <p class="dark:text-white mt-2 font-semibold"> <span> Fecha:
+                        {{ \Carbon\Carbon::parse($documento->fecha)->format('d/m/Y') }}</span></p>
+            </div>
+            <div class="mt-2 md:mt-0 mb-4 md:mb-0">
+                <p class="dark:text-white font-semibold">Estado: @php
+                    $estatusText = match ($documento->estatus) {
+                        1 => 'ACTIVA',
+                        3 => 'CANCELADA',
+                        4 => 'TIMBRADA',
+                        default => 'DESCONOCIDO',
+                    };
+                @endphp
+                    <span class="font-bold bg-green-500 rounded-md py-2 px-6 text-white mr-6">{{ $estatusText }}</span>
                 </p>
-
             </div>
-            <div class="flex gap-2 mt-4 md:mt-0">
-                <a href="{{ route('pagos.pdf',$documento) }}" target="_blank"
-                        class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ml-6">
-                        <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
-                    </a>
-                <div>
-                    <button onclick="timbrar()"
-                        class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
-                        <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5" />
-                        Timbrar
-                    </button>
-                    <form method="POST" id="formTimbrar"
-                        action="{{route('pagos.timbrar',$documento)}}">
-                        @csrf
-                    </form>
-                </div>
-            </div>
+        </div>
     </div>
+    <div class="flex flex-wrap justify-end gap-3">
+        @if ($documento->estatus == 1)
+            <button onclick="timbrar()"
+                class="group w-24 rounded-xl border border-red-500/30 bg-red-500/10 dark:bg-red-500/50 hover:bg-red-500 hover:text-white transition-all duration-200">
+                <div class="flex flex-col items-center py-1">
+                    <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2 text-red-400 group-hover:text-white" />
+                    <span class="mt-1 font-semibold text-sm dark:text-white">Timbrar <span
+                            class="text-xs opacity-70">F1</span></span>
+                </div>
+            </button>
+            <form method="POST" id="formTimbrar" class="hidden" action="{{ route('pagos.timbrar', $documento) }}">
+                @csrf
+            </form>
+        @else
+        <button onclick="cancelar()"
+                    class="group w-24 rounded-xl border border-red-500/30 bg-red-500/10 dark:bg-red-500/50 hover:bg-red-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center py-1">
+                        <x-heroicon-o-x-mark class="w-5 h-5 mr-2 text-red-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Cancelar <span
+                                class="text-xs opacity-70">F1</span></span>
+                    </div>
+                </button>
+                <form method="POST" id="formCancelar" class="hidden"
+                    action="">
+                    @csrf
+                    <input type="hidden" name="motivo" id="motivo">
+                    <input type="hidden" name="uuid_sustitucion" id="uuid_sustitucion">
+                </form>
+        @endif
+
+
+        <a href="{{ route('pagos.pdf', $documento) }}" target="_blank"
+            class="flex items-center justify-center group w-24 rounded-xl border border-blue-500/30 bg-blue-500/10 dark:bg-blue-500/50 hover:bg-blue-500 hover:text-white transition-all duration-200">
+            <div class="flex flex-col items-center">
+                <x-heroicon-o-printer class="w-5 h-5 mr-2 text-blue-400 group-hover:text-white" />
+                <span class="mt-1 font-semibold text-sm dark:text-white">Imprimir<span
+                        class=" text-xs opacity-70">F4</span></span>
+            </div>
+        </a>
+    </div>
+
     <form method="POST" action="{{ route('pagos.store') }}" x-data="compraApp()" x-init="init();">
         @csrf
-        <div x-data="{ tab: 'detalle' }">
-            <div class="flex gap-4 border-b mt-4">
+        <div x-data="{ tab: 'detalle' }" class="">
+            <div class="flex gap-4 border-b mt-2 bg-white dark:bg-slate-800 rounded-md p-2 ">
                 <button type="button" @click="tab='detalle'"
                     :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
                     class="block text-lg font-medium mb-2 dark:text-white">
@@ -60,17 +84,15 @@
                 </button>
             </div>
             <div x-show="tab === 'detalle'">
-                <div class=" mx-auto py-6">
-                    <div class="mb-6">
+                <div class=" mx-auto py-4">
+                    <div class="mb-4 bg-white dark:bg-slate-800 rounded-md p-2">
                         <div class="md:flex justify-between">
-                            <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
+                            <label class="block text-lg font-medium mb-2 dark:text-white">Cliente:
+                                {{ $documento->cliente->nombre }}</label>
                         </div>
-                        <input type="text" readonly class="w-full border rounded p-2"  value="{{ $documento->cliente->nombre }}">
                     </div>
                     {{-- ================= FACTURAS ================= --}}
-                    <div>
-                        <!-- Cliente -->
-
+                    <div class="bg-white dark:bg-slate-800 rounded-md p-2">
                         <div class="col-span-full">
                             <label class="block text-lg font-medium mb-2 dark:text-white">
                                 Facturas pendientes:
@@ -90,17 +112,20 @@
                                     </thead>
 
                                     <tbody>
-                                    @foreach ($documento->detalles as $detalle)
+                                        @foreach ($documento->detalles as $detalle)
                                             <tr class="border-t">
                                                 <td class="p-2 text-center">{{ $detalle->documento->serie }}</td>
                                                 <td class="p-2 text-center">{{ $detalle->documento->folio }}</td>
                                                 <td class="p-2 text-center">{{ $detalle->documento->fecha }}</td>
-                                                <td class="p-2 text-center"> {{ number_format($detalle->documento->total,2) }}</td>
-                                                <td class="p-2 text-center"> {{ number_format($detalle->documento->saldo_pendiente,2) }} </td>
-                                                <td class="p-2 text-center">{{ number_format($detalle->monto,2) }}</td>
+                                                <td class="p-2 text-center">
+                                                    {{ number_format($detalle->documento->total, 2) }}</td>
+                                                <td class="p-2 text-center">
+                                                    {{ number_format($detalle->documento->saldo_pendiente, 2) }} </td>
+                                                <td class="p-2 text-center">{{ number_format($detalle->monto, 2) }}
+                                                </td>
                                             </tr>
-                                    @endforeach
-                                        </tbody>
+                                        @endforeach
+                                    </tbody>
 
                                 </table>
                             </div>
@@ -129,14 +154,16 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Codigo postal: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="codigo_postal" placeholder="Codigo postal" value="{{ optional($documento->domicilios->first())->cp }}"
+                        <input type="text" name="codigo_postal" placeholder="Codigo postal"
+                            value="{{ optional($documento->domicilios->first())->cp }}"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="mb-2">
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Ciudad: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="ciudad" placeholder="Ciudad" value="{{ optional($documento->domicilios->first())->ciudad }}"
+                        <input type="text" name="ciudad" placeholder="Ciudad"
+                            value="{{ optional($documento->domicilios->first())->ciudad }}"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     {{--  --}}
@@ -144,7 +171,8 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Calle: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="calle" placeholder="calle" value="{{ optional($documento->domicilios->first())->calle }}"
+                        <input type="text" name="calle" placeholder="calle"
+                            value="{{ optional($documento->domicilios->first())->calle }}"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
 
                     </div>
@@ -153,7 +181,8 @@
                             <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                                 Número exterior: <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="numero_exterior" placeholder="Número exterior" value="{{ optional($documento->domicilios->first())->numero_exterior }}"
+                            <input type="text" name="numero_exterior" placeholder="Número exterior"
+                                value="{{ optional($documento->domicilios->first())->numero_exterior }}"
                                 class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         </div>
                     </div>
@@ -161,7 +190,8 @@
                         <label class="block text-md font-medium text-gray-700  dark:text-white mb-1">
                             Colonia: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="colonia" placeholder="colonia" value="{{ optional($documento->domicilios->first())->colonia }}"
+                        <input type="text" name="colonia" placeholder="colonia"
+                            value="{{ optional($documento->domicilios->first())->colonia }}"
                             class="p-2 w-full uppercase rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div class="col-span-full">
@@ -189,20 +219,15 @@
 
                 </div>
             </div>
-            <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-
-                <a href="{{ route('pagos.index') }}"
-                    class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
-                    <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar
-                </a>
+            <div class="md:col-span-2 flex justify-end gap-3 mt-4">
                 @if ($documento->estatus == 1)
-            <div x-data @keydown.window.prevent.f9="$refs.btnRegistrar.click()">
-                <a x-ref="btnRegistrar" href="{{ route('pagos.edit', $documento) }}"
-                    class="px-6 py-2 uppercase bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
-                    Actualizar [F9]
-                </a>
-            </div>
-            @endif
+                    <div x-data @keydown.window.prevent.f9="$refs.btnRegistrar.click()">
+                        <a x-ref="btnRegistrar" href="{{ route('pagos.edit', $documento) }}"
+                            class="px-6 py-3 uppercase bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                            Actualizar [F9]
+                        </a>
+                    </div>
+                @endif
 
             </div>
 
@@ -214,10 +239,10 @@
     <script>
         function compraApp() {
             return {
-                init() {
-                },
+                init() {},
             }
         }
+
         function timbrar() {
             Swal.fire({
                 title: '¿Esta seguro que requiere timbrar este recibo electronico?',

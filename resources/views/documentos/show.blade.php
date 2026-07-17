@@ -617,7 +617,6 @@
         }
 
         function cancelar() {
-
             Swal.fire({
                 title: 'Cancelar factura',
 

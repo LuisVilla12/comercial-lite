@@ -1,18 +1,21 @@
 @section('title', 'Registrar pago')
 <x-app-layout>
-    <x-slot name="header">
-        <div class="md:flex md:justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                Registrar Pago
+      <div class="flex items-center mt-4 py-2 gap-3 mb-4 bg-white dark:bg-slate-800 w-full rounded-md">
+        <a href="{{ route('pagos.index') }}" class="flex text-white  bg-red-600 border-1  rounded-lg p-4">
+            <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />Regresar
+        </a>
+        <div class="">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                Registrar un REP
             </h2>
-            <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
-            </label>
+            <p class="dark:text-white mt-2 font-semibold"> Fecha:
+                {{ now()->format('d/m/Y') }}</span></p>
         </div>
-    </x-slot>
+    </div>
     <form method="POST" action="{{ route('pagos.store') }}" x-data="compraApp()" x-init="init();">
         @csrf
         <div x-data="{ tab: 'detalle' }">
-            <div class="flex gap-4 border-b mt-4">
+            <div class="flex gap-4 border-b mt-4 bg-white dark:bg-slate-800 rounded-md p-2">
                 <button type="button" @click="tab='detalle'"
                     :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
                     class="block text-lg font-medium mb-2 dark:text-white">
@@ -26,8 +29,8 @@
                 </button>
             </div>
             <div x-show="tab === 'detalle'">
-                <div class=" mx-auto py-6">
-                    <div class="mb-6">
+                <div class=" mx-auto mt-2">
+                    <div class="mb-6 bg-white dark:bg-slate-800 rounded-md p-2">
                         <div class="md:flex justify-between">
                             <label class="block text-lg font-medium mb-2 dark:text-white">Cliente: *</label>
                         </div>
@@ -83,9 +86,7 @@
 
                     </div>
                     {{-- ================= FACTURAS ================= --}}
-                    <div>
-                        <!-- Cliente -->
-
+                    <div class="bg-white dark:bg-slate-800 rounded-md p-2">
                         <div class="col-span-full">
                             <label class="block text-lg font-medium mb-2 dark:text-white">
                                 Facturas pendientes:
@@ -159,11 +160,11 @@
 
                 </div>
             </div>
-            <div x-show="tab === 'info'" x-cloak class="space-y-4">
+            <div x-show="tab === 'info'" x-cloak class="space-y-4 bg-white dark:bg-slate-800 rounded-md p-2 mt-2">
                 <div class="md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-4">
                     <div class="col-span-full">
                         <label
-                            class="block text-xl mt-4 text-center md:text-left font-medium text-gray-700 dark:text-white">
+                            class="block text-xl  text-center md:text-left font-medium text-gray-700 dark:text-white">
                             Datos del cliente: </span>
                         </label>
                     </div>
@@ -232,12 +233,7 @@
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="col-span-full">
-                        <label for="metodo_pago"
-                            class="block mt-4 text-center md:text-left text-xl font-medium text-gray-700 dark:text-white mb-1">
-                            Datos del pago: </span>
-                        </label>
-                    </div>
+
 
                     {{-- Forma de pago --}}
                     <div class="mb-2">
@@ -260,12 +256,7 @@
 
                 </div>
             </div>
-            <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-
-                <a href="{{ route('pagos.index') }}"
-                    class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
-                    <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" /> Regresar
-                </a>
+            <div class="md:col-span-2 flex justify-end gap-3 mt-4">
                 <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
                     <button x-ref="btnGuardar" type="submit"
                         class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
