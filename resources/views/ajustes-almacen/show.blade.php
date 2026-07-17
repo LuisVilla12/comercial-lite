@@ -1,79 +1,73 @@
 @section('title', content: 'Detalles de ajuste')
 
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            Detalles sobre ajuste de inventario
-        </h2>
-    </x-slot>
-
-    @if (session('success'))
-        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
-            class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4 mt-4">
-            {{ session('success') }}
-        </p>
-    @endif
-    @if (session('error'))
-        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
-            class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-4 mt-4">{{ session('error') }}
-        </p>
-    @endif
-    <h1 class="block text-lg font-medium mb-2 dark:text-white mt-4">
-        @if ($ajuste->tipo == 1)
-            Entradas de almacen
-        @else
-            Salidas de almacen
-        @endif #{{ $ajuste->id }}
-    </h1>
-    <div class="display  mt-6">
-        <div class="flex flex-col md:flex-row justify-between  gap-5">
-            <p class="dark:text-white uppercase">Estado: @php
-                $estatusText = match ($ajuste->estatus) {
-                    1 => 'ACTIVO',
-                    2 => 'TRANSFORMADA',
-                    3 => 'CANCELADA',
-                    4 => 'SURTIDO',
-                    5 => 'DEVOLUCIÓN APLICADA',
-                    default => 'DESCONOCIDO',
-                };
-            @endphp
-                <span class="font-bold text-green-600">{{ $estatusText }}</span>
-            </p>
-            <div class="flex gap-4 mb-2">
-                @if ($ajuste->estatus == 1)
-                    <div class="w-full" >
-                        <button onclick="surtirAjuste()"
-                            class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full ">
-                            <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
-                            Surtir
-                        </button>
-                    </div>
-                    <form method="POST" action="{{ route('ajustes-almacen.surtir', $ajuste) }}" class="hidden"
-                        id="formSurtirAJUSTE">
-                        @csrf
-                    </form>
-                @endif
-                <a href="{{ route('ajustes-almacen.pdf', $ajuste) }}" target="_blank"
-                    class="px-4 py-2 bg-blue-600 text-white rounded flex items-center w-full ">
-                    <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
-                </a>
-
+    <div class="flex items-center mt-4 py-2 gap-3 mb-4 bg-white dark:bg-slate-800  rounded-md w-full">
+        <a href="{{ route('ajustes-almacen.index', $ajuste->tipo) }}" class="flex text-white  bg-red-600 border-1  rounded-lg p-4">
+            <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />Regresar
+        </a>
+        <div class="md:flex md:justify-between items-center w-full">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                    @if ($ajuste->tipo == 1)
+                        Entradas de almacen
+                    @else
+                        Salidas de almacen
+                    @endif # {{ $ajuste->id }}
+                </h2>
+                <p class="dark:text-white mt-2 font-semibold"> <span> Fecha:
+                        {{ \Carbon\Carbon::parse($ajuste->fecha)->format('d/m/Y') }}</span></p>
             </div>
-
-
+            <div class="mt-2 md:mt-0 mb-4 md:mb-0">
+                <p class="dark:text-white font-semibold">Estado: @php
+                    $estatusText = match ($ajuste->estatus) {
+                        1 => 'ACTIVA',
+                        2 => 'TRANSFORMADA',
+                        3 => 'CANCELADA',
+                        4 => 'SURTIDA',
+                        5 => 'DEVOLUCIÓN APLICADA',
+                        default => 'DESCONOCIDO',
+                    };
+                @endphp
+                    <span class="font-bold bg-green-500 rounded-md py-2 px-6 text-white mr-6">{{ $estatusText }}</span>
+                </p>
+            </div>
         </div>
+    </div>
+    <div class="flex flex-wrap justify-end gap-3">
+        @if ($ajuste->estatus == 1)
+            <!-- Surtir -->
+            <button onclick="surtirAjuste()"
+                class="group w-24 rounded-xl border border-orange-500/30 bg-orange-500/10 dark:bg-orange-500/50 hover:bg-orange-500 hover:text-white transition-all duration-200">
+                <div class="flex flex-col items-center py-1">
+                    <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2 text-orange-400 group-hover:text-white" />
+                    <span class="mt-1 font-semibold text-sm dark:text-white">Surtir <span
+                            class="text-xs opacity-70">F1</span></span>
+                </div>
+            </button>
 
+            <form method="POST" action="{{ route('ajustes-almacen.surtir', $ajuste) }}" class="hidden"
+                id="formSurtirAJUSTE">
+                @csrf
+            </form>
+        @endif
+        <!-- Imprimir -->
+        <a href="{{ route('ajustes-almacen.pdf', $ajuste) }}" target="_blank"
+            class="flex items-center justify-center group w-24 rounded-xl border border-blue-500/30 bg-blue-500/10 dark:bg-blue-500/50 hover:bg-blue-500 hover:text-white transition-all duration-200">
+            <div class="flex flex-col items-center">
+                <x-heroicon-o-printer class="w-5 h-5 mr-2 text-blue-400 group-hover:text-white" />
+                <span class="mt-1 font-semibold text-sm dark:text-white">Imprimir<span
+                        class=" text-xs opacity-70">F4</span></span>
+            </div>
+        </a>
     </div>
 
-    <div class="grid md:grid-cols-2 md:gap-4 mb-4">
+    <div class="my-2 p-2 bg-white dark:bg-slate-800  rounded-md ">
         {{-- almacen --}}
         <div>
-            <label class="block text-lg font-medium mb-2 dark:text-white">Almacen : </label>
-            <input type="text" value="{{ $ajuste->almacen->nombre }}" disabled
-                class="w-full border rounded p-2 bg-gray-100">
+            <label class="block text-lg font-medium mb-2 dark:text-white">Almacen : {{ $ajuste->almacen->nombre }}</label>
         </div>
     </div>
-    <div class="w-full">
+    <div class="w-full  bg-white dark:bg-slate-800  rounded-md p-2 ">
         <label class="block text-lg font-medium mb-2 dark:text-white">Listado de productos </label>
 
         <!-- ===== TABLA (DESKTOP) ===== -->
@@ -137,13 +131,10 @@
 
     </div>
     <div class="mt-6  gap-4">
-        <div class="flex justify-between gap-3 mt-4">
-            <a href="{{ route('ajustes-almacen.index', $ajuste->tipo) }}"
-               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
-                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
-            </a>
+        <div class="flex justify-end gap-3 mt-4">
+
             @if ($ajuste->estatus == 1)
-                <a href="" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
+                <a href="" class="px-6 py-2 uppercase bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                     Actualizar
                 </a>
             @endif

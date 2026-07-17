@@ -1,28 +1,30 @@
-@section('Entradas a Almacén')
-
-    <x-app-layout>
-        <x-slot name="header">
-            <div class="md:flex md:justify-between">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 text-center">
-                    Registrar @if ($tipo==1)
+@section('title', 'Ajuste de almacen')
+<x-app-layout>
+        <div class="flex items-center mt-4 py-2 gap-3 mb-4 bg-white dark:bg-slate-800 w-full rounded-md">
+            <a href="{{ route('ajustes-almacen.index', $tipo) }}"  class="flex text-white  bg-red-600 border-1  rounded-lg p-4">
+                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />Regresar
+            </a>
+            <div class="">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                    Registrar @if ($tipo == 1)
                             Entradas
                         @else
                             Salidas
                         @endif
                         a Almacén
                 </h2>
-                <label class="block text-lg font-medium mb-2 dark:text-white text-center">Fecha: {{ now()->format('d/m/Y') }}
-                </label>
+                <p class="dark:text-white mt-2 font-semibold"> Fecha:
+                    {{ now()->format('d/m/Y') }}</span></p>
             </div>
-        </x-slot>
+        </div>
 
-
-        <form method="POST" action="{{ route('ajustes-almacen.store') }}" id="formAjuste" x-data="compraApp()" x-init="init();
-        $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
+        <form method="POST" action="{{ route('ajustes-almacen.store') }}" id="formAjuste" x-data="compraApp()"
+            x-init="init();
+            $watch('modalProducto', value => { if (value) { $nextTick(() => setTimeout(() => $refs.buscarProductoModal?.focus(), 50)) } })">
 
             @csrf
-            <div x-data="{ tab: 'detalle' }">
-                <div class="flex gap-4 border-b mt-4">
+            <div x-data="{ tab: 'detalle' }" class="">
+                <div class="flex gap-4 border-b mt-4 bg-white dark:bg-slate-800  rounded-md p-2 ">
                     <button type="button" @click="tab='detalle'"
                         :class="tab === 'detalle' ? 'border-b-2 border-blue-500' : ''"
                         class="block text-lg font-medium mb-2 dark:text-white">
@@ -36,9 +38,9 @@
                     </button>
                 </div>
                 <div x-show="tab === 'detalle'">
-                    <div class=" mx-auto py-6">
+                    <div class=" mx-auto  mt-2 ">
                         {{-- Almacen --}}
-                        <div>
+                        <div class="bg-white dark:bg-slate-800  rounded-md p-2">
                             <label class="block text-lg font-medium mb-2 dark:text-white">Seleccionar almacen: *</label>
                             <select name="almacen_id" id="almacen_id"
                                 class="p-2 w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 mb-2">
@@ -49,6 +51,16 @@
                             </select>
                         </div>
                         {{-- ================= PRODUCTOS ================= --}}
+                        <div class="bg-white dark:bg-slate-800 mt-2  p-2">
+                            <div class="flex justify-between items-center mb-2  ">
+                                <label class="block text-lg font-medium dark:text-white ">Productos: </label>
+                                <button type="button" @click="abrirModalProducto()"
+                                    @keydown.window.prevent.f9="abrirModalProducto()"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded flex items-center mr-2">
+                                    <x-heroicon-o-plus class="w-5 h-5 mr-2" />Agregar [F9]
+                                </button>
+                            </div>
+
                         <div class="mt-2">
                             <div class="hidden lg:block">
                                 <table class="w-full border bg-white shadow rounded">
@@ -142,7 +154,7 @@
                                                 <td class="p-2 text-center">
                                                     <button type="button" @click="eliminarFila(index)"
                                                         class="text-red-600 hover:text-red-800">
-                                                        ❌
+                                                        <x-heroicon-o-trash class="w-5 h-5 " />
                                                     </button>
                                                 </td>
                                             </tr>
@@ -214,11 +226,6 @@
                             @error('productos')
                                 <p class="text-red-600 text-xs mt-1">{{ 'Debes seleccionar al menos un producto' }}</p>
                             @enderror
-                            <button type="button" @click="abrirModalProducto()"
-                                @keydown.window.prevent.f9="abrirModalProducto()"
-                                class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-                                ➕ Agregar producto [F9]
-                            </button>
                         </div>
 
 
@@ -258,15 +265,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="md:col-span-2 flex justify-between gap-3 mt-4">
-<a href="{{ route('ajustes-almacen.index', $tipo)  }}"
-               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
-                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
-            </a>
+                <div class="md:col-span-2 flex justify-end gap-3 mt-4">
+
                     <div x-data @keydown.window.prevent.f10="$refs.btnGuardar.click()">
-                        <button
-                         x-ref="btnGuardar" id="btnSave"
-                        type="submit"
+                        <button x-ref="btnGuardar" id="btnSave" type="submit"
                             class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">
                             GUARDAR [F10]
                         </button>
@@ -354,16 +356,16 @@
         </div>
         {{-- ================= ALPINE ================= --}}
         <script>
-                        // VALIDAR GUARDAR UNA VEZ
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('formAjuste');
-    const btn  = document.getElementById('btnSave');
-    if (!form || !btn) return;
-    form.addEventListener('submit', function () {
-        btn.disabled = true;
-        btn.innerText = 'Guardando...';
-    });
-});
+            // VALIDAR GUARDAR UNA VEZ
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('formAjuste');
+                const btn = document.getElementById('btnSave');
+                if (!form || !btn) return;
+                form.addEventListener('submit', function() {
+                    btn.disabled = true;
+                    btn.innerText = 'Guardando...';
+                });
+            });
 
             const ALMACEN_ID = 1;
 

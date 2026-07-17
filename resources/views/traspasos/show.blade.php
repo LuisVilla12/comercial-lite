@@ -1,72 +1,61 @@
 @section('title', 'Ver traspaso')
 
 <x-app-layout>
-    <x-slot name="header">
-        <div class="">
-            <div class="flex justify-between">
-                <h2 class="mb-2 font-semibold text-xl text-gray-800 dark:text-gray-200">
-                    Traspaso # {{ $traspaso->id }}
-                </h2>
-                <h2 class="mb-2 font-semibold text-xl text-gray-800 dark:text-gray-200">
-                    Fecha: {{ $traspaso->fecha }}
-                </h2>
-            </div>
 
-        </div>
-
-    </x-slot>
-    @if (session('success'))
-        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
-            class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4 mt-4">
-            {{ session('success') }}
-        </p>
-    @endif
-    @if (session('error'))
-        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
-            class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-4 mt-4">{{ session('error') }}
-        </p>
-    @endif
-
-
-
-    {{-- ORIGEN --}}
-    <div class="mt-5  gap-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <p class="dark:text-white uppercase">Estado: @php
-                $estatusText = match ($traspaso->estatus) {
-                    1 => 'ACTIVO',
-                    2 => 'TRANSFORMADA',
-                    3 => 'CANCELADA',
-                    4 => 'SURTIDO',
-                    5 => 'DEVOLUCIÓN APLICADA',
-                    default => 'DESCONOCIDO',
-                };
-            @endphp
-                <span class="font-bold text-green-600">{{ $estatusText }}</span>
-            </p>
-        <div class="flex gap-2 ">
-        @if ($traspaso->estatus == 1)
-            <div class="w-full">
-                <button onclick="surtirTraspaso()"
-                    class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full">
-                    <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
-                    Surtir
-                </button>
-            </div>
-
-            <form method="POST" id="formSurtirTraspaso" action="{{ route('traspasos.surtir', $traspaso) }}"
-                class=" flex justify-end">
-                @csrf
-            </form>
-        @endif
-        <a href="{{ route('traspasos.pdf', [$traspaso]) }}" target="_blank"
-            class="px-4 py-2 bg-blue-600 text-white rounded flex items-center w-full">
-            <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
+    <div class="flex items-center mt-4 py-2 gap-3 mb-4 bg-white dark:bg-slate-800 w-full rounded-md">
+        <a href="{{ route('traspasos.index') }}" class="flex text-white  bg-red-600 border-1  rounded-lg p-4">
+            <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />Regresar
         </a>
-        </div>
+        <div class="md:flex md:justify-between items-center w-full">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+                    Detalles del Traspaso # {{ $traspaso->id }}
+                </h2>
+                <p class="dark:text-white mt-2 font-semibold"> <span> Fecha:
+                        {{ \Carbon\Carbon::parse($traspaso->fecha)->format('d/m/Y') }}</span></p>
+            </div>
+            <div class="mt-2 md:mt-0 mb-4 md:mb-0">
+                <p class="dark:text-white font-semibold">Estado: @php
+                    $estatusText = match ($traspaso->estatus) {
+                        1 => 'ACTIVA',
+                        2 => 'TRANSFORMADA',
+                        3 => 'CANCELADA',
+                        4 => 'SURTIDA',
+                        5 => 'DEVOLUCIÓN APLICADA',
+                        default => 'DESCONOCIDO',
+                    };
+                @endphp
+                    <span class="font-bold bg-green-500 rounded-md py-2 px-6 text-white mr-6">{{ $estatusText }}</span>
+                </p>
+            </div>
+
         </div>
     </div>
-    <div class="grid  md:grid-cols-2 md:gap-6 mt-6">
+    <div class="flex flex-wrap justify-end gap-3">
+        @if ($traspaso->estatus == 1)
+        <!-- Surtir -->
+        <button onclick="surtirTraspaso()"
+            class="group w-24 rounded-xl border border-orange-500/30 bg-orange-500/10 dark:bg-orange-500/50 hover:bg-orange-500 hover:text-white transition-all duration-200">
+            <div class="flex flex-col items-center py-1">
+                <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2 text-orange-400 group-hover:text-white" />
+                <span class="mt-1 font-semibold text-sm dark:text-white">Surtir <span
+                        class="text-xs opacity-70">F1</span></span>
+            </div>
+        </button>
+        <form method="POST" id="formSurtirTraspaso" action="{{ route('traspasos.surtir', $traspaso) }}" class="hidden">
+        @csrf
+        </form>
+        @endif
+        <!-- Imprimir -->
+        <a class="flex items-center justify-center group w-24 rounded-xl border border-blue-500/30 bg-blue-500/10 dark:bg-blue-500/50 hover:bg-blue-500 hover:text-white transition-all duration-200" href="{{ route('traspasos.pdf', [$traspaso]) }}" target="_blank">
+            <div class="flex flex-col items-center">
+                <x-heroicon-o-printer class="w-5 h-5 mr-2 text-blue-400 group-hover:text-white" />
+                <span class="mt-1 font-semibold text-sm dark:text-white">Imprimir<span
+                        class=" text-xs opacity-70 ml-1">F4</span></span>
+            </div>
+        </a>
+    </div>
+    <div class="grid  md:grid-cols-2 md:gap-6 mt-4 bg-white dark:bg-slate-800  rounded-md p-2 ">
         {{-- ================= Almacen origen ================= --}}
         <div class="mb-4">
             <div class="">
@@ -87,7 +76,7 @@
         </div>
     </div>
 
-    <table class="w-full border bg-white shadow rounded">
+    <table class="w-full mt-2 border bg-white shadow rounded">
         <thead class="bg-gray-100">
             <tr>
                 <th class="p-2">Código</th>
@@ -123,11 +112,7 @@
         </p>
     </div> --}}
     <div class="mt-6">
-        <div class="flex justify-between gap-3 mt-4">
-  <a href="{{ route('traspasos.index')  }}"
-               class="px-4 py-2 rounded-md border-red-100 font-medium flex  text-white bg-red-600 hover:bg-red-600">
-                <x-heroicon-o-arrow-long-left class="w-5 h-5 mr-2" />  Regresar
-            </a>
+        <div class="flex justify-end gap-3 mt-4">
             @if ($traspaso->estatus == 1)
                 <a href="{{ route('traspasos.edit', $traspaso) }}"
                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white  rounded-md font-medium">

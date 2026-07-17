@@ -29,7 +29,7 @@
                             Fecha:
                             {{ \Carbon\Carbon::parse($documento->fecha)->format('d/m/Y') }}</span></p>
                 </div>
-                <div class="mt-2 md:mt-0">
+                <div class="mt-2 md:mt-0 mb-4 md:mb-0">
                     <p class="dark:text-white font-semibold">Estado: @php
                         $estatusText = match (true) {
                             $documento->estatus == 4 && $documento->documento_modelo_id == 2 => 'TIMBRADA',
@@ -49,114 +49,156 @@
             </div>
 
         </div>
-
-        <div class="md:flex md:justify-between mt-4 md:items-center md:gap-2 ">
-
-            <div class="flex gap-2 mt-4 md:mt-0">
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-                    <button onclick="surtirRemision()"
-                        class="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded w-full">
-                        <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2" />
-                        Surtir
-                    </button>
-                    <form method="POST" id="formSurtirRemision"
-                        action="{{ route('documentos.surtir', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
-                        class="mr-6 hidden">
-                        @csrf
-                    </form>
-                @endif
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id > 1)
-                    <button type="button" onclick="openCambioModal()"
-                        class="flex items-center px-4 py-2 bg-green-500 text-white rounded" title="Cambio">
-                        <x-heroicon-o-currency-dollar class="w-5 h-5" /> Cambio
-                    </button>
-                @endif
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
-                    <button onclick="timbrar()"
-                        class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded  w-full">
-                        <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5" />
-                        Timbrar
-                    </button>
-                    <form method="POST" id="formTimbrar"
-                        action="{{ route('documentos.timbrar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
-                        @csrf
-                    </form>
-                @endif
-                @if ($documento->estatus == 4 and $documento->documento_modelo_id == 2)
-                    <button onclick="cancelar()" class="flex items-center px-4 py-2 bg-red-500 text-white rounded  w-full">
-                        <x-heroicon-o-x-mark class="w-5 h-5" />
-                        Cancelar
-                    </button>
-                    <form method="POST" id="formCancelar"
-                        action="{{ route('documentos.cancelar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
-                        @csrf
-                        <input type="hidden" name="motivo" id="motivo">
-                        <input type="hidden" name="uuid_sustitucion" id="uuid_sustitucion">
-                    </form>
-                @endif
-
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
-                    <button onclick="seleccionarConversion()"
-                        class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded ml-6">
-                        <x-heroicon-o-arrow-path-rounded-square class="w-5 h-5 mr-2" />
-                        Convertir
-                    </button>
-                    <a href="{{ route('documentos.pdf', [$sucursal, $documento]) }}" target="_blank"
-                        class="px-4 py-2 bg-blue-600 text-white rounded flex items-center ml-6">
-                        <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
-                    </a>
-                    {{-- OPCINES DE CONVERTIR OCULTAS PARA EVITAR ERRORES DE USUARIOS --}}
-                    <form id="formFactura" method="POST"
-                        action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
-                        @csrf
-                    </form>
-
-                    <form id="formRemision" method="POST"
-                        action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 3]) }}">
-                        @csrf
-                    </form>
-                @endif
-
-                {{-- CONVERTIR A REMISIÓN SOLO PARA COTIZACIONES --}}
-                @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
-                    <button onclick="convertirAFactura()"
-                        class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded ">
-                        <x-heroicon-o-arrow-path-rounded-square class="w-5 h-5 mr-2" />
-                        Convertir
-                    </button>
-                    <form method="POST" class="hidden" id="formConversionFactura"
-                        action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
-                        @csrf
-                        <button
-                            class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded w-full mb-4 md:mb-0">
-                            <x-heroicon-o-archive-box class="w-5 h-5 mr-2" /> Convertir a factura
-                        </button>
-                    </form>
-                @endif
-                @if ($documento->documento_modelo_id > 1)
-                    <button onclick="seleccionarImpresora()"
-                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded flex items-center">
-                        <x-heroicon-o-printer class="w-5 h-5 mr-2" /> Imprimir
-                    </button>
-                @endif
-
-                <button type="button" onclick="openEmailModal()"
-                    class="flex items-center px-4 py-2  bg-yellow-500 text-white rounded" title="Enviar por correo">
-                    <x-heroicon-o-envelope class="w-5 h-5 mr-2" /> Enviar
+        <div class="flex flex-wrap justify-end gap-3">
+            {{-- TIMBRAR FACTURA --}}
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 2)
+                <button onclick="timbrar()"
+                    class="group w-24 rounded-xl border border-red-500/30 bg-red-500/10 dark:bg-red-500/50 hover:bg-red-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center py-1">
+                        <x-heroicon-o-arrow-up-on-square-stack class="w-5 h-5 mr-2 text-red-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Timbrar <span
+                                class="text-xs opacity-70">F1</span></span>
+                    </div>
                 </button>
-                <a href="https://wa.me/521{{ $documento->cliente->whatsapp }}?text={{ urlencode('Hola  tu compra fue de $' . $documento->total . '. Gracias por tu preferencia.') }}"
-                    target="_blank">
-                    <button class="px-4 py-2 w-full bg-green-600 hover:bg-green-700 text-white rounded flex items-center ">
-                        <x-heroicon-o-device-phone-mobile class="w-5 h-5 mr-2" /> WhatsApp
-                    </button>
+                <form method="POST" id="formTimbrar" class="hidden"
+                    action="{{ route('documentos.timbrar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
+                    @csrf
+                </form>
+            @endif
+            {{-- CANCELAR FACTURA --}}
+            @if ($documento->estatus == 4 and $documento->documento_modelo_id == 2)
+                <button onclick="cancelar()"
+                    class="group w-24 rounded-xl border border-red-500/30 bg-red-500/10 dark:bg-red-500/50 hover:bg-red-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center py-1">
+                        <x-heroicon-o-x-mark class="w-5 h-5 mr-2 text-red-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Cancelar <span
+                                class="text-xs opacity-70">F1</span></span>
+                    </div>
+                </button>
+                <form method="POST" id="formCancelar" class="hidden"
+                    action="{{ route('documentos.cancelar', ['sucursal' => $sucursal, 'documento' => $documento->id]) }}">
+                    @csrf
+                    <input type="hidden" name="motivo" id="motivo">
+                    <input type="hidden" name="uuid_sustitucion" id="uuid_sustitucion">
+                </form>
+            @endif
+            <!-- Surtir REMISION-->
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
+                <button onclick="surtirRemision()"
+                    class="group w-24 rounded-xl border border-orange-500/30 bg-orange-500/10 dark:bg-orange-500/50 hover:bg-orange-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center py-1">
+                        <x-heroicon-o-shopping-cart class="w-5 h-5 mr-2 text-orange-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Surtir <span
+                                class="text-xs opacity-70">F1</span></span>
+                    </div>
+                </button>
+                <form method="POST"
+                    id="formSurtirRemision"action="{{ route('documentos.surtir', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                    class="mr-6 hidden">
+                    @csrf
+                </form>
+            @endif
+            <!-- Cambio -->
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id > 1)
+                <button onclick="openCambioModal()"
+                    class="group w-24 rounded-xl border border-green-500/30 bg-green-500/10 dark:bg-green-500/50 hover:bg-green-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center py-1">
+                        <x-heroicon-o-currency-dollar class="w-5 h-5 text-green-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Cambio <span
+                                class=" text-xs opacity-70">F2</span></span>
+
+                    </div>
+                </button>
+            @endif
+            {{-- COTIZACION CONVERTIR A FACTURA Y REMISION --}}
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 1)
+                <button onclick="seleccionarConversion()"
+                    class="group w-24 rounded-xl border border-violet-500/30 bg-violet-500/10 dark:bg-violet-500/50 hover:bg-violet-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center py-1">
+                        <x-heroicon-o-arrow-path-rounded-square
+                            class="w-5 h-5 mr-2 text-violet-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Convertir <span
+                                class="text-xs opacity-70">F3</span></span>
+                    </div>
+                </button>
+                <form id="formFactura" method="POST"
+                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}"
+                    class="hidden">
+                    @csrf
+                </form>
+                <form id="formRemision" method="POST"
+                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 3]) }}"
+                    class="hidden">
+                    @csrf
+                </form>
+                <!-- Imprimir -->
+                <a href="{{ route('documentos.pdf', [$sucursal, $documento]) }}" target="_blank"
+                    class="flex items-center justify-center group w-24 rounded-xl border border-blue-500/30 bg-blue-500/10 dark:bg-blue-500/50 hover:bg-blue-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center">
+                        <x-heroicon-o-printer class="w-5 h-5 mr-2 text-blue-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Imprimir<span
+                                class=" text-xs opacity-70 ml-1">F4</span></span>
+                    </div>
                 </a>
-                @if ($documento->estatus == 4 and $documento->documento_modelo_id == 3)
-                    <a
-                        href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"class="flex  px-6 py-2 bg-indigo-600 text-white rounded  md:mt-0 text-center">
-                        <x-heroicon-o-arrow-uturn-right class="w-5 h-5 mr-2" /> Devolucion</a>
-                @endif
-            </div>
+            @endif
+            @if ($documento->estatus == 1 and $documento->documento_modelo_id == 3)
+                <button onclick="convertirAFactura()"
+                    class="group w-24 rounded-xl border border-violet-500/30 bg-violet-500/10 dark:bg-violet-500/50 hover:bg-violet-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center py-1">
+                        <x-heroicon-o-arrow-path-rounded-square
+                            class="w-5 h-5 mr-2 text-violet-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Convertir <span
+                                class="text-xs opacity-70">F3</span></span>
+                    </div>
+                </button>
+                <form method="POST" class="hidden" id="formConversionFactura"
+                    action="{{ route('convertir', ['sucursal' => $sucursal, 'documento' => $documento, 'tipo' => 2]) }}">
+                    @csrf
+                </form>
+            @endif
+            @if ($documento->documento_modelo_id > 1)
+                <button onclick="seleccionarImpresora()"
+                    class="group w-24 rounded-xl border border-blue-500/30 bg-blue-500/10 dark:bg-blue-500/50 hover:bg-blue-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center">
+                        <x-heroicon-o-printer class="w-5 h-5 mr-2 text-blue-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Imprimir<span
+                                class=" text-xs opacity-70">F4</span></span>
+                    </div>
+                </button>
+            @endif
+            <!-- Enviar -->
+            <button onclick="openEmailModal()"
+                class="group w-24 rounded-xl border border-yellow-500/30 bg-yellow-500/10 dark:bg-yellow-500/50 hover:bg-yellow-500 hover:text-white transition-all duration-200">
+                <div class="flex flex-col items-center py-1">
+                    <x-heroicon-o-envelope class="w-5 h-5 mr-2 text-yellow-400 group-hover:text-white" />
+                    <span class="mt-1 font-semibold text-sm dark:text-white">Enviar <span
+                            class=" text-xs opacity-70 ml-1">F5</span></span>
+                </div>
+            </button>
+
+            <!-- WhatsApp -->
+            <a href="https://wa.me/521{{ $documento->cliente->whatsapp }}?text={{ urlencode('Hola  tu compra fue de $' . $documento->total . '. Gracias por tu preferencia.') }}"
+                target="__blank"
+                class="flex justify-center items-center group w-24 rounded-xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-500/50 hover:bg-emerald-500 hover:text-white transition-all duration-200">
+                <div class="flex flex-col items-center py-1">
+                    <x-heroicon-o-device-phone-mobile class="w-5 h-5 mr-2 text-emerald-400 group-hover:text-white" />
+                    <span class="mt-1 font-semibold  text-sm dark:text-white">WhatsApp<span
+                            class="text-xs opacity-70">F6</span></span>
+                </div>
+            </a>
+            {{-- DEVOLUCION --}}
+            @if ($documento->estatus == 4 and $documento->documento_modelo_id == 3)
+                <a href="{{ route('devolucion.edit', ['sucursal' => $sucursal, 'documento' => $documento]) }}"
+                    class="flex items-center justify-center group w-24 rounded-xl border border-purple-500/30 bg-purple-500/10 dark:bg-purple-500/50 hover:bg-purple-500 hover:text-white transition-all duration-200">
+                    <div class="flex flex-col items-center">
+                        <x-heroicon-o-arrow-uturn-right class="w-5 h-5 mr-2 text-purple-400 group-hover:text-white" />
+                        <span class="mt-1 font-semibold text-sm dark:text-white">Devolución<span
+                                class=" text-xs opacity-70 ml-1">F4</span></span>
+                    </div>
+                </a>
+            @endif
         </div>
+
         {{-- CONTENEDOR GENERAL --}}
         <div class="md:flex md:justify-between gap-2">
             <div class="md:w-9/12 px-1 ">
