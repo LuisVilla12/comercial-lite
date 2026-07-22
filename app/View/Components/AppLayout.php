@@ -15,17 +15,18 @@ class AppLayout extends Component
      */
     public function render(): View
     {
-        $user = auth()->user();
-        $empresa=ConfiguracionEmpresa::first();
-        // // TODO::VERIFICAR COMO USUARIOS PUEDEN ACCEDER A LA SUCURSAL
-        if($user->hasRole("Administrador")){
-            $sucursales = Sucursal::all();
-        }else{
-         $sucursales= Sucursal::where('id', $user->sucursal_id)->get();
-        }
-        $cajaAbierta = Caja::where('user_id', auth()->id())->where('estado', 'abierta')->first();
+        // $user = auth()->user();
+        // $empresa=ConfiguracionEmpresa::first();
+        // // // TODO::VERIFICAR COMO USUARIOS PUEDEN ACCEDER A LA SUCURSAL
+        // if($user->hasRole("Administrador")){
+        //     $sucursales = Sucursal::all();
+        // }else{
+        //  $sucursales= Sucursal::where('id', $user->sucursal_id)->get();
+        // }
+        // $cajaAbierta = Caja::where('user_id', auth()->id())->where('estado', 'abierta')->first();
 
 
-        return view('layouts.app',['sucursales'=>$sucursales,'empresa'=>$empresa,'cajaAbierta'=>$cajaAbierta]);
+        // return view('layouts.app',['sucursales'=>$sucursales,'empresa'=>$empresa,'cajaAbierta'=>$cajaAbierta]);
+        return view('layouts.app');
     }
 }

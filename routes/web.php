@@ -42,7 +42,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Cliente;
 use App\Models\Documento;
 use App\Models\Producto;
-use App\Models\Sucursal;
 use Illuminate\Support\Facades\DB;
 
 require __DIR__ . '/auth.php';
