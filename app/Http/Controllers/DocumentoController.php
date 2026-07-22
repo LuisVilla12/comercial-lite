@@ -613,6 +613,10 @@ class DocumentoController extends Controller
                 'numero_exterior' => $documento->domicilios->first()->numero_exterior ?? '',
                 'cp' => $documento->domicilios->first()->cp ?? '',
             ]);
+            if ($documento_convertido->documento_modelo_id == 3) {
+                $codigo_unico = 'REM-' . Str::upper(Str::random(10));
+                $documento->update(['codigo_unico' => $codigo_unico]);
+            }
             // Copiar detalles
             foreach ($documento->detalles as $detalle) {
                 $documento_convertido->detalles()->create([
